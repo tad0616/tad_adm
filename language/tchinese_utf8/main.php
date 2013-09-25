@@ -9,8 +9,12 @@
 define("_TAD_NEED_TADTOOLS"," 需要 tadtools 模組，可至<a href='http://www.tad0616.net/modules/tad_uploader/index.php?of_cat_sn=50' target='_blank'>Tad教材網</a>下載。");
 
 define("_MD_TADADM_NAME","站長工具箱");
-define("_MD_TADADM_INPUT_PASSWD","輸入救援密碼");
-define("_MD_TADADM_INPUT_PASSWD_DESC","此密碼為您在偏好設定中設定之密碼");
+define("_MD_TADADM_PASSWD","救援密碼");
+define("_MD_TADADM_INPUT_PASSWD","【步驟二】輸入救援密碼：");
+define("_MD_TADADM_INPUT_PASSWD_DESC","【步驟一】<a href='index.php?op=send_passwd'>先點此寄送救援密碼至管理員信箱</a>");
+define("_MD_TADADM_MAIL_CONTENT","救援密碼為：<span style='color:red;'>%s</span><p>請連至：<a href='".XOOPS_URL."/modules/tad_adm'>".XOOPS_URL."/modules/tad_adm</a> 輸入之</p><p>若這不是您索取的，表示有人對貴站心懷不軌，建議您將".XOOPS_ROOT_PATH."/modules/tad_adm/index.php檔案改名（如：xxx.php），以免被其他人亂用。</p>");
+define("_MD_TADADM_MAIL_PASSWD_OK","救援密碼已寄至 %s");
+define("_MD_TADADM_MAIL_PASSWD_FAIL","救援密碼寄至 %s 失敗！");
 define("_MD_TADADM_LOGIN","登入");
 define("_MD_TADADM_FILES_COUNT","（%s個檔案）");
 define("_MD_TADADM_BRACKETS","（%s）");

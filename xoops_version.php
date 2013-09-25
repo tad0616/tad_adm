@@ -74,7 +74,7 @@ $modversion['config'][$i]['title']	= '_MI_TADADM_LOGIN';
 $modversion['config'][$i]['description']	= '_MI_TADADM_LOGIN_DESC';
 $modversion['config'][$i]['formtype']	= 'textbox';
 $modversion['config'][$i]['valuetype']	= 'text';
-$modversion['config'][$i]['default']	= '1q2w3e4r5t';
+$modversion['config'][$i]['default']	= '';
 
 //---搜尋---//
 //$modversion['hasSearch'] = 1;

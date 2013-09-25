@@ -10,10 +10,16 @@ if($xoopsUser) {
   $xoopsModule = &$modhandler->getByDirname("tad_adm");
   $config_handler =& xoops_gethandler('config');
   $xoopsModuleConfig =& $config_handler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
-  $_SESSION['isAdmin']=($xoopsModuleConfig['login']==$_POST['help_passwd'])?true:false;
+  $_SESSION['isAdmin']=($xoopsModuleConfig['login']!='' and $_POST['help_passwd']!='' and $xoopsModuleConfig['login']==$_POST['help_passwd'])?true:false;
+}elseif($op=="send_passwd"){
+  send_passwd();
+  header("location: {$_SERVER['PHP_SELF']}");
 }
+  
 
 if(!$_SESSION['isAdmin']){
+  $sql="update ".$xoopsDB->prefix(config)." set `conf_value`='' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
+	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
   die('
   <!DOCTYPE html>
   <html lang="'._LANGCODE.'">
@@ -34,10 +40,12 @@ if(!$_SESSION['isAdmin']){
           <div class="row-fluid">
             <div class="span12">
             <form  class="well" action="'.$_SERVER['PHP_SELF'].'" method="post">
-            <label>'._MD_TADADM_INPUT_PASSWD.'</label>
-            <input type="text" name="help_passwd" class="span3" placeholder="'._MD_TADADM_INPUT_PASSWD.'...">
+            <ol>
+            <li>'._MD_TADADM_INPUT_PASSWD_DESC.'</li>
+            <li>'._MD_TADADM_INPUT_PASSWD.'
+            <input type="text" name="help_passwd" class="span3" placeholder=""></li>
+            </ol>
             <input type="hidden" name="op" value="helpme">
-            <p class="help-block">'._MD_TADADM_INPUT_PASSWD_DESC.'...</p>
             <button type="submit" class="btn">'._MD_TADADM_LOGIN.'</button>
             </form>
             </div>
@@ -56,38 +64,83 @@ $logout=($xoopsUser)?XOOPS_URL."/user.php?op=logout":"index.php?op=logout";
 $v=isset($_REQUEST['v'])?$_REQUEST['v']:"0";
 
 switch($op){
-  case "debug_mode";
+  case "debug_mode":
   debug_mode($v);
   header("location: {$_SERVER['PHP_SELF']}");
   break;
 
-  case "clear_cache";
+  case "clear_cache":
   clear_cache();
   header("location: {$_SERVER['PHP_SELF']}");
   break;
 
-  case "clear_session";
+  case "clear_session":
   clear_session();
   header("location: {$_SERVER['PHP_SELF']}");
   break;
 
-  case "theme_default";
+  case "theme_default":
   theme_default();
   header("location: {$_SERVER['PHP_SELF']}");
   break;
 
-  case "close_site";
+  case "close_site":
   close_site($v);
   header("location: {$_SERVER['PHP_SELF']}");
   break;
 
-  case "logout";
+  case "logout":
   $_SESSION['isAdmin']=false;
   header("location: {$_SERVER['PHP_SELF']}");
   break;
 
 }
 
+//寄發密碼
+function send_passwd(){
+  global $xoopsConfig,$xoopsDB;
+  $passwd=GeraHash(30);
+  $sql="update ".$xoopsDB->prefix(config)." set `conf_value`='{$passwd}' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
+	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  
+  $content=sprintf(_MD_TADADM_MAIL_CONTENT,$passwd);
+  if(send_now($xoopsConfig['adminmail'],_MD_TADADM_PASSWD,$content)){
+    return sprintf(_MD_TADADM_MAIL_PASSWD_OK,$xoopsConfig['adminmail']); 
+  }else{
+    return sprintf(_MD_TADADM_MAIL_PASSWD_FAIL,$xoopsConfig['adminmail']); 
+  }
+}
+
+
+//立即寄出
+function send_now($email="",$title="",$content=""){
+	global $xoopsConfig,$xoopsDB,$xoopsModuleConfig,$xoopsModule;
+
+	$xoopsMailer =& getMailer();
+	$xoopsMailer->multimailer->ContentType="text/html";
+	$xoopsMailer->addHeaders("MIME-Version: 1.0");
+
+	$msg.=($xoopsMailer->sendMail($email,$title, $content,$headers))?true:false;
+	return $msg;
+}
+
+
+function GeraHash($qtd){
+//Under the string $Caracteres you write all the characters you want to be used to randomly generate the code.
+$Caracteres = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
+$QuantidadeCaracteres = strlen($Caracteres);
+$QuantidadeCaracteres--;
+
+$Hash=NULL;
+    for($x=1;$x<=$qtd;$x++){
+        $Posicao = rand(0,$QuantidadeCaracteres);
+        $Hash .= substr($Caracteres,$Posicao,1);
+    }
+
+return $Hash;
+}
+
+ 
 //目前硬碟空間
 function get_free_space(){
     $bytes = disk_free_space(".");
@@ -319,7 +372,7 @@ $main3="
   <legend>"._MD_TADADM_WEB_FUNCTION."</legend>
   <ul class='nav nav-list'>
     $close_site
-    <li><a href='index.php?op=reset_root'><i class='icon-envelope'  title='"._MD_TADADM_RESET_ADMIN_PASSWD."'></i>"._MD_TADADM_RESET_ADMIN_PASSWD."</a></li>
+    <li><i class='icon-envelope'  title='"._MD_TADADM_RESET_ADMIN_PASSWD."'></i>"._MD_TADADM_RESET_ADMIN_PASSWD."</li>
     <li><a href='index.php?op=reset_mem'><i class='icon-envelope'  title='"._MD_TADADM_RESET_MEM_PASSWD."'></i>"._MD_TADADM_RESET_MEM_PASSWD."</a></li>
     <li><a href='index.php?op=unable_blocks'><i class='icon-envelope'  title='"._MD_TADADM_UNABLE_ALL_BLOCKS."'></i>"._MD_TADADM_UNABLE_ALL_BLOCKS."</a></li>
     <li><a href='index.php?op=unable_modules'><i class='icon-envelope'  title='"._MD_TADADM_UNABLE_ALL_MODS."'></i>"._MD_TADADM_UNABLE_ALL_MODS."</a></li>
