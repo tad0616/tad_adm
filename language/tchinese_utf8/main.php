@@ -8,6 +8,7 @@
 //需加入模組語系
 define("_TAD_NEED_TADTOOLS"," 需要 tadtools 模組，可至<a href='http://www.tad0616.net/modules/tad_uploader/index.php?of_cat_sn=50' target='_blank'>Tad教材網</a>下載。");
 
+define("_MD_TADADM_SET","設定");
 define("_MD_TADADM_NAME","站長工具箱");
 define("_MD_TADADM_PASSWD","救援密碼");
 define("_MD_TADADM_INPUT_PASSWD","【步驟二】輸入救援密碼：");

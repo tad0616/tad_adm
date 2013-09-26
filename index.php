@@ -64,6 +64,13 @@ $logout=($xoopsUser)?XOOPS_URL."/user.php?op=logout":"index.php?op=logout";
 $v=isset($_REQUEST['v'])?$_REQUEST['v']:"0";
 
 switch($op){
+
+  case "reset_adm_pass":
+  reset_adm_pass($_POST['uid'],$_POST['adm_pass']);
+  header("location: ".XOOPS_URL."/user.php");
+  break;
+
+
   case "debug_mode":
   debug_mode($v);
   header("location: {$_SERVER['PHP_SELF']}");
@@ -96,11 +103,19 @@ switch($op){
 
 }
 
+//重設管理員密碼
+function reset_adm_pass($uid="",$passwd=""){
+  global $xoopsDB;
+  $passwd=md5($passwd);
+  $sql="update ".$xoopsDB->prefix('users')." set `pass`='{$passwd}' where `uid`='{$uid}'";
+	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+}
+
 //寄發密碼
 function send_passwd(){
   global $xoopsConfig,$xoopsDB;
   $passwd=GeraHash(30);
-  $sql="update ".$xoopsDB->prefix(config)." set `conf_value`='{$passwd}' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
+  $sql="update ".$xoopsDB->prefix('config')." set `conf_value`='{$passwd}' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
 	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
   
   $content=sprintf(_MD_TADADM_MAIL_CONTENT,$passwd);
@@ -367,12 +382,30 @@ $main2="
 
 
 $close_site=$xoopsConfig['closesite']=='1'?"<li><a href='index.php?op=close_site&v=0'><i class='icon-envelope'  title='"._MD_TADADM_ENABLE_WEB."'></i>"._MD_TADADM_ENABLE_WEB."</a></li>":"<li><a href='index.php?op=close_site&v=1'><i class='icon-envelope'  title='"._MD_TADADM_UNABLE_WEB."'></i>"._MD_TADADM_UNABLE_WEB."</a></li>";
+
+$admin_options="";
+$sql="select a.uid,b.uname from ".$xoopsDB->prefix("groups_users_link")." as a left join ".$xoopsDB->prefix("users")." as b on a.uid=b.uid where groupid=1";
+$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+while(list($uid,$uname)=$xoopsDB->fetchRow($result)){
+  $admin_options.="<option value='{$uid}'>{$uname}</option>";
+}
+
 $main3="
 <fieldset>
   <legend>"._MD_TADADM_WEB_FUNCTION."</legend>
   <ul class='nav nav-list'>
     $close_site
-    <li><i class='icon-envelope'  title='"._MD_TADADM_RESET_ADMIN_PASSWD."'></i>"._MD_TADADM_RESET_ADMIN_PASSWD."</li>
+    <li><i class='icon-envelope'  title='"._MD_TADADM_RESET_ADMIN_PASSWD."'></i>
+    "._MD_TADADM_RESET_ADMIN_PASSWD."
+    <form class='form' action='{$_SERVER['PHP_SELF']}' method='post'>
+    <select name='uid'>
+    {$admin_options}
+    </select>
+    <input type='text' name='adm_pass' class='span8' placeholder='"._MD_TADADM_RESET_ADMIN_PASSWD."'>
+    <input type='hidden' name='op' value='reset_adm_pass'>
+    <button type='submit' class='btn'>"._MD_TADADM_SET."</button>
+    </form>
+    </li>
     <li><a href='index.php?op=reset_mem'><i class='icon-envelope'  title='"._MD_TADADM_RESET_MEM_PASSWD."'></i>"._MD_TADADM_RESET_MEM_PASSWD."</a></li>
     <li><a href='index.php?op=unable_blocks'><i class='icon-envelope'  title='"._MD_TADADM_UNABLE_ALL_BLOCKS."'></i>"._MD_TADADM_UNABLE_ALL_BLOCKS."</a></li>
     <li><a href='index.php?op=unable_modules'><i class='icon-envelope'  title='"._MD_TADADM_UNABLE_ALL_MODS."'></i>"._MD_TADADM_UNABLE_ALL_MODS."</a></li>
