@@ -15,7 +15,7 @@ if($xoopsUser) {
   send_passwd();
   header("location: {$_SERVER['PHP_SELF']}");
 }
-  
+
 
 if(!$_SESSION['isAdmin']){
   $sql="update ".$xoopsDB->prefix(config)." set `conf_value`='' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
@@ -65,6 +65,27 @@ $v=isset($_REQUEST['v'])?$_REQUEST['v']:"0";
 
 switch($op){
 
+  case "unable_blocks":
+  unable_blocks();
+  header("location: {$_SERVER['PHP_SELF']}");
+  break;
+
+  case "unable_modules":
+  unable_modules();
+  header("location: {$_SERVER['PHP_SELF']}");
+  break;
+
+
+  case "enable_blocks":
+  enable_blocks();
+  header("location: {$_SERVER['PHP_SELF']}");
+  break;
+
+  case "enable_modules":
+  enable_modules();
+  header("location: {$_SERVER['PHP_SELF']}");
+  break;
+
   case "reset_mem":
   reset_mem($_POST['uid'],$_POST['new_pass']);
   header("location: ".XOOPS_URL."/userinfo.php?uid={$_POST['uid']}");
@@ -103,6 +124,62 @@ switch($op){
 
 }
 
+//關閉所有模組
+function unable_modules(){
+  global $xoopsDB;
+  $sql="select mid from ".$xoopsDB->prefix("modules")." where `isactive`=1 and `dirname`!='system' and `dirname`!='tad_adm'";
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  while(list($mid)=$xoopsDB->fetchRow($result)){
+    $mid_array[]=$mid;
+  }
+
+  $all_mid=implode(",", $mid_array);
+  $sql="update ".$xoopsDB->prefix('config')." set `conf_value`='{$all_mid}' where `conf_name`='module_id_temp'";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+
+  $sql="update ".$xoopsDB->prefix('modules')." set `isactive`='0' where `mid` in($all_mid)";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+}
+
+
+//還原所有模組
+function enable_modules(){
+  global $xoopsDB,$xoopsModuleConfig;
+  $sql="update ".$xoopsDB->prefix('modules')." set `isactive`='1' where `mid` in({$xoopsModuleConfig['module_id_temp']})";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+
+  $sql="update ".$xoopsDB->prefix('config')." set `conf_value`='' where `conf_name`='module_id_temp'";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+}
+
+//關閉所有區塊
+function unable_blocks(){
+  global $xoopsDB;
+  $sql="select bid from ".$xoopsDB->prefix("newblocks")." where `visible`=1";
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  while(list($bid)=$xoopsDB->fetchRow($result)){
+    $bid_array[]=$bid;
+  }
+
+  $all_bid=implode(",", $bid_array);
+  $sql="update ".$xoopsDB->prefix('config')." set `conf_value`='{$all_bid}' where `conf_name`='block_id_temp'";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+
+  $sql="update ".$xoopsDB->prefix('newblocks')." set `visible`='0' where `bid` in($all_bid)";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+}
+
+//還原所有區塊
+function enable_blocks(){
+  global $xoopsDB,$xoopsModuleConfig;
+  $sql="update ".$xoopsDB->prefix('newblocks')." set `visible`='1' where `bid` in({$xoopsModuleConfig['block_id_temp']})";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+
+  $sql="update ".$xoopsDB->prefix('config')." set `conf_value`='' where `conf_name`='block_id_temp'";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+}
+
+
 //重設密碼
 function reset_mem($uid="",$passwd=""){
   global $xoopsDB;
@@ -117,12 +194,12 @@ function send_passwd(){
   $passwd=GeraHash(30);
   $sql="update ".$xoopsDB->prefix('config')." set `conf_value`='{$passwd}' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
 	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
-  
+
   $content=sprintf(_MD_TADADM_MAIL_CONTENT,$passwd);
   if(send_now($xoopsConfig['adminmail'],_MD_TADADM_PASSWD,$content)){
-    return sprintf(_MD_TADADM_MAIL_PASSWD_OK,$xoopsConfig['adminmail']); 
+    return sprintf(_MD_TADADM_MAIL_PASSWD_OK,$xoopsConfig['adminmail']);
   }else{
-    return sprintf(_MD_TADADM_MAIL_PASSWD_FAIL,$xoopsConfig['adminmail']); 
+    return sprintf(_MD_TADADM_MAIL_PASSWD_FAIL,$xoopsConfig['adminmail']);
   }
 }
 
@@ -155,7 +232,7 @@ $Hash=NULL;
 return $Hash;
 }
 
- 
+
 //目前硬碟空間
 function get_free_space(){
     $bytes = disk_free_space(".");
@@ -400,6 +477,33 @@ while(list($uid,$uname,$name)=$xoopsDB->fetchRow($result)){
   $XoopsFormSelectUserOption.="<option value='{$uid}'>{$uname}{$showname}</option>";
 }
 
+
+if($xoopsModuleConfig['module_id_temp']!=""){
+  $modules_amount=count(explode(",", $xoopsModuleConfig['module_id_temp']));
+  $modules_tool="<a href='index.php?op=enable_modules'><i class='icon-envelope' title='".sprintf(_MD_TADADM_ENABLE_ALL_MODS , $modules_amount)."'></i>".sprintf(_MD_TADADM_ENABLE_ALL_MODS , $modules_amount)."</a>";
+}else{
+  //計算模組數量
+  $sql="select count(*) from ".$xoopsDB->prefix("modules")." where `isactive`=1 and `dirname`!='system' and `dirname`!='tad_adm'";
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  list($modules_amount)=$xoopsDB->fetchRow($result);
+
+  $modules_tool="<a href='index.php?op=unable_modules'><i class='icon-envelope' title='".sprintf(_MD_TADADM_UNABLE_ALL_MODS , $modules_amount)."'></i>".sprintf(_MD_TADADM_UNABLE_ALL_MODS , $modules_amount)."</a>";
+}
+
+
+if($xoopsModuleConfig['block_id_temp']!=""){
+  $blocks_amount=count(explode(",", $xoopsModuleConfig['block_id_temp']));
+  $blocks_tool="<a href='index.php?op=enable_blocks'><i class='icon-envelope' title='".sprintf(_MD_TADADM_ENABLE_ALL_BLOCKS , $blocks_amount)."'></i>".sprintf(_MD_TADADM_ENABLE_ALL_BLOCKS , $blocks_amount)."</a>";
+}else{
+  //計算區塊數量
+  $sql="select count(*) from ".$xoopsDB->prefix("newblocks")." where `visible`=1";
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  list($blocks_amount)=$xoopsDB->fetchRow($result);
+
+  $blocks_tool="<a href='index.php?op=unable_blocks'><i class='icon-envelope' title='".sprintf(_MD_TADADM_UNABLE_ALL_BLOCKS , $blocks_amount)."'></i>".sprintf(_MD_TADADM_UNABLE_ALL_BLOCKS , $blocks_amount)."</a>";
+}
+
+
 $main3="
 <fieldset>
   <legend>"._MD_TADADM_WEB_FUNCTION."</legend>
@@ -426,8 +530,8 @@ $main3="
     <button type='submit' class='btn'>"._MD_TADADM_SET."</button>
     </form>
     </li>
-    <li><a href='index.php?op=unable_blocks'><i class='icon-envelope'  title='"._MD_TADADM_UNABLE_ALL_BLOCKS."'></i>"._MD_TADADM_UNABLE_ALL_BLOCKS."</a></li>
-    <li><a href='index.php?op=unable_modules'><i class='icon-envelope'  title='"._MD_TADADM_UNABLE_ALL_MODS."'></i>"._MD_TADADM_UNABLE_ALL_MODS."</a></li>
+    <li>{$blocks_tool}</li>
+    <li>{$modules_tool}</li>
   </ul>
 </fieldset>";
 

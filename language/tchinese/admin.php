@@ -16,6 +16,27 @@ define("_MA_TADADM_PHPINI_ITEM_VAL", "設定值");
 define("_MA_TADADM_PHPINI_ITEM_DESC", "相關說明");
 
 //main.php
+define("_MA_TADADM_1", '<i class="icon-ok"></i>');
+define("_MA_TADADM_0", "");
+define("_MA_TADADM_MOD_DISPLAY", "選單");
+define("_MA_TADADM_MOD_UPDATE_MODULE", "立即升級");
+define("_MA_TADADM_MOD_LATEST", "已是最新");
+define("_MA_TADADM_NO_MODS", "沒有任何模組");
+define("_MA_TADADM_MOD_NAME", "模組名稱");
+define("_MA_TADADM_MOD_VERSION", "目前版本");
+define("_MA_TADADM_MOD_NEW_VERSION", "最新版本");
+define("_MA_TADADM_MOD_LAST_UPDATE", "上次更新");
+define("_MA_TADADM_MOD_NEW_LAST_UPDATE", "發布日期");
+define("_MA_TADADM_MOD_DIRNAME", "目錄名稱");
+define("_MA_TADADM_MOD_HASMAIN", "前台");
+define("_MA_TADADM_MOD_HASADMIN", "後台");
+define("_MA_TADADM_MOD_HASSEARCH", "搜尋");
+define("_MA_TADADM_MOD_HASCONFIG", "偏好設定");
+define("_MA_TADADM_MOD_HASCOMMENTS", "評論");
+define("_MA_TADADM_MOD_HASNOTIFICATION", "通知");
+
+
+//spam.php
 define("_MA_TADADM_NEVERLOGIN", "未登入過");
 define("_MA_TADADM_CKECKOK", "清查完畢或查無資料");
 define("_MA_TADADM_WORKTIME", "執行時間：%s 秒");
