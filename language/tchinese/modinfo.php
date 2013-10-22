@@ -18,7 +18,6 @@ define("_MI_TADADM_LIST_AMOUNT","每頁顯示的帳號數");
 define("_MI_TADADM_LIST_AMOUNT_DESC","越多檢查速度會越久");
 define("_MI_TADADM_LOGIN","緊急登入密碼");
 define("_MI_TADADM_LOGIN_DESC","已改為自動產生密碼，此處無需設定，任何設定均無效。");
-define("_MI_TADADM_LOGIN_DESC","設定一組密碼以進入救援界面");
 define("_MI_TADADM_MODULE_ID_TEMP","模組編號暫存區");
 define("_MI_TADADM_MODULE_ID_TEMP_DESC","提供前端界面紀錄目前有啟動的模組編號，請勿做任何修改");
 define("_MI_TADADM_BLOCK_ID_TEMP","區塊編號暫存區");

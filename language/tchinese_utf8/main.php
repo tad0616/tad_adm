@@ -58,7 +58,10 @@ define("_MD_TADADM_LINK_TO","連至");
 define("_MD_TADADM_LOGIN_PAGE","登入畫面");
 define("_MD_TADADM_DB","資料庫管理");
 define("_MD_TADADM_LOGOUT","登出");
-
-
+define("_MD_TADADM_USER_ID","請輸入帳號");
+define("_MD_TADADM_USER_PASS","請輸入密碼");
+define("_MD_TADADM_USER_S_ID","帳號：");
+define("_MD_TADADM_USER_S_PASS","密碼：");
+define("_MD_TADADM_FORGOT","我忘了管理員密碼");
 
 ?>

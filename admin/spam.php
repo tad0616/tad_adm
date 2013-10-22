@@ -1,20 +1,14 @@
 <?php
-//  ------------------------------------------------------------------------ //
-// 本模組由 tad 製作
-// 製作日期：2012-11-26
-// $Id:$
-// ------------------------------------------------------------------------- //
-
 /*-----------引入檔案區--------------*/
-$xoopsOption['template_main'] = "tad_adm_adm_main.html";
+$xoopsOption['template_main'] = "tad_adm_adm_spam.html";
 include_once "header.php";
 include_once "../function.php";
 
 /*-----------function區--------------*/
 //列出所有使用者
 function list_user($op="",$mode="normal"){
-	global $xoopsDB,$xoopsModuleConfig,$xoopsTpl;
-	$all_data="";
+  global $xoopsDB,$xoopsModuleConfig,$xoopsTpl;
+  $all_data="";
   if($op=="byNeverLoginDays"){
     $dayLimit=time()-$_GET['days']*86400;
     $andDayLimit=" and last_login=0 and user_regdate <= $dayLimit";
@@ -26,20 +20,20 @@ function list_user($op="",$mode="normal"){
   }else{
     $andDayLimit="";
   }
-	$sql="select * from ".$xoopsDB->prefix("users")." where 1 $andDayLimit order by uid desc";
+  $sql="select * from ".$xoopsDB->prefix("users")." where 1 $andDayLimit order by uid desc";
 
-	//getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
+  //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
   $PageBar=getPageBar($sql,$xoopsModuleConfig['list_amount'],10);
   $bar=$PageBar['bar'];
   $sql=$PageBar['sql'];
   $total=$PageBar['total'];
 
 
-	$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
-	$_SESSION['chk_start']=time();
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  $_SESSION['chk_start']=time();
   $i=0;
   $all_data="";
-	while($data=$xoopsDB->fetchArray($result)){
+  while($data=$xoopsDB->fetchArray($result)){
     foreach($data as $k=>$v){
       $$k=$v;
     }
@@ -55,7 +49,7 @@ function list_user($op="",$mode="normal"){
     }else{
 
       $handle = fopen("http://www.stopforumspam.com/api?email={$email}&f=json", "r");
-  		if ($handle) {
+      if ($handle) {
         $json = fgets($handle, 4096);
         fclose($handle);
       }
@@ -138,23 +132,23 @@ function list_user($op="",$mode="normal"){
 
 //列出所有垃圾郵件
 function list_spam(){
-	global $xoopsDB,$xoopsModuleConfig,$xoopsTpl;
-	$all_data="";
+  global $xoopsDB,$xoopsModuleConfig,$xoopsTpl;
+  $all_data="";
 
-	$sql="select a.uid,a.email,a.chk_date,b.`name`, b.`uname`, b.`email`, b.`url`, b.`user_avatar`, b.`user_regdate`, b.`user_icq`, b.`user_from`, b.`user_sig`, b.`user_viewemail`, b.`actkey`, b.`user_aim`, b.`user_yim`, b.`user_msnm`, b.`pass`, b.`posts`, b.`attachsig`, b.`rank`, b.`level`, b.`theme`, b.`timezone_offset`, b.`last_login`, b.`umode`, b.`uorder`, b.`notify_method`, b.`notify_mode`, b.`user_occ`, b.`bio`, b.`user_intrest`, b.`user_mailok` from ".$xoopsDB->prefix("tad_adm")." as a left join ".$xoopsDB->prefix("users")." as b on a.uid=b.uid where a.`result`='1' order by a.uid desc";
+  $sql="select a.uid,a.email,a.chk_date,b.`name`, b.`uname`, b.`email`, b.`url`, b.`user_avatar`, b.`user_regdate`, b.`user_icq`, b.`user_from`, b.`user_sig`, b.`user_viewemail`, b.`actkey`, b.`user_aim`, b.`user_yim`, b.`user_msnm`, b.`pass`, b.`posts`, b.`attachsig`, b.`rank`, b.`level`, b.`theme`, b.`timezone_offset`, b.`last_login`, b.`umode`, b.`uorder`, b.`notify_method`, b.`notify_mode`, b.`user_occ`, b.`bio`, b.`user_intrest`, b.`user_mailok` from ".$xoopsDB->prefix("tad_adm")." as a left join ".$xoopsDB->prefix("users")." as b on a.uid=b.uid where a.`result`='1' order by a.uid desc";
 
-	//getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
+  //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
   $PageBar=getPageBar($sql,500,10);
   $bar=$PageBar['bar'];
   $sql=$PageBar['sql'];
   $total=$PageBar['total'];
 
-	$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
 
   $all_data="";
   $i=0;
 
-	while($all=$xoopsDB->fetchArray($result)){
+  while($all=$xoopsDB->fetchArray($result)){
     foreach($all as $k=>$v){
       $$k=$v;
     }
@@ -214,39 +208,39 @@ function list_spam(){
 
 //新增資料到tad_adm中
 function replace_tad_adm($uid='',$email='',$result=''){
-	global $xoopsDB,$xoopsUser;
+  global $xoopsDB,$xoopsUser;
 
 
-	$myts =& MyTextSanitizer::getInstance();
-	$email=$myts->addSlashes($email);
-	$result=$myts->addSlashes($result);
+  $myts =& MyTextSanitizer::getInstance();
+  $email=$myts->addSlashes($email);
+  $result=$myts->addSlashes($result);
 
   $chk_date=date('Y-m-d H:i:s',xoops_getUserTimestamp(time()));
 
-	$sql = "replace into `".$xoopsDB->prefix("tad_adm")."`
-	(`uid` , `email` , `result` , `chk_date`)
-	values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
-	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  $sql = "replace into `".$xoopsDB->prefix("tad_adm")."`
+  (`uid` , `email` , `result` , `chk_date`)
+  values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 
 }
 
 //以流水號取得某筆tad_adm資料
 function get_tad_adm($uid=""){
-	global $xoopsDB;
-	if(empty($uid))return;
-	$sql = "select * from `".$xoopsDB->prefix("tad_adm")."` where `uid` = '{$uid}'";
-	$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
-	$data=$xoopsDB->fetchArray($result);
-	return $data;
+  global $xoopsDB;
+  if(empty($uid))return;
+  $sql = "select * from `".$xoopsDB->prefix("tad_adm")."` where `uid` = '{$uid}'";
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  $data=$xoopsDB->fetchArray($result);
+  return $data;
 }
 
 
 //刪除會員
 function del_user($del_uid){
-	global $xoopsDB;
-	if(empty($del_uid))return;
-	$sql = "delete from `".$xoopsDB->prefix("tad_adm")."` where `uid` = '{$del_uid}'";
-	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  global $xoopsDB;
+  if(empty($del_uid))return;
+  $sql = "delete from `".$xoopsDB->prefix("tad_adm")."` where `uid` = '{$del_uid}'";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 
 
   $member_handler =& xoops_gethandler('member');
@@ -279,27 +273,27 @@ $g2p=empty($_REQUEST['g2p'])?1:$_REQUEST['g2p'];
 $mode = empty($_REQUEST['mode'])? "":$_REQUEST['mode'];
 
 switch($op){
-	/*---判斷動作請貼在下方---*/
+  /*---判斷動作請貼在下方---*/
   case "del_user":
     del_all_user($_POST['uid']);
     redirect_header($_SERVER['PHP_SELF']."?g2p=$g2p", 3, _MA_TADADM_DEL_OK);
   break;
 
-	case "spam":
-	list_spam();
+  case "spam":
+  list_spam();
   $xoopsTpl->assign('op',spam);
-	break;
+  break;
 
 
-	default:
-	list_user($op,$mode);
-	if($op=="all"){
+  default:
+  list_user($op,$mode);
+  if($op=="all"){
     $g2p++;
     redirect_header($_SERVER['PHP_SELF']."?op=all&mode=$mode&g2p=$g2p",3, _MA_TADADM_NEXT_PAGE);
   }
-	break;
+  break;
 
-	/*---判斷動作請貼在上方---*/
+  /*---判斷動作請貼在上方---*/
 }
 
 /*-----------秀出結果區--------------*/

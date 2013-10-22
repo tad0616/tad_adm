@@ -1,26 +1,18 @@
 <?php
-//  ------------------------------------------------------------------------ //
-// 本模組由 tad 製作
-// 製作日期：2012-11-29
-// $Id:$
-// ------------------------------------------------------------------------- //
-
-
-
 //區塊主函式 (tad_adm_new)
 function tad_adm_new($options){
-	global $xoopsDB,$xoopsUser;
-	
-	if(!$xoopsUser)return;
-	
-	if(!$xoopsUser->isAdmin(1))return;
-	
-	$all_data="";
+  global $xoopsDB,$xoopsUser;
 
-	$sql="select * from ".$xoopsDB->prefix("users")." order by uid desc limit 0,{$options[0]}";
-	$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  if(!$xoopsUser)return;
 
-	while($data=$xoopsDB->fetchArray($result)){
+  if(!$xoopsUser->isAdmin(1))return;
+
+  $all_data="";
+
+  $sql="select * from ".$xoopsDB->prefix("users")." order by uid desc limit 0,{$options[0]}";
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+
+  while($data=$xoopsDB->fetchArray($result)){
     foreach($data as $k=>$v){
       $$k=$v;
     }
@@ -31,7 +23,7 @@ function tad_adm_new($options){
     }else{
 
       $handle = fopen("http://www.stopforumspam.com/api?email={$email}&f=json", "r");
-  		if ($handle) {
+      if ($handle) {
         $json = fgets($handle, 4096);
         fclose($handle);
       }
@@ -76,26 +68,26 @@ function tad_adm_new($options){
     <div style='word-wrap:break-word;word-break:break-all;font-size:10px;'>$user_sig</div>
     </fieldset>";
   }
-  
+
   if(empty($all_data))return;
 
 
-	$block="
-	<form action='".XOOPS_URL."/modules/tad_adm/admin/index.php' method='post'>
+  $block="
+  <form action='".XOOPS_URL."/modules/tad_adm/admin/spam.php' method='post'>
     $all_data
     <input type='hidden' name='g2p' value='{$_GET['g2p']}'>
     <input type='hidden' name='op' value='del_user'>
     <input type='submit' value='"._MB_TADADM_DEL_CHK."'>
   </form>
   ";
-	return $block;
+  return $block;
 }
 
 //區塊編輯函式 (tad_adm_new_edit)
 function tad_adm_new_edit($options){
-	$form=_MB_TADADM_SEARCH_NUM."<input type='text' name='options[0]' value='{$options[0]}'>
+  $form=_MB_TADADM_SEARCH_NUM."<input type='text' name='options[0]' value='{$options[0]}'>
   <div>"._MB_TADADM_SEARCH_NUM_DESC."</div>";
-	return $form;
+  return $form;
 }
 
 
@@ -103,19 +95,19 @@ function tad_adm_new_edit($options){
   //新增資料到tad_adm中
 if(!function_exists('replace_tad_adm')){
   function replace_tad_adm($uid='',$email='',$result=''){
-  	global $xoopsDB,$xoopsUser;
+    global $xoopsDB,$xoopsUser;
 
 
-  	$myts =& MyTextSanitizer::getInstance();
-  	$email=$myts->addSlashes($email);
-  	$result=$myts->addSlashes($result);
+    $myts =& MyTextSanitizer::getInstance();
+    $email=$myts->addSlashes($email);
+    $result=$myts->addSlashes($result);
 
     $chk_date=date('Y-m-d H:i:s',xoops_getUserTimestamp(time()));
 
-  	$sql = "replace into `".$xoopsDB->prefix("tad_adm")."`
-  	(`uid` , `email` , `result` , `chk_date`)
-  	values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
-  	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+    $sql = "replace into `".$xoopsDB->prefix("tad_adm")."`
+    (`uid` , `email` , `result` , `chk_date`)
+    values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
+    $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 
   }
 }
@@ -123,12 +115,12 @@ if(!function_exists('replace_tad_adm')){
 if(!function_exists('get_tad_adm')){
   //以流水號取得某筆tad_adm資料
   function get_tad_adm($uid=""){
-  	global $xoopsDB;
-  	if(empty($uid))return;
-  	$sql = "select * from `".$xoopsDB->prefix("tad_adm")."` where `uid` = '{$uid}'";
-  	$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
-  	$data=$xoopsDB->fetchArray($result);
-  	return $data;
+    global $xoopsDB;
+    if(empty($uid))return;
+    $sql = "select * from `".$xoopsDB->prefix("tad_adm")."` where `uid` = '{$uid}'";
+    $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+    $data=$xoopsDB->fetchArray($result);
+    return $data;
   }
 }
 ?>

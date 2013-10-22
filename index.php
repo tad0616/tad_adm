@@ -20,6 +20,35 @@ if($xoopsUser) {
 if(!$_SESSION['isAdmin']){
   $sql="update ".$xoopsDB->prefix(config)." set `conf_value`='' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
 	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+
+  if($op=="forgot"){
+    $form='<form  class="well" action="'.$_SERVER['PHP_SELF'].'" method="post">
+      <ol>
+      <li>'._MD_TADADM_INPUT_PASSWD_DESC.'</li>
+      <li>'._MD_TADADM_INPUT_PASSWD.'
+      <input type="text" name="help_passwd" class="span3" placeholder=""></li>
+      </ol>
+      <input type="hidden" name="op" value="helpme">
+      <button type="submit" class="btn btn-primary">'._MD_TADADM_LOGIN.'</button>
+    </form>';
+  }else{
+    $form='<form action="'.XOOPS_URL.'/user.php" method="post">
+      <fieldset>
+      <legend>'._MD_TADADM_LOGIN.'</legend>
+      '._MD_TADADM_USER_S_ID.'
+      <input type="text" name="uname"  id="uname" placeholder="'._MD_TADADM_USER_ID.'"  class="input-small" />
+      '._MD_TADADM_USER_S_PASS.'
+      <input type="password" name="pass" id="pass" placeholder="'._MD_TADADM_USER_PASS.'" class="input-small" />
+      <input type="hidden" name="xoops_redirect" value="'.$_SERVER['PHP_SELF'].'" />
+      <input type="hidden" name="rememberme" value="On" />
+      <input type="hidden" name="op" value="login" />
+      <br />
+      <a href="index.php?op=forgot" style="font-size:12px;color:gray;">'._MD_TADADM_FORGOT.'</a>
+      <button type="submit" class="btn btn-primary">'._MD_TADADM_LOGIN.'</button>
+      </fieldset>
+    </form>';
+  }
+
   die('
   <!DOCTYPE html>
   <html lang="'._LANGCODE.'">
@@ -39,15 +68,7 @@ if(!$_SESSION['isAdmin']){
           </div>
           <div class="row-fluid">
             <div class="span12">
-            <form  class="well" action="'.$_SERVER['PHP_SELF'].'" method="post">
-            <ol>
-            <li>'._MD_TADADM_INPUT_PASSWD_DESC.'</li>
-            <li>'._MD_TADADM_INPUT_PASSWD.'
-            <input type="text" name="help_passwd" class="span3" placeholder=""></li>
-            </ol>
-            <input type="hidden" name="op" value="helpme">
-            <button type="submit" class="btn">'._MD_TADADM_LOGIN.'</button>
-            </form>
+            '.$form.'
             </div>
           </div>
         </div>
