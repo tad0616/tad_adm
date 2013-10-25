@@ -6,46 +6,56 @@
 
 
 <{if $all_data}>
+
 	<form action="main.php" method="post">
   <table class="table table-striped table-bordered table-hover">
     <tr>
-    <th><{$smarty.const._MA_TADADM_MOD_NAME}></th>
-    <th><{$smarty.const._MA_TADADM_MOD_DIRNAME}></th>
-    <th><{$smarty.const._MA_TADADM_MOD_VERSION}></th>
-    <th><{$smarty.const._MA_TADADM_MOD_LAST_UPDATE}></th>
-    <th><{$smarty.const._MA_TADADM_MOD_NEW_VERSION}></th>
-    <th><{$smarty.const._MA_TADADM_MOD_NEW_LAST_UPDATE}></th>
-    <th><{$smarty.const._TAD_FUNCTION}></th>
-    <th><{$smarty.const._MA_TADADM_MOD_DISPLAY}></th>
+    <th nowrap><{$smarty.const._MA_TADADM_MOD_NAME}></th>
+    <th nowrap><{$smarty.const._MA_TADADM_MOD_DIRNAME}></th>
+    <th nowrap><{$smarty.const._MA_TADADM_MOD_VERSION}></th>
+    <th nowrap><{$smarty.const._MA_TADADM_MOD_LAST_UPDATE}></th>
+    <th nowrap><{$smarty.const._MA_TADADM_MOD_NEW_VERSION}></th>
+    <th nowrap><{$smarty.const._MA_TADADM_MOD_NEW_LAST_UPDATE}></th>
+    <th nowrap><{$smarty.const._TAD_FUNCTION}></th>
+    <th><{$smarty.const._MA_TADADM_MOD_UPDATE_DESC}></th>
+    <!--th><{$smarty.const._MA_TADADM_MOD_DISPLAY}></th>
     <th><{$smarty.const._MA_TADADM_MOD_HASMAIN}></th>
     <th><{$smarty.const._MA_TADADM_MOD_HASADMIN}></th>
     <th><{$smarty.const._MA_TADADM_MOD_HASSEARCH}></th>
     <th><{$smarty.const._MA_TADADM_MOD_HASCONFIG}></th>
     <th><{$smarty.const._MA_TADADM_MOD_HASCOMMENTS}></th>
-    <th><{$smarty.const._MA_TADADM_MOD_HASNOTIFICATION}></th>
+    <th><{$smarty.const._MA_TADADM_MOD_HASNOTIFICATION}></th-->
     </tr>
       <{foreach from=$all_data item=mod}>
         <tr>
-          <td><{$mod.name}></td>
-          <td><{$mod.dirname}></td>
-          <td><{$mod.version}></td>
-          <td><{$mod.last_update}></td>
-          <td><{$mod.new_version}></td>
-          <td><{$mod.new_last_update}></td>
-          <td>
-              <{if $mod.function}>
-                <a href="main.php?op=update_module&dirname=<{$mod.dirname}>" class="btn btn-mini btn-danger"><{$smarty.const._MA_TADADM_MOD_UPDATE_MODULE}></a>
+          <td nowrap><a href="http://120.115.2.90/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" target="_blank"><{$mod.name}></a></td>
+          <td nowrap><{$mod.dirname}></td>
+          <td nowrap><{$mod.version}></td>
+          <td nowrap><{$mod.last_update}></td>
+          <td nowrap><{$mod.new_version}></td>
+          <td nowrap><{$mod.new_last_update}></td>
+          <td nowrap>
+              <{if $mod.function=='install'}>
+                <a href="main.php?op=install_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>" class="btn btn-mini btn-primary"><{$smarty.const._MA_TADADM_MOD_INSTALL_MODULE}></a>
+              <{elseif $mod.function}>
+                <a href="main.php?op=update_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>" class="btn btn-mini btn-danger"><{$smarty.const._MA_TADADM_MOD_UPDATE_MODULE}></a>
               <{elseif $mod.new_last_update}>
                 <{$smarty.const._MA_TADADM_MOD_LATEST}>
               <{/if}>
           </td>
-          <td><{if $mod.weight!=0}><i class="icon-ok"></i><{/if}></td>
+
+          <td nowrap>
+            <{if $mod.descript}>
+              <a id="view_well<{$mod.module_sn}>" class="btn btn-mini btn-success" href="javascript:alert('<{$mod.descript}>')"><{if $mod.version}><{$smarty.const._MA_TADADM_MOD_UPDATE_DESC}><{else}><{$smarty.const._MA_TADADM_MOD_ABOUT_MOD}><{/if}></a>
+            <{/if}>
+          </td>
+          <!--td><{if $mod.weight!=0}><i class="icon-ok"></i><{/if}></td>
           <td><{$mod.hasmain}></td>
           <td><{$mod.hasadmin}></td>
           <td><{$mod.hassearch}></td>
           <td><{$mod.hasconfig}></td>
           <td><{$mod.hascomments}></td>
-          <td><{$mod.hasnotification}></td>
+          <td><{$mod.hasnotification}></td-->
         </tr>
       <{/foreach}>
     </table>

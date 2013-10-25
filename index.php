@@ -138,6 +138,10 @@ switch($op){
   header("location: {$_SERVER['PHP_SELF']}");
   break;
 
+  case "phpinfo":
+  phpinfo();
+  break;
+
   case "logout":
   $_SESSION['isAdmin']=false;
   header("location: {$_SERVER['PHP_SELF']}");
@@ -459,6 +463,7 @@ $main1="
     $other
     <li class=\"divider\"></li>
     <li><i class='icon-envelope'  title='"._MD_TADADM_AVAILABLE_SPACE."'></i>"._MD_TADADM_AVAILABLE_SPACE.": ".get_free_space()."</li>
+    <li><a href='index.php?op=phpinfo'><i class='icon-envelope'  title='phpinfo'></i>phpinfo()</a></li>
   </ul>
 </fieldset>";
 

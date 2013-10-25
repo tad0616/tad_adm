@@ -1,10 +1,4 @@
 <?php
-//  ------------------------------------------------------------------------ //
-// 本模組由 tad 製作
-// 製作日期：2012-11-26
-// $Id:$
-// ------------------------------------------------------------------------- //
-
 include_once "../../tadtools/language/{$xoopsConfig['language']}/admin_common.php";
 define("_TAD_NEED_TADTOOLS"," 需要 tadtools 模組，可至<a href='http://www.tad0616.net/modules/tad_uploader/index.php?of_cat_sn=50' target='_blank'>Tad教材網</a>下載。");
 
@@ -20,6 +14,7 @@ define("_MA_TADADM_1", '<i class="icon-ok"></i>');
 define("_MA_TADADM_0", "");
 define("_MA_TADADM_MOD_DISPLAY", "選單");
 define("_MA_TADADM_MOD_UPDATE_MODULE", "立即升級");
+define("_MA_TADADM_MOD_INSTALL_MODULE", "立即安裝");
 define("_MA_TADADM_MOD_LATEST", "已是最新");
 define("_MA_TADADM_NO_MODS", "沒有任何模組");
 define("_MA_TADADM_MOD_NAME", "模組名稱");
@@ -34,6 +29,9 @@ define("_MA_TADADM_MOD_HASSEARCH", "搜尋");
 define("_MA_TADADM_MOD_HASCONFIG", "偏好設定");
 define("_MA_TADADM_MOD_HASCOMMENTS", "評論");
 define("_MA_TADADM_MOD_HASNOTIFICATION", "通知");
+define("_MA_TADADM_MOD_UNINSTALL", "未安裝");
+define("_MA_TADADM_MOD_UPDATE_DESC", "更新說明");
+define("_MA_TADADM_MOD_ABOUT_MOD", "模組簡介");
 
 
 //spam.php
