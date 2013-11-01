@@ -30,7 +30,7 @@ define("_MA_TADADM_MOD_HASCONFIG", "偏好設定");
 define("_MA_TADADM_MOD_HASCOMMENTS", "評論");
 define("_MA_TADADM_MOD_HASNOTIFICATION", "通知");
 define("_MA_TADADM_MOD_UNINSTALL", "未安裝");
-define("_MA_TADADM_MOD_UPDATE_DESC", "更新說明");
+define("_MA_TADADM_MOD_UPDATE_DESC", "新版說明");
 define("_MA_TADADM_MOD_ABOUT_MOD", "模組簡介");
 
 

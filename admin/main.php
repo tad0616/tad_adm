@@ -39,7 +39,7 @@ function list_modules(){
     $all_data[$i]['hasconfig']=$hasconfig?_MA_TADADM_1:_MA_TADADM_0;
     $all_data[$i]['hascomments']=$hascomments?_MA_TADADM_1:_MA_TADADM_0;
     $all_data[$i]['hasnotification']=$hasnotification?_MA_TADADM_1:_MA_TADADM_0;
-    $all_data[$i]['function']=($mod[$dirname]['new_last_update'] > $last_update)?true:false;
+    $all_data[$i]['function']=($mod[$dirname]['new_last_update'] > $last_update)?'update':false;
     $all_data[$i]['update_sn']=$mod[$dirname]['update_sn'];
     $all_data[$i]['descript']=$mod[$dirname]['update_descript'];
     $all_data[$i]['module_sn']=$mod[$dirname]['module_sn'];
@@ -136,6 +136,25 @@ function install_module($file_link="",$dirname=""){
   header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op=install&module={$dirname}");
 }
 
+
+//更新模組
+function update_module($file_link="",$dirname=""){
+  if(empty($file_link))header("location:main.php");
+  //http://120.115.2.90/uploads/tad_modules/file/tadgallery_20120726_2.01.zip
+  $new_file=str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH."/modules/", $file_link);
+  unlink($new_file);
+  //下載檔案 for windows
+  copyemz($file_link, $new_file);
+
+  require_once "../class/dunzip2/dUnzip2.inc.php";
+  require_once "../class/dunzip2/dZip.inc.php";
+  $zip = new dUnzip2($new_file);
+  $zip->getList();
+  $zip->unzipAll(XOOPS_ROOT_PATH."/modules/");
+  header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op=update&module={$dirname}");
+}
+
+
 function copyemz($file1,$file2){
   $url=$file1;
   if(function_exists('curl_init')) {
@@ -173,6 +192,10 @@ switch($op){
   /*---判斷動作請貼在下方---*/
   case "install_module":
   install_module($file_link,$dirname);
+  break;
+
+  case "update_module":
+  update_module($file_link,$dirname);
   break;
 
   default:
