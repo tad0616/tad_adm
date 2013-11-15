@@ -120,38 +120,149 @@ function get_tad_modules_info(){
   return $mod;
 }
 
-//安裝模組
-function install_module($file_link="",$dirname=""){
-  if(empty($file_link))header("location:main.php");
-  //http://120.115.2.90/uploads/tad_modules/file/tadgallery_20120726_2.01.zip
-  $new_file=str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH."/modules/", $file_link);
-  //下載檔案 for windows
-  copyemz($file_link, $new_file);
+//登入SSH
+function ssh_login($ssh_host,$ssh_id,$ssh_passwd,$file_link="",$dirname="",$act=""){
+
+  $the_file=str_replace("http://120.115.2.90/uploads/tad_modules/file/", "" , $file_link);
+  $new_file=str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH."/uploads/" , $file_link);
+
+  mk_dir(XOOPS_ROOT_PATH."/uploads/tad_adm");
+  if(!copyemz($file_link, $new_file)){
+    redirect_header($_SERVER['PHP_SELF'],3, sprintf(_MA_TADADM_DL_FAIL,$file_link));
+  }
+
+
+  include('Net/SSH2.php');
+
+  $ssh = new Net_SSH2($ssh_host);
+  if (!$ssh->login($ssh_id, $ssh_passwd)) {
+     redirect_header("main.php?op={$act}_module&dirname=$dirname&file_link=$file_link",3, sprintf(_MA_TADADM_SSH_LOGIN_FAIL,$ssh_id,$ssh_host));
+  }else{
+    if(empty($_SESSION['tad_adm_ssh_host']))$_SESSION['tad_adm_ssh_host']=$ssh_host;
+    if(empty($_SESSION['tad_adm_ssh_id']))$_SESSION['tad_adm_ssh_id']=$ssh_id;
+    if(empty($_SESSION['tad_adm_ssh_passwd']))$_SESSION['tad_adm_ssh_passwd']=$ssh_passwd;
+  }
 
   require_once "../class/dunzip2/dUnzip2.inc.php";
   require_once "../class/dunzip2/dZip.inc.php";
   $zip = new dUnzip2($new_file);
   $zip->getList();
-  $zip->unzipAll(XOOPS_ROOT_PATH."/modules/");
-  header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op=install&module={$dirname}");
+  $zip->unzipAll(XOOPS_ROOT_PATH."/uploads/tad_adm/");
+  $ssh->exec("mv ".XOOPS_ROOT_PATH."/uploads/tad_adm/$dirname ".XOOPS_ROOT_PATH."/modules/$dirname");
+
+  header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}");
 }
 
 
-//更新模組
-function update_module($file_link="",$dirname=""){
-  if(empty($file_link))header("location:main.php");
-  //http://120.115.2.90/uploads/tad_modules/file/tadgallery_20120726_2.01.zip
-  $new_file=str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH."/modules/", $file_link);
-  unlink($new_file);
-  //下載檔案 for windows
-  copyemz($file_link, $new_file);
+//登入ftp
+function ftp_log_in($ftp_host,$ftp_id,$ftp_passwd,$file_link="",$dirname="",$act=""){
 
-  require_once "../class/dunzip2/dUnzip2.inc.php";
-  require_once "../class/dunzip2/dZip.inc.php";
-  $zip = new dUnzip2($new_file);
-  $zip->getList();
-  $zip->unzipAll(XOOPS_ROOT_PATH."/modules/");
-  header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op=update&module={$dirname}");
+  $the_file=str_replace("http://120.115.2.90/uploads/tad_modules/file/", "" , $file_link);
+  $new_file=str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH."/uploads/" , $file_link);
+  mk_dir(XOOPS_ROOT_PATH."/uploads/tad_adm");
+  if(!copyemz($file_link, $new_file)){
+    redirect_header($_SERVER['PHP_SELF'],3, sprintf(_MA_TADADM_DL_FAIL,$file_link));
+  }
+
+  $conn=ftp_connect($ftp_host,21,60);
+  if($conn){
+    if(empty($_SESSION['tad_adm_ftp_host']))$_SESSION['tad_adm_ftp_host']=$ftp_host;
+    if(empty($_SESSION['tad_adm_ftp_id']))$_SESSION['tad_adm_ftp_id']=$ftp_id;
+    if(empty($_SESSION['tad_adm_ftp_passwd']))$_SESSION['tad_adm_ftp_passwd']=$ftp_passwd;
+
+    if(!ftp_login($conn,$ftp_id,$ftp_passwd)){
+      die("$ftp_id FTP Login Failed!");
+    }
+  }else{
+    die("$ftp_host FTP Connect Failed!");
+  }
+
+  if(file_exists($new_file)){
+    require_once "../class/dunzip2/dUnzip2.inc.php";
+    require_once "../class/dunzip2/dZip.inc.php";
+    $zip = new dUnzip2($new_file);
+    $zip->getList();
+    $zip->unzipAll(XOOPS_ROOT_PATH."/uploads/tad_adm/");
+  }else{
+    die("{$new_file} doesn't exist!");
+  }
+
+  $path=explode("/",XOOPS_ROOT_PATH);
+  foreach($path as $dir){
+    ftp_chdir($conn, $dir);
+    ftp_chdir($conn, "uploads");
+    ftp_chdir($conn, "tad_adm");
+  }
+
+  if(ftp_rename($conn, $dirname, "../../modules/".$dirname)){
+    header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}");
+  }else{
+    die("Move ".XOOPS_ROOT_PATH."/uploads/tad_adm/$dirname to ".XOOPS_ROOT_PATH."/modules/$dirname Failed! ");
+  }
+  ftp_close($conn);
+
+}
+
+
+//建立目錄
+function mk_dir($dir=""){
+    //若無目錄名稱秀出警告訊息
+    if(empty($dir))return;
+    //若目錄不存在的話建立目錄
+    if (!is_dir($dir)) {
+        umask(000);
+        //若建立失敗秀出警告訊息
+        mkdir($dir, 0777);
+    }
+}
+
+
+//安裝模組
+function install_module($file_link="",$dirname="",$act="install"){
+  global $xoopsTpl;
+  if(empty($file_link))header("location:{$_SERVER['PHP_SELF']}");
+  //http://120.115.2.90/uploads/tad_modules/file/tadgallery_20120726_2.01.zip
+
+  $is_writable=is_writable(XOOPS_ROOT_PATH."/modules/");
+  if($is_writable){
+    $new_file=str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH."/modules/", $file_link);
+    //下載檔案 for windows
+    if(copyemz($file_link, $new_file)){
+      module_act($new_file,$dirname,$act);
+    }else{
+      header("location:{$_SERVER['PHP_SELF']}?op=ssh&file_link={$file_link}&dirname={$dirname}&act={$act}");
+    }
+  }else{
+
+    $xoopsTpl->assign('now_op','login_form');
+    $xoopsTpl->assign('file_link',$file_link);
+    $xoopsTpl->assign('dirname',$dirname);
+    $xoopsTpl->assign('act',$act);
+    $tad_adm_ssh_host=empty($_SESSION['tad_adm_ssh_host'])?$_SERVER['SERVER_ADDR']:$_SESSION['tad_adm_ssh_host'];
+    $xoopsTpl->assign('tad_adm_ssh_host',$tad_adm_ssh_host);
+    $xoopsTpl->assign('tad_adm_ssh_id',$_SESSION['tad_adm_ssh_id']);
+    $xoopsTpl->assign('tad_adm_ssh_passwd',$_SESSION['tad_adm_ssh_passwd']);
+    $tad_adm_ftp_host=empty($_SESSION['tad_adm_ftp_host'])?$_SERVER['SERVER_ADDR']:$_SESSION['tad_adm_ftp_host'];
+    $xoopsTpl->assign('tad_adm_ftp_host',$_tad_adm_ftp_host);
+    $xoopsTpl->assign('tad_adm_ftp_id',$_SESSION['tad_adm_ftp_id']);
+    $xoopsTpl->assign('tad_adm_ftp_passwd',$_SESSION['tad_adm_ftp_passwd']);
+
+  }
+}
+
+
+
+function module_act($new_file="",$dirname="",$act="install"){
+  if(is_file($new_file)){
+    require_once "../class/dunzip2/dUnzip2.inc.php";
+    require_once "../class/dunzip2/dZip.inc.php";
+    $zip = new dUnzip2($new_file);
+    $zip->getList();
+    $zip->unzipAll(XOOPS_ROOT_PATH."/modules/");
+    header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}");
+  }else{
+    return false;
+  }
 }
 
 
@@ -187,16 +298,32 @@ function copyemz($file1,$file2){
 $op = empty($_REQUEST['op'])? "":$_REQUEST['op'];
 $file_link = empty($_REQUEST['file_link'])? "":$_REQUEST['file_link'];
 $dirname = empty($_REQUEST['dirname'])? "":$_REQUEST['dirname'];
+$act = empty($_REQUEST['act'])? "":$_REQUEST['act'];
+$ssh_id = empty($_POST['ssh_id'])? "":$_POST['ssh_id'];
+$ssh_passwd = empty($_POST['ssh_passwd'])? "":$_POST['ssh_passwd'];
+$ssh_host = empty($_POST['ssh_host'])? "":$_POST['ssh_host'];
+$ftp_id = empty($_POST['ftp_id'])? "":$_POST['ftp_id'];
+$ftp_passwd = empty($_POST['ftp_passwd'])? "":$_POST['ftp_passwd'];
+$ftp_host = empty($_POST['ftp_host'])? "":$_POST['ftp_host'];
 
 switch($op){
   /*---判斷動作請貼在下方---*/
   case "install_module":
-  install_module($file_link,$dirname);
+  install_module($file_link,$dirname,"install");
   break;
 
   case "update_module":
-  update_module($file_link,$dirname);
+  install_module($file_link,$dirname,"update");
   break;
+
+  case "ssh_login":
+  ssh_login($ssh_host,$ssh_id,$ssh_passwd,$file_link,$dirname,$act);
+  break;
+
+  case "ftp_login":
+  ftp_log_in($ftp_host,$ftp_id,$ftp_passwd,$file_link,$dirname,$act);
+  break;
+
 
   default:
   list_modules();

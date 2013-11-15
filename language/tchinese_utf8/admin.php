@@ -32,7 +32,17 @@ define("_MA_TADADM_MOD_HASNOTIFICATION", "通知");
 define("_MA_TADADM_MOD_UNINSTALL", "未安裝");
 define("_MA_TADADM_MOD_UPDATE_DESC", "新版說明");
 define("_MA_TADADM_MOD_ABOUT_MOD", "模組簡介");
-
+define("_MA_TADADM_LOGIN", "登入");
+define("_MA_TADADM_SSH", "SSH登入");
+define("_MA_TADADM_SSH_HOST", "請輸入SSH登入主機");
+define("_MA_TADADM_SSH_ID", "請輸入SSH登入帳號");
+define("_MA_TADADM_SSH_PASS", "請輸入SSH登入密碼");
+define("_MA_TADADM_FTP", "FTP登入");
+define("_MA_TADADM_FTP_HOST", "請輸入FTP登入主機");
+define("_MA_TADADM_FTP_ID", "請輸入FTP登入帳號");
+define("_MA_TADADM_FTP_PASS", "請輸入FTP登入密碼");
+define("_MA_TADADM_DL_FAIL", "「%s」下載失敗！");
+define("_MA_TADADM_SSH_LOGIN_FAIL", "「%s」以SSH登入「%s」失敗！");
 
 //spam.php
 define("_MA_TADADM_NEVERLOGIN", "未登入過");
