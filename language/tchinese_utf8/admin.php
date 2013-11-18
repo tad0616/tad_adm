@@ -15,6 +15,8 @@ define("_MA_TADADM_0", "");
 define("_MA_TADADM_MOD_DISPLAY", "選單");
 define("_MA_TADADM_MOD_UPDATE_MODULE", "立即升級");
 define("_MA_TADADM_MOD_INSTALL_MODULE", "立即安裝");
+define("_MA_TADADM_MOD_UPDATE_THEME", "升級佈景");
+define("_MA_TADADM_MOD_INSTALL_THEME", "安裝佈景");
 define("_MA_TADADM_MOD_LATEST", "已是最新");
 define("_MA_TADADM_NO_MODS", "沒有任何模組");
 define("_MA_TADADM_MOD_NAME", "模組名稱");
@@ -42,7 +44,18 @@ define("_MA_TADADM_FTP_HOST", "請輸入FTP登入主機");
 define("_MA_TADADM_FTP_ID", "請輸入FTP登入帳號");
 define("_MA_TADADM_FTP_PASS", "請輸入FTP登入密碼");
 define("_MA_TADADM_DL_FAIL", "「%s」下載失敗！");
+define("_MA_TADADM_EXEC_FAIL", "「%s」執行失敗！");
+define("_MA_TADADM_MV_FAIL", "「%s」搬移至modules下失敗！");
 define("_MA_TADADM_SSH_LOGIN_FAIL", "「%s」以SSH登入「%s」失敗！");
+define("_MA_TADADM_FTP_LOGIN_FAIL", "「%s」以FTP登入「%s」失敗！");
+define("_MA_TADADM_FTP_FAIL", "FTP 連線失敗！（可能該伺服器無FTP服務或未啟動FTP服務）");
+define("_MA_TADADM_KIND" , "種類");
+define("_MA_TADADM_MODULE" , "模組");
+define("_MA_TADADM_THEME" , "佈景");
+define("_MA_TADADM_THEME_UPDATE_OK" , "佈景更新完畢！");
+define("_MA_TADADM_THEME_INSTALL_OK" , "佈景安裝完畢！請將「使用者可選擇的佈景」欄位加入「%s」佈景。");
+define("_MA_TADADM_FTP_NOTE" , "FTP僅適用與安裝新模組，因為權限關係，FTP模式無法覆蓋原有資料夾，故不適用於更新模組。");
+
 
 //spam.php
 define("_MA_TADADM_NEVERLOGIN", "未登入過");
