@@ -20,7 +20,9 @@ function list_modules(){
     foreach($data as $k=>$v){
       $$k=$v;
     }
-    if($mod[$dirname]['kind']=="module"){
+    if(!isset($mod[$dirname]['kind'])){
+      continue;
+    }elseif($mod[$dirname]['kind']=="module"){
       $ok[]=$dirname;
     }else{
       continue;
@@ -44,7 +46,7 @@ function list_modules(){
     $all_data[$i]['hasconfig']=$hasconfig?_MA_TADADM_1:_MA_TADADM_0;
     $all_data[$i]['hascomments']=$hascomments?_MA_TADADM_1:_MA_TADADM_0;
     $all_data[$i]['hasnotification']=$hasnotification?_MA_TADADM_1:_MA_TADADM_0;
-    $all_data[$i]['function']=($mod[$dirname]['new_last_update'] > $last_update)?'update':false;
+    $all_data[$i]['function']=($mod[$dirname]['new_last_update'] > $last_update)?'update':'last_mod';
     $all_data[$i]['update_sn']=$mod[$dirname]['update_sn'];
     $all_data[$i]['descript']=$mod[$dirname]['update_descript'];
     $all_data[$i]['module_sn']=$mod[$dirname]['module_sn'];
@@ -94,7 +96,7 @@ function list_modules(){
         $all_data[$i]['hasconfig']="";
         $all_data[$i]['hascomments']="";
         $all_data[$i]['hasnotification']="";
-        $all_data[$i]['function']=($data['new_last_update'] > $last_update)?'update_theme':false;
+        $all_data[$i]['function']=($data['new_last_update'] > $last_update)?'update_theme':'last_theme';
         $all_data[$i]['update_sn']=$data['update_sn'];
         $all_data[$i]['descript']=$data['module_descript'];
         $all_data[$i]['module_sn']=$data['module_sn'];
@@ -120,7 +122,7 @@ function list_modules(){
         $all_data[$i]['hasconfig']="";
         $all_data[$i]['hascomments']="";
         $all_data[$i]['hasnotification']="";
-        $all_data[$i]['function']=($data['new_last_update'] > $last_update)?'install_theme':false;
+        $all_data[$i]['function']=($data['new_last_update'] > $last_update)?'install_theme':'last_theme';
         $all_data[$i]['update_sn']=$data['update_sn'];
         $all_data[$i]['descript']=$data['module_descript'];
         $all_data[$i]['module_sn']=$data['module_sn'];
@@ -243,6 +245,7 @@ function ssh_login($ssh_host,$ssh_id,$ssh_passwd,$file_link="",$dirname="",$act=
   $ssh->exec("chmod -R 755 ".XOOPS_ROOT_PATH."/{$kind_dir}/$dirname");
   $ssh->exec("chown -R {$ssh_id}:{$ssh_id} ".XOOPS_ROOT_PATH."/{$kind_dir}/$dirname");
   $ssh->exec("rm -fr ".XOOPS_ROOT_PATH."/uploads/tad_adm/{$dirname}");
+  $ssh->exec("rm -f $new_file");
 
   if(is_dir(XOOPS_ROOT_PATH."/{$kind_dir}/{$dirname}")){
     if($kind_dir=="modules"){
@@ -287,18 +290,6 @@ function ftp_log_in($ftp_host,$ftp_id,$ftp_passwd,$file_link="",$dirname="",$act
 
   ftp_exec($conn, "unzip -d $new_file ".XOOPS_ROOT_PATH."/$kind_dir");
 
-/*
-  if(!is_dir(XOOPS_ROOT_PATH."/uploads/tad_adm/{$dirname}")){
-    require_once "../class/dunzip2/dUnzip2.inc.php";
-    require_once "../class/dunzip2/dZip.inc.php";
-    $zip = new dUnzip2($new_file);
-    $zip->getList();
-    $zip->unzipAll(XOOPS_ROOT_PATH."/uploads/tad_adm/");
-    //recurse_chown_chgrp(XOOPS_ROOT_PATH."/uploads/tad_adm/{$dirname}", $ftp_id, $ftp_id);
-  }
-  ftp_site("chmof -R 755 ".XOOPS_ROOT_PATH."/uploads/tad_adm/{$dirname}");
-  */
-
   $path=explode("/",XOOPS_ROOT_PATH);
   foreach($path as $dir){
     ftp_chdir($conn, $dir);
@@ -306,14 +297,9 @@ function ftp_log_in($ftp_host,$ftp_id,$ftp_passwd,$file_link="",$dirname="",$act
   ftp_chdir($conn, "uploads");
   ftp_chdir($conn, "tad_adm");
 
-  //if(!ftp_exec($conn, "cp -rf ./$dirname ../../{$kind_dir}/{$dirname}")){
-  //  redirect_header($_SERVER['PHP_SELF'],3, sprintf(_MA_TADADM_MV_FAIL,XOOPS_ROOT_PATH."/uploads/tad_adm/$dirname"));
-  //}
   ftp_delete($conn, "../../{$kind_dir}/{$dirname}");
-  //
+  ftp_delete($conn, $new_file);
   if(ftp_rename($conn, $dirname, "../../{$kind_dir}/{$dirname}")){
-  //ftp_putAll($conn, $dirname, "../../{$kind_dir}/{$dirname}");
-  //if(is_dir(XOOPS_ROOT_PATH."/{$kind_dir}/{$dirname}")){
     if($kind_dir=="modules"){
       header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}");
     }else{
@@ -406,6 +392,7 @@ function module_act($new_file="",$dirname="",$act="install",$kind_dir="modules")
     $zip = new dUnzip2($new_file);
     $zip->getList();
     $zip->unzipAll(XOOPS_ROOT_PATH."/{$kind_dir}/");
+    unlink($new_file);
     if($kind_dir=="modules"){
       header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}");
     }else{

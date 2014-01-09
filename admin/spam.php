@@ -112,20 +112,20 @@ function list_user($op="",$mode="normal"){
   $_SESSION['chk_end']=time();
 
   $time=$_SESSION['chk_end']-$_SESSION['chk_start'];
-  $days=intval($_REQUEST['days']);
+  $days=isset($_REQUEST['days'])?intval($_REQUEST['days']):0;
   $days=empty($days)?100:$days;
-
-
+  $g2p=isset($_GET['g2p'])?intval($_GET['g2p']):1;
+  $byemail=isset($_REQUEST['byemail'])?$_REQUEST['byemail']:"";
   $max=$xoopsModuleConfig['list_amount'] * 20;
 
 
   $xoopsTpl->assign('_MA_TADADM_AUTO_CHECK_DESC',sprintf(_MA_TADADM_AUTO_CHECK_DESC,$max));
   $xoopsTpl->assign('_MA_TADADM_WORKTIME',sprintf(_MA_TADADM_WORKTIME,$time));
-  $xoopsTpl->assign('g2p',$_GET['g2p']);
+  $xoopsTpl->assign('g2p',$g2p);
   $xoopsTpl->assign('_MA_TADADM_TOTAL',sprintf(_MA_TADADM_TOTAL,$total));
   $xoopsTpl->assign('all_data',$all_data);
   $xoopsTpl->assign('bar',$bar);
-  $xoopsTpl->assign('_MA_TADADM_BY_EMAIL',sprintf(_MA_TADADM_BY_EMAIL,"<input type='text' name='byemail' value='{$_REQUEST['byemail']}' class='span4' size=20>"));
+  $xoopsTpl->assign('_MA_TADADM_BY_EMAIL',sprintf(_MA_TADADM_BY_EMAIL,"<input type='text' name='byemail' value='{$byemail}' class='span4' size=20>"));
   $xoopsTpl->assign('_MA_TADADM_NEVERLOGIN_DAY',sprintf(_MA_TADADM_NEVERLOGIN_DAY,"<input type='text' name='days' value='$days' class='span1' size=4>"));
   $xoopsTpl->assign('_MA_TADADM_NEVERSTART_DAY',sprintf(_MA_TADADM_NEVERSTART_DAY,"<input type='text' name='days' value='$days' class='span1' size=4>"));
 }

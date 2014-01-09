@@ -422,14 +422,21 @@ if($mysql_connect=="OK"){
 	list($normal_user_count)=$xoopsDB->fetchRow($result);
 
   //各群組人數
-	$sql="select a.`groupid`, a.`uid`, b.`name` from ".$xoopsDB->prefix("groups_users_link")." as a left join ".$xoopsDB->prefix("groups")." as b on a.`groupid` = b.`groupid`";
+	$sql="select a.`groupid`, a.`uid`, b.`name` from ".$xoopsDB->prefix("groups_users_link")." as a left join ".$xoopsDB->prefix("groups")." as b on a.`groupid` = b.`groupid` order by a.`groupid`";
+
 	$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  $groupid_count=$group_name=array();
 	while(list($groupid ,$uid , $name)=$xoopsDB->fetchRow($result)){
-    $groupid_count[$groupid]++;
+    if(isset($groupid_count[$groupid])){
+      $groupid_count[$groupid]++;
+    }else{
+      $groupid_count[$groupid]=1;
+    }
     $group_name[$groupid]=$name;
   }
-  sort($groupid_count);
+
   $groupid_count_list="<li class=\"divider\"></li>";
+
   foreach($groupid_count as $groupid => $counter){
     if($groupid==0){
       $gname=_MD_TADADM_NO_GROUP;
@@ -438,7 +445,7 @@ if($mysql_connect=="OK"){
     }else{
       $gname=empty($group_name[$groupid])?_MD_TADADM_SOME_GROUP." {$groupid}":$group_name[$groupid];
     }
-    $groupid_count_list.="<li><i class='icon-envelope'  title='".sprintf(_MD_TADADM_GROUP_COUNTEER,$gname,$counter)."'></i>".sprintf(_MD_TADADM_GROUP_COUNTEER,$gname,$counter)."</li>";
+    $groupid_count_list.="<li><span class=\"label label-info\">{$groupid}</span>".sprintf(_MD_TADADM_GROUP_COUNTEER,$gname,$counter)."</li>";
   }
 
 

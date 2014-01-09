@@ -16,22 +16,22 @@ function phpini(){
 	global $xoopsDB,$xoopsConfig,$xoopsTpl;
 
   include_once "../language/{$xoopsConfig['language']}/ini_arr.php";
-  
+
   $allini=ini_get_all();
   //die(var_export(ini_get_all()));
-	
+
 
   $i=0;
   $main="";
   foreach($allini as $k=>$v){
     $global_value=str_replace(',',' , ',$v['global_value']);
-    
+
     $main[$i]['k']=$k;
     $main[$i]['global_value']=$global_value;
-    $main[$i]['ini']=$ini[$k];
+    $main[$i]['ini']=isset($ini[$k])?$ini[$k]:"";
     $i++;
   }
-  
+
   $xoopsTpl->assign('main', $main);
 }
 
@@ -47,7 +47,7 @@ switch($op){
 	default:
 	$main=phpini($op);
 	break;
-	
+
 	/*---判斷動作請貼在上方---*/
 }
 

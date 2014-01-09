@@ -116,6 +116,10 @@
                   <a href="main.php?op=update_theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" class="btn btn-mini btn-danger"><{$smarty.const._MA_TADADM_MOD_UPDATE_THEME}></a>
               <{elseif $mod.function=='install_theme'}>
                   <a href="main.php?op=install_theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" class="btn btn-mini btn-primary"><{$smarty.const._MA_TADADM_MOD_INSTALL_THEME}></a>
+              <{elseif $mod.function=='last_mod'}>
+                <a href="main.php?op=update_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>"><{$smarty.const._MA_TADADM_MOD_LATEST}></a>
+              <{elseif $mod.function=='last_theme'}>
+                  <a href="main.php?op=update_theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>"><{$smarty.const._MA_TADADM_MOD_LATEST}></a>
               <{elseif $mod.new_last_update}>
                 <{$smarty.const._MA_TADADM_MOD_LATEST}>
               <{/if}>
