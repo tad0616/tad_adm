@@ -220,7 +220,15 @@ function send_passwd(){
   $sql="update ".$xoopsDB->prefix('config')." set `conf_value`='{$passwd}' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
 	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 
-  $content=sprintf(_MD_TADADM_MAIL_CONTENT,$passwd);
+  if (empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+    $myip = $_SERVER['REMOTE_ADDR'];
+  } else {
+    $myip = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+    $myip = $myip[0];
+  }
+
+
+  $content=sprintf(_MD_TADADM_MAIL_CONTENT,$passwd,$myip);
   if(send_now($xoopsConfig['adminmail'],_MD_TADADM_PASSWD,$content)){
     return sprintf(_MD_TADADM_MAIL_PASSWD_OK,$xoopsConfig['adminmail']);
   }else{
