@@ -19,7 +19,7 @@ if($xoopsUser) {
 
 if(!$_SESSION['isAdmin']){
   $sql="update ".$xoopsDB->prefix(config)." set `conf_value`='' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
-	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 
   if($op=="forgot"){
     $form='<form  class="well" action="'.$_SERVER['PHP_SELF'].'" method="post">
@@ -210,7 +210,7 @@ function reset_mem($uid="",$passwd=""){
   global $xoopsDB;
   $passwd=md5($passwd);
   $sql="update ".$xoopsDB->prefix('users')." set `pass`='{$passwd}' where `uid`='{$uid}'";
-	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 }
 
 //寄發密碼
@@ -218,7 +218,7 @@ function send_passwd(){
   global $xoopsConfig,$xoopsDB;
   $passwd=GeraHash(30);
   $sql="update ".$xoopsDB->prefix('config')." set `conf_value`='{$passwd}' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
-	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 
   if (empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
     $myip = $_SERVER['REMOTE_ADDR'];
@@ -239,14 +239,14 @@ function send_passwd(){
 
 //立即寄出
 function send_now($email="",$title="",$content=""){
-	global $xoopsConfig,$xoopsDB,$xoopsModuleConfig,$xoopsModule;
+  global $xoopsConfig,$xoopsDB,$xoopsModuleConfig,$xoopsModule;
 
-	$xoopsMailer =& getMailer();
-	$xoopsMailer->multimailer->ContentType="text/html";
-	$xoopsMailer->addHeaders("MIME-Version: 1.0");
+  $xoopsMailer =& getMailer();
+  $xoopsMailer->multimailer->ContentType="text/html";
+  $xoopsMailer->addHeaders("MIME-Version: 1.0");
 
-	$msg.=($xoopsMailer->sendMail($email,$title, $content,$headers))?true:false;
-	return $msg;
+  $msg.=($xoopsMailer->sendMail($email,$title, $content,$headers))?true:false;
+  return $msg;
 }
 
 
@@ -281,21 +281,21 @@ function get_free_space(){
 function theme_default(){
   global $xoopsDB;
 
-	$sql="update ".$xoopsDB->prefix("config")." set conf_value='default' where conf_name='theme_set'";
-	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  $sql="update ".$xoopsDB->prefix("config")." set conf_value='default' where conf_name='theme_set'";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 }
 
 //清除 session
 function clear_session(){
   global $xoopsDB;
-	$sql="TRUNCATE TABLE ".$xoopsDB->prefix("session")."";
-	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  $sql="TRUNCATE TABLE ".$xoopsDB->prefix("session")."";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 }
 
 //清除快取
 function clear_cache(){
-	$dirname=XOOPS_VAR_PATH."/caches/smarty_compile";
-	if(is_dir($dirname)){
+  $dirname=XOOPS_VAR_PATH."/caches/smarty_compile";
+  if(is_dir($dirname)){
     delete_directory($dirname) ;
     $fp = fopen("{$dirname}/index.html", 'w');
     fwrite($fp, '<script>history.go(-1);</script>');
@@ -325,8 +325,8 @@ function delete_directory($dirname) {
 //session 資料表容量
 function session_size(){
   global $xoopsDB;
-	$sql="show table status where name='".$xoopsDB->prefix("session")."'";
-	$result=$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  $sql="show table status where name='".$xoopsDB->prefix("session")."'";
+  $result=$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
   $row=$xoopsDB->fetchArray($result);
 
   $bytes = ($row['Data_length'] + $row['Index_length']);
@@ -342,7 +342,7 @@ function session_size(){
 
 //取得目錄下的檔案數
 function files_counter(){
-	$dirname=XOOPS_VAR_PATH."/caches/smarty_compile/";
+  $dirname=XOOPS_VAR_PATH."/caches/smarty_compile/";
   if (glob($dirname . "*.php") != false){
    $filecount = count(glob($dirname . "*.php"));
    return sprintf(_MD_TADADM_FILES_COUNT,$filecount);;
@@ -354,8 +354,8 @@ function files_counter(){
 function close_site($v=0){
   global $xoopsDB;
 
-	$sql="update ".$xoopsDB->prefix("config")." set conf_value='$v' where conf_name='closesite'";
-	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  $sql="update ".$xoopsDB->prefix("config")." set conf_value='$v' where conf_name='closesite'";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 }
 
 
@@ -363,8 +363,8 @@ function close_site($v=0){
 function debug_mode($v=0){
   global $xoopsDB;
 
-	$sql="update ".$xoopsDB->prefix("config")." set conf_value='$v' where conf_name='debug_mode'";
-	$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  $sql="update ".$xoopsDB->prefix("config")." set conf_value='$v' where conf_name='debug_mode'";
+  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 }
 
 
@@ -372,10 +372,10 @@ function debug_mode($v=0){
 function debug_mode_tool(){
   global $xoopsDB;
 
-	$sql="select conf_value from ".$xoopsDB->prefix("config")." where conf_name='debug_mode'";
-	$result = $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
-	list($debug)=$xoopsDB->fetchRow($result);
-	if($debug==1){
+  $sql="select conf_value from ".$xoopsDB->prefix("config")." where conf_name='debug_mode'";
+  $result = $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  list($debug)=$xoopsDB->fetchRow($result);
+  if($debug==1){
     $debug_tool="
     <li><a href='index.php?op=debug_mode&v=0'><i class='icon-envelope'  title='".sprintf(_MD_TADADM_UNABLE_DEBUG,"PHP")."'></i>".sprintf(_MD_TADADM_UNABLE_DEBUG,"PHP")."</a></li>
     <li><a href='index.php?op=debug_mode&v=3'><i class='icon-envelope'  title='".sprintf(_MD_TADADM_ENABLE_DEBUG,"Smarty")."'></i>".sprintf(_MD_TADADM_ENABLE_DEBUG,"Smarty")."</a></li>";
@@ -410,31 +410,31 @@ $other="";
 if($mysql_connect=="OK"){
 
   //註冊人數
-	$sql="select count(*) from ".$xoopsDB->prefix("users")."";
-	$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
-	list($all_user_count)=$xoopsDB->fetchRow($result);
+  $sql="select count(*) from ".$xoopsDB->prefix("users")."";
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  list($all_user_count)=$xoopsDB->fetchRow($result);
 
   //從未登入人數
-	$sql="select count(*) from ".$xoopsDB->prefix("users")." where last_login=0";
-	$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
-	list($never_login_user_count)=$xoopsDB->fetchRow($result);
+  $sql="select count(*) from ".$xoopsDB->prefix("users")." where last_login=0";
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  list($never_login_user_count)=$xoopsDB->fetchRow($result);
 
   //未啟用人數
-	$sql="select count(*) from ".$xoopsDB->prefix("users")." where user_regdate=0";
-	$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
-	list($never_start_user_count)=$xoopsDB->fetchRow($result);
+  $sql="select count(*) from ".$xoopsDB->prefix("users")." where user_regdate=0";
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  list($never_start_user_count)=$xoopsDB->fetchRow($result);
 
   //正常會員人數
-	$sql="select count(*) from ".$xoopsDB->prefix("users")." where user_regdate!=0 and last_login!=0";
-	$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
-	list($normal_user_count)=$xoopsDB->fetchRow($result);
+  $sql="select count(*) from ".$xoopsDB->prefix("users")." where user_regdate!=0 and last_login!=0";
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  list($normal_user_count)=$xoopsDB->fetchRow($result);
 
   //各群組人數
-	$sql="select a.`groupid`, a.`uid`, b.`name` from ".$xoopsDB->prefix("groups_users_link")." as a left join ".$xoopsDB->prefix("groups")." as b on a.`groupid` = b.`groupid` order by a.`groupid`";
+  $sql="select a.`groupid`, a.`uid`, b.`name` from ".$xoopsDB->prefix("groups_users_link")." as a left join ".$xoopsDB->prefix("groups")." as b on a.`groupid` = b.`groupid` order by a.`groupid`";
 
-	$result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
+  $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
   $groupid_count=$group_name=array();
-	while(list($groupid ,$uid , $name)=$xoopsDB->fetchRow($result)){
+  while(list($groupid ,$uid , $name)=$xoopsDB->fetchRow($result)){
     if(isset($groupid_count[$groupid])){
       $groupid_count[$groupid]++;
     }else{
