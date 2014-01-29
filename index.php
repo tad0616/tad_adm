@@ -10,16 +10,18 @@ if($xoopsUser) {
   $xoopsModule = &$modhandler->getByDirname("tad_adm");
   $config_handler =& xoops_gethandler('config');
   $xoopsModuleConfig =& $config_handler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
+
+
   $_SESSION['isAdmin']=($xoopsModuleConfig['login']!='' and $_POST['help_passwd']!='' and $xoopsModuleConfig['login']==$_POST['help_passwd'])?true:false;
 }elseif($op=="send_passwd"){
   send_passwd();
-  header("location: {$_SERVER['PHP_SELF']}");
+  header("location: {$_SERVER['PHP_SELF']}?op=forgot");
 }
 
 
 if(!$_SESSION['isAdmin']){
-  $sql="update ".$xoopsDB->prefix(config)." set `conf_value`='' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
-  $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+  $sql="update ".$xoopsDB->prefix('config')." set `conf_value`='' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
+  //$xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
 
   if($op=="forgot"){
     $form='<form  class="well" action="'.$_SERVER['PHP_SELF'].'" method="post">
@@ -251,18 +253,18 @@ function send_now($email="",$title="",$content=""){
 
 
 function GeraHash($qtd){
-//Under the string $Caracteres you write all the characters you want to be used to randomly generate the code.
-$Caracteres = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
-$QuantidadeCaracteres = strlen($Caracteres);
-$QuantidadeCaracteres--;
+  //Under the string $Caracteres you write all the characters you want to be used to randomly generate the code.
+  $Caracteres = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
+  $QuantidadeCaracteres = strlen($Caracteres);
+  $QuantidadeCaracteres--;
 
-$Hash=NULL;
-    for($x=1;$x<=$qtd;$x++){
-        $Posicao = rand(0,$QuantidadeCaracteres);
-        $Hash .= substr($Caracteres,$Posicao,1);
-    }
+  $Hash=NULL;
+  for($x=1;$x<=$qtd;$x++){
+    $Posicao = rand(0,$QuantidadeCaracteres);
+    $Hash .= substr($Caracteres,$Posicao,1);
+  }
 
-return $Hash;
+  return $Hash;
 }
 
 
