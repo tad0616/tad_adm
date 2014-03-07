@@ -47,11 +47,9 @@ function list_modules(){
     $all_data[$i]['hascomments']=$hascomments?_MA_TADADM_1:_MA_TADADM_0;
     $all_data[$i]['hasnotification']=$hasnotification?_MA_TADADM_1:_MA_TADADM_0;
 
-    $version=$version*1;
-    $new_version=$mod[$dirname]['new_version']*1;
+    $new_version=$mod[$dirname]['new_version'] * 100;
 
-
-    $all_data[$i]['function']=($mod[$dirname]['new_last_update'] > $last_update or $new_version > $version)?'update':'last_mod';
+    $all_data[$i]['function']=($new_version > $version)?'update':'last_mod';
     $all_data[$i]['update_sn']=$mod[$dirname]['update_sn'];
     $all_data[$i]['descript']=$mod[$dirname]['update_descript'];
     $all_data[$i]['module_sn']=$mod[$dirname]['module_sn'];
@@ -102,10 +100,11 @@ function list_modules(){
         $all_data[$i]['hascomments']="";
         $all_data[$i]['hasnotification']="";
 
-        $version=$Version*1;
-        $new_version=$data['new_version']*1;
-
-        $all_data[$i]['function']=($data['new_last_update'] > $last_update or $new_version>$version)?'update_theme':'last_theme';
+        $version=$Version*100;
+        $new_version=$data['new_version']*100;
+        //$all_data[$i]['version']=$version;
+        //$all_data[$i]['new_version']=$new_version;
+        $all_data[$i]['function']=($new_version > $version)?'update_theme':'last_theme';
         $all_data[$i]['update_sn']=$data['update_sn'];
         $all_data[$i]['descript']=$data['module_descript'];
         $all_data[$i]['module_sn']=$data['module_sn'];
