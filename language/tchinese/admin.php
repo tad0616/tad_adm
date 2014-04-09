@@ -75,5 +75,8 @@ define("_MA_TADADM_NEVERLOGIN_DAY", "列出從未登入過，並註冊超過 %s 天");
 define("_MA_TADADM_BY_EMAIL", "列出 Email 結尾（網域）為 %s 的資料");
 
 define("_MA_TADADM_SELECT_ALL", "全選");
+define("_MA_TADADM_MOD_FUNCTION", "管理");
+define("_MA_TADADM_MOD_BLOCK", "區塊");
+define("_MA_TADADM_MOD_ADMIN", "模組後台");
 
 ?>
