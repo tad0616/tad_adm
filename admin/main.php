@@ -370,6 +370,35 @@ function recurse_chown_chgrp($mypath, $uid, $gid)
 
  }
 
+function chmod_R($path, $filemode, $dirmode) {
+  if (is_dir($path) ) {
+    if (!chmod($path, $dirmode)) {
+      $dirmode_str=decoct($dirmode);
+      print "Failed applying filemode '$dirmode_str' on directory '$path'\n";
+      print "  `-> the directory '$path' will be skipped from recursive chmod\n";
+      return;
+    }
+    $dh = opendir($path);
+    while (($file = readdir($dh)) !== false) {
+      if($file != '.' && $file != '..') {  // skip self and parent pointing directories
+        $fullpath = $path.'/'.$file;
+        chmod_R($fullpath, $filemode,$dirmode);
+      }
+    }
+    closedir($dh);
+    } else {
+    if (is_link($path)) {
+      print "link '$path' is skipped\n";
+      return;
+    }
+    if (!chmod($path, $filemode)) {
+      $filemode_str=decoct($filemode);
+      print "Failed applying filemode '$filemode_str' on file '$path'\n";
+      return;
+    }
+  }
+}
+
 //安裝套件
 function install_module($file_link="",$dirname="",$act="install",$update_sn="",$kind_dir="modules"){
   global $xoopsTpl;
@@ -406,6 +435,7 @@ function install_module($file_link="",$dirname="",$act="install",$update_sn="",$
 
 
 function module_act($new_file="",$dirname="",$act="install",$kind_dir="modules"){
+  global $xoopsConfig;
   if(is_file($new_file)){
     require_once "../class/dunzip2/dUnzip2.inc.php";
     require_once "../class/dunzip2/dZip.inc.php";
@@ -413,8 +443,33 @@ function module_act($new_file="",$dirname="",$act="install",$kind_dir="modules")
     $zip->getList();
     $zip->unzipAll(XOOPS_ROOT_PATH."/{$kind_dir}/");
     unlink($new_file);
+
+    chmod_R(XOOPS_ROOT_PATH."/{$kind_dir}/{$dirname}", 0755, 0755);
+
+    include_once(XOOPS_ROOT_PATH."/class/xoopsformloader.php");
+    $token=new XoopsFormHiddenToken();
+    $token_code=$token->render();
     if($kind_dir=="modules"){
-      header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}");
+
+      require(XOOPS_ROOT_PATH."/modules/{$dirname}/xoops_version.php");
+      $main="
+      <link rel='stylesheet' type='text/css' media='screen' href='".XOOPS_URL."/modules/tadtools/bootstrap/css/bootstrap.css' />
+      <link rel='stylesheet' type='text/css' media='screen' href='".XOOPS_URL."/modules/tadtools/bootstrap/css/bootstrap-responsive.css' />
+      <link rel='stylesheet' type='text/css' media='screen' href='".XOOPS_URL."/modules/tadtools/css/xoops_adm.css' />
+      <div class='well'>
+        <form action='".XOOPS_URL."/modules/system/admin.php' method='post' style='text-align:center'>
+          <img src='".XOOPS_URL."/modules/{$dirname}/{$modversion['image']}'>
+          <div style='font-weight:bold;font-size:11pt;'>{$modversion['name']}</div>
+          <input type='hidden' value='{$dirname}' name='dirname'></input>
+          <input type='hidden' value='update_ok' name='op'></input>
+          <input type='hidden' value='modulesadmin' name='fct'></input>
+          <input id='XOOPS_TOKEN_REQUEST' type='hidden' value='{$token_code}' name='XOOPS_TOKEN_REQUEST'></input>
+          <input type='submit' title='"._MA_TADADM_MODULES_UPDATING."' value='"._MA_TADADM_MODULES_UPDATING."' name='confirm_submit'></input>
+        </form>
+      </div>
+      ";
+      die($main);
+      //header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}");
     }else{
       if($act=="install"){
         redirect_header(XOOPS_URL."/modules/system/admin.php?fct=preferences&op=show&confcat_id=1",3, sprintf(_MA_TADADM_THEME_INSTALL_OK,$dirname));
