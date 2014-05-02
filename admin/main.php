@@ -450,8 +450,22 @@ function module_act($new_file="",$dirname="",$act="install",$kind_dir="modules")
     $token=new XoopsFormHiddenToken();
     $token_code=$token->render();
     if($kind_dir=="modules"){
+      if($act=="install"){
+        $op="install_ok";
+        $hidden="<input type='hidden' value='{$dirname}' name='module'>";
+        $title=_MA_TADADM_MODULES_INSTALLING;
+      }else{
+        $op="update_ok";
+        $hidden="<input type='hidden' value='{$dirname}' name='dirname'>";
+        $title=_MA_TADADM_MODULES_UPDATING;
+      }
+
 
       require(XOOPS_ROOT_PATH."/modules/{$dirname}/xoops_version.php");
+      require(XOOPS_ROOT_PATH."/modules/{$dirname}/language/{$xoopsConfig['language']}/modinfo.php");
+
+      $mod_name=constant($modversion['name']);
+
       $main="
       <link rel='stylesheet' type='text/css' media='screen' href='".XOOPS_URL."/modules/tadtools/bootstrap/css/bootstrap.css' />
       <link rel='stylesheet' type='text/css' media='screen' href='".XOOPS_URL."/modules/tadtools/bootstrap/css/bootstrap-responsive.css' />
@@ -459,12 +473,12 @@ function module_act($new_file="",$dirname="",$act="install",$kind_dir="modules")
       <div class='well'>
         <form action='".XOOPS_URL."/modules/system/admin.php' method='post' style='text-align:center'>
           <img src='".XOOPS_URL."/modules/{$dirname}/{$modversion['image']}'>
-          <div style='font-weight:bold;font-size:11pt;'>{$modversion['name']}</div>
-          <input type='hidden' value='{$dirname}' name='dirname'></input>
-          <input type='hidden' value='update_ok' name='op'></input>
-          <input type='hidden' value='modulesadmin' name='fct'></input>
-          <input id='XOOPS_TOKEN_REQUEST' type='hidden' value='{$token_code}' name='XOOPS_TOKEN_REQUEST'></input>
-          <input type='submit' title='"._MA_TADADM_MODULES_UPDATING."' value='"._MA_TADADM_MODULES_UPDATING."' name='confirm_submit'></input>
+          <div style='font-weight:bold;font-size:11pt;'>{$mod_name}</div>
+          $hidden
+          <input type='hidden' value='{$op}' name='op'>
+          <input type='hidden' value='modulesadmin' name='fct'>
+          $token_code
+          <input type='submit' title='".$title."' value='".$title."' name='confirm_submit'>
         </form>
       </div>
       ";

@@ -92,12 +92,15 @@
   $(document).ready(function(){
     $(".modulesadmin").fancybox({
       fitToView : true,
-      width   : '500px',
-      height    : '300px',
+      width   : '640px',
+      height    : '400px',
       autoSize  : true,
       closeClick  : false,
       openEffect  : 'none',
-      closeEffect : 'none'
+      closeEffect : 'none',
+      afterClose  :function () {
+        window.location.reload();
+      }
     });
   });
   </script>
