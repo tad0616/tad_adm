@@ -20,23 +20,23 @@ function list_modules(){
     foreach($data as $k=>$v){
       $$k=$v;
     }
-    if(!isset($mod[$dirname]['kind'])){
+    if(!isset($mod[$dirname]['module']['kind'])){
       continue;
-    }elseif($mod[$dirname]['kind']=="module"){
-      $ok[]=$dirname;
+    }elseif($mod[$dirname]['module']['kind']=="module"){
+      $ok['module'][]=$dirname;
     }else{
       continue;
     }
-    $status=($mod[$dirname]['new_status_version'])?" {$mod[$dirname]['new_status']}{$mod[$dirname]['new_status_version']}":"";
+    $status=($mod[$dirname]['module']['new_status_version'])?" {$mod[$dirname]['module']['new_status']}{$mod[$dirname]['module']['new_status_version']}":"";
 
     $all_data[$i]['mid']=$mid;
     $all_data[$i]['name']=$name;
     $all_data[$i]['version']=round( $version / 100, 2 );
-    $all_data[$i]['new_version']=($mod[$dirname]['new_version'])?$mod[$dirname]['new_version'].$status:"";
+    $all_data[$i]['new_version']=($mod[$dirname]['module']['new_version'])?$mod[$dirname]['module']['new_version'].$status:"";
 
     $last_update=filemtime(XOOPS_ROOT_PATH."/modules/{$dirname}/xoops_version.php");
     $all_data[$i]['last_update']=date("Y-m-d H:i",$last_update);
-    $all_data[$i]['new_last_update']=($mod[$dirname]['new_last_update'])?date("Y-m-d H:i",$mod[$dirname]['new_last_update']):"";
+    $all_data[$i]['new_last_update']=($mod[$dirname]['module']['new_last_update'])?date("Y-m-d H:i",$mod[$dirname]['module']['new_last_update']):"";
     $all_data[$i]['weight']=$weight;
     $all_data[$i]['isactive']=$isactive;
     $all_data[$i]['dirname']=$dirname;
@@ -48,7 +48,7 @@ function list_modules(){
     $all_data[$i]['hasnotification']=$hasnotification?_MA_TADADM_1:_MA_TADADM_0;
 
     $version=intval($version);
-    $new_version=$mod[$dirname]['new_version'] * 100;
+    $new_version=$mod[$dirname]['module']['new_version'] * 100;
     $new_version=intval($new_version);
 
     $last_update=strtotime($all_data[$i]['last_update']);
@@ -59,23 +59,74 @@ function list_modules(){
 
     $all_data[$i]['function']=($new_version > $version or $new_last_update > $last_update)?'update':'last_mod';
 
-    $all_data[$i]['update_sn']=$mod[$dirname]['update_sn'];
-    $all_data[$i]['descript']=$mod[$dirname]['update_descript'];
-    $all_data[$i]['module_sn']=$mod[$dirname]['module_sn'];
-    $all_data[$i]['file_link']=$mod[$dirname]['file_link'];
-    $all_data[$i]['kind']=$mod[$dirname]['kind'];
+    $all_data[$i]['update_sn']=$mod[$dirname]['module']['update_sn'];
+    $all_data[$i]['descript']=$mod[$dirname]['module']['update_descript'];
+    $all_data[$i]['module_sn']=$mod[$dirname]['module']['module_sn'];
+    $all_data[$i]['file_link']=$mod[$dirname]['module']['file_link'];
+    $all_data[$i]['kind']=$mod[$dirname]['module']['kind'];
+
+    $i++;
+
+
+    //補充包部份
+    if(in_array($dirname,$ok['fix'])){
+      continue;
+    }elseif($mod[$dirname]['fix']['kind']=="fix"){
+      $ok['fix'][]=$dirname;
+    }else{
+      continue;
+    }
+
+    $status=($mod[$dirname]['fix']['new_status_version'])?" {$mod[$dirname]['fix']['new_status']}{$mod[$dirname]['fix']['new_status_version']}":"";
+
+    $all_data[$i]['mid']=$mid;
+    $all_data[$i]['name']=$mod[$dirname]['fix']['module_title'];
+    $all_data[$i]['version']=round( $version / 100, 2 );
+    $all_data[$i]['new_version']=($mod[$dirname]['fix']['new_version'])?$mod[$dirname]['fix']['new_version'].$status:"";
+
+    $last_update=filemtime(XOOPS_ROOT_PATH."/modules/{$dirname}/xoops_version.php");
+    $all_data[$i]['last_update']=date("Y-m-d H:i",$last_update);
+    $all_data[$i]['new_last_update']=($mod[$dirname]['fix']['new_last_update'])?date("Y-m-d H:i",$mod[$dirname]['fix']['new_last_update']):"";
+    $all_data[$i]['weight']=$weight;
+    $all_data[$i]['isactive']=$isactive;
+    $all_data[$i]['dirname']=$dirname;
+    $all_data[$i]['hasmain']=$hasmain?_MA_TADADM_1:_MA_TADADM_0;
+    $all_data[$i]['hasadmin']=$hasadmin?_MA_TADADM_1:_MA_TADADM_0;
+    $all_data[$i]['hassearch']=$hassearch?_MA_TADADM_1:_MA_TADADM_0;
+    $all_data[$i]['hasconfig']=$hasconfig?_MA_TADADM_1:_MA_TADADM_0;
+    $all_data[$i]['hascomments']=$hascomments?_MA_TADADM_1:_MA_TADADM_0;
+    $all_data[$i]['hasnotification']=$hasnotification?_MA_TADADM_1:_MA_TADADM_0;
+
+    $version=intval($version);
+    $new_version=$mod[$dirname]['fix']['new_version'] * 100;
+    $new_version=intval($new_version);
+
+    $last_update=strtotime($all_data[$i]['last_update']);
+    $new_last_update=strtotime($all_data[$i]['new_last_update']);
+
+    $all_data[$i]['newversion']=$new_version;
+    $all_data[$i]['now_version']=$version;
+
+    $all_data[$i]['function']=($new_version > $version or $new_last_update > $last_update)?'update':'last_mod';
+
+    $all_data[$i]['update_sn']=$mod[$dirname]['fix']['update_sn'];
+    $all_data[$i]['descript']=$mod[$dirname]['fix']['update_descript'];
+    $all_data[$i]['module_sn']=$mod[$dirname]['fix']['module_sn'];
+    $all_data[$i]['file_link']=$mod[$dirname]['fix']['file_link'];
+    $all_data[$i]['kind']=$mod[$dirname]['fix']['kind'];
 
     $i++;
   }
 
 
+
   //佈景部份
   foreach($mod as $dirname=>$data){
-    if(in_array($dirname,$ok))continue;
+    if(in_array($dirname,$ok['theme']))continue;
     $Version="";
     //佈景部份
-    if($data['kind']=="theme"){
-      $ok[]=$dirname;
+    if($data['theme']['kind']=="theme"){
+      $ok['theme'][]=$dirname;
       if(is_dir(XOOPS_ROOT_PATH."/themes/{$dirname}")){
 
         $handle = @fopen(XOOPS_ROOT_PATH."/themes/{$dirname}/theme.ini", "r");
@@ -91,14 +142,14 @@ function list_modules(){
         }
 
 
-        $status=($data['new_status_version'])?" {$data['new_status']}{$data['new_status_version']}":"";
+        $status=($data['theme']['new_status_version'])?" {$data['theme']['new_status']}{$data['theme']['new_status_version']}":"";
         $all_data[$i]['mid']="";
-        $all_data[$i]['name']=$data['module_title'];
+        $all_data[$i]['name']=$data['theme']['module_title'];
         $all_data[$i]['version']=$Version;
-        $all_data[$i]['new_version']=($data['new_version'])?$data['new_version'].$status:"";
+        $all_data[$i]['new_version']=($data['theme']['new_version'])?$data['theme']['new_version'].$status:"";
         $last_update=filemtime(XOOPS_ROOT_PATH."/themes/{$dirname}/theme.ini");
         $all_data[$i]['last_update']=date("Y-m-d H:i", $last_update);
-        $all_data[$i]['new_last_update']=($data['new_last_update'])?date("Y-m-d H:i",$data['new_last_update']):"";
+        $all_data[$i]['new_last_update']=($data['theme']['new_last_update'])?date("Y-m-d H:i",$data['theme']['new_last_update']):"";
         $all_data[$i]['weight']="";
         $all_data[$i]['isactive']="";
         $all_data[$i]['dirname']=$dirname;
@@ -110,29 +161,29 @@ function list_modules(){
         $all_data[$i]['hasnotification']="";
 
         $version=$Version*100;
-        $new_version=$data['new_version']*100;
+        $new_version=$data['theme']['new_version']*100;
         $version=intval($version);
         $new_version=intval($new_version);
 
         $last_update=strtotime($all_data[$i]['last_update']);
         $new_last_update=strtotime($all_data[$i]['new_last_update']);
         $all_data[$i]['function']=($new_version > $version or $new_last_update > $last_update)?'update_theme':'last_theme';
-        $all_data[$i]['update_sn']=$data['update_sn'];
-        $all_data[$i]['descript']=$data['module_descript'];
-        $all_data[$i]['module_sn']=$data['module_sn'];
-        $all_data[$i]['file_link']=$data['file_link'];
-        $all_data[$i]['kind']=$data['kind'];
+        $all_data[$i]['update_sn']=$data['theme']['update_sn'];
+        $all_data[$i]['descript']=$data['theme']['module_descript'];
+        $all_data[$i]['module_sn']=$data['theme']['module_sn'];
+        $all_data[$i]['file_link']=$data['theme']['file_link'];
+        $all_data[$i]['kind']=$data['theme']['kind'];
 
         $i++;
       }else{
-        $status=($data['new_status_version'])?" {$data['new_status']}{$data['new_status_version']}":"";
+        $status=($data['theme']['new_status_version'])?" {$data['theme']['new_status']}{$data['theme']['new_status_version']}":"";
         $all_data[$i]['mid']="";
-        $all_data[$i]['name']=$data['module_title'];
+        $all_data[$i]['name']=$data['theme']['module_title'];
         $all_data[$i]['version']="";
-        $all_data[$i]['new_version']=($data['new_version'])?$data['new_version'].$status:"";
+        $all_data[$i]['new_version']=($data['theme']['new_version'])?$data['theme']['new_version'].$status:"";
         $last_update=filemtime(XOOPS_ROOT_PATH."/themes/{$dirname}/theme.ini");
         $all_data[$i]['last_update']=empty($last_update)?_MA_TADADM_MOD_UNINSTALL:date("Y-m-d H:i", $last_update);
-        $all_data[$i]['new_last_update']=($data['new_last_update'])?date("Y-m-d H:i",$data['new_last_update']):"";
+        $all_data[$i]['new_last_update']=($data['theme']['new_last_update'])?date("Y-m-d H:i",$data['theme']['new_last_update']):"";
         $all_data[$i]['weight']="";
         $all_data[$i]['isactive']="";
         $all_data[$i]['dirname']=$dirname;
@@ -142,12 +193,12 @@ function list_modules(){
         $all_data[$i]['hasconfig']="";
         $all_data[$i]['hascomments']="";
         $all_data[$i]['hasnotification']="";
-        $all_data[$i]['function']=($data['new_last_update'] > $last_update)?'install_theme':'last_theme';
-        $all_data[$i]['update_sn']=$data['update_sn'];
-        $all_data[$i]['descript']=$data['module_descript'];
-        $all_data[$i]['module_sn']=$data['module_sn'];
-        $all_data[$i]['file_link']=$data['file_link'];
-        $all_data[$i]['kind']=$data['kind'];
+        $all_data[$i]['function']=($data['theme']['new_last_update'] > $last_update)?'install_theme':'last_theme';
+        $all_data[$i]['update_sn']=$data['theme']['update_sn'];
+        $all_data[$i]['descript']=$data['theme']['module_descript'];
+        $all_data[$i]['module_sn']=$data['theme']['module_sn'];
+        $all_data[$i]['file_link']=$data['theme']['file_link'];
+        $all_data[$i]['kind']=$data['theme']['kind'];
 
         $i++;
       }
@@ -157,34 +208,38 @@ function list_modules(){
   }
 
   //未安裝部份
-  foreach($mod as $dirname=>$data){
-    if(in_array($dirname,$ok))continue;
+  foreach($mod as $dirname=>$item){
+    foreach($item as $kind=>$data){
+      if(in_array($dirname,$ok['module']) and $kind=="module")continue;
+      if(in_array($dirname,$ok['theme']) and $kind=="theme")continue;
+      if(in_array($dirname,$ok['fix']) and $kind=="fix")continue;
 
-    $status=($data['new_status_version'])?" {$data['new_status']}{$data['new_status_version']}":"";
-    $all_data[$i]['mid']="";
-    $all_data[$i]['name']=$data['module_title'];
-    $all_data[$i]['version']=$Version;
-    $all_data[$i]['new_version']=($data['new_version'])?$data['new_version'].$status:"";
+      $status=($data['new_status_version'])?" {$data['new_status']}{$data['new_status_version']}":"";
+      $all_data[$i]['mid']="";
+      $all_data[$i]['name']=$data['module_title'];
+      $all_data[$i]['version']=$Version;
+      $all_data[$i]['new_version']=($data['new_version'])?$data['new_version'].$status:"";
 
-    $all_data[$i]['last_update']=_MA_TADADM_MOD_UNINSTALL;
-    $all_data[$i]['new_last_update']=($data['new_last_update'])?date("Y-m-d H:i",$data['new_last_update']):"";
-    $all_data[$i]['weight']="";
-    $all_data[$i]['isactive']="";
-    $all_data[$i]['dirname']=$dirname;
-    $all_data[$i]['hasmain']="";
-    $all_data[$i]['hasadmin']="";
-    $all_data[$i]['hassearch']="";
-    $all_data[$i]['hasconfig']="";
-    $all_data[$i]['hascomments']="";
-    $all_data[$i]['hasnotification']="";
-    $all_data[$i]['function']="install";
-    $all_data[$i]['update_sn']=$data['update_sn'];
-    $all_data[$i]['descript']=$data['module_descript'];
-    $all_data[$i]['module_sn']=$data['module_sn'];
-    $all_data[$i]['file_link']=$data['file_link'];
-    $all_data[$i]['kind']=$data['kind'];
+      $all_data[$i]['last_update']=_MA_TADADM_MOD_UNINSTALL;
+      $all_data[$i]['new_last_update']=($data['new_last_update'])?date("Y-m-d H:i",$data['new_last_update']):"";
+      $all_data[$i]['weight']="";
+      $all_data[$i]['isactive']="";
+      $all_data[$i]['dirname']=$dirname;
+      $all_data[$i]['hasmain']="";
+      $all_data[$i]['hasadmin']="";
+      $all_data[$i]['hassearch']="";
+      $all_data[$i]['hasconfig']="";
+      $all_data[$i]['hascomments']="";
+      $all_data[$i]['hasnotification']="";
+      $all_data[$i]['function']=($kind=="fix")?"update":"install";
+      $all_data[$i]['update_sn']=$data['update_sn'];
+      $all_data[$i]['descript']=$data['module_descript'];
+      $all_data[$i]['module_sn']=$data['module_sn'];
+      $all_data[$i]['file_link']=$data['file_link'];
+      $all_data[$i]['kind']=$data['kind'];
 
-    $i++;
+      $i++;
+    }
   }
 
   if(empty($all_data)){
@@ -216,17 +271,17 @@ function get_tad_modules_info(){
   $all=explode('||',$data);
   foreach($all as $arr_data){
     list($module_title,$dirname,$update_sn,$new_version,$new_status,$new_status_version,$new_last_update,$file_link,$update_descript,$module_sn,$module_descript,$kind)=explode("-+-",$arr_data);
-    $mod[$dirname]['module_title']=$module_title;
-    $mod[$dirname]['update_sn']=$update_sn;
-    $mod[$dirname]['new_version']=$new_version;
-    $mod[$dirname]['new_status']=$new_status;
-    $mod[$dirname]['new_status_version']=$new_status_version;
-    $mod[$dirname]['new_last_update']=$new_last_update;
-    $mod[$dirname]['update_descript']=str_replace("\n", "\\n", $update_descript);
-    $mod[$dirname]['module_sn']=$module_sn;
-    $mod[$dirname]['module_descript']=str_replace("\n", "\\n", $module_descript);
-    $mod[$dirname]['file_link']=$file_link;
-    $mod[$dirname]['kind']=$kind;
+    $mod[$dirname][$kind]['module_title']=$module_title;
+    $mod[$dirname][$kind]['update_sn']=$update_sn;
+    $mod[$dirname][$kind]['new_version']=$new_version;
+    $mod[$dirname][$kind]['new_status']=$new_status;
+    $mod[$dirname][$kind]['new_status_version']=$new_status_version;
+    $mod[$dirname][$kind]['new_last_update']=$new_last_update;
+    $mod[$dirname][$kind]['update_descript']=str_replace("\n", "\\n", $update_descript);
+    $mod[$dirname][$kind]['module_sn']=$module_sn;
+    $mod[$dirname][$kind]['module_descript']=str_replace("\n", "\\n", $module_descript);
+    $mod[$dirname][$kind]['file_link']=$file_link;
+    $mod[$dirname][$kind]['kind']=$kind;
   }
   return $mod;
 }

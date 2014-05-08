@@ -126,6 +126,8 @@
               <span class="label label-info"><{$smarty.const._MA_TADADM_MODULE}></span>
             <{elseif $mod.kind=="theme"}>
               <span class="label label-important"><{$smarty.const._MA_TADADM_THEME}></span>
+            <{elseif $mod.kind=="fix"}>
+              <span class="label label-warning"><{$smarty.const._MA_TADADM_FIX}></span>
             <{/if}>
           </td>
           <td nowrap><a href="http://120.115.2.90/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" target="_blank"><{$mod.name}></a></td>

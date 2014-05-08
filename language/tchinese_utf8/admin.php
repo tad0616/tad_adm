@@ -42,6 +42,7 @@ define("_MA_TADADM_FTP_FAIL", "FTP 連線失敗！（可能該伺服器無FTP服
 define("_MA_TADADM_KIND" , "種類");
 define("_MA_TADADM_MODULE" , "模組");
 define("_MA_TADADM_THEME" , "佈景");
+define("_MA_TADADM_FIX" , "補充");
 define("_MA_TADADM_THEME_UPDATE_OK" , "佈景更新完畢！");
 define("_MA_TADADM_THEME_INSTALL_OK" , "佈景安裝完畢！請將「使用者可選擇的佈景」欄位加入「%s」佈景。");
 define("_MA_TADADM_FTP_NOTE" , "FTP僅適用與安裝新模組，因為權限關係，FTP模式無法覆蓋原有資料夾，故不適用於更新模組。");

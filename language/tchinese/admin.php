@@ -42,6 +42,7 @@ define("_MA_TADADM_FTP_FAIL", "FTP ³s½u¥¢±Ñ¡I¡]¥i¯à¸Ó¦øªA¾¹µLFTPªA°È©Î¥¼±Ò°ÊFTPª
 define("_MA_TADADM_KIND" , "ºØÃþ");
 define("_MA_TADADM_MODULE" , "¼Ò²Õ");
 define("_MA_TADADM_THEME" , "§G´º");
+define("_MA_TADADM_FIX" , "¸É¥R");
 define("_MA_TADADM_THEME_UPDATE_OK" , "§G´º§ó·s§¹²¦¡I");
 define("_MA_TADADM_THEME_INSTALL_OK" , "§G´º¦w¸Ë§¹²¦¡I½Ð±N¡u¨Ï¥ÎªÌ¥i¿ï¾Üªº§G´º¡vÄæ¦ì¥[¤J¡u%s¡v§G´º¡C");
 define("_MA_TADADM_FTP_NOTE" , "FTP¶È¾A¥Î»P¦w¸Ë·s¼Ò²Õ¡A¦]¬°Åv­­Ãö«Y¡AFTP¼Ò¦¡µLªkÂÐ»\­ì¦³¸ê®Æ§¨¡A¬G¤£¾A¥Î©ó§ó·s¼Ò²Õ¡C");
