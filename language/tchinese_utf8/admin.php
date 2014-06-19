@@ -10,9 +10,9 @@ define("_MA_TADADM_PHPINI_ITEM_DESC", "相關說明");
 //main.php
 define("_MA_TADADM_1", '<i class="icon-ok"></i>');
 define("_MA_TADADM_0", "");
-define("_MA_TADADM_MOD_UPDATE_MODULE", "立即升級");
+define("_MA_TADADM_MOD_UPDATE_MODULE", "立即升級到");
 define("_MA_TADADM_MOD_INSTALL_MODULE", "立即安裝");
-define("_MA_TADADM_MOD_UPDATE_THEME", "升級佈景");
+define("_MA_TADADM_MOD_UPDATE_THEME", "升級佈景到");
 define("_MA_TADADM_MOD_INSTALL_THEME", "安裝佈景");
 define("_MA_TADADM_MOD_LATEST", "已是最新");
 define("_MA_TADADM_NO_MODS", "沒有任何模組");
@@ -44,7 +44,7 @@ define("_MA_TADADM_MODULE" , "模組");
 define("_MA_TADADM_THEME" , "佈景");
 define("_MA_TADADM_FIX" , "補充");
 define("_MA_TADADM_THEME_UPDATE_OK" , "佈景更新完畢！");
-define("_MA_TADADM_THEME_INSTALL_OK" , "佈景安裝完畢！請將「使用者可選擇的佈景」欄位加入「%s」佈景。");
+define("_MA_TADADM_THEME_INSTALL_OK" , "「%s」佈景安裝完畢！可至「<a href='".XOOPS_URL."/modules/system/admin.php?fct=preferences&op=show&confcat_id=1'>偏好設定</a>」將之設為預設佈景，或至前台佈景區塊套用之。");
 define("_MA_TADADM_FTP_NOTE" , "FTP僅適用與安裝新模組，因為權限關係，FTP模式無法覆蓋原有資料夾，故不適用於更新模組。");
 
 

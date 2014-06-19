@@ -1,14 +1,14 @@
-<?
+<?php
 class dZip{
 	var $filename;
 	var $overwrite;
-	
+
 	var $zipSignature = "\x50\x4b\x03\x04"; // local file header signature
 	var $dirSignature = "\x50\x4b\x01\x02"; // central dir header signature
 	var $dirSignatureE= "\x50\x4b\x05\x06"; // end of central dir signature
 	var $files_count  = 0;
 	var $fh;
-	
+
 	Function dZip($filename, $overwrite=true){
 		$this->filename  = $filename;
 		$this->overwrite = $overwrite;
@@ -21,7 +21,7 @@ class dZip{
 	Function addFile($filename, $cfilename, $fileComments='', $data=false){
 		if(!($fh = &$this->fh))
 			$fh = fopen($this->filename, $this->overwrite?'wb':'a+b');
-		
+
 		// $filename can be a local file OR the data wich will be compressed
 		if(substr($cfilename, -1)=='/'){
 			$details['uncsize'] = 0;
@@ -39,7 +39,7 @@ class dZip{
 			$details['uncsize'] = strlen($filename);
 			// DATA is given.. use it! :|
 		}
-		
+
 		// if data to compress is too small, just store it
 		if($details['uncsize'] < 256){
 			$details['comsize'] = $details['uncsize'];
@@ -54,10 +54,10 @@ class dZip{
 			$details['vneeded'] = 10;
 			$details['cmethod'] = 8;
 		}
-		
+
 		$details['bitflag'] = 0;
 		$details['crc_32']  = crc32($data);
-		
+
 		// Convert date and time to DOS Format, and set then
 		$lastmod_timeS  = str_pad(decbin(date('s')>=32?date('s')-32:date('s')), 5, '0', STR_PAD_LEFT);
 		$lastmod_timeM  = str_pad(decbin(date('i')), 6, '0', STR_PAD_LEFT);
@@ -65,12 +65,12 @@ class dZip{
 		$lastmod_dateD  = str_pad(decbin(date('d')), 5, '0', STR_PAD_LEFT);
 		$lastmod_dateM  = str_pad(decbin(date('m')), 4, '0', STR_PAD_LEFT);
 		$lastmod_dateY  = str_pad(decbin(date('Y')-1980), 7, '0', STR_PAD_LEFT);
-		
+
 		# echo "ModTime: $lastmod_timeS-$lastmod_timeM-$lastmod_timeH (".date("s H H").")\n";
 		# echo "ModDate: $lastmod_dateD-$lastmod_dateM-$lastmod_dateY (".date("d m Y").")\n";
 		$details['modtime'] = bindec("$lastmod_timeH$lastmod_timeM$lastmod_timeS");
 		$details['moddate'] = bindec("$lastmod_dateY$lastmod_dateM$lastmod_dateD");
-		
+
 		$details['offset'] = ftell($fh);
 		fwrite($fh, $this->zipSignature);
 		fwrite($fh, pack('s', $details['vneeded'])); // version_needed
@@ -86,7 +86,7 @@ class dZip{
 		fwrite($fh, $cfilename);    // file_name
 		// ignoring extra_field
 		fwrite($fh, $zdata);
-		
+
 		// Append it to central dir
 		$details['external_attributes']  = (substr($cfilename, -1)=='/'&&!$zdata)?16:32; // Directory or file name
 		$details['comments']             = $fileComments;
@@ -99,7 +99,7 @@ class dZip{
 	Function save($zipComments=''){
 		if(!($fh = &$this->fh))
 			$fh = fopen($this->filename, $this->overwrite?'w':'a+');
-		
+
 		$cdrec = "";
 		foreach($this->centraldirs as $filename=>$cd){
 			$cdrec .= $this->dirSignature;
@@ -124,21 +124,21 @@ class dZip{
 		}
 		$before_cd = ftell($fh);
 		fwrite($fh, $cdrec);
-		
+
 		// end of central dir
 		fwrite($fh, $this->dirSignatureE);
 		fwrite($fh, pack('v', 0)); // number of this disk
 		fwrite($fh, pack('v', 0)); // number of the disk with the start of the central directory
-		fwrite($fh, pack('v', $this->files_count)); // total # of entries "on this disk" 
-		fwrite($fh, pack('v', $this->files_count)); // total # of entries overall 
-		fwrite($fh, pack('V', strlen($cdrec)));     // size of central dir 
+		fwrite($fh, pack('v', $this->files_count)); // total # of entries "on this disk"
+		fwrite($fh, pack('v', $this->files_count)); // total # of entries overall
+		fwrite($fh, pack('V', strlen($cdrec)));     // size of central dir
 		fwrite($fh, pack('V', $before_cd));         // offset to start of central dir
 		fwrite($fh, pack('v', strlen($zipComments))); // .zip file comment length
 		fwrite($fh, $zipComments);
-		
+
 		fclose($fh);
 	}
-	
+
 	// Private
 	Function appendCentralDir($filename,$properties){
 		$this->centraldirs[$filename] = $properties;
