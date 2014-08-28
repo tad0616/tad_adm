@@ -1,9 +1,9 @@
 <?php
 //列出所有模組
-function list_modules(){
+function list_modules($mode="tpl"){
   global $xoopsDB,$xoopsModuleConfig,$xoopsTpl;
   $mod=get_tad_modules_info();
-  $sql="select * from ".$xoopsDB->prefix("modules")." where isactive='1' order by weight";
+  $sql="select * from ".$xoopsDB->prefix("modules")." where isactive='1' order by hasmain desc, weight";
   $result = $xoopsDB->query($sql) or die($sql."<br>". mysql_error());
 
   $i=0;
@@ -62,9 +62,9 @@ function list_modules(){
 
 
     //補充包部份
-    if(in_array($dirname,$ok['fix'])){
+    if(isset($ok['fix']) and in_array($dirname,$ok['fix'])){
       continue;
-    }elseif($mod[$dirname]['fix']['kind']=="fix"){
+    }elseif(isset($mod[$dirname]['fix']['kind']) and $mod[$dirname]['fix']['kind']=="fix"){
       $ok['fix'][]=$dirname;
     }else{
       continue;
@@ -115,10 +115,10 @@ function list_modules(){
 
   //佈景部份
   foreach($mod as $dirname=>$data){
-    if(in_array($dirname,$ok['theme']))continue;
+    if(isset($ok['theme']) and in_array($dirname,$ok['theme']))continue;
     $Version="";
     //佈景部份
-    if($data['theme']['kind']=="theme"){
+    if(isset($data['theme']['kind']) and $data['theme']['kind']=="theme"){
       $ok['theme'][]=$dirname;
       if(is_dir(XOOPS_ROOT_PATH."/themes/{$dirname}")){
 
@@ -174,7 +174,7 @@ function list_modules(){
         $all_data[$i]['name']=$data['theme']['module_title'];
         $all_data[$i]['version']="";
         $all_data[$i]['new_version']=($data['theme']['new_version'])?$data['theme']['new_version'].$status:"";
-        $last_update=filemtime(XOOPS_ROOT_PATH."/themes/{$dirname}/theme.ini");
+        $last_update=file_exists((XOOPS_ROOT_PATH."/themes/{$dirname}/theme.ini"))?filemtime(XOOPS_ROOT_PATH."/themes/{$dirname}/theme.ini"):"";
         $all_data[$i]['last_update']=empty($last_update)?_MA_TADADM_MOD_UNINSTALL:date("Y-m-d H:i", $last_update);
         $all_data[$i]['new_last_update']=($data['theme']['new_last_update'])?date("Y-m-d H:i",$data['theme']['new_last_update']):"";
         $all_data[$i]['weight']="";
@@ -240,6 +240,9 @@ function list_modules(){
     exit;
   }
 
+  if($mode=="return"){
+    return $all_data;
+  }
   $xoopsTpl->assign('all_data',$all_data);
 }
 
@@ -486,12 +489,14 @@ function install_module($file_link="",$dirname="",$act="install",$update_sn="",$
 
 function module_act($new_file="",$dirname="",$act="install",$kind_dir="modules"){
   global $xoopsConfig;
+
   if(is_file($new_file)){
     require_once XOOPS_ROOT_PATH."/modules/tad_adm/class/dunzip2/dUnzip2.inc.php";
     require_once XOOPS_ROOT_PATH."/modules/tad_adm/class/dunzip2/dZip.inc.php";
     $zip = new dUnzip2($new_file);
     $zip->getList();
     $zip->unzipAll(XOOPS_ROOT_PATH."/{$kind_dir}/");
+    $zip->close($new_file);
     unlink($new_file);
 
     chmod_R(XOOPS_ROOT_PATH."/{$kind_dir}/{$dirname}", 0755, 0755);
@@ -542,6 +547,7 @@ function module_act($new_file="",$dirname="",$act="install",$kind_dir="modules")
         redirect_header($_SERVER['PHP_SELF']."?op=list_all_modules",3, _MA_TADADM_THEME_UPDATE_OK);
       }
     }
+
   }else{
     return false;
   }
@@ -556,6 +562,10 @@ function add_theme_config($theme){
     $sql="update ".$xoopsDB->prefix("config")." set conf_value='{$theme_set_allowed}' where conf_name='theme_set_allowed'";
 
     $xoopsDB->queryF($sql) or die($sql."<br>". mysql_error());
+
+    $sql = "INSERT INTO `".$xoopsDB->prefix("tadtools_setup")."` (`tt_theme` , `tt_use_bootstrap`,`tt_bootstrap_color`) values('{$theme}', '0', 'bootstrap' ) ON DUPLICATE KEY UPDATE `tt_use_bootstrap` = '0',`tt_bootstrap_color`='bootstrap'";
+
+    $xoopsDB->queryF($sql) or redirect_header($_SERVER['PHP_SELF'],3, mysql_error());
   }
 }
 

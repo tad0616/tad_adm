@@ -5,6 +5,7 @@ define("_TAD_NEED_TADTOOLS"," 需要 tadtools 模組，可至<a href='http://www
 //phpini.php
 define("_MA_TADADM_PHPINI_ITEM", "設定項目");
 define("_MA_TADADM_PHPINI_ITEM_VAL", "設定值");
+define("_MA_TADADM_PHPINI_ADV", "建議值");
 define("_MA_TADADM_PHPINI_ITEM_DESC", "相關說明");
 
 //main.php
