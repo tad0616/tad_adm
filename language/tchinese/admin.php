@@ -83,4 +83,5 @@ define("_MA_TADADM_MOD_ADMIN", "模組後台");
 
 define( "_MA_TADADM_MODULES_UPDATING", "更新");
 define( "_MA_TADADM_MODULES_INSTALLING", "安裝");
+define( "_MA_TADADM_MODULES_PHP_INI_PATH", "重要設定");
 ?>

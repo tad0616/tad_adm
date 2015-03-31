@@ -17,6 +17,9 @@ function phpini(){
 
   include_once "../language/{$xoopsConfig['language']}/ini_arr.php";
 
+  $php_ini_path=php_ini_loaded_file ();
+  $xoopsTpl->assign('php_ini_path', $php_ini_path);
+
   $show_ini=array('allow_url_fopen','date.timezone','display_errors','file_uploads','max_execution_time','max_file_uploads','max_input_time','max_input_vars','memory_limit','post_max_size','short_open_tag','upload_max_filesize');
 
   $adv_val=array(
