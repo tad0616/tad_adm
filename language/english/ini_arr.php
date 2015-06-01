@@ -6,25 +6,25 @@ This command is only available
 $ini['engine'] = "PHP parsing engine is enabled.
 <br> Tip: You can host-based virtual directory or to turn on or off PHP parsing engine in httpd.conf.";
 
-$ini['last_modified'] = "is placed in the Last-Modified response header last modified time of the PHP script.";
-$ini['xbithack'] = "What is the end of the file regardless of whether, as the PHP executable bits are set to resolve.";
-$ini['date.default_latitude'] = "Default latitude";
+$ini['last_modified']          = "is placed in the Last-Modified response header last modified time of the PHP script.";
+$ini['xbithack']               = "What is the end of the file regardless of whether, as the PHP executable bits are set to resolve.";
+$ini['date.default_latitude']  = "Default latitude";
 $ini['date.default_longitude'] = "Default longitude";
-$ini['date.sunrise_zenith'] = "default sunrise zenith";
-$ini['date.sunset_zenith'] = "default sunset zenith";
-$ini['date.timezone'] = "TZ environment variable is not set for the default date and time functions for all time zones. Priority
+$ini['date.sunrise_zenith']    = "default sunrise zenith";
+$ini['date.sunset_zenith']     = "default sunset zenith";
+$ini['date.timezone']          = "TZ environment variable is not set for the default date and time functions for all time zones. Priority
 <br> application time zone is:
 <br> 1. time zone setting function with date_default_timezone_set () (If you set it)
 <br> 2. TZ environment variable (if non-empty words)
 <br> 3. the instruction value (if set words)
 <br> 4. PHP own speculation (if the operating system supports)
 <br> 5. If the above are not successful, then use UTC ";
-$ini['assert.active'] = "Whether to enable assert () assert assessments";
-$ini['assert.bail'] = "suspend execution of the script is in the assertion failure occurs when";
-$ini['assert.callback'] = "assertion failure occurred callback executed";
-$ini['assert.quiet_eval'] = "assess whether the use of quiet (do not show any error messages, the equivalent error_reporting = 0).
+$ini['assert.active']          = "Whether to enable assert () assert assessments";
+$ini['assert.bail']            = "suspend execution of the script is in the assertion failure occurs when";
+$ini['assert.callback']        = "assertion failure occurred callback executed";
+$ini['assert.quiet_eval']      = "assess whether the use of quiet (do not show any error messages, the equivalent error_reporting = 0).
 <br> closed in assessing if the assertion expression when using the current value of error_reporting directive. ";
-$ini['assert.warning'] = "Are assertion failures are warned each";
+$ini['assert.warning']         = "Are assertion failures are warned each";
 
 $ini['safe_mode'] = "whether to enable safe mode.
 <br> When open, PHP will check whether the owner of the current script and is operated by the same owner of the file,
@@ -105,10 +105,10 @@ $ini['error_reporting'] = "Error reporting level is superimposed bit field, it i
 
 $ini['track_errors'] = "是否在變數 \$php_errormsg中保存最近一個錯誤或警告消息。";
 
-$ini['display_errors'] = "是否將錯誤信息作為輸出的一部分顯示。
-<br> 在最終發佈的web站點上，強烈建議你關掉這個特性，並使用錯誤日誌代替(參看下面)。
-<br> 在最終發佈的web站點打開這個特性可能暴露一些安全信息，
-<br> 例如你的web服務上的檔案路徑、資料庫規劃或別的信息。";
+$ini['display_errors'] ='This determines whether errors should be printed to the screen as part of the output or if they should be hidden from the user.
+<br> You\'re strongly advised to use error logging in place of error displaying on production web sites,
+<br> otherwise it may expose some security information to hackers,
+<br> such as file path on your web server, database planning or other information.';
 
 $ini['display_startup_errors'] = "是否顯示PHP啟動時的錯誤。
 <br> 即使display_errors指令被打開，關閉此參數也將不顯示PHP啟動時的錯誤。
@@ -123,7 +123,7 @@ $ini['html_errors'] = "是否在出錯信息中使用HTML標記。
 <br> 注意: 不要在發佈的站點上使用這個特性！";
 
 $ini['docref_root'] = "";
-$ini['docref_ext'] = "如果打開了html_errors指令，PHP將會在出錯信息上顯示超連接，
+$ini['docref_ext']  = "如果打開了html_errors指令，PHP將會在出錯信息上顯示超連接，
 <br> 直接鏈接到一個說明這個錯誤或者導致這個錯誤的函數的頁面。
 <br> 你可以從[url]http://www.php.net/docs.php[/url]下載php手冊，
 <br> 並將docref_root指令指向你本地的手冊所在的URL目錄。
@@ -131,9 +131,9 @@ $ini['docref_ext'] = "如果打開了html_errors指令，PHP將會在出錯信�
 <br> 注意: 不要在發佈的站點上使用這個特性。";
 
 $ini['error_prepend_string'] = "用於錯誤信息前輸出的字符串";
-$ini['error_append_string'] = "用於錯誤信息後輸出的字符串";
-$ini['xmlrpc_errors'] = "";
-$ini['xmlrpc_error_number'] = "尚無文檔";
+$ini['error_append_string']  = "用於錯誤信息後輸出的字符串";
+$ini['xmlrpc_errors']        = "";
+$ini['xmlrpc_error_number']  = "尚無文檔";
 
 $ini['define_syslog_variables'] = "是否定義各種系統日誌變數，如：\$LOG_PID, \$LOG_CRON 等等。
 <br> 關掉它以提高效率的好主意。
@@ -175,38 +175,47 @@ $ini['mail.force_extra_parameters'] = "作為額外的參數傳遞給sendmail庫
 
 $ini['default_socket_timeout'] = "預設socket超時(秒)";
 
-$ini['max_execution_time'] = "每個腳本最大允許執行時間(秒)，0 表示沒有限制。
-<br> 這個參數有助於阻止劣質腳本無休止的佔用伺服器資源。
-<br> 該指令僅影響腳本本身的運行時間，任何其它花費在腳本運行之外的時間，
-<br> 如用system()/sleep()函數的使用、資料庫查詢、檔案上傳等，都不包括在內。
-<br> 在安全模式下，你不能用ini_set()在運行時改變這個設置。";
+$ini['max_execution_time'] = 'This sets the maximum time in seconds a script is allowed to run before it is terminated by the parser.
+<br> This helps prevent poorly written scripts from tying up the server.
+<br> The default setting is 30. When running PHP from the command line the default setting is 0.
+<br> The maximum execution time is not affected by system calls, stream operations etc.
+<br> Please see the set_time_limit() function for more details.';
 
-$ini['memory_limit'] = "一個腳本所能夠申請到的最大內存字節數(可以使用K和M作為單位)。
-<br> 這有助於防止劣質腳本消耗完伺服器上的所有內存。
-<br> 要能夠使用該指令必須在編譯時使用「--enable-memory-limit」配置選項。
-<br> 如果要取消內存限制，則必須將其設為 -1 。
-<br> 設置了該指令後，memory_get_usage()函數將變為可用。";
+$ini['memory_limit'] = 'This sets the maximum amount of memory in bytes that a script is allowed to allocate.
+<br> This helps prevent poorly written scripts for eating up all available memory on a server.
+<br> Note that to have no memory limit, set this directive to -1.';
 
-$ini['max_input_time'] = "每個腳本解析輸入數據(POST, GET, upload)的最大允許時間(秒)。
-<br> -1 表示不限制。";
+$ini['max_input_time'] = 'This sets the maximum time in seconds a script is allowed to parse input data, like POST and GET.
+<br> Timing begins at the moment PHP is invoked at the server and ends when execution begins.';
+
+$ini['max_input_vars'] ='How many input variables may be accepted (limit is applied to $_GET, $_POST and $_COOKIE superglobal separately).
+<br> Use of this directive mitigates the possibility of denial of service attacks which use hash collisions.
+<br> If there are more input variables than specified by this directive, an E_WARNING is issued,
+<br> and further input variables are truncated from the request.';
+
+
 
 $ini['max_input_nesting_level'] = "輸入變數的最大嵌套深度(尚無更多解釋文檔)";
 
-$ini['post_max_size'] = "允許的POST數據最大字節長度。此設定也影響到檔案上傳。
-<br> 如果POST數據超出限制，那麼\$_POST和\$_FILES將會為空。
-<br> 要上傳大檔案，該值必須大於upload_max_filesize指令的值。
-<br> 如果啟用了內存限制，那麼該值應當小於memory_limit指令的值。";
+$ini['post_max_size'] = 'Sets max size of post data allowed. This setting also affects file upload.
+<br> To upload large files, this value must be larger than upload_max_filesize.
+<br> If memory limit is enabled by your configure script, memory_limit also affects file uploading.
+<br> Generally speaking, memory_limit should be larger than post_max_size.
+<br> If the size of post data is greater than post_max_size, the $_POST and $_FILES superglobals are empty.';
 
-$ini['realpath_cache_size'] = "指定PHP使用的realpath(規範化的絕對路徑名)緩衝區大小。
+                                                                                                                                                                                                                                                                                                            $ini['realpath_cache_size'] = "指定PHP使用的realpath(規範化的絕對路徑名)緩衝區大小。
 <br> 在PHP打開大量檔案的系統上應當增大該值以提高性能。";
 
 $ini['realpath_cache_ttl'] = "realpath緩衝區中信息的有效期(秒)。
 <br> 對檔案很少變動的系統，可以增大該值以提高性能。";
 
-$ini['file_uploads'] = "是否允許HTTP檔案上傳。
-<br> 參見upload_max_filesize, upload_tmp_dir, post_max_size指令";
+$ini['file_uploads'] = 'Whether or not to allow HTTP file uploads. <br> See also the upload_max_filesize, upload_tmp_dir, and post_max_size directives.';
 
-$ini['upload_max_filesize'] = "允許上傳的檔案的最大尺寸。";
+$ini['max_file_uploads'] = 'The maximum number of files allowed to be uploaded simultaneously.
+<br> Starting with PHP 5.3.4, upload fields left blank on submission do not count towards this limit.';
+
+
+$ini['upload_max_filesize'] = 'The maximum size of an uploaded file.';
 
 $ini['upload_tmp_dir'] = "檔案上傳時存放檔案的臨時目錄(必須是PHP進程用戶可寫的目錄)。
 <br> 如果未指定則PHP使用系統預設的臨時目錄。";
@@ -226,11 +235,10 @@ $ini['magic_quotes_runtime'] = "是否對運行時從外部資源產生的數據
 
 $ini['magic_quotes_sybase'] = "是否採用Sybase形式的自動字符串轉義(用 '' 表示 ')";
 
-$ini['short_open_tag'] = "是否允許使用「&lt;? ?&gt;」短標識。否則必須使用「&lt;?php ?&gt;」長標識。
-<br> 除非你的php程序僅在受控環境下運行，且只供自己使用，否則請不要使用短標記。
-<br> 如果要和XML結合使用PHP，可以選擇關閉此選項以方便直接嵌入「&lt;?xml ... ?&gt;」，
-<br> 不然你必須用PHP來輸出：&lt;? echo '&lt;?xml version=\"1.0\"'; ?&gt;
-<br> 本指令也會影響到縮寫形式「&lt;?=」，它和「&lt;? echo」等價，要使用它也必須打開短標記。";
+$ini['short_open_tag'] = 'Tells PHP whether the short form (&lt;? ?&gt;) of PHP\'s open tag should be allowed.
+<br> If you want to use PHP in combination with XML, you can disable this option in order to use &lt;?xml ?&gt; inline.
+<br> Otherwise, you can print it with PHP, for example: &lt;?php echo \'&lt;?xml version="1.0"?&gt;\'; ?&gt;.
+<br> Also, if disabled, you must use the long form of the PHP open tag (&lt;?php ?&gt;).';
 
 $ini['asp_tags'] = "是否允許ASP風格的標記「&lt;% %&gt;」，這也會影響到縮寫形式「&lt;%=」。
 <br> PHP6中將刪除此指令";
@@ -617,8 +625,8 @@ $ini['apc.file_update_protection'] = "當你在一個運行中的伺服器上修
 $ini['apc.filters'] = "一個以逗號分隔的POSIX擴展正則表達式列表。
 <br> 如果源檔案名與任意一個模式匹配，則該檔案不被緩存。
 <br> 注意，用來匹配的檔案名是傳遞給include/require的檔案名，而不是絕對路徑。
-<br> 如果正則表達式的第一個字符是"+"則意味著任何匹配表達式的檔案會被緩存，
-<br> 如果第一個字符是"-"則任何匹配項都不會被緩存。"-"是預設值，可以省略掉。";
+<br> 如果正則表達式的第一個字符是" + "則意味著任何匹配表達式的檔案會被緩存，
+<br> 如果第一個字符是" - "則任何匹配項都不會被緩存。" - "是預設值，可以省略掉。";
 
 $ini['apc.ttl'] = "緩存條目在緩衝區中允許逗留的秒數。0 表示永不超時。建議值為7200~86400。
 <br> 設為 0 意味著緩衝區有可能被舊的緩存條目填滿，從而導致無法緩存新條目。";
@@ -781,20 +789,20 @@ $ini['mcrypt.algorithms_dir'] = "預設的加密算法模組所在目錄。通�
 $ini['mcrypt.modes_dir'] = "預設的加密模式模組所在目錄。通常是\"/usr/local/lib/libmcrypt\"。
 <br> 目前尚無說明文檔，此處的解釋可能是錯誤的。";
 
-$ini['memcache.allow_failover'] = "是否在遇到錯誤時透明地向其他伺服器進行故障轉移。";
+$ini['memcache.allow_failover'] = 'Whether to transparently failover to other servers on errors.';
 
-$ini['memcache.chunk_size'] = "數據將按照此值設定的塊大小進行轉移。此值越小所需的額外網絡傳輸越多。
-<br> 如果發現無法解釋的速度降低，可以嘗試將此值增加到32768。";
+$ini['memcache.chunk_size'] = 'Data will be transferred in chunks of this size, setting the value lower requires more network writes.
+<br> Try increasing this value to 32768 if noticing otherwise inexplicable slowdowns.';
 
-$ini['memcache.default_port'] = "連接到memcached伺服器時使用的預設TCP端口。";
+$ini['memcache.default_port'] = 'The default TCP port number to use when connecting to the memcached server if no other port is specified.';
 
-$ini['memcache.max_failover_attempts'] = "接受和發送數據時最多嘗試多少個伺服器，進在打開memcache.allow_failover時有效。";
+$ini['memcache.max_failover_attempts'] = 'Defines how many servers to try when setting and getting data. Used only in conjunction with memcache.allow_failover.';
 
-$ini['memcache.hash_strategy'] = "控制將key映射到server的策略。預設值\"standard\"表示使用先前版本的老hash策略。
-<br> 設為\"consistent\"可以允許在連接池中添加/刪除伺服器時不必重新計算key與server之間的映射關係。";
+$ini['memcache.hash_strategy'] = 'Controls which strategy to use when mapping keys to servers.
+<br> Set this value to consistent to enable consistent hashing which allows servers to be added or removed from the pool without causing keys to be remapped.
+<br> Setting this value to standard results in the old strategy being used.';
 
-$ini['memcache.hash_function'] = "控制將key映射到server的散列函數。預設值\"crc32\"使用CRC32算法，而\"fnv\"則表示使用FNV-1a算法。
-<br> FNV-1a比CRC32速度稍低，但是散列效果更好。";
+$ini['memcache.hash_function'] = 'Controls which hash function to apply when mapping keys to servers, crc32 uses the standard CRC32 hash while fnv uses FNV-1a.';
 
 $ini['zlib.output_compression'] = "是否使用zlib庫透明地壓縮腳本輸出結果。
 <br> 該指令的值可以設置為：Off、On、字節數(壓縮緩衝區大小，預設為4096)。
