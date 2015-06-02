@@ -3,7 +3,7 @@ include_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['langua
 
 define('_MI_TADADM_NAME', 'Webmaster Tools');
 define('_MI_TADADM_AUTHOR', 'Tad');
-define('_MI_TADADM_CREDITS', 'Tad');
+define('_MI_TADADM_CREDITS', 'Michael Beck');
 define('_MI_TADADM_DESC', 'This module provides several Webmasters tools');
 define('_MI_TADADM_ADMENU1', 'Module on-demand');
 define('_MI_TADADM_ADMENU3', 'Spam Account');

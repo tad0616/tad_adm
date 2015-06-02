@@ -2,7 +2,7 @@
 include_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/modinfo_common.php";
 define('_MI_TADADM_NAME', '站長工具箱');
 define('_MI_TADADM_AUTHOR', '站長工具箱');
-define('_MI_TADADM_CREDITS', 'tad');
+define('_MI_TADADM_CREDITS', 'Michael Beck');
 define('_MI_TADADM_DESC', '此模組提供一些站長用的工具');
 define('_MI_TADADM_ADMENU1', '模組隨選');
 define('_MI_TADADM_ADMENU3', '清理垃圾帳戶');
