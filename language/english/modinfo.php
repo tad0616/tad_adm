@@ -1,9 +1,4 @@
 <?php
-//  ------------------------------------------------------------------------ //
-// 本模組由 tad 製作
-// 製作日期：2012-11-26
-// $Id:$
-// ------------------------------------------------------------------------- //
 include_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/modinfo_common.php";
 
 define('_MI_TADADM_NAME', 'Webmaster Tools');
@@ -24,10 +19,9 @@ define('_MI_TADADM_MODULE_ID_TEMP_DESC', 'There are currently providing front-en
 define('_MI_TADADM_BLOCK_ID_TEMP', 'Block number staging area');
 define('_MI_TADADM_BLOCK_ID_TEMP_DESC', 'Front-end interface to provide a record of the current block number has started, do not make any changes.');
 
-
 define('_MI_TADADM_DIRNAME', basename(dirname(dirname(__DIR__))));
-define('_MI_TADADM_HELP_HEADER', __DIR__.'/help/helpheader.html');
-define('_MI_TADADM_BACK_2_ADMIN','Back to Administration of ');
+define('_MI_TADADM_HELP_HEADER', __DIR__ . '/help/helpheader.html');
+define('_MI_TADADM_BACK_2_ADMIN', 'Back to Administration of ');
 
 //help
-define('_MI_TADADM_HELP_OVERVIEW','Overview');
+define('_MI_TADADM_HELP_OVERVIEW', 'Overview');

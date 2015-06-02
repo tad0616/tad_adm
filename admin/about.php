@@ -1,6 +1,6 @@
 <?php
 /**
- * Marquee module
+ * TadAdm module
  *
  * You may not change or alter any portion of this comment or credits
  * of supporting developers from this source code or any supporting source code
@@ -11,9 +11,9 @@
  *
  * @copyright    The XOOPS Project http://sourceforge.net/projects/xoops/
  * @license             http://www.fsf.org/copyleft/gpl.html GNU public license
- * @package    Marquee
- * @since        2.5.0
- * @author     Mage, Mamba
+ * @package    TadAdm
+ * @since       2.5.0
+ * @author     Tad
  * @version    $Id $
  **/
 
@@ -22,7 +22,7 @@ include '../../../class/xoopsformloader.php';
 xoops_cp_header();
 include_once XOOPS_ROOT_PATH . "/modules/" . $xoopsModule->getVar("dirname") . "/class/admin.php";
 
-$module_info =& $module_handler->get($xoopsModule->getVar("mid"));
+$module_info = &$module_handler->get($xoopsModule->getVar("mid"));
 
 $module_info = '<div id="about">
 				<label>' . _AM_XDIR_ABOUT_DESCRIPTION . '</label><text>' . $module_info->getInfo("description") . '</text><br />
@@ -43,5 +43,3 @@ echo $about_admin->addNavigation('about.php');
 echo $about_admin->renderabout();
 echo "<div class='center smallsmall italic pad5'><b>" . $xoopsModule->getVar("name") . "</b> is maintained by the <a class='tooltip' rel='external' href='http://www.xoops.org/' title='Visit XOOPS Community'>XOOPS Community</a></div>";
 xoops_cp_footer();
-
-?>
