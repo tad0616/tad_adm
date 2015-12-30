@@ -53,13 +53,13 @@
     <script type="text/javascript">
     $().ready(function(){
       $("#clickAll").click(function() {
-        if($("#clickAll").attr("checked")){
+        if($("#clickAll").prop("checked")){
           $("input[name='uid[]']").each(function() {
-          $(this).attr("checked", true);
+          $(this).prop("checked", true);
         });
       }else{
        $("input[name='uid[]']").each(function() {
-           $(this).attr("checked", false);
+           $(this).prop("checked", false);
        });
       }
       });
