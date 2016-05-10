@@ -29,7 +29,7 @@ function list_user($op = "", $mode = "normal")
     $sql     = $PageBar['sql'];
     $total   = $PageBar['total'];
 
-    $result                = $xoopsDB->query($sql) or die($sql . "<br>" . mysql_error());
+    $result                = $xoopsDB->query($sql) or die($sql . "<br>" . $xoopsDB->error());
     $_SESSION['chk_start'] = time();
     $i                     = 0;
     $all_data              = "";
@@ -142,7 +142,7 @@ function list_spam()
     $sql     = $PageBar['sql'];
     $total   = $PageBar['total'];
 
-    $result = $xoopsDB->query($sql) or die($sql . "<br>" . mysql_error());
+    $result = $xoopsDB->query($sql) or die($sql . "<br>" . $xoopsDB->error());
 
     $all_data = "";
     $i        = 0;
@@ -214,7 +214,7 @@ function replace_tad_adm($uid = '', $email = '', $result = '')
     $sql = "replace into `" . $xoopsDB->prefix("tad_adm") . "`
   (`uid` , `email` , `result` , `chk_date`)
   values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
-    $xoopsDB->queryF($sql) or die($sql . "<br>" . mysql_error());
+    $xoopsDB->queryF($sql) or die($sql . "<br>" . $xoopsDB->error());
 
 }
 
@@ -227,7 +227,7 @@ function get_tad_adm($uid = "")
     }
 
     $sql    = "select * from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$uid}'";
-    $result = $xoopsDB->query($sql) or die($sql . "<br>" . mysql_error());
+    $result = $xoopsDB->query($sql) or die($sql . "<br>" . $xoopsDB->error());
     $data   = $xoopsDB->fetchArray($result);
     return $data;
 }
@@ -241,7 +241,7 @@ function del_user($del_uid)
     }
 
     $sql = "delete from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$del_uid}'";
-    $xoopsDB->queryF($sql) or die($sql . "<br>" . mysql_error());
+    $xoopsDB->queryF($sql) or die($sql . "<br>" . $xoopsDB->error());
 
     $member_handler = &xoops_gethandler('member');
     $user           = &$member_handler->getUser($del_uid);
@@ -296,7 +296,7 @@ switch ($op) {
         }
         break;
 
-    /*---判斷動作請貼在上方---*/
+        /*---判斷動作請貼在上方---*/
 }
 
 /*-----------秀出結果區--------------*/
