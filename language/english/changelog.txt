@@ -1,3 +1,10 @@
+Tad Adm 2.4 official version of the function item (2016-05-16 release)
+==================================================================
+1. thank Michael Beck in English language
+2. Modify the PHP code to conform to specifications PSR2
+3. Compatibility PHP7 correction
+
+
 Tad Adm 2.31 official version of the function item (2015-03-27 release)
 ================================================== ================
 1. Fixed tadtools Failure to update will cause the system error bug

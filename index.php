@@ -411,7 +411,7 @@ preg_match('/[1-9].[0-9].[1-9][0-9]/', $info, $match);
 $gd = $match[0];
 
 //檢查連線
-// $mysql_connect = mysql_connect(XOOPS_DB_HOST, XOOPS_DB_USER, XOOPS_DB_PASS) ? "OK" : _MD_TADADM_CANT_CONNECT;
+$mysql_connect = $xoopsDB ? "OK" : _MD_TADADM_CANT_CONNECT;
 
 $other = "";
 if ($xoopsDB) {
