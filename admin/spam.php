@@ -29,7 +29,7 @@ function list_user($op = "", $mode = "normal")
     $sql     = $PageBar['sql'];
     $total   = $PageBar['total'];
 
-    $result                = $xoopsDB->query($sql) or die($sql . "<br>" . $xoopsDB->error());
+    $result                = $xoopsDB->query($sql) or web_error($sql);
     $_SESSION['chk_start'] = time();
     $i                     = 0;
     $all_data              = "";
@@ -142,7 +142,7 @@ function list_spam()
     $sql     = $PageBar['sql'];
     $total   = $PageBar['total'];
 
-    $result = $xoopsDB->query($sql) or die($sql . "<br>" . $xoopsDB->error());
+    $result = $xoopsDB->query($sql) or web_error($sql);
 
     $all_data = "";
     $i        = 0;
@@ -205,7 +205,7 @@ function replace_tad_adm($uid = '', $email = '', $result = '')
 {
     global $xoopsDB, $xoopsUser;
 
-    $myts   = &MyTextSanitizer::getInstance();
+    $myts   = MyTextSanitizer::getInstance();
     $email  = $myts->addSlashes($email);
     $result = $myts->addSlashes($result);
 
@@ -214,7 +214,7 @@ function replace_tad_adm($uid = '', $email = '', $result = '')
     $sql = "replace into `" . $xoopsDB->prefix("tad_adm") . "`
   (`uid` , `email` , `result` , `chk_date`)
   values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
-    $xoopsDB->queryF($sql) or die($sql . "<br>" . $xoopsDB->error());
+    $xoopsDB->queryF($sql) or web_error($sql);
 
 }
 
@@ -227,7 +227,7 @@ function get_tad_adm($uid = "")
     }
 
     $sql    = "select * from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$uid}'";
-    $result = $xoopsDB->query($sql) or die($sql . "<br>" . $xoopsDB->error());
+    $result = $xoopsDB->query($sql) or web_error($sql);
     $data   = $xoopsDB->fetchArray($result);
     return $data;
 }
@@ -241,9 +241,9 @@ function del_user($del_uid)
     }
 
     $sql = "delete from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$del_uid}'";
-    $xoopsDB->queryF($sql) or die($sql . "<br>" . $xoopsDB->error());
+    $xoopsDB->queryF($sql) or web_error($sql);
 
-    $member_handler = &xoops_gethandler('member');
+    $member_handler = xoops_gethandler('member');
     $user           = &$member_handler->getUser($del_uid);
     if (empty($user)) {
         return;
@@ -255,7 +255,7 @@ function del_user($del_uid)
     } elseif (!$member_handler->deleteUser($user)) {
         redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_DEL_FAIL);
     } else {
-        $online_handler = &xoops_gethandler('online');
+        $online_handler = xoops_gethandler('online');
         $online_handler->destroy($del_uid);
         xoops_notification_deletebyuser($del_uid);
         return;

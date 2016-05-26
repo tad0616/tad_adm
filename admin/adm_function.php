@@ -5,7 +5,7 @@ function list_modules($mode = "tpl")
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
     $mod    = get_tad_modules_info();
     $sql    = "select * from " . $xoopsDB->prefix("modules") . " where isactive='1' order by hasmain desc, weight";
-    $result = $xoopsDB->query($sql) or die($sql . "<br>" . $xoopsDB->error());
+    $result = $xoopsDB->query($sql) or web_error($sql);
 
     $i = 0;
     //模組部份
@@ -135,13 +135,19 @@ function list_modules($mode = "tpl")
                     fclose($handle);
                 }
 
-                $status                          = ($data['theme']['new_status_version']) ? " {$data['theme']['new_status']}{$data['theme']['new_status_version']}" : "";
-                $all_data[$i]['mid']             = "";
-                $all_data[$i]['name']            = $data['theme']['module_title'];
-                $all_data[$i]['version']         = $Version;
-                $all_data[$i]['new_version']     = ($data['theme']['new_version']) ? $data['theme']['new_version'] . $status : "";
-                $last_update                     = filemtime(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini");
-                $all_data[$i]['last_update']     = date("Y-m-d H:i", $last_update);
+                $status                      = ($data['theme']['new_status_version']) ? " {$data['theme']['new_status']}{$data['theme']['new_status_version']}" : "";
+                $all_data[$i]['mid']         = "";
+                $all_data[$i]['name']        = $data['theme']['module_title'];
+                $all_data[$i]['version']     = $Version;
+                $all_data[$i]['new_version'] = ($data['theme']['new_version']) ? $data['theme']['new_version'] . $status : "";
+
+                if (file_exists(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini")) {
+                    $last_update = filemtime(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini");
+                } else {
+                    $last_update = $data['theme']['new_last_update'];
+                }
+                $all_data[$i]['last_update'] = date("Y-m-d H:i", $last_update);
+
                 $all_data[$i]['new_last_update'] = ($data['theme']['new_last_update']) ? date("Y-m-d H:i", $data['theme']['new_last_update']) : "";
                 $all_data[$i]['weight']          = "";
                 $all_data[$i]['isactive']        = "";
@@ -211,7 +217,7 @@ function list_modules($mode = "tpl")
                 continue;
             }
 
-            if (in_array($dirname, $ok['fix']) and $kind == "fix") {
+            if (isset($ok['fix']) and in_array($dirname, $ok['fix']) and $kind == "fix") {
                 continue;
             }
 
@@ -552,8 +558,7 @@ function module_act($new_file = "", $dirname = "", $act = "install", $kind_dir =
             $mod_name = constant($modversion['name']);
 
             $main = "
-      <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/bootstrap/css/bootstrap.css' />
-      <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/bootstrap/css/bootstrap-responsive.css' />
+      <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/bootstrap3/css/bootstrap.css' />
       <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/css/xoops_adm.css' />
       <div class='well'>
         <form action='" . XOOPS_URL . "/modules/system/admin.php' method='post' style='text-align:center'>
@@ -591,7 +596,7 @@ function add_theme_config($theme)
         $theme_set_allowed                  = serialize($xoopsConfig['theme_set_allowed']);
         $sql                                = "update " . $xoopsDB->prefix("config") . " set conf_value='{$theme_set_allowed}' where conf_name='theme_set_allowed'";
 
-        $xoopsDB->queryF($sql) or die($sql . "<br>" . $xoopsDB->error());
+        $xoopsDB->queryF($sql) or web_error($sql);
 
         $sql = "INSERT INTO `" . $xoopsDB->prefix("tadtools_setup") . "` (`tt_theme` , `tt_use_bootstrap`,`tt_bootstrap_color`) values('{$theme}', '0', 'bootstrap' ) ON DUPLICATE KEY UPDATE `tt_use_bootstrap` = '0',`tt_bootstrap_color`='bootstrap'";
 
