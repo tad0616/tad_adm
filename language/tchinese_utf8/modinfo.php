@@ -17,6 +17,8 @@ define('_MI_TADADM_MODULE_ID_TEMP', '模組編號暫存區');
 define('_MI_TADADM_MODULE_ID_TEMP_DESC', '提供前端界面紀錄目前有啟動的模組編號，請勿做任何修改');
 define('_MI_TADADM_BLOCK_ID_TEMP', '區塊編號暫存區');
 define('_MI_TADADM_BLOCK_ID_TEMP_DESC', '提供前端界面紀錄目前有啟動的區塊編號，請勿做任何修改');
+define('_MI_TADADM_SSH_PORT', '設定 SSH 的連線 port');
+define('_MI_TADADM_SSH_PORT_DESC', '請根據網站主機使用的SSH port來設定');
 
 define('_MI_TADADM_DIRNAME', basename(dirname(dirname(__DIR__))));
 define('_MI_TADADM_HELP_HEADER', __DIR__ . '/help/helpheader.html');

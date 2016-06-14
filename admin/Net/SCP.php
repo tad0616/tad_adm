@@ -30,10 +30,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -61,7 +61,7 @@ define('NET_SCP_LOCAL_FILE', 1);
 /**
  * Reads data from a string.
  */
-define('NET_SCP_STRING',  2);
+define('NET_SCP_STRING', 2);
 /**#@-*/
 
 /**#@+
@@ -76,7 +76,7 @@ define('NET_SCP_SSH1', 1);
 /**
  * SSH2 is being used.
  */
-define('NET_SCP_SSH2',  2);
+define('NET_SCP_SSH2', 2);
 /**#@-*/
 
 /**
@@ -87,14 +87,15 @@ define('NET_SCP_SSH2',  2);
  * @access  public
  * @package Net_SCP
  */
-class Net_SCP {
+class Net_SCP
+{
     /**
      * SSH Object
      *
      * @var Object
      * @access private
      */
-    var $ssh;
+    public $ssh;
 
     /**
      * Packet Size
@@ -102,7 +103,7 @@ class Net_SCP {
      * @var Integer
      * @access private
      */
-    var $packet_size;
+    public $packet_size;
 
     /**
      * Mode
@@ -110,7 +111,7 @@ class Net_SCP {
      * @var Integer
      * @access private
      */
-    var $mode;
+    public $mode;
 
     /**
      * Default Constructor.
@@ -123,19 +124,19 @@ class Net_SCP {
      * @return Net_SCP
      * @access public
      */
-    function Net_SCP($ssh)
+    public function __construct($ssh)
     {
         if (!is_object($ssh)) {
             return;
         }
 
         switch (strtolower(get_class($ssh))) {
-            case'net_ssh2':
+            case 'net_ssh2':
                 $this->mode = NET_SCP_SSH2;
                 break;
             case 'net_ssh1':
                 $this->packet_size = 50000;
-                $this->mode = NET_SCP_SSH1;
+                $this->mode        = NET_SCP_SSH1;
                 break;
             default:
                 return;
@@ -151,7 +152,7 @@ class Net_SCP {
      * So, for example, if you set $data to 'filename.ext' and then do Net_SCP::get(), you will get a file, twelve bytes
      * long, containing 'filename.ext' as its contents.
      *
-     * Setting $mode to NET_SFTP_LOCAL_FILE will change the above behavior.  With NET_SFTP_LOCAL_FILE, $remote_file will 
+     * Setting $mode to NET_SFTP_LOCAL_FILE will change the above behavior.  With NET_SFTP_LOCAL_FILE, $remote_file will
      * contain as many bytes as filename.ext does on your local filesystem.  If your filename.ext is 1MB then that is how
      * large $remote_file will be, as well.
      *
@@ -164,7 +165,7 @@ class Net_SCP {
      * @return Boolean
      * @access public
      */
-    function put($remote_file, $data, $mode = NET_SCP_STRING)
+    public function put($remote_file, $data, $mode = NET_SCP_STRING)
     {
         if (!isset($this->ssh)) {
             return false;
@@ -204,7 +205,7 @@ class Net_SCP {
             for ($i = 0; $i < $size; $i += $this->packet_size) {
                 $this->_send(fgets($fp, $this->packet_size));
             }
-            fclose($fp);	
+            fclose($fp);
         }
         $this->_close();
     }
@@ -221,7 +222,7 @@ class Net_SCP {
      * @return Mixed
      * @access public
      */
-    function get($remote_file, $local_file = false)
+    public function get($remote_file, $local_file = false)
     {
         if (!isset($this->ssh)) {
             return false;
@@ -250,10 +251,10 @@ class Net_SCP {
         while ($size < $info['size']) {
             $data = $this->_receive();
             // SCP usually seems to split stuff out into 16k chunks
-            $size+= strlen($data);
+            $size += strlen($data);
 
             if ($local_file === false) {
-                $content.= $data;
+                $content .= $data;
             } else {
                 fputs($fp, $data);
             }
@@ -275,7 +276,7 @@ class Net_SCP {
      * @param String $data
      * @access private
      */
-    function _send($data)
+    public function _send($data)
     {
         switch ($this->mode) {
             case NET_SCP_SSH2:
@@ -284,7 +285,7 @@ class Net_SCP {
             case NET_SCP_SSH1:
                 $data = pack('CNa*', NET_SSH1_CMSG_STDIN_DATA, strlen($data), $data);
                 $this->ssh->_send_binary_packet($data);
-         }
+        }
     }
 
     /**
@@ -293,7 +294,7 @@ class Net_SCP {
      * @return String
      * @access private
      */
-    function _receive()
+    public function _receive()
     {
         switch ($this->mode) {
             case NET_SCP_SSH2:
@@ -320,7 +321,7 @@ class Net_SCP {
                             return false;
                     }
                 }
-         }
+        }
     }
 
     /**
@@ -328,7 +329,7 @@ class Net_SCP {
      *
      * @access private
      */
-    function _close()
+    public function _close()
     {
         switch ($this->mode) {
             case NET_SCP_SSH2:
@@ -336,6 +337,6 @@ class Net_SCP {
                 break;
             case NET_SCP_SSH1:
                 $this->ssh->disconnect();
-         }
+        }
     }
 }

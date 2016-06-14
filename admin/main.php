@@ -1,6 +1,6 @@
 <?php
 /*-----------引入檔案區--------------*/
-$xoopsOption['template_main'] = "tad_adm_adm_main.html";
+$xoopsOption['template_main'] = "tad_adm_adm_main.tpl";
 include_once "header.php";
 include_once "../function.php";
 require "adm_function.php";
@@ -50,8 +50,10 @@ switch ($op) {
     default:
         list_modules();
         break;
-    /*---判斷動作請貼在上方---*/
+        /*---判斷動作請貼在上方---*/
 }
 
 /*-----------秀出結果區--------------*/
+$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/bootstrap3/css/bootstrap.css');
+$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/css/xoops_adm3.css');
 include_once 'footer.php';

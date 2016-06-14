@@ -18,6 +18,8 @@ define('_MI_TADADM_MODULE_ID_TEMP', 'Module ID staging area');
 define('_MI_TADADM_MODULE_ID_TEMP_DESC', 'There are currently providing front-end interface to start a record number of modules, do not make any changes.');
 define('_MI_TADADM_BLOCK_ID_TEMP', 'Block number staging area');
 define('_MI_TADADM_BLOCK_ID_TEMP_DESC', 'Front-end interface to provide a record of the current block number has started, do not make any changes.');
+define('_MI_TADADM_SSH_PORT', 'SSH port');
+define('_MI_TADADM_SSH_PORT_DESC', 'Setup SSH port');
 
 define('_MI_TADADM_DIRNAME', basename(dirname(dirname(__DIR__))));
 define('_MI_TADADM_HELP_HEADER', __DIR__ . '/help/helpheader.html');

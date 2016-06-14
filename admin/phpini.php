@@ -1,6 +1,6 @@
 <?php
 /*-----------引入檔案區--------------*/
-$xoopsOption['template_main'] = "tad_adm_adm_phpini.html";
+$xoopsOption['template_main'] = "tad_adm_adm_phpini.tpl";
 include_once "header.php";
 include_once "../function.php";
 
@@ -15,21 +15,20 @@ function phpini()
     $php_ini_path = php_ini_loaded_file();
     $xoopsTpl->assign('php_ini_path', $php_ini_path);
 
-    $show_ini = array('allow_url_fopen', 'date.timezone', 'display_errors', 'file_uploads', 'max_execution_time', 'max_file_uploads', 'max_input_time', 'max_input_vars', 'memory_limit', 'post_max_size', 'short_open_tag', 'upload_max_filesize');
+    $show_ini = array('allow_url_fopen', 'date.timezone', 'display_errors', 'file_uploads', 'max_execution_time', 'max_file_uploads', 'max_input_time', 'max_input_vars', 'memory_limit', 'post_max_size', 'upload_max_filesize');
 
     $adv_val = array(
-        'allow_url_fopen'     => '1',
-        'date.timezone'       => 'Asia/Taipei',
-        'display_errors'      => '1',
-        'file_uploads'        => '1',
-        'max_execution_time'  => '150',
-        'max_file_uploads'    => '300',
-        'max_input_time'      => '120',
-        'max_input_vars'      => '5000',
-        'memory_limit'        => '240M',
-        'post_max_size'       => '220M',
-        'short_open_tag'      => '1',
-        'upload_max_filesize' => '200M',
+        'max_execution_time'  => '150', //380
+        'max_input_time'      => '120', //390
+        'max_input_vars'      => '5000', //397
+        'memory_limit'        => '240M', //401
+        'display_errors'      => '1', //474
+        'post_max_size'       => '220M', //668
+        'file_uploads'        => '1', //810
+        'upload_max_filesize' => '200M', //821
+        'max_file_uploads'    => '300', //824
+        'allow_url_fopen'     => '1', //832
+        'date.timezone'       => 'Asia/Taipei', //940
     );
 
     $allini = ini_get_all();
@@ -75,8 +74,10 @@ switch ($op) {
         $main = phpini($op);
         break;
 
-    /*---判斷動作請貼在上方---*/
+        /*---判斷動作請貼在上方---*/
 }
 
 /*-----------秀出結果區--------------*/
+$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/bootstrap3/css/bootstrap.css');
+$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/css/xoops_adm3.css');
 include_once 'footer.php';

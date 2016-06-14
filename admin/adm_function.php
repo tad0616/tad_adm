@@ -300,10 +300,11 @@ function get_tad_modules_info()
 //登入SSH
 function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = "", $dirname = "", $act = "", $update_sn = "", $kind_dir = "modules")
 {
+    global $xoopsModuleConfig;
 
     include XOOPS_ROOT_PATH . '/modules/tad_adm/admin/Net/SSH2.php';
 
-    $ssh = new Net_SSH2($ssh_host);
+    $ssh = new Net_SSH2($ssh_host, $xoopsModuleConfig['ssh_port']);
     if (!$ssh->login($ssh_id, $ssh_passwd)) {
         redirect_header("main.php?op={$act}_module&dirname=$dirname&file_link=$file_link", 3, sprintf(_MA_TADADM_SSH_LOGIN_FAIL, $ssh_id, $ssh_host));
     } else {

@@ -3,7 +3,7 @@ $modversion = array();
 
 //---模組基本資訊---//
 $modversion['name']        = _MI_TADADM_NAME;
-$modversion['version']     = '2.51';
+$modversion['version']     = '2.54';
 $modversion['description'] = _MI_TADADM_DESC;
 $modversion['author']      = _MI_TADADM_AUTHOR;
 $modversion['credits']     = _MI_TADADM_CREDITS;
@@ -14,7 +14,7 @@ $modversion['image']       = "images/logo_{$xoopsConfig['language']}.png";
 $modversion['dirname']     = basename(dirname(__FILE__));
 
 //---模組狀態資訊---//
-$modversion['release_date']        = '2016/05/26';
+$modversion['release_date']        = '2016/06/05';
 $modversion['module_website_url']  = 'http://tad0616.net/';
 $modversion['module_website_name'] = _MI_TAD_WEB;
 $modversion['module_status']       = 'release';
@@ -86,6 +86,14 @@ $modversion['config'][$i]['formtype']    = 'textarea';
 $modversion['config'][$i]['valuetype']   = 'text';
 $modversion['config'][$i]['default']     = '';
 
+$i++;
+$modversion['config'][$i]['name']        = 'ssh_port';
+$modversion['config'][$i]['title']       = '_MI_TADADM_SSH_PORT';
+$modversion['config'][$i]['description'] = '_MI_TADADM_SSH_PORT_DESC';
+$modversion['config'][$i]['formtype']    = 'textbox';
+$modversion['config'][$i]['valuetype']   = 'int';
+$modversion['config'][$i]['default']     = '22';
+
 //---搜尋---//
 //$modversion['hasSearch'] = 1;
 //$modversion['search']['file'] = "include/search.php";
@@ -98,23 +106,23 @@ $modversion['blocks'][$i]['file']        = 'tad_adm_new.php';
 $modversion['blocks'][$i]['name']        = _MI_TADADM_BNAME1;
 $modversion['blocks'][$i]['description'] = _MI_TADADM_BDESC1;
 $modversion['blocks'][$i]['show_func']   = 'tad_adm_new';
-$modversion['blocks'][$i]['template']    = 'tad_adm_new.html';
+$modversion['blocks'][$i]['template']    = 'tad_adm_new.tpl';
 $modversion['blocks'][$i]['edit_func']   = "tad_adm_new_edit";
 $modversion['blocks'][$i]['options']     = "10";
 
 //---樣板設定---//
 $modversion['templates']                    = array();
 $i                                          = 1;
-$modversion['templates'][$i]['file']        = 'tad_adm_adm_main_b3.html';
-$modversion['templates'][$i]['description'] = 'tad_adm_adm_main_b3.html';
+$modversion['templates'][$i]['file']        = 'tad_adm_adm_main.tpl';
+$modversion['templates'][$i]['description'] = 'tad_adm_adm_main.tpl';
 
 $i++;
-$modversion['templates'][$i]['file']        = 'tad_adm_adm_spam_b3.html';
-$modversion['templates'][$i]['description'] = 'tad_adm_adm_spam_b3.html';
+$modversion['templates'][$i]['file']        = 'tad_adm_adm_spam.tpl';
+$modversion['templates'][$i]['description'] = 'tad_adm_adm_spam.tpl';
 
 $i++;
-$modversion['templates'][$i]['file']        = 'tad_adm_adm_phpini_b3.html';
-$modversion['templates'][$i]['description'] = 'tad_adm_adm_phpini_b3.html';
+$modversion['templates'][$i]['file']        = 'tad_adm_adm_phpini.tpl';
+$modversion['templates'][$i]['description'] = 'tad_adm_adm_phpini.tpl';
 
 //---評論---//
 //$modversion['hasComments'] = 1;
