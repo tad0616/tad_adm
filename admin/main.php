@@ -7,19 +7,34 @@ require "adm_function.php";
 
 /*-----------function區--------------*/
 
+if (file_exists(XOOPS_ROOT_PATH . "/modules/tadtools/FooTable.php")) {
+    include_once XOOPS_ROOT_PATH . "/modules/tadtools/FooTable.php";
+
+    $FooTable = new FooTable();
+    $FooTable->render();
+}
+
+if (!file_exists(XOOPS_ROOT_PATH . "/modules/tadtools/fancybox.php")) {
+    redirect_header("index.php", 3, _MA_NEED_TADTOOLS);
+}
+include_once XOOPS_ROOT_PATH . "/modules/tadtools/fancybox.php";
+$fancybox = new fancybox('.modulesadmin', '640', '480');
+$fancybox->render(true);
+
 /*-----------執行動作判斷區----------*/
-$op         = empty($_REQUEST['op']) ? "" : $_REQUEST['op'];
-$update_sn  = empty($_REQUEST['update_sn']) ? "" : intval($_REQUEST['update_sn']);
-$file_link  = empty($_REQUEST['file_link']) ? "" : $_REQUEST['file_link'];
-$dirname    = empty($_REQUEST['dirname']) ? "" : $_REQUEST['dirname'];
-$act        = empty($_REQUEST['act']) ? "" : $_REQUEST['act'];
-$kind_dir   = empty($_REQUEST['kind_dir']) ? "" : $_REQUEST['kind_dir'];
-$ssh_id     = empty($_POST['ssh_id']) ? "" : $_POST['ssh_id'];
-$ssh_passwd = empty($_POST['ssh_passwd']) ? "" : $_POST['ssh_passwd'];
-$ssh_host   = empty($_POST['ssh_host']) ? "" : $_POST['ssh_host'];
-$ftp_id     = empty($_POST['ftp_id']) ? "" : $_POST['ftp_id'];
-$ftp_passwd = empty($_POST['ftp_passwd']) ? "" : $_POST['ftp_passwd'];
-$ftp_host   = empty($_POST['ftp_host']) ? "" : $_POST['ftp_host'];
+include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+$op         = system_CleanVars($_REQUEST, 'op', '', 'string');
+$update_sn  = system_CleanVars($_REQUEST, 'update_sn', 0, 'int');
+$file_link  = system_CleanVars($_REQUEST, 'file_link', '', 'string');
+$dirname    = system_CleanVars($_REQUEST, 'dirname', '', 'string');
+$act        = system_CleanVars($_REQUEST, 'act', '', 'string');
+$kind_dir   = system_CleanVars($_REQUEST, 'kind_dir', '', 'string');
+$ssh_id     = system_CleanVars($_REQUEST, 'ssh_id', '', 'string');
+$ssh_passwd = system_CleanVars($_REQUEST, 'ssh_passwd', '', 'string');
+$ssh_host   = system_CleanVars($_REQUEST, 'ssh_host', '', 'string');
+$ftp_id     = system_CleanVars($_REQUEST, 'ftp_id', '', 'string');
+$ftp_passwd = system_CleanVars($_REQUEST, 'ftp_passwd', '', 'string');
+$ftp_host   = system_CleanVars($_REQUEST, 'ftp_host', '', 'string');
 
 switch ($op) {
     /*---判斷動作請貼在下方---*/

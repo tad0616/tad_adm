@@ -272,9 +272,10 @@ function del_all_user($uid_arr = array())
     }
 }
 /*-----------執行動作判斷區----------*/
-$op   = empty($_REQUEST['op']) ? "" : $_REQUEST['op'];
-$g2p  = empty($_REQUEST['g2p']) ? 1 : $_REQUEST['g2p'];
-$mode = empty($_REQUEST['mode']) ? "" : $_REQUEST['mode'];
+include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+$op   = system_CleanVars($_REQUEST, 'op', '', 'string');
+$g2p  = system_CleanVars($_REQUEST, 'g2p', 0, 'int');
+$mode = system_CleanVars($_REQUEST, 'mode', '', 'string');
 
 switch ($op) {
     /*---判斷動作請貼在下方---*/

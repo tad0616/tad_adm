@@ -3,7 +3,7 @@ $modversion = array();
 
 //---模組基本資訊---//
 $modversion['name']        = _MI_TADADM_NAME;
-$modversion['version']     = '2.54';
+$modversion['version']     = '2.55';
 $modversion['description'] = _MI_TADADM_DESC;
 $modversion['author']      = _MI_TADADM_AUTHOR;
 $modversion['credits']     = _MI_TADADM_CREDITS;
@@ -14,7 +14,7 @@ $modversion['image']       = "images/logo_{$xoopsConfig['language']}.png";
 $modversion['dirname']     = basename(dirname(__FILE__));
 
 //---模組狀態資訊---//
-$modversion['release_date']        = '2016/06/05';
+$modversion['release_date']        = '2016/06/16';
 $modversion['module_website_url']  = 'http://tad0616.net/';
 $modversion['module_website_name'] = _MI_TAD_WEB;
 $modversion['module_status']       = 'release';
@@ -124,10 +124,6 @@ $i++;
 $modversion['templates'][$i]['file']        = 'tad_adm_adm_phpini.tpl';
 $modversion['templates'][$i]['description'] = 'tad_adm_adm_phpini.tpl';
 
-//---評論---//
-//$modversion['hasComments'] = 1;
-//$modversion['comments']['pageName'] = '單一頁面.php';
-//$modversion['comments']['itemName'] = '主編號';
-
-//---通知---//
-//$modversion['hasNotification'] = 1;
+$i++;
+$modversion['templates'][$i]['file']        = 'tad_adm_adm_backup.tpl';
+$modversion['templates'][$i]['description'] = 'tad_adm_adm_backup.tpl';

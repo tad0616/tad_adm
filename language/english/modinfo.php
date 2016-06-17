@@ -8,6 +8,7 @@ define('_MI_TADADM_DESC', 'This module provides several Webmasters tools');
 define('_MI_TADADM_ADMENU1', 'Module on-demand');
 define('_MI_TADADM_ADMENU3', 'Spam Account');
 define('_MI_TADADM_ADMENU2', 'Host Environment');
+define('_MI_TADADM_ADMENU4', 'Backup');
 define('_MI_TADADM_BNAME1', 'New Spam Accounts');
 define('_MI_TADADM_BDESC1', 'Block new Spam accounts');
 define('_MI_TADADM_LIST_AMOUNT', 'Number of Accounts displayed per page');

@@ -75,46 +75,27 @@
       </div>
     </div>
   <{elseif $all_data}>
-    <script type="text/javascript" src="<{$xoops_url}>/modules/tadtools/fancyBox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
-    <script type="text/javascript" language="javascript" src="<{$xoops_url}>/modules/tadtools/fancyBox/source/jquery.fancybox.js?v=2.1.4"></script>
-    <link rel="stylesheet" href="<{$xoops_url}>/modules/tadtools/fancyBox/source/jquery.fancybox.css?v=2.1.4" type="text/css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="<{$xoops_url}>/modules/tadtools/fancyBox/source/helpers/jquery.fancybox-buttons.css?v=1.0.5" />
-    <script type="text/javascript" src="<{$xoops_url}>/modules/tadtools/fancyBox/source/helpers/jquery.fancybox-buttons.js?v=1.0.5"></script>
-    <link rel="stylesheet" type="text/css" href="<{$xoops_url}>/modules/tadtools/fancyBox/source/helpers/jquery.fancybox-thumbs.css?v=1.0.7" />
-    <script type="text/javascript" src="<{$xoops_url}>/modules/tadtools/fancyBox/source/helpers/jquery.fancybox-thumbs.js?v=1.0.7"></script>
-    <script type="text/javascript" src="<{$xoops_url}>/modules/tadtools/fancyBox/source/helpers/jquery.fancybox-media.js?v=1.0.5"></script>
-
-    <script type="text/javascript">
-    $(document).ready(function(){
-      $(".modulesadmin").fancybox({
-        fitToView : true,
-        width   : '640px',
-        height    : '400px',
-        autoSize  : true,
-        closeClick  : false,
-        openEffect  : 'none',
-        closeEffect : 'none',
-        afterClose  :function () {
-          window.location.reload();
-        }
-      });
-    });
-    </script>
-
-
-    <table class="table table-striped table-bordered table-hover">
-      <tr>
-      <th nowrap><{$smarty.const._MA_TADADM_KIND}></th>
-      <th nowrap><{$smarty.const._MA_TADADM_MOD_NAME}></th>
-      <th nowrap><{$smarty.const._TAD_FUNCTION}></th>
-      <th><{$smarty.const._MA_TADADM_MOD_UPDATE_DESC}></th>
-      <th nowrap><{$smarty.const._MA_TADADM_MOD_DIRNAME}></th>
-      <th nowrap><{$smarty.const._MA_TADADM_MOD_FUNCTION}></th>
-      <th nowrap><{$smarty.const._MA_TADADM_MOD_VERSION}></th>
-      <th nowrap><{$smarty.const._MA_TADADM_MOD_LAST_UPDATE}></th>
-      <th nowrap><{$smarty.const._MA_TADADM_MOD_NEW_VERSION}></th>
-      <th nowrap><{$smarty.const._MA_TADADM_MOD_NEW_LAST_UPDATE}></th>
-      </tr>
+    <style type="text/css" media="screen">
+      .footable th{
+        color: #000;
+      }
+    </style>
+    <table class="footable">
+      <thead>
+        <tr>
+          <th nowrap><{$smarty.const._MA_TADADM_KIND}></th>
+          <th data-class="expand"><{$smarty.const._MA_TADADM_MOD_NAME}></th>
+          <th nowrap><{$smarty.const._TAD_FUNCTION}></th>
+          <th nowrap data-hide="phone"><{$smarty.const._MA_TADADM_MOD_UPDATE_DESC}></th>
+          <th nowrap data-hide="phone"><{$smarty.const._MA_TADADM_MOD_DIRNAME}></th>
+          <th nowrap data-hide="phone"><{$smarty.const._MA_TADADM_MOD_FUNCTION}></th>
+          <th nowrap data-hide="phone,tablet"><{$smarty.const._MA_TADADM_MOD_VERSION}></th>
+          <th nowrap data-hide="phone,tablet"><{$smarty.const._MA_TADADM_MOD_LAST_UPDATE}></th>
+          <th nowrap data-hide="phone,tablet"><{$smarty.const._MA_TADADM_MOD_NEW_VERSION}></th>
+          <th nowrap data-hide="phone,tablet"><{$smarty.const._MA_TADADM_MOD_NEW_LAST_UPDATE}></th>
+        </tr>
+      </thead>
+      <tbody>
         <{foreach from=$all_data item=mod}>
           <tr>
             <td nowrap>
@@ -126,7 +107,7 @@
                 <span class="label label-warning"><{$smarty.const._MA_TADADM_FIX}></span>
               <{/if}>
             </td>
-            <td nowrap><a href="http://120.115.2.90/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" target="_blank"><{$mod.name}></a></td>
+            <td><a href="http://120.115.2.90/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" target="_blank"><{$mod.name}></a></td>
             <td nowrap style="text-align:center;">
               <{if $mod.function=='install'}>
                 <a href="main.php?op=install_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" class="btn btn-xs btn-primary modulesadmin" data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_INSTALL_MODULE}></a>
@@ -168,6 +149,7 @@
             <td nowrap><{$mod.new_last_update}></td>
           </tr>
         <{/foreach}>
-      </table>
+      </tbody>
+    </table>
   <{/if}>
 </div>

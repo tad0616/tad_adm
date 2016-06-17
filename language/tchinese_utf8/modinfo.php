@@ -7,6 +7,7 @@ define('_MI_TADADM_DESC', '此模組提供一些站長用的工具');
 define('_MI_TADADM_ADMENU1', '模組隨選');
 define('_MI_TADADM_ADMENU3', '清理垃圾帳戶');
 define('_MI_TADADM_ADMENU2', '主機環境');
+define('_MI_TADADM_ADMENU4', '備份');
 define('_MI_TADADM_BNAME1', '新的垃圾帳戶');
 define('_MI_TADADM_BDESC1', '新的垃圾帳戶區塊');
 define('_MI_TADADM_LIST_AMOUNT', '每頁顯示的帳號數');

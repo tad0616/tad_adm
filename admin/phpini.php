@@ -64,14 +64,15 @@ function phpini()
 }
 
 /*-----------執行動作判斷區----------*/
-$op  = empty($_REQUEST['op']) ? "" : $_REQUEST['op'];
-$g2p = empty($_REQUEST['g2p']) ? 1 : $_REQUEST['g2p'];
+include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+$op  = system_CleanVars($_REQUEST, 'op', '', 'string');
+$g2p = system_CleanVars($_REQUEST, 'g2p', 0, 'int');
 
 switch ($op) {
     /*---判斷動作請貼在下方---*/
 
     default:
-        $main = phpini($op);
+        phpini($op);
         break;
 
         /*---判斷動作請貼在上方---*/

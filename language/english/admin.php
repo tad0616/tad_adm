@@ -83,3 +83,5 @@ define('_MA_TADADM_MOD_ADMIN', 'Module Admin');
 define('_MA_TADADM_MODULES_UPDATING', 'Updating');
 define('_MA_TADADM_MODULES_INSTALLING', 'Installing');
 define('_MA_TADADM_MODULES_PHP_INI_PATH', 'Important Values');
+define('_MA_TADADM_FREE_SPACE', 'HD free space:');
+define('_MA_TADADM_DOWNLOAD_ZIP', 'Download backup zip');
