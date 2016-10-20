@@ -57,8 +57,8 @@ define('_MA_TADADM_AUTO_CHECK_DESC', '（使用一次即可，第一次用來清
 define('_MA_TADADM_AUTO_CHECK_DESC1', '檢查時會連至 <a href="http://www.stopforumspam.com" target="_blank">http://www.stopforumspam.com</a> 檢查該帳號的 Email 是否為登記有案的垃圾帳號，故第一次速度會比較慢。');
 define('_MA_TADADM_AUTO_CHECK_DESC2', '檢查後就會將結果存入資料庫，所以，第二次瀏覽帳號就會變快了。');
 define('_MA_TADADM_AUTO_CHECK_DESC3', '<span style="color:red">紅色代表這是登記有案的「垃圾帳號」</span>；<span style="color:#CC6600">橘色代表「從簽名檔來研判八成是垃圾帳號」</span>；<span style="color:#505050">黑色代表應該是一般帳號</span>，<span style="color:blue">藍色是有發布過文章的帳號</span>');
-define('_MA_TADADM_AUTO_CHECK_DESC4', '<a href="main.php?op=all&mode=force">強制重查！</a>之前查過的Email會註記為已查，故不會再次至 stopforumspam 檢查該 Email 是否為垃圾郵件以加快檢查速度。但有些 Email 是之後才被 stopforumspam 列為垃圾郵件，故每隔一段時間，可利用此功能，重查一下 Email 是否有被列為垃圾郵件。');
-define('_MA_TADADM_AUTO_CHECK_DESC5', '<a href="main.php?op=spam">僅列出查為垃圾郵件列表</a>（執行「強制重查」後，可利用此功能觀看有找出哪些垃圾郵件並刪除之。）');
+define('_MA_TADADM_AUTO_CHECK_DESC4', '<a href="spam.php?op=all&mode=force">強制重查！</a>之前查過的Email會註記為已查，故不會再次至 stopforumspam 檢查該 Email 是否為垃圾郵件以加快檢查速度。但有些 Email 是之後才被 stopforumspam 列為垃圾郵件，故每隔一段時間，可利用此功能，重查一下 Email 是否有被列為垃圾郵件。');
+define('_MA_TADADM_AUTO_CHECK_DESC5', '<a href="spam.php?op=spam">僅列出查為垃圾郵件列表</a>（執行「強制重查」後，可利用此功能觀看有找出哪些垃圾郵件並刪除之。）');
 define('_MA_TADADM_UNAME', '帳號');
 define('_MA_TADADM_COUNT', '發表數');
 define('_MA_TADADM_EMAIL', '信箱');
