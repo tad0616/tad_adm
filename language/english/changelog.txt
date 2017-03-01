@@ -1,3 +1,22 @@
+Tad Adm 2.5.8 (2017-02-13 released)
+==================================================================
+1.Fixed a bug that does not support the posix extension suite on Windows caused a blank screen
+
+
+Tad Adm 2.5.7 (2017-02-06 released)
+==================================================================
+1.XOOPS 2.5.8 can not be successfully updated module problems
+2.Part of the message into Chinese
+3.Fixed XOOPS 2.5.6 can not use the problem
+4.The list includes information such as owner and permissions
+
+
+Tad Adm 2.5.6 (2017-01-07 released)
+==================================================================
+1.Fixed clean up spam account path
+2.Change the col-md of boootstrap to col-sm
+
+
 Tad Adm 2.5.5 (2016-06-16 released)
 ==================================================================
 1.Modified modules online install page layout

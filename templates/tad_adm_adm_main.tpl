@@ -1,26 +1,26 @@
 <div class="container-fluid">
   <{if $now_op=="login_form"}>
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-sm-6">
         <h2><{$smarty.const._MA_TADADM_SSH_ID}></h2>
         <div class="well">
           <form action="main.php" method="post">
             <div class="row">
-              <label class="col-md-5 text-right"><{$smarty.const._MA_TADADM_SSH_HOST}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-md-7">
-                <input type="text" name="ssh_host" placeholder="<{$smarty.const._MA_TADADM_SSH_HOST}>" value="<{$tad_adm_ssh_host}>" class="col-md-12">
+              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_SSH_HOST}><{$smarty.const._TAD_FOR}></label>
+              <div class="col-sm-7">
+                <input type="text" name="ssh_host" placeholder="<{$smarty.const._MA_TADADM_SSH_HOST}>" value="<{$tad_adm_ssh_host}>" class="col-sm-12">
               </div>
             </div>
             <div class="row">
-              <label class="col-md-5 text-right"><{$smarty.const._MA_TADADM_SSH_ID}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-md-7">
-                <input type="text" name="ssh_id" placeholder="<{$smarty.const._MA_TADADM_SSH_ID}>" class="col-md-12" value="<{$tad_adm_ssh_id}>">
+              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_SSH_ID}><{$smarty.const._TAD_FOR}></label>
+              <div class="col-sm-7">
+                <input type="text" name="ssh_id" placeholder="<{$smarty.const._MA_TADADM_SSH_ID}>" class="col-sm-12" value="<{$tad_adm_ssh_id}>">
               </div>
             </div>
             <div class="row">
-              <label class="col-md-5 text-right"><{$smarty.const._MA_TADADM_SSH_PASS}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-md-7">
-                <input type="password" name="ssh_passwd" placeholder="<{$smarty.const._MA_TADADM_SSH_PASS}>" class="col-md-12" value="<{$tad_adm_ssh_passwd}>">
+              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_SSH_PASS}><{$smarty.const._TAD_FOR}></label>
+              <div class="col-sm-7">
+                <input type="password" name="ssh_passwd" placeholder="<{$smarty.const._MA_TADADM_SSH_PASS}>" class="col-sm-12" value="<{$tad_adm_ssh_passwd}>">
               </div>
             </div>
 
@@ -37,26 +37,26 @@
         </div>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-sm-6">
         <h2><{$smarty.const._MA_TADADM_FTP_ID}></h2>
         <div class="well">
           <form action="main.php" method="post">
             <div class="row">
-              <label class="col-md-5 text-right"><{$smarty.const._MA_TADADM_FTP_HOST}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-md-7">
-                <input type="text" name="ftp_host" placeholder="<{$smarty.const._MA_TADADM_FTP_HOST}>" value="<{$tad_adm_ftp_host}>" class="col-md-12">
+              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_FTP_HOST}><{$smarty.const._TAD_FOR}></label>
+              <div class="col-sm-7">
+                <input type="text" name="ftp_host" placeholder="<{$smarty.const._MA_TADADM_FTP_HOST}>" value="<{$tad_adm_ftp_host}>" class="col-sm-12">
               </div>
             </div>
             <div class="row">
-              <label class="col-md-5 text-right"><{$smarty.const._MA_TADADM_FTP_ID}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-md-7">
-                <input type="text" name="ftp_id" placeholder="<{$smarty.const._MA_TADADM_FTP_ID}>" class="col-md-12" value="<{$tad_adm_ftp_id}>">
+              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_FTP_ID}><{$smarty.const._TAD_FOR}></label>
+              <div class="col-sm-7">
+                <input type="text" name="ftp_id" placeholder="<{$smarty.const._MA_TADADM_FTP_ID}>" class="col-sm-12" value="<{$tad_adm_ftp_id}>">
               </div>
             </div>
             <div class="row">
-              <label class="col-md-5 text-right"><{$smarty.const._MA_TADADM_FTP_PASS}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-md-7">
-                <input type="password" name="ftp_passwd" placeholder="<{$smarty.const._MA_TADADM_FTP_PASS}>" class="col-md-12" value="<{$tad_adm_ftp_passwd}>">
+              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_FTP_PASS}><{$smarty.const._TAD_FOR}></label>
+              <div class="col-sm-7">
+                <input type="password" name="ftp_passwd" placeholder="<{$smarty.const._MA_TADADM_FTP_PASS}>" class="col-sm-12" value="<{$tad_adm_ftp_passwd}>">
                 <{$smarty.const._MA_TADADM_FTP_NOTE}>
               </div>
             </div>
@@ -93,6 +93,8 @@
           <th nowrap data-hide="phone,tablet"><{$smarty.const._MA_TADADM_MOD_LAST_UPDATE}></th>
           <th nowrap data-hide="phone,tablet"><{$smarty.const._MA_TADADM_MOD_NEW_VERSION}></th>
           <th nowrap data-hide="phone,tablet"><{$smarty.const._MA_TADADM_MOD_NEW_LAST_UPDATE}></th>
+          <th nowrap data-hide="phone,tablet"><{$smarty.const._MA_TADADM_OWNER}></th>
+          <th nowrap data-hide="phone,tablet"><{$smarty.const._MA_TADADM_PERMS}></th>
         </tr>
       </thead>
       <tbody>
@@ -147,6 +149,9 @@
             <td nowrap><{$mod.last_update}></td>
             <td nowrap><{$mod.new_version}></td>
             <td nowrap><{$mod.new_last_update}></td>
+            <td nowrap style="text-align: center;"><{$mod.fileowner.name}>:<{$mod.filegroup.name}></td>
+            <td nowrap><{$mod.fileperms}></td>
+
           </tr>
         <{/foreach}>
       </tbody>

@@ -51,7 +51,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-12">
+    <div class="col-sm-12">
 
       <h1><{$smarty.const._MA_TADADM_FREE_SPACE}><{$free_space}></h1>
       <form action="zip.php" method="post" class="form-horizontal" role="form">

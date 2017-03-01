@@ -93,12 +93,12 @@ if (!$_SESSION['isAdmin']) {
         <body>
         <div class="container-fluid">
           <div class="row">
-            <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+            <div class="col-lg-6 col-lg-offset-3 col-sm-8 col-sm-offset-2 col-sm-10 col-sm-offset-1">
               <div class="page-header">
                 <h1>' . _MD_TADADM_NAME . '</h1>
               </div>
               <div class="row">
-                <div class="col-md-12">
+                <div class="col-sm-12">
                 ' . $form . '
                 </div>
               </div>
@@ -433,7 +433,7 @@ function debug_mode_tool()
 }
 
 //MySQL版本
-$mysql_version = $xoopsDB->getServerVersion();
+$mysql_version = function_exists('mysql_get_server_info') ? mysql_get_server_info() : $xoopsDB->getServerVersion();
 
 //檢查連線
 $mysql_connect = $xoopsDB ? "OK" : _MD_TADADM_CANT_CONNECT;
@@ -795,14 +795,14 @@ echo '
   <body>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-md-12">
+      <div class="col-sm-12">
         <div class="page-header">
           <h1>' . _MD_TADADM_NAME . '</h1>
         </div>
         <div class="row">
-          <div class="col-lg-4 col-md-6">' . $main1 . '</div>
-          <div class="col-lg-4 col-md-6">' . $main2 . $main3 . '</div>
-          <div class="col-lg-4 col-md-6">' . $main4 . '</div>
+          <div class="col-lg-4 col-sm-6">' . $main1 . '</div>
+          <div class="col-lg-4 col-sm-6">' . $main2 . $main3 . '</div>
+          <div class="col-lg-4 col-sm-6">' . $main4 . '</div>
         </div>
       </div>
     </div>

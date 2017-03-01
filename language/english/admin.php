@@ -85,3 +85,7 @@ define('_MA_TADADM_MODULES_INSTALLING', 'Installing');
 define('_MA_TADADM_MODULES_PHP_INI_PATH', 'Important Values');
 define('_MA_TADADM_FREE_SPACE', 'HD free space:');
 define('_MA_TADADM_DOWNLOAD_ZIP', 'Download backup zip');
+
+define('_MA_TADADM_CHMOD_FAILED', '<ul><li>Could not set read/write permissions for %s to %s, possibly because the file directory owner is not correct.</li></ul>');
+define('_MA_TADADM_OWNER', 'Owner:Group');
+define('_MA_TADADM_PERMS', 'Permissions');

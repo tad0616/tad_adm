@@ -85,3 +85,7 @@ define('_MA_TADADM_MODULES_INSTALLING', '安裝');
 define('_MA_TADADM_MODULES_PHP_INI_PATH', '重要設定');
 define('_MA_TADADM_FREE_SPACE', '硬碟剩餘空間：');
 define('_MA_TADADM_DOWNLOAD_ZIP', '開始壓縮備份');
+
+define('_MA_TADADM_CHMOD_FAILED', '<ul><li>無法將 %s 的讀寫權限設為 %s，該檔案目錄的擁有者為 %s:%s，屬性為 %s。</li></ul>');
+define('_MA_TADADM_OWNER', '擁有者:擁有群組');
+define('_MA_TADADM_PERMS', '讀寫權限');

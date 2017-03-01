@@ -31,6 +31,15 @@ function list_modules($mode = "tpl")
         $last_update                     = filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php");
         $all_data[$i]['last_update']     = date("Y-m-d H:i", $last_update);
         $all_data[$i]['new_last_update'] = ($mod[$dirname]['module']['new_last_update']) ? date("Y-m-d H:i", $mod[$dirname]['module']['new_last_update']) : "";
+
+        if (file_exists(XOOPS_ROOT_PATH . "/modules/{$dirname}")) {
+            $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/modules/{$dirname}");
+            $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/modules/{$dirname}");
+            $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/modules/{$dirname}")), -4);
+        } else {
+            $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+        }
+
         $all_data[$i]['weight']          = $weight;
         $all_data[$i]['isactive']        = $isactive;
         $all_data[$i]['dirname']         = $dirname;
@@ -80,6 +89,14 @@ function list_modules($mode = "tpl")
         $last_update                     = filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php");
         $all_data[$i]['last_update']     = date("Y-m-d H:i", $last_update);
         $all_data[$i]['new_last_update'] = ($mod[$dirname]['fix']['new_last_update']) ? date("Y-m-d H:i", $mod[$dirname]['fix']['new_last_update']) : "";
+
+        if (file_exists(XOOPS_ROOT_PATH . "/modules/{$dirname}")) {
+            $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/modules/{$dirname}");
+            $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/modules/{$dirname}");
+            $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/modules/{$dirname}")), -4);
+        } else {
+            $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+        }
         $all_data[$i]['weight']          = $weight;
         $all_data[$i]['isactive']        = $isactive;
         $all_data[$i]['dirname']         = $dirname;
@@ -149,6 +166,14 @@ function list_modules($mode = "tpl")
                 $all_data[$i]['last_update'] = date("Y-m-d H:i", $last_update);
 
                 $all_data[$i]['new_last_update'] = ($data['theme']['new_last_update']) ? date("Y-m-d H:i", $data['theme']['new_last_update']) : "";
+
+                if (file_exists(XOOPS_ROOT_PATH . "/themes/{$dirname}")) {
+                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
+                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
+                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/themes/{$dirname}")), -4);
+                } else {
+                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                }
                 $all_data[$i]['weight']          = "";
                 $all_data[$i]['isactive']        = "";
                 $all_data[$i]['dirname']         = $dirname;
@@ -183,6 +208,15 @@ function list_modules($mode = "tpl")
                 $last_update                     = file_exists((XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini")) ? filemtime(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini") : "";
                 $all_data[$i]['last_update']     = empty($last_update) ? _MA_TADADM_MOD_UNINSTALL : date("Y-m-d H:i", $last_update);
                 $all_data[$i]['new_last_update'] = ($data['theme']['new_last_update']) ? date("Y-m-d H:i", $data['theme']['new_last_update']) : "";
+
+                if (file_exists(XOOPS_ROOT_PATH . "/themes/{$dirname}")) {
+                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
+                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
+                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/themes/{$dirname}")), -4);
+                } else {
+                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                }
+
                 $all_data[$i]['weight']          = "";
                 $all_data[$i]['isactive']        = "";
                 $all_data[$i]['dirname']         = $dirname;
@@ -229,6 +263,13 @@ function list_modules($mode = "tpl")
 
             $all_data[$i]['last_update']     = _MA_TADADM_MOD_UNINSTALL;
             $all_data[$i]['new_last_update'] = ($data['new_last_update']) ? date("Y-m-d H:i", $data['new_last_update']) : "";
+            if (file_exists(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}")) {
+                $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}");
+                $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}");
+                $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}")), -4);
+            } else {
+                $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+            }
             $all_data[$i]['weight']          = "";
             $all_data[$i]['isactive']        = "";
             $all_data[$i]['dirname']         = $dirname;
@@ -458,10 +499,13 @@ function recurse_chown_chgrp($mypath, $uid, $gid)
 function chmod_R($path, $filemode, $dirmode)
 {
     if (is_dir($path)) {
+        $fileowner = getpwuid($path);
+        $filegroup = getgrgid($path);
+        $fileperms = substr(sprintf('%o', fileperms($path)), -4);
         if (!chmod($path, $dirmode)) {
             $dirmode_str = decoct($dirmode);
-            print "Failed applying filemode '$dirmode_str' on directory '$path'\n";
-            print "  `-> the directory '$path' will be skipped from recursive chmod\n";
+
+            print sprintf(_MA_TADADM_CHMOD_FAILED, $path, $dirmode_str, $fileowner['name'], $filegroup['name'], $fileperms);
             return;
         }
         $dh = opendir($path);
@@ -475,12 +519,15 @@ function chmod_R($path, $filemode, $dirmode)
         closedir($dh);
     } else {
         if (is_link($path)) {
-            print "link '$path' is skipped\n";
+            // print "link '$path' is skipped\n";
             return;
         }
         if (!chmod($path, $filemode)) {
+            $fileowner    = getpwuid($path);
+            $filegroup    = posix_getgrgid(filegroup($path));
+            $fileperms    = substr(sprintf('%o', fileperms($path)), -4);
             $filemode_str = decoct($filemode);
-            print "Failed applying filemode '$filemode_str' on file '$path'\n";
+            print sprintf(_MA_TADADM_CHMOD_FAILED, $path, $filemode_str, $fileowner['name'], $filegroup['name'], $fileperms);
             return;
         }
     }
@@ -544,13 +591,11 @@ function module_act($new_file = "", $dirname = "", $act = "install", $kind_dir =
         $token_code = $token->render();
         if ($kind_dir == "modules") {
             if ($act == "install") {
-                $op     = "install_ok";
-                $hidden = "<input type='hidden' value='{$dirname}' name='module'>";
-                $title  = _MA_TADADM_MODULES_INSTALLING;
+                $op    = "install_ok";
+                $title = _MA_TADADM_MODULES_INSTALLING;
             } else {
-                $op     = "update_ok";
-                $hidden = "<input type='hidden' value='{$dirname}' name='dirname'>";
-                $title  = _MA_TADADM_MODULES_UPDATING;
+                $op    = "update_ok";
+                $title = _MA_TADADM_MODULES_UPDATING;
             }
 
             require XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php";
@@ -559,20 +604,21 @@ function module_act($new_file = "", $dirname = "", $act = "install", $kind_dir =
             $mod_name = constant($modversion['name']);
 
             $main = "
-      <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/bootstrap3/css/bootstrap.css' />
-      <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/css/xoops_adm.css' />
-      <div class='well'>
-        <form action='" . XOOPS_URL . "/modules/system/admin.php' method='post' style='text-align:center'>
-          <img src='" . XOOPS_URL . "/modules/{$dirname}/{$modversion['image']}'>
-          <div style='font-weight:bold;font-size:11pt;'>{$mod_name}</div>
-          $hidden
-          <input type='hidden' value='{$op}' name='op'>
-          <input type='hidden' value='modulesadmin' name='fct'>
-          $token_code
-          <input type='submit' title='" . $title . "' value='" . $title . "' name='confirm_submit'>
-        </form>
-      </div>
-      ";
+              <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/bootstrap3/css/bootstrap.css' />
+              <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/css/xoops_adm.css' />
+              <div class='well'>
+                <form action='" . XOOPS_URL . "/modules/system/admin.php' method='post' style='text-align:center'>
+                  <img src='" . XOOPS_URL . "/modules/{$dirname}/{$modversion['image']}'>
+                  <div style='font-weight:bold;font-size:11pt;'>{$mod_name}</div>
+                  <input type='hidden' value='{$dirname}' name='module'>
+                  <input type='hidden' value='{$dirname}' name='dirname'>
+                  <input type='hidden' value='{$op}' name='op'>
+                  <input type='hidden' value='modulesadmin' name='fct'>
+                  $token_code
+                  <input type='submit' title='" . $title . "' value='" . $title . "' name='confirm_submit'>
+                </form>
+              </div>
+              ";
             die($main);
             //header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}");
         } else {
@@ -650,4 +696,22 @@ function copyemz($file1, $file2, $update_sn)
     }
 
     return $status;
+}
+
+function getpwuid($file = "")
+{
+    if (function_exists('posix_getpwuid')) {
+        return posix_getpwuid(fileowner($file));
+    } else {
+        return "";
+    }
+}
+
+function getgrgid($file = "")
+{
+    if (function_exists('posix_getgrgid')) {
+        return posix_getgrgid(filegroup($file));
+    } else {
+        return "";
+    }
 }
