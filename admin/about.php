@@ -35,7 +35,7 @@ $module_info = '<div id="about">
 $about_admin = new ModuleAdmin();
 $about_admin->addLabel($xoopsModule->getVar("name"));
 $about_admin->addLabel(_AM_XDIR_ABOUT_MODULE_INFO);
-$about_admin->addLineLabel($xoopsModule->getVar("name"), '', '6KJ7RW5DR3VTJ', '', 'module');
+$about_admin->addLineLabel($xoopsModule->getVar("name"), '', 'xoopsfoundation@gmail.com', '', 'module');
 $about_admin->addLineLabel(_AM_XDIR_ABOUT_MODULE_INFO, $module_info, '', '', 'information');
 $about_admin->addChangelogLabel(_AM_XDIR_ABOUT_CHANGELOG);
 

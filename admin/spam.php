@@ -211,7 +211,7 @@ function replace_tad_adm($uid='',$email='',$result=''){
   global $xoopsDB,$xoopsUser;
 
 
-  $myts =& MyTextSanitizer::getInstance();
+  $myts = MyTextSanitizer::getInstance();
   $email=$myts->addSlashes($email);
   $result=$myts->addSlashes($result);
 

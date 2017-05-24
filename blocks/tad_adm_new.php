@@ -98,7 +98,7 @@ if(!function_exists('replace_tad_adm')){
     global $xoopsDB,$xoopsUser;
 
 
-    $myts =& MyTextSanitizer::getInstance();
+    $myts = MyTextSanitizer::getInstance();
     $email=$myts->addSlashes($email);
     $result=$myts->addSlashes($result);
 
