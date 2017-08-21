@@ -9,7 +9,7 @@ include_once "../function.php";
 function list_user($op = "", $mode = "normal")
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
-    $all_data = "";
+
     if ($op == "byNeverLoginDays") {
         $dayLimit    = time() - $_GET['days'] * 86400;
         $andDayLimit = " and last_login=0 and user_regdate <= $dayLimit";
@@ -32,7 +32,7 @@ function list_user($op = "", $mode = "normal")
     $result                = $xoopsDB->query($sql) or web_error($sql);
     $_SESSION['chk_start'] = time();
     $i                     = 0;
-    $all_data              = "";
+    $all_data              = array();
     while ($data = $xoopsDB->fetchArray($result)) {
         foreach ($data as $k => $v) {
             $$k = $v;
@@ -132,7 +132,6 @@ function list_user($op = "", $mode = "normal")
 function list_spam()
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
-    $all_data = "";
 
     $sql = "select a.uid,a.email,a.chk_date,b.`name`, b.`uname`, b.`email`, b.`url`, b.`user_avatar`, b.`user_regdate`, b.`user_icq`, b.`user_from`, b.`user_sig`, b.`user_viewemail`, b.`actkey`, b.`user_aim`, b.`user_yim`, b.`user_msnm`, b.`pass`, b.`posts`, b.`attachsig`, b.`rank`, b.`level`, b.`theme`, b.`timezone_offset`, b.`last_login`, b.`umode`, b.`uorder`, b.`notify_method`, b.`notify_mode`, b.`user_occ`, b.`bio`, b.`user_intrest`, b.`user_mailok` from " . $xoopsDB->prefix("tad_adm") . " as a left join " . $xoopsDB->prefix("users") . " as b on a.uid=b.uid where a.`result`='1' order by a.uid desc";
 
@@ -144,7 +143,7 @@ function list_spam()
 
     $result = $xoopsDB->query($sql) or web_error($sql);
 
-    $all_data = "";
+    $all_data = array();
     $i        = 0;
 
     while ($all = $xoopsDB->fetchArray($result)) {

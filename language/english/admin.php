@@ -89,3 +89,12 @@ define('_MA_TADADM_DOWNLOAD_ZIP', 'Download backup zip');
 define('_MA_TADADM_CHMOD_FAILED', '<ul><li>Could not set read/write permissions for %s to %s, possibly because the file directory owner is not correct.</li></ul>');
 define('_MA_TADADM_OWNER', 'Owner:Group');
 define('_MA_TADADM_PERMS', 'Permissions');
+
+define('_MA_TADADM_ADMTPL', 'Cpanel');
+define('_MA_TADADM_MOD_UPDATE_ADMTPL', 'Update Cpanel');
+define('_MA_TADADM_MOD_INSTALL_ADMTPL', 'Install Cpanel');
+define('_MA_TADADM_ADM_TPL_LATEST', 'Is up to date');
+define('_MA_TADADM_ADM_TPL_INSTALL_OK', 'Cpanel  %s  install success!');
+define('_MA_TADADM_ADM_TPL_UPDATE_OK', 'Cpanel upgrade success!');
+
+define('_MA_TADADM_MOD_CLOSED', 'Module closed');

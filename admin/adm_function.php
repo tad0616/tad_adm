@@ -4,12 +4,12 @@ function list_modules($mode = "tpl")
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
     $mod    = get_tad_modules_info();
-    $sql    = "select * from " . $xoopsDB->prefix("modules") . " where isactive='1' order by hasmain desc, weight";
+    $sql    = "select * from " . $xoopsDB->prefix("modules") . " order by hasmain desc, weight";
     $result = $xoopsDB->query($sql) or web_error($sql);
 
     $i = 0;
     //模組部份
-    $all_data = "";
+    $all_data = array();
     while ($data = $xoopsDB->fetchArray($result)) {
         foreach ($data as $k => $v) {
             $$k = $v;
@@ -126,6 +126,108 @@ function list_modules($mode = "tpl")
         $all_data[$i]['kind']      = $mod[$dirname]['fix']['kind'];
 
         $i++;
+    }
+
+    //後台部份
+    foreach ($mod as $dirname => $data) {
+        if (isset($ok['adm_tpl']) and in_array($dirname, $ok['adm_tpl'])) {
+            continue;
+        }
+
+        $Version = "";
+        //佈景部份
+        if (isset($data['adm_tpl']['kind']) and $data['adm_tpl']['kind'] == "adm_tpl") {
+            $ok['adm_tpl'][] = $dirname;
+            if (is_dir(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")) {
+
+                $Version = file_get_contents(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt");
+
+                $status                      = ($data['adm_tpl']['new_status_version']) ? " {$data['adm_tpl']['new_status']}{$data['adm_tpl']['new_status_version']}" : "";
+                $all_data[$i]['mid']         = "";
+                $all_data[$i]['name']        = $data['adm_tpl']['module_title'];
+                $all_data[$i]['version']     = $Version;
+                $all_data[$i]['new_version'] = ($data['adm_tpl']['new_version']) ? $data['adm_tpl']['new_version'] . $status : "";
+
+                if (file_exists(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt")) {
+                    $last_update = filemtime(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt");
+                } else {
+                    $last_update = $data['adm_tpl']['new_last_update'];
+                }
+                $all_data[$i]['last_update'] = date("Y-m-d H:i", $last_update);
+
+                $all_data[$i]['new_last_update'] = ($data['adm_tpl']['new_last_update']) ? date("Y-m-d H:i", $data['adm_tpl']['new_last_update']) : "";
+
+                if (file_exists(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")) {
+                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/themes/{$dirname}")), -4);
+                } else {
+                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                }
+                $all_data[$i]['weight']          = "";
+                $all_data[$i]['isactive']        = "";
+                $all_data[$i]['dirname']         = $dirname;
+                $all_data[$i]['hasmain']         = "";
+                $all_data[$i]['hasadmin']        = "";
+                $all_data[$i]['hassearch']       = "";
+                $all_data[$i]['hasconfig']       = "";
+                $all_data[$i]['hascomments']     = "";
+                $all_data[$i]['hasnotification'] = "";
+
+                $version     = $Version * 100;
+                $new_version = $data['adm_tpl']['new_version'] * 100;
+                $version     = intval($version);
+                $new_version = intval($new_version);
+
+                $last_update               = strtotime($all_data[$i]['last_update']);
+                $new_last_update           = strtotime($all_data[$i]['new_last_update']);
+                $all_data[$i]['function']  = ($new_version > $version or $new_last_update > $last_update) ? 'update_adm_tpl' : 'last_adm_tpl';
+                $all_data[$i]['update_sn'] = $data['adm_tpl']['update_sn'];
+                $all_data[$i]['descript']  = $data['adm_tpl']['module_descript'];
+                $all_data[$i]['module_sn'] = $data['adm_tpl']['module_sn'];
+                $all_data[$i]['file_link'] = $data['adm_tpl']['file_link'];
+                $all_data[$i]['kind']      = $data['adm_tpl']['kind'];
+
+                $i++;
+            } else {
+                $status                          = ($data['adm_tpl']['new_status_version']) ? " {$data['adm_tpl']['new_status']}{$data['adm_tpl']['new_status_version']}" : "";
+                $all_data[$i]['mid']             = "";
+                $all_data[$i]['name']            = $data['adm_tpl']['module_title'];
+                $all_data[$i]['version']         = "";
+                $all_data[$i]['new_version']     = ($data['adm_tpl']['new_version']) ? $data['adm_tpl']['new_version'] . $status : "";
+                $last_update                     = file_exists((XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt")) ? filemtime(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt") : "";
+                $all_data[$i]['last_update']     = empty($last_update) ? _MA_TADADM_MOD_UNINSTALL : date("Y-m-d H:i", $last_update);
+                $all_data[$i]['new_last_update'] = ($data['adm_tpl']['new_last_update']) ? date("Y-m-d H:i", $data['adm_tpl']['new_last_update']) : "";
+
+                if (file_exists(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")) {
+                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")), -4);
+                } else {
+                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                }
+
+                $all_data[$i]['weight']          = "";
+                $all_data[$i]['isactive']        = "";
+                $all_data[$i]['dirname']         = $dirname;
+                $all_data[$i]['hasmain']         = "";
+                $all_data[$i]['hasadmin']        = "";
+                $all_data[$i]['hassearch']       = "";
+                $all_data[$i]['hasconfig']       = "";
+                $all_data[$i]['hascomments']     = "";
+                $all_data[$i]['hasnotification'] = "";
+                $all_data[$i]['function']        = ($data['adm_tpl']['new_last_update'] > $last_update) ? 'install_adm_tpl' : 'last_adm_tpl';
+                $all_data[$i]['update_sn']       = $data['adm_tpl']['update_sn'];
+                $all_data[$i]['descript']        = $data['adm_tpl']['module_descript'];
+                $all_data[$i]['module_sn']       = $data['adm_tpl']['module_sn'];
+                $all_data[$i]['file_link']       = $data['adm_tpl']['file_link'];
+                $all_data[$i]['kind']            = $data['adm_tpl']['kind'];
+
+                $i++;
+            }
+        } else {
+            continue;
+        }
     }
 
     //佈景部份
@@ -247,6 +349,10 @@ function list_modules($mode = "tpl")
                 continue;
             }
 
+            if (in_array($dirname, $ok['adm_tpl']) and $kind == "adm_tpl") {
+                continue;
+            }
+
             if (in_array($dirname, $ok['theme']) and $kind == "theme") {
                 continue;
             }
@@ -263,12 +369,22 @@ function list_modules($mode = "tpl")
 
             $all_data[$i]['last_update']     = _MA_TADADM_MOD_UNINSTALL;
             $all_data[$i]['new_last_update'] = ($data['new_last_update']) ? date("Y-m-d H:i", $data['new_last_update']) : "";
-            if (file_exists(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}")) {
-                $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}");
-                $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}");
-                $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}")), -4);
+            if ($kind == "adm_tpl") {
+                if (file_exists(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")) {
+                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")), -4);
+                } else {
+                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                }
             } else {
-                $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                if (file_exists(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}")) {
+                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}");
+                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}");
+                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}")), -4);
+                } else {
+                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                }
             }
             $all_data[$i]['weight']          = "";
             $all_data[$i]['isactive']        = "";
@@ -339,15 +455,22 @@ function get_tad_modules_info()
 }
 
 //登入SSH
-function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = "", $dirname = "", $act = "", $update_sn = "", $kind_dir = "modules")
+function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = "", $dirname = "", $act = "", $update_sn = "", $kind = "module")
 {
     global $xoopsModuleConfig;
 
     include XOOPS_ROOT_PATH . '/modules/tad_adm/admin/Net/SSH2.php';
+    if ($kind == "theme") {
+        $kind_dir = "themes";
+    } elseif ($kind == "adm_tpl") {
+        $kind_dir = "modules/system/themes";
+    } else {
+        $kind_dir = "modules";
+    }
 
     $ssh = new Net_SSH2($ssh_host, $xoopsModuleConfig['ssh_port']);
     if (!$ssh->login($ssh_id, $ssh_passwd)) {
-        redirect_header("main.php?op={$act}_module&dirname=$dirname&file_link=$file_link", 3, sprintf(_MA_TADADM_SSH_LOGIN_FAIL, $ssh_id, $ssh_host));
+        redirect_header("main.php?op={$act}_module&kind=$kind&dirname=$dirname&file_link=$file_link&tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_SSH_LOGIN_FAIL, $ssh_id, $ssh_host));
     } else {
         if (empty($_SESSION['tad_adm_ssh_host'])) {
             $_SESSION['tad_adm_ssh_host'] = $ssh_host;
@@ -370,7 +493,7 @@ function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = "", $dirname = 
     copyemz($file_link, $new_file, $update_sn);
 
     if (!is_file($new_file)) {
-        redirect_header($_SERVER['PHP_SELF'], 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
+        redirect_header($_SERVER['PHP_SELF'] . "?tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
     }
 //exit;
     require_once XOOPS_ROOT_PATH . "/modules/tad_adm/class/dunzip2/dUnzip2.inc.php";
@@ -380,87 +503,32 @@ function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = "", $dirname = 
     $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/");
     $ssh->exec("cp -fr " . XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname " . XOOPS_ROOT_PATH . "/{$kind_dir}/");
     $ssh->exec("chmod -R 755 " . XOOPS_ROOT_PATH . "/{$kind_dir}/$dirname");
-    $ssh->exec("chown -R {$ssh_id}:{$ssh_id} " . XOOPS_ROOT_PATH . "/{$kind_dir}/$dirname");
+    $ssh->exec("chown -R {$ssh_id}:{$ssh_id} " . XOOPS_ROOT_PATH . "/{$kind_dir}/{$dirname}");
     $ssh->exec("rm -fr " . XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}");
     $ssh->exec("rm -f $new_file");
 
     if (is_dir(XOOPS_ROOT_PATH . "/{$kind_dir}/{$dirname}")) {
-        if ($kind_dir == "modules") {
-            header("location:" . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}");
-        } else {
+        if ($kind == "theme") {
             add_theme_config($dirname);
             if ($act == "install") {
-                redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules", 3, sprintf(_MA_TADADM_THEME_INSTALL_OK, $dirname));
+                redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules&tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_THEME_INSTALL_OK, $dirname));
             } else {
-                redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules", 3, _MA_TADADM_THEME_UPDATE_OK);
+                redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules&tad_adm_tpl=clean", 3, _MA_TADADM_THEME_UPDATE_OK);
             }
-        }
-    } else {
-        redirect_header($_SERVER['PHP_SELF'], 3, sprintf(_MA_TADADM_MV_FAIL, XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname"));
-    }
-}
-
-//登入ftp
-function ftp_log_in($ftp_host, $ftp_id, $ftp_passwd, $file_link = "", $dirname = "", $act = "", $update_sn = "", $kind_dir = "modules")
-{
-
-    $the_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", "", $file_link);
-    $new_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/uploads/", $file_link);
-    mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm");
-    copyemz($file_link, $new_file, $update_sn);
-
-    if (!is_file($new_file)) {
-        redirect_header($_SERVER['PHP_SELF'], 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
-    }
-
-    $conn = ftp_connect($ftp_host, 21, 60);
-    if ($conn) {
-        if (empty($_SESSION['tad_adm_ftp_host'])) {
-            $_SESSION['tad_adm_ftp_host'] = $ftp_host;
-        }
-
-        if (empty($_SESSION['tad_adm_ftp_id'])) {
-            $_SESSION['tad_adm_ftp_id'] = $ftp_id;
-        }
-
-        if (empty($_SESSION['tad_adm_ftp_passwd'])) {
-            $_SESSION['tad_adm_ftp_passwd'] = $ftp_passwd;
-        }
-
-        if (!ftp_login($conn, $ftp_id, $ftp_passwd)) {
-            redirect_header($_SERVER['PHP_SELF'], 3, sprintf(_MA_TADADM_FTP_LOGIN_FAIL, $ftp_id, $ftp_host));
-        }
-    } else {
-        redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_FTP_FAIL);
-    }
-
-    ftp_exec($conn, "unzip -d $new_file " . XOOPS_ROOT_PATH . "/$kind_dir");
-
-    $path = explode("/", XOOPS_ROOT_PATH);
-    foreach ($path as $dir) {
-        ftp_chdir($conn, $dir);
-    }
-    ftp_chdir($conn, "uploads");
-    ftp_chdir($conn, "tad_adm");
-
-    ftp_delete($conn, "../../{$kind_dir}/{$dirname}");
-    ftp_delete($conn, $new_file);
-    if (ftp_rename($conn, $dirname, "../../{$kind_dir}/{$dirname}")) {
-        if ($kind_dir == "modules") {
-            header("location:" . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}");
-        } else {
-            add_theme_config($dirname);
+        } elseif ($kind == "adm_tpl") {
+            add_adm_tpl_config($dirname);
             if ($act == "install") {
-                redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules", 3, sprintf(_MA_TADADM_THEME_INSTALL_OK, $dirname));
+                redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules&tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_ADM_TPL_INSTALL_OK, $dirname));
             } else {
-                redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules", 3, _MA_TADADM_THEME_UPDATE_OK);
+                redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules&tad_adm_tpl=clean", 3, _MA_TADADM_ADM_TPL_UPDATE_OK);
             }
+
+        } else {
+            header("location:" . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}&tad_adm_tpl=clean");
         }
     } else {
-        redirect_header($_SERVER['PHP_SELF'], 3, sprintf(_MA_TADADM_MV_FAIL, XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname"));
+        redirect_header($_SERVER['PHP_SELF'] . "?tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_MV_FAIL, XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname"));
     }
-    ftp_close($conn);
-
 }
 
 // //建立目錄
@@ -534,11 +602,19 @@ function chmod_R($path, $filemode, $dirmode)
 }
 
 //安裝套件
-function install_module($file_link = "", $dirname = "", $act = "install", $update_sn = "", $kind_dir = "modules")
+function install_module($file_link = "", $dirname = "", $act = "install", $update_sn = "", $kind = "module")
 {
     global $xoopsTpl;
     if (empty($file_link)) {
         header("location:{$_SERVER['PHP_SELF']}");
+    }
+
+    if ($kind == "theme") {
+        $kind_dir = "themes";
+    } elseif ($kind == "adm_tpl") {
+        $kind_dir = "modules/system/themes";
+    } else {
+        $kind_dir = "modules";
     }
 
     //http://120.115.2.90/uploads/tad_modules/file/tadgallery_20120726_2.01.zip
@@ -549,7 +625,7 @@ function install_module($file_link = "", $dirname = "", $act = "install", $updat
         $new_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/{$kind_dir}/", $file_link);
         //下載檔案 for windows
         if (copyemz($file_link, $new_file, $update_sn)) {
-            module_act($new_file, $dirname, $act, $kind_dir);
+            module_act($new_file, $dirname, $act, $kind);
         }
     } else {
 
@@ -558,22 +634,26 @@ function install_module($file_link = "", $dirname = "", $act = "install", $updat
         $xoopsTpl->assign('file_link', $file_link);
         $xoopsTpl->assign('dirname', $dirname);
         $xoopsTpl->assign('act', $act);
-        $xoopsTpl->assign('kind_dir', $kind_dir);
+        $xoopsTpl->assign('kind', $kind);
         $tad_adm_ssh_host = empty($_SESSION['tad_adm_ssh_host']) ? $_SERVER['SERVER_ADDR'] : $_SESSION['tad_adm_ssh_host'];
         $xoopsTpl->assign('tad_adm_ssh_host', $tad_adm_ssh_host);
         $xoopsTpl->assign('tad_adm_ssh_id', $_SESSION['tad_adm_ssh_id']);
         $xoopsTpl->assign('tad_adm_ssh_passwd', $_SESSION['tad_adm_ssh_passwd']);
-        $tad_adm_ftp_host = empty($_SESSION['tad_adm_ftp_host']) ? $_SERVER['SERVER_ADDR'] : $_SESSION['tad_adm_ftp_host'];
-        $xoopsTpl->assign('tad_adm_ftp_host', $tad_adm_ftp_host);
-        $xoopsTpl->assign('tad_adm_ftp_id', $_SESSION['tad_adm_ftp_id']);
-        $xoopsTpl->assign('tad_adm_ftp_passwd', $_SESSION['tad_adm_ftp_passwd']);
 
     }
 }
 
-function module_act($new_file = "", $dirname = "", $act = "install", $kind_dir = "modules")
+function module_act($new_file = "", $dirname = "", $act = "install", $kind = "module")
 {
     global $xoopsConfig;
+
+    if ($kind == "theme") {
+        $kind_dir = "themes";
+    } elseif ($kind == "adm_tpl") {
+        $kind_dir = "modules/system/themes";
+    } else {
+        $kind_dir = "modules";
+    }
 
     if (is_file($new_file)) {
         require_once XOOPS_ROOT_PATH . "/modules/tad_adm/class/dunzip2/dUnzip2.inc.php";
@@ -589,7 +669,7 @@ function module_act($new_file = "", $dirname = "", $act = "install", $kind_dir =
         include_once XOOPS_ROOT_PATH . "/class/xoopsformloader.php";
         $token      = new XoopsFormHiddenToken();
         $token_code = $token->render();
-        if ($kind_dir == "modules") {
+        if ($kind == "module" or $kind == "fix") {
             if ($act == "install") {
                 $op    = "install_ok";
                 $title = _MA_TADADM_MODULES_INSTALLING;
@@ -621,6 +701,13 @@ function module_act($new_file = "", $dirname = "", $act = "install", $kind_dir =
               ";
             die($main);
             //header("location:".XOOPS_URL."/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}");
+        } elseif ($kind == "adm_tpl") {
+            add_adm_tpl_config($dirname);
+            if ($act == "install") {
+                redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules", 3, sprintf(_MA_TADADM_ADM_TPL_INSTALL_OK, $dirname));
+            } else {
+                redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules", 3, _MA_TADADM_ADM_TPL_UPDATE_OK);
+            }
         } else {
             add_theme_config($dirname);
             if ($act == "install") {
@@ -632,6 +719,17 @@ function module_act($new_file = "", $dirname = "", $act = "install", $kind_dir =
 
     } else {
         return false;
+    }
+}
+
+function add_adm_tpl_config($theme)
+{
+    global $xoopsConfig, $xoopsDB;
+    if ($xoopsConfig['cpanel'] != $theme) {
+
+        $sql = "update " . $xoopsDB->prefix("config") . " set conf_value='{$theme}' where conf_name='cpanel'";
+
+        $xoopsDB->queryF($sql) or web_error($sql);
     }
 }
 

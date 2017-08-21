@@ -32,34 +32,21 @@ $kind_dir   = system_CleanVars($_REQUEST, 'kind_dir', '', 'string');
 $ssh_id     = system_CleanVars($_REQUEST, 'ssh_id', '', 'string');
 $ssh_passwd = system_CleanVars($_REQUEST, 'ssh_passwd', '', 'string');
 $ssh_host   = system_CleanVars($_REQUEST, 'ssh_host', '', 'string');
-$ftp_id     = system_CleanVars($_REQUEST, 'ftp_id', '', 'string');
-$ftp_passwd = system_CleanVars($_REQUEST, 'ftp_passwd', '', 'string');
-$ftp_host   = system_CleanVars($_REQUEST, 'ftp_host', '', 'string');
+$kind       = system_CleanVars($_REQUEST, 'kind', '', 'string');
 
 switch ($op) {
     /*---判斷動作請貼在下方---*/
-    case "install_module":
-        install_module($file_link, $dirname, "install", $update_sn, 'modules');
-        break;
-
-    case "update_module":
-        install_module($file_link, $dirname, "update", $update_sn, 'modules');
-        break;
 
     case "ssh_login":
-        ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link, $dirname, $act, $update_sn, $kind_dir);
+        ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link, $dirname, $act, $update_sn, $kind);
         break;
 
-    case "ftp_login":
-        ftp_log_in($ftp_host, $ftp_id, $ftp_passwd, $file_link, $dirname, $act, $update_sn, $kind_dir);
+    case "install":
+        install_module($file_link, $dirname, "install", $update_sn, $kind);
         break;
 
-    case "install_theme":
-        install_module($file_link, $dirname, "install", $update_sn, 'themes');
-        break;
-
-    case "update_theme":
-        install_module($file_link, $dirname, "update", $update_sn, 'themes');
+    case "update":
+        install_module($file_link, $dirname, "update", $update_sn, $kind);
         break;
 
     default:

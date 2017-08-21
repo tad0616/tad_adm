@@ -1,74 +1,38 @@
 <div class="container-fluid">
   <{if $now_op=="login_form"}>
     <div class="row">
-      <div class="col-sm-6">
+      <div class="col-sm-12">
         <h2><{$smarty.const._MA_TADADM_SSH_ID}></h2>
         <div class="well">
-          <form action="main.php" method="post">
-            <div class="row">
-              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_SSH_HOST}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-sm-7">
-                <input type="text" name="ssh_host" placeholder="<{$smarty.const._MA_TADADM_SSH_HOST}>" value="<{$tad_adm_ssh_host}>" class="col-sm-12">
+          <form action="main.php" method="post" class="form-horizontal" role="form">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">
+                <{$smarty.const._MA_TADADM_SSH_ID}><{$smarty.const._TAD_FOR}>
+              </label>
+              <div class="col-sm-10">
+                <input type="text" name="ssh_id" placeholder="<{$smarty.const._MA_TADADM_SSH_ID}>" class="form-control" value="<{$tad_adm_ssh_id}>">
               </div>
             </div>
-            <div class="row">
-              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_SSH_ID}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-sm-7">
-                <input type="text" name="ssh_id" placeholder="<{$smarty.const._MA_TADADM_SSH_ID}>" class="col-sm-12" value="<{$tad_adm_ssh_id}>">
-              </div>
-            </div>
-            <div class="row">
-              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_SSH_PASS}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-sm-7">
-                <input type="password" name="ssh_passwd" placeholder="<{$smarty.const._MA_TADADM_SSH_PASS}>" class="col-sm-12" value="<{$tad_adm_ssh_passwd}>">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">
+                <{$smarty.const._MA_TADADM_SSH_PASS}><{$smarty.const._TAD_FOR}>
+              </label>
+              <div class="col-sm-10">
+                <input type="password" name="ssh_passwd" placeholder="<{$smarty.const._MA_TADADM_SSH_PASS}>" class="form-control" value="<{$tad_adm_ssh_passwd}>">
               </div>
             </div>
 
+
             <div class="text-center">
+              <input type="hidden" name="ssh_host" value="127.0.0.1" >
               <input type="hidden" name="file_link" value="<{$file_link}>">
               <input type="hidden" name="dirname" value="<{$dirname}>">
               <input type="hidden" name="act" value="<{$act}>">
-              <input type="hidden" name="kind_dir" value="<{$kind_dir}>">
+              <input type="hidden" name="kind" value="<{$kind}>">
               <input type="hidden" name="update_sn" value="<{$update_sn}>">
+              <input type="hidden" name="tad_adm_tpl" value="clean">
               <input type="hidden" name="op" value="ssh_login">
               <button type="submit" class="btn btn-primary"><{$smarty.const._MA_TADADM_LOGIN}>SSH</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div class="col-sm-6">
-        <h2><{$smarty.const._MA_TADADM_FTP_ID}></h2>
-        <div class="well">
-          <form action="main.php" method="post">
-            <div class="row">
-              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_FTP_HOST}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-sm-7">
-                <input type="text" name="ftp_host" placeholder="<{$smarty.const._MA_TADADM_FTP_HOST}>" value="<{$tad_adm_ftp_host}>" class="col-sm-12">
-              </div>
-            </div>
-            <div class="row">
-              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_FTP_ID}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-sm-7">
-                <input type="text" name="ftp_id" placeholder="<{$smarty.const._MA_TADADM_FTP_ID}>" class="col-sm-12" value="<{$tad_adm_ftp_id}>">
-              </div>
-            </div>
-            <div class="row">
-              <label class="col-sm-5 text-right"><{$smarty.const._MA_TADADM_FTP_PASS}><{$smarty.const._TAD_FOR}></label>
-              <div class="col-sm-7">
-                <input type="password" name="ftp_passwd" placeholder="<{$smarty.const._MA_TADADM_FTP_PASS}>" class="col-sm-12" value="<{$tad_adm_ftp_passwd}>">
-                <{$smarty.const._MA_TADADM_FTP_NOTE}>
-              </div>
-            </div>
-
-            <div class="text-center">
-              <input type="hidden" name="file_link" value="<{$file_link}>">
-              <input type="hidden" name="dirname" value="<{$dirname}>">
-              <input type="hidden" name="act" value="<{$act}>">
-              <input type="hidden" name="kind_dir" value="<{$kind_dir}>">
-              <input type="hidden" name="update_sn" value="<{$update_sn}>">
-              <input type="hidden" name="op" value="ftp_login">
-              <button type="submit" class="btn btn-primary"><{$smarty.const._MA_TADADM_LOGIN}>FTP</button>
             </div>
           </form>
         </div>
@@ -103,6 +67,8 @@
             <td nowrap>
               <{if $mod.kind=="module"}>
                 <span class="label label-info"><{$smarty.const._MA_TADADM_MODULE}></span>
+              <{elseif $mod.kind=="adm_tpl"}>
+                <span class="label label-success"><{$smarty.const._MA_TADADM_ADMTPL}></span>
               <{elseif $mod.kind=="theme"}>
                 <span class="label label-danger"><{$smarty.const._MA_TADADM_THEME}></span>
               <{elseif $mod.kind=="fix"}>
@@ -111,18 +77,30 @@
             </td>
             <td><a href="http://120.115.2.90/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" target="_blank"><{$mod.name}></a></td>
             <td nowrap style="text-align:center;">
-              <{if $mod.function=='install'}>
-                <a href="main.php?op=install_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" class="btn btn-xs btn-primary modulesadmin" data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_INSTALL_MODULE}></a>
+              <{if $mod.isactive=='0'}>
+                  <a href="<{$xoops_url}>/modules/<{$mod.dirname}>" class="btn btn-xs btn-danger" target="_blank" alt="<{$smarty.const._MA_GUIDE_TO_MODULE}>" title="<{$smarty.const._MA_GUIDE_TO_MODULE}>"><i class="fa fa-times-circle-o" aria-hidden="true"></i></a>
+                  <a href="main.php?op=update_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin"  data-fancybox-type="iframe" style="color: #934949;"><{$smarty.const._MA_TADADM_MOD_CLOSED}></a>
+              <{elseif $mod.function=='install'}>
+                <a href="main.php?op=install&kind=module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-primary modulesadmin" data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_INSTALL_MODULE}></a>
               <{elseif $mod.function=='update'}>
-                <a href="main.php?op=update_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" class="btn btn-xs btn-danger modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_UPDATE_MODULE}> <{$mod.new_version}></a>
+                <a href="main.php?op=update&kind=module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-danger modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_UPDATE_MODULE}> <{$mod.new_version}></a>
+
+              <{elseif $mod.function=='update_adm_tpl'}>
+                  <a href="main.php?op=update&kind=adm_tpl&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-danger modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_UPDATE_ADMTPL}> <{$mod.new_version}></a>
+              <{elseif $mod.function=='install_adm_tpl'}>
+                  <a href="main.php?op=install&kind=adm_tpl&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-primary modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_INSTALL_ADMTPL}></a>
+
               <{elseif $mod.function=='update_theme'}>
-                  <a href="main.php?op=update_theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" class="btn btn-xs btn-danger" ><{$smarty.const._MA_TADADM_MOD_UPDATE_THEME}> <{$mod.new_version}></a>
+                  <a href="main.php?op=update&kind=theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-danger modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_UPDATE_THEME}> <{$mod.new_version}></a>
               <{elseif $mod.function=='install_theme'}>
-                  <a href="main.php?op=install_theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" class="btn btn-xs btn-primary" ><{$smarty.const._MA_TADADM_MOD_INSTALL_THEME}></a>
+                  <a href="main.php?op=install&kind=theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-primary modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_INSTALL_THEME}></a>
+
               <{elseif $mod.function=='last_mod'}>
-                <a href="main.php?op=update_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" class="modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_LATEST}></a>
+                <a href="main.php?op=update&kind=module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_LATEST}></a>
+              <{elseif $mod.function=='last_adm_tpl'}>
+                  <a href="main.php?op=update&kind=adm_tpl&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" ><{$smarty.const._MA_TADADM_ADM_TPL_LATEST}></a>
               <{elseif $mod.function=='last_theme'}>
-                  <a href="main.php?op=update_theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" ><{$smarty.const._MA_TADADM_MOD_LATEST}></a>
+                  <a href="main.php?op=update&kind=theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" ><{$smarty.const._MA_TADADM_MOD_LATEST}></a>
               <{elseif $mod.new_last_update}>
                 <{$smarty.const._MA_TADADM_MOD_LATEST}>
               <{/if}>

@@ -8,7 +8,7 @@ if ($xoopsUser) {
     $_SESSION['isAdmin'] = $xoopsUser->isAdmin(1);
 } elseif ($op == "helpme") {
     $modhandler        = xoops_gethandler('module');
-    $xoopsModule       = &$modhandler->getByDirname("tad_adm");
+    $xoopsModule       = $modhandler->getByDirname("tad_adm");
     $config_handler    = xoops_gethandler('config');
     $xoopsModuleConfig = &$config_handler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
 
@@ -32,9 +32,9 @@ if (!$_SESSION['isAdmin']) {
                         <label class="col-xs-12">' . _MD_TADADM_INPUT_PASSWD_DESC . '</label>
                     </div>
                     <div class="form-group">
-                        <label class="col-xs-3">' . _MD_TADADM_INPUT_PASSWD . '</label>
+                        <label class="col-xs-3" for="help_passwd">' . _MD_TADADM_INPUT_PASSWD . '</label>
                         <div class="col-xs-7">
-                            <input type="text" name="help_passwd" class="form-control" placeholder="">
+                            <input type="text" name="help_passwd" id="help_passwd" class="form-control" placeholder="">
                         </div>
                         <div class="col-xs-2">
                           <input type="hidden" name="op" value="helpme">
@@ -52,13 +52,13 @@ if (!$_SESSION['isAdmin']) {
 
                 <form class="form-horizontal" action="' . XOOPS_URL . '/user.php" method="post" role="form">
                     <div class="form-group">
-                        <label class="col-xs-3 control-label">' . _MD_TADADM_USER_S_ID . '</label>
+                        <label class="col-xs-3 control-label" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
                         <div class="col-xs-9">
                             <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-xs-3 control-label">' . _MD_TADADM_USER_S_PASS . '</label>
+                        <label class="col-xs-3 control-label" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
                         <div class="col-xs-9">
                             <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control" />
                         </div>
@@ -327,12 +327,16 @@ function clear_session()
 //清除快取
 function clear_cache()
 {
-    $dirname = XOOPS_VAR_PATH . "/caches/smarty_compile";
-    if (is_dir($dirname)) {
-        delete_directory($dirname);
-        $fp = fopen("{$dirname}/index.html", 'w');
-        fwrite($fp, '<script>history.go(-1);</script>');
-        fclose($fp);
+    $dirnames[] = XOOPS_VAR_PATH . "/caches/smarty_cache";
+    $dirnames[] = XOOPS_VAR_PATH . "/caches/smarty_compile";
+    $dirnames[] = XOOPS_VAR_PATH . "/caches/xoops_cache";
+    foreach ($dirnames as $dirname) {
+        if (is_dir($dirname)) {
+            delete_directory($dirname);
+            $fp = fopen("{$dirname}/index.html", 'w');
+            fwrite($fp, '<script>history.go(-1);</script>');
+            fclose($fp);
+        }
     }
 }
 
@@ -432,11 +436,14 @@ function debug_mode_tool()
     return $debug_tool;
 }
 
-//MySQL版本
-$mysql_version = function_exists('mysql_get_server_info') ? mysql_get_server_info() : $xoopsDB->getServerVersion();
-
 //檢查連線
 $mysql_connect = $xoopsDB ? "OK" : _MD_TADADM_CANT_CONNECT;
+
+//MySQL版本
+$sql                 = "select version()";
+$result              = $xoopsDB->queryF($sql);
+list($mysql_version) = $xoopsDB->fetchRow($result);
+// $mysql_version = function_exists('mysql_get_server_info') ? mysql_get_server_info() : $xoopsDB->getServerVersion();
 
 $other = "";
 if ($xoopsDB) {

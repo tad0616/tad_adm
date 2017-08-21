@@ -1,3 +1,20 @@
+Tad Adm 2.6 (2017-06-16 released)
+==================================================================
+1. Simplify the SSH login mechanism
+2. Complete accessibility 2.0 A level detection
+3. Mark the module to be closed
+
+
+Tad Adm 2.5.9 (2017-04-20 released)
+==================================================================
+1. Upgrade Adminer to 4.3.1
+2. Modify Adminer as an responsive template
+3. Add several Adminer plugins
+4. Add the XOOPS cpanel online upgrade feature
+5. Remove the FTP login
+
+
+
 Tad Adm 2.5.8 (2017-02-13 released)
 ==================================================================
 1.Fixed a bug that does not support the posix extension suite on Windows caused a blank screen

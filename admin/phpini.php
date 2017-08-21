@@ -35,7 +35,7 @@ function phpini()
     //die(var_export(ini_get_all()));
 
     $i    = 0;
-    $main = "";
+    $main = array();
     foreach ($allini as $k => $v) {
 
         if (!in_array($k, $show_ini)) {

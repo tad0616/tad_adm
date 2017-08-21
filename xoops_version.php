@@ -3,7 +3,7 @@ $modversion = array();
 
 //---模組基本資訊---//
 $modversion['name']        = _MI_TADADM_NAME;
-$modversion['version']     = '2.58';
+$modversion['version']     = '2.6';
 $modversion['description'] = _MI_TADADM_DESC;
 $modversion['author']      = _MI_TADADM_AUTHOR;
 $modversion['credits']     = _MI_TADADM_CREDITS;
@@ -14,13 +14,13 @@ $modversion['image']       = "images/logo_{$xoopsConfig['language']}.png";
 $modversion['dirname']     = basename(dirname(__FILE__));
 
 //---模組狀態資訊---//
-$modversion['release_date']        = '2017/02/13';
+$modversion['release_date']        = '2017/06/16';
 $modversion['module_website_url']  = 'http://tad0616.net/';
 $modversion['module_website_name'] = _MI_TAD_WEB;
 $modversion['module_status']       = 'release';
 $modversion['author_website_url']  = 'http://tad0616.net/';
 $modversion['author_website_name'] = _MI_TAD_WEB;
-$modversion['min_php']             = 5.3;
+$modversion['min_php']             = 5.4;
 $modversion['min_xoops']           = '2.5';
 
 //---paypal資訊---//

@@ -89,3 +89,12 @@ define('_MA_TADADM_DOWNLOAD_ZIP', '開始壓縮備份');
 define('_MA_TADADM_CHMOD_FAILED', '<ul><li>無法將 %s 的讀寫權限設為 %s，該檔案目錄的擁有者為 %s:%s，屬性為 %s。</li></ul>');
 define('_MA_TADADM_OWNER', '擁有者:擁有群組');
 define('_MA_TADADM_PERMS', '讀寫權限');
+
+define('_MA_TADADM_ADMTPL', '後台');
+define('_MA_TADADM_MOD_UPDATE_ADMTPL', '更新後台');
+define('_MA_TADADM_MOD_INSTALL_ADMTPL', '安裝後台');
+define('_MA_TADADM_ADM_TPL_LATEST', '已是最新');
+define('_MA_TADADM_ADM_TPL_INSTALL_OK', '後台佈景 %s 安裝成功！並已自動替換之。');
+define('_MA_TADADM_ADM_TPL_UPDATE_OK', '後台佈景升級成功！');
+
+define('_MA_TADADM_MOD_CLOSED', '模組關閉中');
