@@ -138,4 +138,3 @@ $modversion['templates'][$i]['description'] = 'tad_adm_adm_phpini_b3.html';
 
 //---通知---//
 //$modversion['hasNotification'] = 1;
-?>

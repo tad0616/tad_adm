@@ -9,10 +9,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- * @copyright  XOOPS Project     
+ * @copyright  XOOPS Project
  * @license    http://www.fsf.org/copyleft/gpl.html GNU public license
- * @package         
- * @author 	   		
+ * @package
+ * @author
  *
  * Version : $Id:
  * ****************************************************************************
@@ -29,11 +29,10 @@ $index_admin = new ModuleAdmin();
 $index_admin->addConfigLabel(_AM_XDIR_CONFIG_CHECK) ;
 $index_admin->addLineConfigLabel(_AM_XDIR_CONFIG_PHP, $xoopsModule->getInfo("min_php"), 'php') ;
 $index_admin->addLineConfigLabel(_AM_XDIR_CONFIG_XOOPS, $xoopsModule->getInfo("min_xoops"), 'xoops') ;
-	
+    
 echo $index_admin->addNavigation('index.php') ;
 echo $index_admin->renderIndex();
-	
+    
 
 include "footer.php";
 xoops_cp_footer();
-?>

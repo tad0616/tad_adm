@@ -27,7 +27,7 @@ define('_MI_TADADM_BLOCK_ID_TEMP_DESC', 'Front-end interface to provide a record
 
 define('_MI_TADADM_DIRNAME', basename(dirname(dirname(__DIR__))));
 define('_MI_TADADM_HELP_HEADER', __DIR__.'/help/helpheader.html');
-define('_MI_TADADM_BACK_2_ADMIN','Back to Administration of ');
+define('_MI_TADADM_BACK_2_ADMIN', 'Back to Administration of ');
 
 //help
-define('_MI_TADADM_HELP_OVERVIEW','Overview');
+define('_MI_TADADM_HELP_OVERVIEW', 'Overview');

@@ -1,6 +1,6 @@
 <?php
 include_once "../../tadtools/language/{$xoopsConfig['language']}/admin_common.php";
-define("_TAD_NEED_TADTOOLS"," 需要 tadtools 模組，可至<a href='http://www.tad0616.net/modules/tad_uploader/index.php?of_cat_sn=50' target='_blank'>Tad教材網</a>下載。");
+define("_TAD_NEED_TADTOOLS", " 需要 tadtools 模組，可至<a href='http://www.tad0616.net/modules/tad_uploader/index.php?of_cat_sn=50' target='_blank'>Tad教材網</a>下載。");
 
 //phpini.php
 define("_MA_TADADM_PHPINI_ITEM", "設定項目");
@@ -40,13 +40,13 @@ define("_MA_TADADM_MV_FAIL", "「%s」搬移至modules下失敗！");
 define("_MA_TADADM_SSH_LOGIN_FAIL", "「%s」以SSH登入「%s」失敗！");
 define("_MA_TADADM_FTP_LOGIN_FAIL", "「%s」以FTP登入「%s」失敗！");
 define("_MA_TADADM_FTP_FAIL", "FTP 連線失敗！（可能該伺服器無FTP服務或未啟動FTP服務）");
-define("_MA_TADADM_KIND" , "種類");
-define("_MA_TADADM_MODULE" , "模組");
-define("_MA_TADADM_THEME" , "佈景");
-define("_MA_TADADM_FIX" , "補充");
-define("_MA_TADADM_THEME_UPDATE_OK" , "佈景更新完畢！");
-define("_MA_TADADM_THEME_INSTALL_OK" , "「%s」佈景安裝完畢！可至「<a href='".XOOPS_URL."/modules/system/admin.php?fct=preferences&op=show&confcat_id=1'>偏好設定</a>」將之設為預設佈景，或至前台佈景區塊套用之。");
-define("_MA_TADADM_FTP_NOTE" , "FTP僅適用與安裝新模組，因為權限關係，FTP模式無法覆蓋原有資料夾，故不適用於更新模組。");
+define("_MA_TADADM_KIND", "種類");
+define("_MA_TADADM_MODULE", "模組");
+define("_MA_TADADM_THEME", "佈景");
+define("_MA_TADADM_FIX", "補充");
+define("_MA_TADADM_THEME_UPDATE_OK", "佈景更新完畢！");
+define("_MA_TADADM_THEME_INSTALL_OK", "「%s」佈景安裝完畢！可至「<a href='".XOOPS_URL."/modules/system/admin.php?fct=preferences&op=show&confcat_id=1'>偏好設定</a>」將之設為預設佈景，或至前台佈景區塊套用之。");
+define("_MA_TADADM_FTP_NOTE", "FTP僅適用與安裝新模組，因為權限關係，FTP模式無法覆蓋原有資料夾，故不適用於更新模組。");
 
 
 //spam.php
@@ -81,7 +81,6 @@ define("_MA_TADADM_MOD_FUNCTION", "管理");
 define("_MA_TADADM_MOD_BLOCK", "區塊");
 define("_MA_TADADM_MOD_ADMIN", "模組後台");
 
-define( "_MA_TADADM_MODULES_UPDATING", "更新");
-define( "_MA_TADADM_MODULES_INSTALLING", "安裝");
-define( "_MA_TADADM_MODULES_PHP_INI_PATH", "重要設定");
-?>
+define("_MA_TADADM_MODULES_UPDATING", "更新");
+define("_MA_TADADM_MODULES_INSTALLING", "安裝");
+define("_MA_TADADM_MODULES_PHP_INI_PATH", "重要設定");

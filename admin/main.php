@@ -23,30 +23,30 @@ $ftp_id = empty($_POST['ftp_id'])? "":$_POST['ftp_id'];
 $ftp_passwd = empty($_POST['ftp_passwd'])? "":$_POST['ftp_passwd'];
 $ftp_host = empty($_POST['ftp_host'])? "":$_POST['ftp_host'];
 
-switch($op){
+switch ($op) {
   /*---判斷動作請貼在下方---*/
   case "install_module":
-  install_module($file_link,$dirname,"install",$update_sn,'modules');
+  install_module($file_link, $dirname, "install", $update_sn, 'modules');
   break;
 
   case "update_module":
-  install_module($file_link,$dirname,"update",$update_sn,'modules');
+  install_module($file_link, $dirname, "update", $update_sn, 'modules');
   break;
 
   case "ssh_login":
-  ssh_login($ssh_host,$ssh_id,$ssh_passwd,$file_link,$dirname,$act,$update_sn,$kind_dir);
+  ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link, $dirname, $act, $update_sn, $kind_dir);
   break;
 
   case "ftp_login":
-  ftp_log_in($ftp_host,$ftp_id,$ftp_passwd,$file_link,$dirname,$act,$update_sn,$kind_dir);
+  ftp_log_in($ftp_host, $ftp_id, $ftp_passwd, $file_link, $dirname, $act, $update_sn, $kind_dir);
   break;
 
   case "install_theme":
-  install_module($file_link,$dirname,"install",$update_sn,'themes');
+  install_module($file_link, $dirname, "install", $update_sn, 'themes');
   break;
 
   case "update_theme":
-  install_module($file_link,$dirname,"update",$update_sn,'themes');
+  install_module($file_link, $dirname, "update", $update_sn, 'themes');
   break;
 
   default:
@@ -57,4 +57,3 @@ switch($op){
 
 /*-----------秀出結果區--------------*/
 include_once 'footer.php';
-?>

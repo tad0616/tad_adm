@@ -39,10 +39,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -143,7 +143,8 @@ define('CRYPT_DES_MODE_MCRYPT', 2);
  * @access  public
  * @package Crypt_DES
  */
-class Crypt_DES {
+class Crypt_DES
+{
     /**
      * The Key Schedule
      *
@@ -151,7 +152,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $keys = "\0\0\0\0\0\0\0\0";
+    public $keys = "\0\0\0\0\0\0\0\0";
 
     /**
      * The Encryption Mode
@@ -160,7 +161,7 @@ class Crypt_DES {
      * @var Integer
      * @access private
      */
-    var $mode;
+    public $mode;
 
     /**
      * Continuous Buffer status
@@ -169,7 +170,7 @@ class Crypt_DES {
      * @var Boolean
      * @access private
      */
-    var $continuousBuffer = false;
+    public $continuousBuffer = false;
 
     /**
      * Padding status
@@ -178,7 +179,7 @@ class Crypt_DES {
      * @var Boolean
      * @access private
      */
-    var $padding = true;
+    public $padding = true;
 
     /**
      * The Initialization Vector
@@ -187,7 +188,7 @@ class Crypt_DES {
      * @var String
      * @access private
      */
-    var $iv = "\0\0\0\0\0\0\0\0";
+    public $iv = "\0\0\0\0\0\0\0\0";
 
     /**
      * A "sliding" Initialization Vector
@@ -196,7 +197,7 @@ class Crypt_DES {
      * @var String
      * @access private
      */
-    var $encryptIV = "\0\0\0\0\0\0\0\0";
+    public $encryptIV = "\0\0\0\0\0\0\0\0";
 
     /**
      * A "sliding" Initialization Vector
@@ -205,7 +206,7 @@ class Crypt_DES {
      * @var String
      * @access private
      */
-    var $decryptIV = "\0\0\0\0\0\0\0\0";
+    public $decryptIV = "\0\0\0\0\0\0\0\0";
 
     /**
      * mcrypt resource for encryption
@@ -217,7 +218,7 @@ class Crypt_DES {
      * @var String
      * @access private
      */
-    var $enmcrypt;
+    public $enmcrypt;
 
     /**
      * mcrypt resource for decryption
@@ -229,7 +230,7 @@ class Crypt_DES {
      * @var String
      * @access private
      */
-    var $demcrypt;
+    public $demcrypt;
 
     /**
      * Does the enmcrypt resource need to be (re)initialized?
@@ -239,7 +240,7 @@ class Crypt_DES {
      * @var Boolean
      * @access private
      */
-    var $enchanged = true;
+    public $enchanged = true;
 
     /**
      * Does the demcrypt resource need to be (re)initialized?
@@ -249,7 +250,7 @@ class Crypt_DES {
      * @var Boolean
      * @access private
      */
-    var $dechanged = true;
+    public $dechanged = true;
 
     /**
      * Is the mode one that is paddable?
@@ -258,7 +259,7 @@ class Crypt_DES {
      * @var Boolean
      * @access private
      */
-    var $paddable = false;
+    public $paddable = false;
 
     /**
      * Encryption buffer for CTR, OFB and CFB modes
@@ -267,7 +268,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $enbuffer = array('encrypted' => '', 'xor' => '', 'pos' => 0, 'enmcrypt_init' => true);
+    public $enbuffer = array('encrypted' => '', 'xor' => '', 'pos' => 0, 'enmcrypt_init' => true);
 
     /**
      * Decryption buffer for CTR, OFB and CFB modes
@@ -276,7 +277,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $debuffer = array('ciphertext' => '', 'xor' => '', 'pos' => 0, 'demcrypt_init' => true);
+    public $debuffer = array('ciphertext' => '', 'xor' => '', 'pos' => 0, 'demcrypt_init' => true);
 
     /**
      * mcrypt resource for CFB mode
@@ -286,15 +287,15 @@ class Crypt_DES {
      * @var String
      * @access private
      */
-    var $ecb;
+    public $ecb;
 
     /**
      * Performance-optimized callback function for en/decrypt()
-     * 
+     *
      * @var Callback
      * @access private
      */
-    var $inline_crypt;
+    public $inline_crypt;
 
     /**
      * Holds whether performance-optimized $inline_crypt should be used or not.
@@ -302,7 +303,7 @@ class Crypt_DES {
      * @var Boolean
      * @access private
      */
-    var $use_inline_crypt = false;
+    public $use_inline_crypt = false;
 
     /**
      * Shuffle table.
@@ -316,7 +317,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $shuffle = array(
+    public $shuffle = array(
         "\x00\x00\x00\x00\x00\x00\x00\x00", "\x00\x00\x00\x00\x00\x00\x00\xFF",
         "\x00\x00\x00\x00\x00\x00\xFF\x00", "\x00\x00\x00\x00\x00\x00\xFF\xFF",
         "\x00\x00\x00\x00\x00\xFF\x00\x00", "\x00\x00\x00\x00\x00\xFF\x00\xFF",
@@ -455,7 +456,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $ipmap = array(
+    public $ipmap = array(
         0x00, 0x10, 0x01, 0x11, 0x20, 0x30, 0x21, 0x31,
         0x02, 0x12, 0x03, 0x13, 0x22, 0x32, 0x23, 0x33,
         0x40, 0x50, 0x41, 0x51, 0x60, 0x70, 0x61, 0x71,
@@ -497,7 +498,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $invipmap = array(
+    public $invipmap = array(
         0x00, 0x80, 0x40, 0xC0, 0x20, 0xA0, 0x60, 0xE0,
         0x10, 0x90, 0x50, 0xD0, 0x30, 0xB0, 0x70, 0xF0,
         0x08, 0x88, 0x48, 0xC8, 0x28, 0xA8, 0x68, 0xE8,
@@ -541,7 +542,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $sbox1 = array(
+    public $sbox1 = array(
         0x00808200, 0x00000000, 0x00008000, 0x00808202,
         0x00808002, 0x00008202, 0x00000002, 0x00008000,
         0x00000200, 0x00808200, 0x00808202, 0x00000200,
@@ -566,7 +567,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $sbox2 = array(
+    public $sbox2 = array(
         0x40084010, 0x40004000, 0x00004000, 0x00084010,
         0x00080000, 0x00000010, 0x40080010, 0x40004010,
         0x40000010, 0x40084010, 0x40084000, 0x40000000,
@@ -591,7 +592,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $sbox3 = array(
+    public $sbox3 = array(
         0x00000104, 0x04010100, 0x00000000, 0x04010004,
         0x04000100, 0x00000000, 0x00010104, 0x04000100,
         0x00010004, 0x04000004, 0x04000004, 0x00010000,
@@ -616,7 +617,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $sbox4 = array(
+    public $sbox4 = array(
         0x80401000, 0x80001040, 0x80001040, 0x00000040,
         0x00401040, 0x80400040, 0x80400000, 0x80001000,
         0x00000000, 0x00401000, 0x00401000, 0x80401040,
@@ -641,7 +642,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $sbox5 = array(
+    public $sbox5 = array(
         0x00000080, 0x01040080, 0x01040000, 0x21000080,
         0x00040000, 0x00000080, 0x20000000, 0x01040000,
         0x20040080, 0x00040000, 0x01000080, 0x20040080,
@@ -666,7 +667,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $sbox6 = array(
+    public $sbox6 = array(
         0x10000008, 0x10200000, 0x00002000, 0x10202008,
         0x10200000, 0x00000008, 0x10202008, 0x00200000,
         0x10002000, 0x00202008, 0x00200000, 0x10000008,
@@ -691,7 +692,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $sbox7 = array(
+    public $sbox7 = array(
         0x00100000, 0x02100001, 0x02000401, 0x00000000,
         0x00000400, 0x02000401, 0x00100401, 0x02100400,
         0x02100401, 0x00100000, 0x00000000, 0x02000001,
@@ -716,7 +717,7 @@ class Crypt_DES {
      * @var Array
      * @access private
      */
-    var $sbox8 = array(
+    public $sbox8 = array(
         0x08000820, 0x00000800, 0x00020000, 0x08020820,
         0x08000000, 0x08000820, 0x00000020, 0x08000000,
         0x00020020, 0x08020000, 0x08020820, 0x00020800,
@@ -745,9 +746,9 @@ class Crypt_DES {
      * @return Crypt_DES
      * @access public
      */
-    function Crypt_DES($mode = CRYPT_DES_MODE_CBC)
+    public function Crypt_DES($mode = CRYPT_DES_MODE_CBC)
     {
-        if ( !defined('CRYPT_DES_MODE') ) {
+        if (!defined('CRYPT_DES_MODE')) {
             switch (true) {
                 case extension_loaded('mcrypt') && in_array('des', mcrypt_list_algorithms()):
                     define('CRYPT_DES_MODE', CRYPT_DES_MODE_MCRYPT);
@@ -757,7 +758,7 @@ class Crypt_DES {
             }
         }
 
-        switch ( CRYPT_DES_MODE ) {
+        switch (CRYPT_DES_MODE) {
             case CRYPT_DES_MODE_MCRYPT:
                 switch ($mode) {
                     case CRYPT_DES_MODE_ECB:
@@ -821,9 +822,9 @@ class Crypt_DES {
      * @access public
      * @param String $key
      */
-    function setKey($key)
+    public function setKey($key)
     {
-        $this->keys = ( CRYPT_DES_MODE == CRYPT_DES_MODE_MCRYPT ) ? str_pad(substr($key, 0, 8), 8, chr(0)) : $this->_prepareKey($key);
+        $this->keys = (CRYPT_DES_MODE == CRYPT_DES_MODE_MCRYPT) ? str_pad(substr($key, 0, 8), 8, chr(0)) : $this->_prepareKey($key);
         $this->enchanged = true;
         $this->dechanged = true;
     }
@@ -839,7 +840,7 @@ class Crypt_DES {
      * @param optional String $method
      * @access public
      */
-    function setPassword($password, $method = 'pbkdf2')
+    public function setPassword($password, $method = 'pbkdf2')
     {
         $key = '';
 
@@ -890,7 +891,7 @@ class Crypt_DES {
      * @access public
      * @param String $iv
      */
-    function setIV($iv)
+    public function setIV($iv)
     {
         $this->encryptIV = $this->decryptIV = $this->iv = str_pad(substr($iv, 0, 8), 8, chr(0));
         $this->enchanged = true;
@@ -908,7 +909,7 @@ class Crypt_DES {
      * @access public
      * @param String $iv
      */
-    function _generate_xor(&$iv)
+    public function _generate_xor(&$iv)
     {
         $xor = $iv;
         for ($j = 4; $j <= 8; $j+=4) {
@@ -947,13 +948,13 @@ class Crypt_DES {
      * @access public
      * @param String $plaintext
      */
-    function encrypt($plaintext)
+    public function encrypt($plaintext)
     {
         if ($this->paddable) {
             $plaintext = $this->_pad($plaintext);
         }
 
-        if ( CRYPT_DES_MODE == CRYPT_DES_MODE_MCRYPT ) {
+        if (CRYPT_DES_MODE == CRYPT_DES_MODE_MCRYPT) {
             if ($this->enchanged) {
                 mcrypt_generic_init($this->enmcrypt, $this->keys, $this->encryptIV);
                 if ($this->mode == 'ncfb') {
@@ -1003,7 +1004,7 @@ class Crypt_DES {
                             $i+= 8;
                         }
                     }
-                } 
+                }
                 if ($len) {
                     $iv = mcrypt_generic($this->ecb, $iv);
                     $block = $iv ^ substr($plaintext, -$len);
@@ -1137,7 +1138,7 @@ class Crypt_DES {
                 if ($this->continuousBuffer) {
                     $this->encryptIV = $xor;
                     if ($start = strlen($plaintext) & 7) {
-                         $buffer['xor'] = substr($key, $start) . $buffer['xor'];
+                        $buffer['xor'] = substr($key, $start) . $buffer['xor'];
                     }
                 }
         }
@@ -1154,7 +1155,7 @@ class Crypt_DES {
      * @access public
      * @param String $ciphertext
      */
-    function decrypt($ciphertext)
+    public function decrypt($ciphertext)
     {
         if ($this->paddable) {
             // we pad with chr(0) since that's what mcrypt_generic does.  to quote from http://php.net/function.mcrypt-generic :
@@ -1162,7 +1163,7 @@ class Crypt_DES {
             $ciphertext = str_pad($ciphertext, (strlen($ciphertext) + 7) & 0xFFFFFFF8, chr(0));
         }
 
-        if ( CRYPT_DES_MODE == CRYPT_DES_MODE_MCRYPT ) {
+        if (CRYPT_DES_MODE == CRYPT_DES_MODE_MCRYPT) {
             if ($this->dechanged) {
                 mcrypt_generic_init($this->demcrypt, $this->keys, $this->decryptIV);
                 if ($this->mode == 'ncfb') {
@@ -1332,7 +1333,7 @@ class Crypt_DES {
                 if ($this->continuousBuffer) {
                     $this->decryptIV = $xor;
                     if ($start = strlen($ciphertext) % 8) {
-                         $buffer['xor'] = substr($key, $start) . $buffer['xor'];
+                        $buffer['xor'] = substr($key, $start) . $buffer['xor'];
                     }
                 }
         }
@@ -1377,7 +1378,7 @@ class Crypt_DES {
      * @see Crypt_DES::disableContinuousBuffer()
      * @access public
      */
-    function enableContinuousBuffer()
+    public function enableContinuousBuffer()
     {
         $this->continuousBuffer = true;
     }
@@ -1390,7 +1391,7 @@ class Crypt_DES {
      * @see Crypt_DES::enableContinuousBuffer()
      * @access public
      */
-    function disableContinuousBuffer()
+    public function disableContinuousBuffer()
     {
         $this->continuousBuffer = false;
         $this->encryptIV = $this->iv;
@@ -1418,7 +1419,7 @@ class Crypt_DES {
      * @see Crypt_DES::disablePadding()
      * @access public
      */
-    function enablePadding()
+    public function enablePadding()
     {
         $this->padding = true;
     }
@@ -1429,7 +1430,7 @@ class Crypt_DES {
      * @see Crypt_DES::enablePadding()
      * @access public
      */
-    function disablePadding()
+    public function disablePadding()
     {
         $this->padding = false;
     }
@@ -1446,7 +1447,7 @@ class Crypt_DES {
      * @see Crypt_DES::_unpad()
      * @access private
      */
-    function _pad($text)
+    public function _pad($text)
     {
         $length = strlen($text);
 
@@ -1472,7 +1473,7 @@ class Crypt_DES {
      * @see Crypt_DES::_pad()
      * @access private
      */
-    function _unpad($text)
+    public function _unpad($text)
     {
         if (!$this->padding) {
             return $text;
@@ -1499,7 +1500,7 @@ class Crypt_DES {
      * @param Integer $mode
      * @return String
      */
-    function _processBlock($block, $mode)
+    public function _processBlock($block, $mode)
     {
         $shuffle  = $this->shuffle;
         $invipmap = $this->invipmap;
@@ -1567,7 +1568,7 @@ class Crypt_DES {
      * @param String $key
      * @return Array
      */
-    function _prepareKey($key)
+    public function _prepareKey($key)
     {
         static $shifts = array( // number of key bits shifted per round
             1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1
@@ -2085,7 +2086,7 @@ class Crypt_DES {
      * @return String
      * @access private
      */
-    function _string_shift(&$string)
+    public function _string_shift(&$string)
     {
         $substr = substr($string, 0, 8);
         $string = substr($string, 8);
@@ -2098,7 +2099,7 @@ class Crypt_DES {
      * @param optional Integer $des_rounds (1 = DES[default], 3 = TribleDES)
      * @access private
      */
-    function inline_crypt_setup($des_rounds = 1)
+    public function inline_crypt_setup($des_rounds = 1)
     {
         $lambda_functions =& Crypt_DES::get_lambda_functions();
         $block_size = 8;
@@ -2525,7 +2526,7 @@ class Crypt_DES {
      * @return Array
      * @access private
      */
-    function &get_lambda_functions()
+    public function &get_lambda_functions()
     {
         static $functions = array();
         return $functions;

@@ -33,10 +33,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -82,14 +82,15 @@ define('CRYPT_DES_MODE_CBC3', CRYPT_DES_MODE_CBC);
  * @access  public
  * @package Crypt_TerraDES
  */
-class Crypt_TripleDES extends Crypt_DES {
+class Crypt_TripleDES extends Crypt_DES
+{
     /**
      * The Crypt_DES objects
      *
      * @var Array
      * @access private
      */
-    var $des;
+    public $des;
 
     /**
      * Default Constructor.
@@ -101,9 +102,9 @@ class Crypt_TripleDES extends Crypt_DES {
      * @return Crypt_TripleDES
      * @access public
      */
-    function Crypt_TripleDES($mode = CRYPT_DES_MODE_CBC)
+    public function Crypt_TripleDES($mode = CRYPT_DES_MODE_CBC)
     {
-        if ( !defined('CRYPT_DES_MODE') ) {
+        if (!defined('CRYPT_DES_MODE')) {
             switch (true) {
                 case extension_loaded('mcrypt') && in_array('tripledes', mcrypt_list_algorithms()):
                     define('CRYPT_DES_MODE', CRYPT_DES_MODE_MCRYPT);
@@ -113,7 +114,7 @@ class Crypt_TripleDES extends Crypt_DES {
             }
         }
 
-        if ( $mode == CRYPT_DES_MODE_3CBC ) {
+        if ($mode == CRYPT_DES_MODE_3CBC) {
             $this->mode = CRYPT_DES_MODE_3CBC;
             $this->des = array(
                 new Crypt_DES(CRYPT_DES_MODE_CBC),
@@ -130,7 +131,7 @@ class Crypt_TripleDES extends Crypt_DES {
             return;
         }
 
-        switch ( CRYPT_DES_MODE ) {
+        switch (CRYPT_DES_MODE) {
             case CRYPT_DES_MODE_MCRYPT:
                 switch ($mode) {
                     case CRYPT_DES_MODE_ECB:
@@ -203,7 +204,7 @@ class Crypt_TripleDES extends Crypt_DES {
      * @access public
      * @param String $key
      */
-    function setKey($key)
+    public function setKey($key)
     {
         $length = strlen($key);
         if ($length > 8) {
@@ -218,11 +219,11 @@ class Crypt_TripleDES extends Crypt_DES {
         switch (true) {
             case CRYPT_DES_MODE == CRYPT_DES_MODE_INTERNAL:
             case $this->mode == CRYPT_DES_MODE_3CBC:
-                $this->des[0]->setKey(substr($key,  0, 8));
-                $this->des[1]->setKey(substr($key,  8, 8));
+                $this->des[0]->setKey(substr($key, 0, 8));
+                $this->des[1]->setKey(substr($key, 8, 8));
                 $this->des[2]->setKey(substr($key, 16, 8));
 
-                // Merge the three DES-1-dim-key-arrays for 3DES-inline-en/decrypting  
+                // Merge the three DES-1-dim-key-arrays for 3DES-inline-en/decrypting
                 if ($this->use_inline_crypt && $this->mode != CRYPT_DES_MODE_3CBC) {
                     $this->keys = array(
                         CRYPT_DES_ENCRYPT_1DIM => array_merge(
@@ -252,7 +253,7 @@ class Crypt_TripleDES extends Crypt_DES {
      * @param optional String $method
      * @access public
      */
-    function setPassword($password, $method = 'pbkdf2')
+    public function setPassword($password, $method = 'pbkdf2')
     {
         $key = '';
 
@@ -302,7 +303,7 @@ class Crypt_TripleDES extends Crypt_DES {
      * @access public
      * @param String $iv
      */
-    function setIV($iv)
+    public function setIV($iv)
     {
         $this->encryptIV = $this->decryptIV = $this->iv = str_pad(substr($iv, 0, 8), 8, chr(0));
         if ($this->mode == CRYPT_DES_MODE_3CBC) {
@@ -319,7 +320,7 @@ class Crypt_TripleDES extends Crypt_DES {
      * @access public
      * @param String $plaintext
      */
-    function encrypt($plaintext)
+    public function encrypt($plaintext)
     {
         if ($this->paddable) {
             $plaintext = $this->_pad($plaintext);
@@ -332,7 +333,7 @@ class Crypt_TripleDES extends Crypt_DES {
             return $ciphertext;
         }
 
-        if ( CRYPT_DES_MODE == CRYPT_DES_MODE_MCRYPT ) {
+        if (CRYPT_DES_MODE == CRYPT_DES_MODE_MCRYPT) {
             if ($this->enchanged) {
                 mcrypt_generic_init($this->enmcrypt, $this->key, $this->encryptIV);
                 if ($this->mode == 'ncfb') {
@@ -383,7 +384,7 @@ class Crypt_TripleDES extends Crypt_DES {
                             $i+= 8;
                         }
                     }
-                } 
+                }
                 if ($len) {
                     $iv = mcrypt_generic($this->ecb, $iv);
                     $block = $iv ^ substr($plaintext, $i);
@@ -423,7 +424,7 @@ class Crypt_TripleDES extends Crypt_DES {
                     $block = substr($plaintext, $i, 8);
                     // all of these _processBlock calls could, in theory, be put in a function - say Crypt_TripleDES::_ede_encrypt() or something.
                     // only problem with that: it would slow encryption and decryption down.  $this->des would have to be called every time that
-                    // function is called, instead of once for the whole string of text that's being encrypted, which would, in turn, make 
+                    // function is called, instead of once for the whole string of text that's being encrypted, which would, in turn, make
                     // encryption and decryption take more time, per this:
                     //
                     // http://blog.libssh2.org/index.php?/archives/21-Compiled-Variables.html
@@ -538,7 +539,7 @@ class Crypt_TripleDES extends Crypt_DES {
                 if ($this->continuousBuffer) {
                     $this->encryptIV = $xor;
                     if ($start = strlen($plaintext) & 7) {
-                         $buffer['xor'] = substr($key, $start) . $buffer['xor'];
+                        $buffer['xor'] = substr($key, $start) . $buffer['xor'];
                     }
                 }
         }
@@ -552,7 +553,7 @@ class Crypt_TripleDES extends Crypt_DES {
      * @access public
      * @param String $ciphertext
      */
-    function decrypt($ciphertext)
+    public function decrypt($ciphertext)
     {
         if ($this->mode == CRYPT_DES_MODE_3CBC && strlen($this->key) > 8) {
             $plaintext = $this->des[0]->decrypt($this->des[1]->encrypt($this->des[2]->decrypt($ciphertext)));
@@ -566,7 +567,7 @@ class Crypt_TripleDES extends Crypt_DES {
             $ciphertext = str_pad($ciphertext, (strlen($ciphertext) + 7) & 0xFFFFFFF8, chr(0));
         }
 
-        if ( CRYPT_DES_MODE == CRYPT_DES_MODE_MCRYPT ) {
+        if (CRYPT_DES_MODE == CRYPT_DES_MODE_MCRYPT) {
             if ($this->dechanged) {
                 mcrypt_generic_init($this->demcrypt, $this->key, $this->decryptIV);
                 if ($this->mode == 'ncfb') {
@@ -721,7 +722,7 @@ class Crypt_TripleDES extends Crypt_DES {
                     if ($continuousBuffer && strlen($block) != 8) {
                         $buffer['ciphertext'].= $block;
                         $block = $xor;
-                    } else if (strlen($block) == 8) {
+                    } elseif (strlen($block) == 8) {
                         $xor = $des[0]->_processBlock($block, CRYPT_DES_ENCRYPT);
                         $xor = $des[1]->_processBlock($xor, CRYPT_DES_DECRYPT);
                         $xor = $des[2]->_processBlock($xor, CRYPT_DES_ENCRYPT);
@@ -757,7 +758,7 @@ class Crypt_TripleDES extends Crypt_DES {
                 if ($this->continuousBuffer) {
                     $this->decryptIV = $xor;
                     if ($start = strlen($ciphertext) & 7) {
-                         $buffer['xor'] = substr($key, $start) . $buffer['xor'];
+                        $buffer['xor'] = substr($key, $start) . $buffer['xor'];
                     }
                 }
         }
@@ -802,7 +803,7 @@ class Crypt_TripleDES extends Crypt_DES {
      * @see Crypt_TripleDES::disableContinuousBuffer()
      * @access public
      */
-    function enableContinuousBuffer()
+    public function enableContinuousBuffer()
     {
         $this->continuousBuffer = true;
         if ($this->mode == CRYPT_DES_MODE_3CBC) {
@@ -820,7 +821,7 @@ class Crypt_TripleDES extends Crypt_DES {
      * @see Crypt_TripleDES::enableContinuousBuffer()
      * @access public
      */
-    function disableContinuousBuffer()
+    public function disableContinuousBuffer()
     {
         $this->continuousBuffer = false;
         $this->encryptIV = $this->iv;

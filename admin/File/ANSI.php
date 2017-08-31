@@ -17,10 +17,10 @@
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -45,14 +45,15 @@
  * @access  public
  * @package File_ANSI
  */
-class File_ANSI {
+class File_ANSI
+{
     /**
      * Max Width
      *
      * @var Integer
      * @access private
      */
-    var $max_x;
+    public $max_x;
 
     /**
      * Max Height
@@ -60,7 +61,7 @@ class File_ANSI {
      * @var Integer
      * @access private
      */
-    var $max_y;
+    public $max_y;
 
     /**
      * Max History
@@ -68,7 +69,7 @@ class File_ANSI {
      * @var Integer
      * @access private
      */
-    var $max_history;
+    public $max_history;
 
     /**
      * History
@@ -76,7 +77,7 @@ class File_ANSI {
      * @var Array
      * @access private
      */
-    var $history;
+    public $history;
 
     /**
      * History Attributes
@@ -84,7 +85,7 @@ class File_ANSI {
      * @var Array
      * @access private
      */
-    var $history_attrs;
+    public $history_attrs;
 
     /**
      * Current Column
@@ -92,7 +93,7 @@ class File_ANSI {
      * @var Integer
      * @access private
      */
-    var $x;
+    public $x;
 
     /**
      * Current Row
@@ -100,7 +101,7 @@ class File_ANSI {
      * @var Integer
      * @access private
      */
-    var $y;
+    public $y;
 
     /**
      * Old Column
@@ -108,7 +109,7 @@ class File_ANSI {
      * @var Integer
      * @access private
      */
-    var $old_x;
+    public $old_x;
 
     /**
      * Old Row
@@ -116,7 +117,7 @@ class File_ANSI {
      * @var Integer
      * @access private
      */
-    var $old_y;
+    public $old_y;
 
     /**
      * An empty attribute row
@@ -124,7 +125,7 @@ class File_ANSI {
      * @var Array
      * @access private
      */
-    var $attr_row;
+    public $attr_row;
 
     /**
      * The current screen text
@@ -132,7 +133,7 @@ class File_ANSI {
      * @var Array
      * @access private
      */
-    var $screen;
+    public $screen;
 
     /**
      * The current screen attributes
@@ -140,7 +141,7 @@ class File_ANSI {
      * @var Array
      * @access private
      */
-    var $attrs;
+    public $attrs;
 
     /**
      * The current foreground color
@@ -148,7 +149,7 @@ class File_ANSI {
      * @var String
      * @access private
      */
-    var $foreground;
+    public $foreground;
 
     /**
      * The current background color
@@ -156,7 +157,7 @@ class File_ANSI {
      * @var String
      * @access private
      */
-    var $background;
+    public $background;
 
     /**
      * Bold flag
@@ -164,7 +165,7 @@ class File_ANSI {
      * @var Boolean
      * @access private
      */
-    var $bold;
+    public $bold;
 
     /**
      * Underline flag
@@ -172,7 +173,7 @@ class File_ANSI {
      * @var Boolean
      * @access private
      */
-    var $underline;
+    public $underline;
 
     /**
      * Blink flag
@@ -180,7 +181,7 @@ class File_ANSI {
      * @var Boolean
      * @access private
      */
-    var $blink;
+    public $blink;
 
     /**
      * Reverse flag
@@ -188,7 +189,7 @@ class File_ANSI {
      * @var Boolean
      * @access private
      */
-    var $reverse;
+    public $reverse;
 
     /**
      * Color flag
@@ -196,7 +197,7 @@ class File_ANSI {
      * @var Boolean
      * @access private
      */
-    var $color;
+    public $color;
 
     /**
      * Current ANSI code
@@ -204,7 +205,7 @@ class File_ANSI {
      * @var String
      * @access private
      */
-    var $ansi;
+    public $ansi;
 
     /**
      * Default Constructor.
@@ -212,7 +213,7 @@ class File_ANSI {
      * @return File_ANSI
      * @access public
      */
-    function File_ANSI()
+    public function File_ANSI()
     {
         $this->setHistory(200);
         $this->setDimensions(80, 24);
@@ -227,7 +228,7 @@ class File_ANSI {
      * @param Integer $y
      * @access public
      */
-    function setDimensions($x, $y)
+    public function setDimensions($x, $y)
     {
         $this->max_x = $x - 1;
         $this->max_y = $y - 1;
@@ -254,7 +255,7 @@ class File_ANSI {
      * @param Integer $y
      * @access public
      */
-    function setHistory($history)
+    public function setHistory($history)
     {
         $this->max_history = $history;
     }
@@ -265,7 +266,7 @@ class File_ANSI {
      * @param String $source
      * @access public
      */
-    function loadString($source)
+    public function loadString($source)
     {
         $this->setDimensions($this->max_x + 1, $this->max_y + 1);
         $this->appendString($source);
@@ -277,7 +278,7 @@ class File_ANSI {
      * @param String $source
      * @access public
      */
-    function appendString($source)
+    public function appendString($source)
     {
         for ($i = 0; $i < strlen($source); $i++) {
             if (strlen($this->ansi)) {
@@ -313,6 +314,7 @@ class File_ANSI {
                             array_shift($this->history);
                             array_shift($this->history_attrs);
                         }
+                        // no break
                     case "\x1B[K": // Clear screen from cursor right
                         $this->screen[$this->y] = substr($this->screen[$this->y], 0, $this->x);
 
@@ -350,10 +352,18 @@ class File_ANSI {
                                         case 0: // Turn off character attributes
                                             $this->attrs[$this->y][$this->x] = '';
 
-                                            if ($this->bold) $this->attrs[$this->y][$this->x].= '</b>';
-                                            if ($this->underline) $this->attrs[$this->y][$this->x].= '</underline>';
-                                            if ($this->blink) $this->attrs[$this->y][$this->x].= '</blink>';
-                                            if ($this->color) $this->attrs[$this->y][$this->x].= '</span>';
+                                            if ($this->bold) {
+                                                $this->attrs[$this->y][$this->x].= '</b>';
+                                            }
+                                            if ($this->underline) {
+                                                $this->attrs[$this->y][$this->x].= '</underline>';
+                                            }
+                                            if ($this->blink) {
+                                                $this->attrs[$this->y][$this->x].= '</blink>';
+                                            }
+                                            if ($this->color) {
+                                                $this->attrs[$this->y][$this->x].= '</span>';
+                                            }
 
                                             if ($this->reverse) {
                                                 $temp = $this->background;
@@ -476,7 +486,7 @@ class File_ANSI {
      *
      * @access private
      */
-    function _newLine()
+    public function _newLine()
     {
         //if ($this->y < $this->max_y) {
         //    $this->y++;
@@ -505,7 +515,7 @@ class File_ANSI {
      * @access private
      * @return String
      */
-    function _getScreen()
+    public function _getScreen()
     {
         $output = '';
         for ($i = 0; $i <= $this->max_y; $i++) {
@@ -528,7 +538,7 @@ class File_ANSI {
      * @access public
      * @return String
      */
-    function getScreen()
+    public function getScreen()
     {
         return '<pre style="color: white; background: black" width="' . ($this->max_x + 1) . '">' . $this->_getScreen() . '</pre>';
     }
@@ -539,7 +549,7 @@ class File_ANSI {
      * @access public
      * @return String
      */
-    function getHistory()
+    public function getHistory()
     {
         $scrollback = '';
         for ($i = 0; $i < count($this->history); $i++) {
