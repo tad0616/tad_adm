@@ -1,6 +1,6 @@
 <?php
-include_once "../../tadtools/language/{$xoopsConfig['language']}/admin_common.php";
-define('_TAD_NEED_TADTOOLS', "This module needs TadTools module. You can download TadTools from <a href='http://www.tad0616.net/modules/tad_uploader/index.php?of_cat_sn=50' target='_blank'>Tad's web</a>.");
+include_once '../../tadtools/language/' . $xoopsConfig['language'] . '/admin_common.php';
+define('_TAD_NEED_TADTOOLS', 'This module needs TadTools module. You can download TadTools from <a href="http://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS EasyGO</a>.');
 
 //phpini.php
 define('_MA_TADADM_PHPINI_ITEM', 'Setting item');
@@ -57,8 +57,8 @@ define('_MA_TADADM_AUTO_CHECK_DESC', '(to use once, the first time to check all 
 define('_MA_TADADM_AUTO_CHECK_DESC1', "will not even check to <a href='http://www.stopforumspam.com' target='_blank'>http://www.stopforumspam.com</a> to check the account Email whether it is registered with the garbage account, so for the first time may be slow.");
 define('_MA_TADADM_AUTO_CHECK_DESC2', 'will result after checking into the database, so the account will become second faster browsing.');
 define('_MA_TADADM_AUTO_CHECK_DESC3', "<span style='color:red'>red means it is registered with the 'junk account'</span>；<span style='color:#CC6600'>orange means 'from signature judged eight is rubbish to account' </span>；<span style='color:#505050'>black representatives should be generally account</span>，<span style='color:blue'>blue is articles published over the account</span>");
-define('_MA_TADADM_AUTO_CHECK_DESC4', "<a href='main.php?op=all&mode=force'> forced to re-check!</a>The Email will be checked before the note is already checked, it will not be checked again until the stopforumspam email is spam but to accelerate the speed check was only after some email stopforumspam as spam, so every once in a while, you can take advantage of this feature, re-check whether they have been classified as email spam");
-define('_MA_TADADM_AUTO_CHECK_DESC5', "<a href='main.php?op=spam'>spam lists only check list</a>(execute 'forced re-check' after, you can use this feature to watch have to find out What are spam and delete it). ");
+define('_MA_TADADM_AUTO_CHECK_DESC4', "<a href='spam.php?op=all&mode=force'> forced to re-check!</a>The Email will be checked before the note is already checked, it will not be checked again until the stopforumspam email is spam but to accelerate the speed check was only after some email stopforumspam as spam, so every once in a while, you can take advantage of this feature, re-check whether they have been classified as email spam");
+define('_MA_TADADM_AUTO_CHECK_DESC5', "<a href='spam.php?op=spam'>spam lists only check list</a>(execute 'forced re-check' after, you can use this feature to watch have to find out What are spam and delete it). ");
 define('_MA_TADADM_UNAME', 'Account');
 define('_MA_TADADM_COUNT', 'Posts');
 define('_MA_TADADM_EMAIL', 'Email');
@@ -83,3 +83,18 @@ define('_MA_TADADM_MOD_ADMIN', 'Module Admin');
 define('_MA_TADADM_MODULES_UPDATING', 'Updating');
 define('_MA_TADADM_MODULES_INSTALLING', 'Installing');
 define('_MA_TADADM_MODULES_PHP_INI_PATH', 'Important Values');
+define('_MA_TADADM_FREE_SPACE', 'HD free space:');
+define('_MA_TADADM_DOWNLOAD_ZIP', 'Download backup zip');
+
+define('_MA_TADADM_CHMOD_FAILED', '<ul><li>Could not set read/write permissions for %s to %s, possibly because the file directory owner is not correct.</li></ul>');
+define('_MA_TADADM_OWNER', 'Owner:Group');
+define('_MA_TADADM_PERMS', 'Permissions');
+
+define('_MA_TADADM_ADMTPL', 'Cpanel');
+define('_MA_TADADM_MOD_UPDATE_ADMTPL', 'Update Cpanel');
+define('_MA_TADADM_MOD_INSTALL_ADMTPL', 'Install Cpanel');
+define('_MA_TADADM_ADM_TPL_LATEST', 'Is up to date');
+define('_MA_TADADM_ADM_TPL_INSTALL_OK', 'Cpanel  %s  install success!');
+define('_MA_TADADM_ADM_TPL_UPDATE_OK', 'Cpanel upgrade success!');
+
+define('_MA_TADADM_MOD_CLOSED', 'Module closed');

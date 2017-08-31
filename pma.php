@@ -14,13 +14,18 @@ function adminer_object()
         new AdminerTablesHistory,
         new AdminerTablesFilter,
         new AdminerRestoreMenuScroll,
+        new AdminerJsonPreview,
+        new AdminerSimpleMenu,
+        new AdminerDumpJson,
+        new AdminerJsonColumn,
+        new AdminerTheme("default-blue"),
     );
 
     /* It is possible to combine customization and plugins:
     class AdminerCustomization extends AdminerPlugin {
     }
     return new AdminerCustomization($plugins);
-    */
+     */
 
     return new AdminerPlugin($plugins);
 }

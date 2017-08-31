@@ -170,7 +170,7 @@ class Crypt_RC4
      * @return Crypt_RC4
      * @access public
      */
-    public function Crypt_RC4()
+    public function __construct()
     {
         if (!defined('CRYPT_RC4_MODE')) {
             switch (true) {
@@ -188,7 +188,7 @@ class Crypt_RC4
                     case defined('MCRYPT_ARCFOUR'):
                         $this->mode = MCRYPT_ARCFOUR;
                         break;
-                    case defined('MCRYPT_RC4'):
+                    case defined('MCRYPT_RC4');
                         $this->mode = MCRYPT_RC4;
                 }
                 $this->encryptStream = mcrypt_module_open($this->mode, '', MCRYPT_MODE_STREAM, '');
@@ -223,13 +223,13 @@ class Crypt_RC4
         }
         $j = 0;
         for ($i = 0; $i < 256; $i++) {
-            $j = ($j + $keyStream[$i] + ord($key[$i % $keyLength])) & 255;
-            $temp = $keyStream[$i];
+            $j             = ($j + $keyStream[$i] + ord($key[$i % $keyLength])) & 255;
+            $temp          = $keyStream[$i];
             $keyStream[$i] = $keyStream[$j];
             $keyStream[$j] = $temp;
         }
 
-        $this->encryptIndex = $this->decryptIndex = array(0, 0);
+        $this->encryptIndex  = $this->decryptIndex  = array(0, 0);
         $this->encryptStream = $this->decryptStream = $keyStream;
     }
 
@@ -268,7 +268,7 @@ class Crypt_RC4
                 }
 
                 if (!class_exists('Crypt_Hash')) {
-                    require_once('Crypt/Hash.php');
+                    require_once 'Crypt/Hash.php';
                 }
 
                 $i = 1;
@@ -280,9 +280,9 @@ class Crypt_RC4
                     $f = $u = $hmac->hash($salt . pack('N', $i++));
                     for ($j = 2; $j <= $count; $j++) {
                         $u = $hmac->hash($u);
-                        $f^= $u;
+                        $f ^= $u;
                     }
-                    $key.= $f;
+                    $key .= $f;
                 }
         }
 
@@ -366,34 +366,34 @@ class Crypt_RC4
 
         switch ($mode) {
             case CRYPT_RC4_ENCRYPT:
-                $keyStream = $this->encryptStream;
+                $keyStream   = $this->encryptStream;
                 list($i, $j) = $this->encryptIndex;
                 break;
             case CRYPT_RC4_DECRYPT:
-                $keyStream = $this->decryptStream;
+                $keyStream   = $this->decryptStream;
                 list($i, $j) = $this->decryptIndex;
         }
 
         $newText = '';
         for ($k = 0; $k < strlen($text); $k++) {
-            $i = ($i + 1) & 255;
-            $j = ($j + $keyStream[$i]) & 255;
-            $temp = $keyStream[$i];
+            $i             = ($i + 1) & 255;
+            $j             = ($j + $keyStream[$i]) & 255;
+            $temp          = $keyStream[$i];
             $keyStream[$i] = $keyStream[$j];
             $keyStream[$j] = $temp;
-            $temp = $keyStream[($keyStream[$i] + $keyStream[$j]) & 255];
-            $newText.= chr(ord($text[$k]) ^ $temp);
+            $temp          = $keyStream[($keyStream[$i] + $keyStream[$j]) & 255];
+            $newText .= chr(ord($text[$k]) ^ $temp);
         }
 
         if ($this->continuousBuffer) {
             switch ($mode) {
                 case CRYPT_RC4_ENCRYPT:
                     $this->encryptStream = $keyStream;
-                    $this->encryptIndex = array($i, $j);
+                    $this->encryptIndex  = array($i, $j);
                     break;
                 case CRYPT_RC4_DECRYPT:
                     $this->decryptStream = $keyStream;
-                    $this->decryptIndex = array($i, $j);
+                    $this->decryptIndex  = array($i, $j);
             }
         }
 
@@ -458,7 +458,7 @@ class Crypt_RC4
     public function disableContinuousBuffer()
     {
         if (CRYPT_RC4_MODE == CRYPT_RC4_MODE_INTERNAL) {
-            $this->encryptIndex = $this->decryptIndex = array(0, 0);
+            $this->encryptIndex  = $this->decryptIndex  = array(0, 0);
             $this->encryptStream = $this->decryptStream = false;
         }
 

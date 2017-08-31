@@ -1,6 +1,6 @@
 <?php
 /**
- * MyLinks module
+ * TadAdm module
  *
  * You may not change or alter any portion of this comment or credits
  * of supporting developers from this source code or any supporting source code
@@ -12,11 +12,11 @@
  * @copyright::  XOOPS Project (https://xoops.org)
  * @license::    http://www.fsf.org/copyleft/gpl.html GNU public license
  * @package::    mylinks
- * @subpackage:: admin
+ * @subpackage:: TadAdm
  * @since:       2.5.0
- * @author::     Magic.Shao <magic.shao@gmail.com> - Susheng Yang <ezskyyoung@gmail.com>
- * @version::	 $Id $
-**/
+ * @author::     Tad
+ * @version::     $Id $
+ **/
 
 echo "<div align=\"center\"><a href=\"http://www.xoops.org\" target=\"_blank\"><img src=\"../images/admin/xoopsmicrobutton.gif\" alt=\"XOOPS\" title=\"XOOPS\"></a></div>";
 echo "<div class='center smallsmall italic pad5'><strong>" . $xoopsModule->getVar("name") . "</strong> is maintained by the <a class='tooltip' rel='external' href='http://www.xoops.org/' title='Visit XOOPS Community'>XOOPS Community</a></div>";

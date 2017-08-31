@@ -1,12 +1,6 @@
 <?php
-//  ------------------------------------------------------------------------ //
-// 本模組由 tad 製作
-// 製作日期：2012-11-26
-// $Id:$
-// ------------------------------------------------------------------------- //
-
 //Must be added to the module language
-define('_TAD_NEED_TADTOOLS', "This module needs TadTools module. You can download TadTools from <a href='http://www.tad0616.net/modules/tad_uploader/index.php?of_cat_sn=50' target='_blank'>Tad's web</a>.");
+define('_TAD_NEED_TADTOOLS', 'This module needs TadTools module. You can download TadTools from <a href="http://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS EasyGO</a>.');
 
 define('_MD_TADADM_SET', 'Set');
 define('_MD_TADADM_NAME', 'Webmaster Tools');
@@ -25,7 +19,8 @@ define('_MD_TADADM_CANT_CONNECT', 'Can not connect');
 define('_MD_TADADM_NO_GROUP', 'Non-group');
 define('_MD_TADADM_GUEST', 'Guest');
 define('_MD_TADADM_SOME_GROUP', 'Unknown group');
-define('_MD_TADADM_GROUP_COUNTEER', '%s number %s users');
+define('_MD_TADADM_GROUP', '%s group');
+define('_MD_TADADM_GROUP_COUNTEER', '%s users');
 define('_MD_TADADM_MEM_AMOUNT', 'Registered users');
 define('_MD_TADADM_AVAILABLE_MEM_AMOUNT', 'Available number of members');
 define('_MD_TADADM_PEOPLE', 'People');
@@ -63,3 +58,7 @@ define('_MD_TADADM_USER_PASS', 'Password');
 define('_MD_TADADM_USER_S_ID', 'User ID:');
 define('_MD_TADADM_USER_S_PASS', 'Password:');
 define('_MD_TADADM_FORGOT', 'I forgot Admin password');
+define('_MD_TADADM_USER_AND_GROUP', 'Groups and Users');
+define('_MD_TADADM_XOOPS_ROOT_PATH', 'install path');
+define('_MD_TADADM_XOOPS_VAR_PATH', 'xoops_data path');
+define('_MD_TADADM_XOOPS_TRUST_PATH', 'xoops_lib path');

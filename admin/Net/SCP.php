@@ -124,19 +124,19 @@ class Net_SCP
      * @return Net_SCP
      * @access public
      */
-    public function Net_SCP($ssh)
+    public function __construct($ssh)
     {
         if (!is_object($ssh)) {
             return;
         }
 
         switch (strtolower(get_class($ssh))) {
-            case'net_ssh2':
+            case 'net_ssh2':
                 $this->mode = NET_SCP_SSH2;
                 break;
             case 'net_ssh1':
                 $this->packet_size = 50000;
-                $this->mode = NET_SCP_SSH1;
+                $this->mode        = NET_SCP_SSH1;
                 break;
             default:
                 return;
@@ -251,10 +251,10 @@ class Net_SCP
         while ($size < $info['size']) {
             $data = $this->_receive();
             // SCP usually seems to split stuff out into 16k chunks
-            $size+= strlen($data);
+            $size += strlen($data);
 
             if ($local_file === false) {
-                $content.= $data;
+                $content .= $data;
             } else {
                 fputs($fp, $data);
             }
@@ -285,7 +285,7 @@ class Net_SCP
             case NET_SCP_SSH1:
                 $data = pack('CNa*', NET_SSH1_CMSG_STDIN_DATA, strlen($data), $data);
                 $this->ssh->_send_binary_packet($data);
-         }
+        }
     }
 
     /**
@@ -321,7 +321,7 @@ class Net_SCP
                             return false;
                     }
                 }
-         }
+        }
     }
 
     /**
@@ -337,6 +337,6 @@ class Net_SCP
                 break;
             case NET_SCP_SSH1:
                 $this->ssh->disconnect();
-         }
+        }
     }
 }

@@ -52,7 +52,7 @@ class Net_SFTP_Stream
      * @var Array
      * @access static
      */
-    public static $instances;
+    static $instances;
 
     /**
      * SFTP instance
@@ -133,10 +133,10 @@ class Net_SFTP_Stream
      *
      * @access public
      */
-    public function Net_SFTP_Stream()
+    public function __construct()
     {
         if (!class_exists('Net_SFTP')) {
-            require_once('Net/SFTP.php');
+            require_once 'Net/SFTP.php';
         }
     }
 
@@ -206,13 +206,13 @@ class Net_SFTP_Stream
                 if (isset($this->notification) && is_callable($this->notification)) {
                     /* if !is_callable($this->notification) we could do this:
 
-                       user_error('fopen(): failed to call user notifier', E_USER_WARNING);
+                    user_error('fopen(): failed to call user notifier', E_USER_WARNING);
 
-                       the ftp wrapper gives errors like that when the notifier isn't callable.
-                       i've opted not to do that, however, since the ftp wrapper gives the line
-                       on which the fopen occurred as the line number - not the line that the
-                       user_error is on.
-                    */
+                    the ftp wrapper gives errors like that when the notifier isn't callable.
+                    i've opted not to do that, however, since the ftp wrapper gives the line
+                    on which the fopen occurred as the line number - not the line that the
+                    user_error is on.
+                     */
                     call_user_func($this->notification, STREAM_NOTIFY_CONNECT, STREAM_NOTIFY_SEVERITY_INFO, '', 0, 0, 0);
                     call_user_func($this->notification, STREAM_NOTIFY_AUTH_REQUIRED, STREAM_NOTIFY_SEVERITY_INFO, '', 0, 0, 0);
                     if (!$this->sftp->login($user, $pass)) {
@@ -306,11 +306,12 @@ class Net_SFTP_Stream
             call_user_func($this->notification, STREAM_NOTIFY_PROGRESS, STREAM_NOTIFY_SEVERITY_INFO, '', 0, strlen($result), $this->size);
         }
 
-        if (empty($result)) { // ie. false or empty string
+        if (empty($result)) {
+            // ie. false or empty string
             $this->eof = true;
             return false;
         }
-        $this->pos+= strlen($result);
+        $this->pos += strlen($result);
 
         return $result;
     }
@@ -342,7 +343,7 @@ class Net_SFTP_Stream
         if ($result === false) {
             return false;
         }
-        $this->pos+= strlen($data);
+        $this->pos += strlen($data);
         if ($this->pos > $this->size) {
             $this->size = $this->pos;
         }
@@ -396,10 +397,10 @@ class Net_SFTP_Stream
                 }
                 break;
             case SEEK_CUR:
-                $offset+= $this->pos;
+                $offset += $this->pos;
                 break;
             case SEEK_END:
-                $offset+= $this->size;
+                $offset += $this->size;
         }
 
         $this->pos = $offset;
@@ -487,7 +488,7 @@ class Net_SFTP_Stream
         }
 
         $path_from = $this->_parse_path($path_from);
-        $path_to = parse_url($path_to);
+        $path_to   = parse_url($path_to);
         if ($path_from == false) {
             return false;
         }
@@ -522,7 +523,7 @@ class Net_SFTP_Stream
         if ($path === false) {
             return false;
         }
-        $this->pos = 0;
+        $this->pos     = 0;
         $this->entries = $this->sftp->nlist($path);
         return $this->entries !== false;
     }
@@ -694,7 +695,7 @@ class Net_SFTP_Stream
             return false;
         }
 
-        $this->eof = false;
+        $this->eof  = false;
         $this->size = $new_size;
 
         return true;
