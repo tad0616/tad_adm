@@ -7,9 +7,9 @@ $op = isset($_REQUEST['op']) ? $_REQUEST['op'] : "";
 if ($xoopsUser) {
     $_SESSION['isAdmin'] = $xoopsUser->isAdmin(1);
 } elseif ($op == "helpme") {
-    $modhandler        = xoops_gethandler('module');
+    $modhandler        = xoops_getHandler('module');
     $xoopsModule       = $modhandler->getByDirname("tad_adm");
-    $config_handler    = xoops_gethandler('config');
+    $config_handler    = xoops_getHandler('config');
     $xoopsModuleConfig = &$config_handler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
 
     $_SESSION['isAdmin'] = ($xoopsModuleConfig['login'] != '' and $_POST['help_passwd'] != '' and $xoopsModuleConfig['login'] == $_POST['help_passwd']) ? true : false;

@@ -244,7 +244,7 @@ function del_user($del_uid)
     $sql = "delete from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$del_uid}'";
     $xoopsDB->queryF($sql) or web_error($sql);
 
-    $member_handler = xoops_gethandler('member');
+    $member_handler = xoops_getHandler('member');
     $user           = &$member_handler->getUser($del_uid);
     if (empty($user)) {
         return;
@@ -256,7 +256,7 @@ function del_user($del_uid)
     } elseif (!$member_handler->deleteUser($user)) {
         redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_DEL_FAIL);
     } else {
-        $online_handler = xoops_gethandler('online');
+        $online_handler = xoops_getHandler('online');
         $online_handler->destroy($del_uid);
         xoops_notification_deletebyuser($del_uid);
         return;

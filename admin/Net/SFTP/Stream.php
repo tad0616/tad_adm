@@ -190,7 +190,7 @@ class Net_SFTP_Stream
             if (isset($context['sftp']['password'])) {
                 $pass = $context['sftp']['password'];
             }
-            if (isset($context['sftp']['privkey']) && is_object($context['sftp']['privkey']) && get_Class($context['sftp']['privkey']) == 'Crypt_RSA') {
+            if (isset($context['sftp']['privkey']) && is_object($context['sftp']['privkey']) && get_class($context['sftp']['privkey']) == 'Crypt_RSA') {
                 $pass = $context['sftp']['privkey'];
             }
 
