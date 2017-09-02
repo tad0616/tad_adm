@@ -3,8 +3,8 @@
 function list_modules($mode = "tpl")
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
-    $mod    = get_tad_modules_info();
-    $sql    = "select * from " . $xoopsDB->prefix("modules") . " order by hasmain desc, weight";
+    $mod = get_tad_modules_info();
+    $sql = "SELECT * FROM " . $xoopsDB->prefix("modules") . " ORDER BY hasmain DESC, weight";
     $result = $xoopsDB->query($sql) or web_error($sql);
 
     $i = 0;
@@ -139,7 +139,6 @@ function list_modules($mode = "tpl")
         if (isset($data['adm_tpl']['kind']) and $data['adm_tpl']['kind'] == "adm_tpl") {
             $ok['adm_tpl'][] = $dirname;
             if (is_dir(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")) {
-
                 $Version = file_get_contents(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt");
 
                 $status                      = ($data['adm_tpl']['new_status_version']) ? " {$data['adm_tpl']['new_status']}{$data['adm_tpl']['new_status_version']}" : "";
@@ -241,7 +240,6 @@ function list_modules($mode = "tpl")
         if (isset($data['theme']['kind']) and $data['theme']['kind'] == "theme") {
             $ok['theme'][] = $dirname;
             if (is_dir(XOOPS_ROOT_PATH . "/themes/{$dirname}")) {
-
                 $handle = @fopen(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini", "r");
                 if ($handle) {
                     while (($buffer = fgets($handle, 4096)) !== false) {
@@ -439,17 +437,17 @@ function get_tad_modules_info()
     $all = explode('||', $data);
     foreach ($all as $arr_data) {
         list($module_title, $dirname, $update_sn, $new_version, $new_status, $new_status_version, $new_last_update, $file_link, $update_descript, $module_sn, $module_descript, $kind) = explode("-+-", $arr_data);
-        $mod[$dirname][$kind]['module_title']                                                                                                                                          = $module_title;
-        $mod[$dirname][$kind]['update_sn']                                                                                                                                             = $update_sn;
-        $mod[$dirname][$kind]['new_version']                                                                                                                                           = $new_version;
-        $mod[$dirname][$kind]['new_status']                                                                                                                                            = $new_status;
-        $mod[$dirname][$kind]['new_status_version']                                                                                                                                    = $new_status_version;
-        $mod[$dirname][$kind]['new_last_update']                                                                                                                                       = $new_last_update;
-        $mod[$dirname][$kind]['update_descript']                                                                                                                                       = str_replace("\n", "\\n", $update_descript);
-        $mod[$dirname][$kind]['module_sn']                                                                                                                                             = $module_sn;
-        $mod[$dirname][$kind]['module_descript']                                                                                                                                       = str_replace("\n", "\\n", $module_descript);
-        $mod[$dirname][$kind]['file_link']                                                                                                                                             = $file_link;
-        $mod[$dirname][$kind]['kind']                                                                                                                                                  = $kind;
+        $mod[$dirname][$kind]['module_title']       = $module_title;
+        $mod[$dirname][$kind]['update_sn']          = $update_sn;
+        $mod[$dirname][$kind]['new_version']        = $new_version;
+        $mod[$dirname][$kind]['new_status']         = $new_status;
+        $mod[$dirname][$kind]['new_status_version'] = $new_status_version;
+        $mod[$dirname][$kind]['new_last_update']    = $new_last_update;
+        $mod[$dirname][$kind]['update_descript']    = str_replace("\n", "\\n", $update_descript);
+        $mod[$dirname][$kind]['module_sn']          = $module_sn;
+        $mod[$dirname][$kind]['module_descript']    = str_replace("\n", "\\n", $module_descript);
+        $mod[$dirname][$kind]['file_link']          = $file_link;
+        $mod[$dirname][$kind]['kind']               = $kind;
     }
     return $mod;
 }
@@ -483,7 +481,6 @@ function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = "", $dirname = 
         if (empty($_SESSION['tad_adm_ssh_passwd'])) {
             $_SESSION['tad_adm_ssh_passwd'] = $ssh_passwd;
         }
-
     }
 
     $the_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", "", $file_link);
@@ -495,7 +492,7 @@ function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = "", $dirname = 
     if (!is_file($new_file)) {
         redirect_header($_SERVER['PHP_SELF'] . "?tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
     }
-//exit;
+    //exit;
     require_once XOOPS_ROOT_PATH . "/modules/tad_adm/class/dunzip2/dUnzip2.inc.php";
     require_once XOOPS_ROOT_PATH . "/modules/tad_adm/class/dunzip2/dZip.inc.php";
     $zip = new dUnzip2($new_file);
@@ -522,7 +519,6 @@ function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = "", $dirname = 
             } else {
                 redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules&tad_adm_tpl=clean", 3, _MA_TADADM_ADM_TPL_UPDATE_OK);
             }
-
         } else {
             header("location:" . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$act}&module={$dirname}&tad_adm_tpl=clean");
         }
@@ -548,7 +544,6 @@ function recurse_chown_chgrp($mypath, $uid, $gid)
     $d = opendir($mypath);
     while (($file = readdir($d)) !== false) {
         if ($file != "." && $file != "..") {
-
             $typepath = $mypath . "/" . $file;
 
             //print $typepath. " : " . filetype ($typepath). "<BR>" ;
@@ -558,10 +553,8 @@ function recurse_chown_chgrp($mypath, $uid, $gid)
 
             chown($typepath, $uid);
             chgrp($typepath, $gid);
-
         }
     }
-
 }
 
 function chmod_R($path, $filemode, $dirmode)
@@ -628,7 +621,6 @@ function install_module($file_link = "", $dirname = "", $act = "install", $updat
             module_act($new_file, $dirname, $act, $kind);
         }
     } else {
-
         $xoopsTpl->assign('now_op', 'login_form');
         $xoopsTpl->assign('update_sn', $update_sn);
         $xoopsTpl->assign('file_link', $file_link);
@@ -639,7 +631,6 @@ function install_module($file_link = "", $dirname = "", $act = "install", $updat
         $xoopsTpl->assign('tad_adm_ssh_host', $tad_adm_ssh_host);
         $xoopsTpl->assign('tad_adm_ssh_id', $_SESSION['tad_adm_ssh_id']);
         $xoopsTpl->assign('tad_adm_ssh_passwd', $_SESSION['tad_adm_ssh_passwd']);
-
     }
 }
 
@@ -716,7 +707,6 @@ function module_act($new_file = "", $dirname = "", $act = "install", $kind = "mo
                 redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules", 3, _MA_TADADM_THEME_UPDATE_OK);
             }
         }
-
     } else {
         return false;
     }
@@ -726,7 +716,6 @@ function add_adm_tpl_config($theme)
 {
     global $xoopsConfig, $xoopsDB;
     if ($xoopsConfig['cpanel'] != $theme) {
-
         $sql = "update " . $xoopsDB->prefix("config") . " set conf_value='{$theme}' where conf_name='cpanel'";
 
         $xoopsDB->queryF($sql) or web_error($sql);

@@ -5,7 +5,7 @@
 // - Fixed E_STRICT notice: "Only variables should be passed by reference". Thanks Erik W.
 // 24/03/2010 (v2.66)
 // - Fixed bug inside unzipAll when dirname is "." (thanks to Thorsten Groth)
-// - Added character "´" to the string conversion table (ex: caixa d´água)
+// - Added character "Â´" to the string conversion table (ex: caixa dÂ´Ã¡gua)
 // 27/02/2010
 // - Removed PHP4 support (file_put_contents redeclaration).
 // 04/12/2009 (v2.65)
@@ -62,6 +62,7 @@ class dUnzip2
     {
         return "2.662";
     }
+
     // Public
     public $fileName;
     public $lastError;
@@ -130,7 +131,6 @@ class dUnzip2
                     } else {
                         echo "<td title='$fieldName' nowrap='nowrap'>$value</td>";
                     }
-
                 }
                 echo "</tr>";
             }
@@ -156,7 +156,6 @@ class dUnzip2
                         } else {
                             echo "<td title='$fieldName' nowrap='nowrap'>$value</td>";
                         }
-
                     }
                     echo "</tr>";
                 }
@@ -180,6 +179,7 @@ class dUnzip2
 
         return $this->compressedList;
     }
+
     public function getExtraInfo($compressedFileName)
     {
         return
@@ -187,6 +187,7 @@ class dUnzip2
         $this->centralDirList[$compressedFileName] :
         false;
     }
+
     public function getZipInfo($detail = false)
     {
         return $detail ?
@@ -232,6 +233,7 @@ class dUnzip2
 
         return $ret;
     }
+
     public function unzipAll($targetDir = false, $baseDir = "", $maintainStructure = true, $applyChmod = 0777)
     {
         if ($targetDir === false) {
@@ -263,7 +265,6 @@ class dUnzip2
                             if ($applyChmod) {
                                 chmod("$targetDir/$str", $applyChmod);
                             }
-
                         }
                     }
                 }
@@ -276,7 +277,6 @@ class dUnzip2
                 $this->unzip($fileName, "$targetDir/" . basename($fileName), $applyChmod);
             }
         }
-
     }
 
     public function close()
@@ -285,8 +285,8 @@ class dUnzip2
         if ($this->fh) {
             fclose($this->fh);
         }
-
     }
+
     public function __destroy()
     {
         $this->close();
@@ -340,6 +340,7 @@ class dUnzip2
                 return false;
         }
     }
+
     public function debugMsg($level, $string)
     {
         if ($this->debug) {
@@ -350,10 +351,10 @@ class dUnzip2
             if ($level == 2) {
                 echo "<b style='color: #F00'>dUnzip2:</b> $string<br>";
             }
-
         }
         $this->lastError = $string;
     }
+
     public function getLastError()
     {
         return $this->lastError;
@@ -452,7 +453,7 @@ class dUnzip2
                         'extra_field'          => $dir['extra_field'],
                         'file_comment'         => $dir['file_comment'],
                     );
-                    $signature = fread($fh, 4);
+                    $signature                               = fread($fh, 4);
                 }
 
                 // If loaded centralDirs, then try to identify the offsetPosition of the compressed data.
@@ -472,7 +473,6 @@ class dUnzip2
                         if (strtolower($stopOnFile) == strtolower($filename)) {
                             break;
                         }
-
                     }
                 }
 
@@ -481,12 +481,13 @@ class dUnzip2
         }
         return false;
     }
+
     public function _loadFileListBySignatures(&$fh, $stopOnFile = false)
     {
         fseek($fh, 0);
 
         $return = false;
-        for (;;) {
+        for (; ;) {
             $details = $this->_getFileHeaderInformation($fh);
             if (!$details) {
                 $this->debugMsg(1, "Invalid signature. Trying to verify if is old style Data Descriptor...");
@@ -503,11 +504,11 @@ class dUnzip2
             if (strtolower($stopOnFile) == strtolower($filename)) {
                 break;
             }
-
         }
 
         return $return;
     }
+
     public function _getFileHeaderInformation(&$fh, $startOffset = false)
     {
         if ($startOffset !== false) {
@@ -578,11 +579,12 @@ class dUnzip2
         $from = "\xb7\xb5\xb6\xc7\x8e\x8f\x92\x80\xd4\x90\xd2\xd3\xde\xd6\xd7\xd8\xd1\xa5\xe3\xe0" .
         "\xe2\xe5\x99\x9d\xeb\xe9\xea\x9a\xed\xe8\xe1\x85\xa0\x83\xc6\x84\x86\x91\x87\x8a" .
         "\x82\x88\x89\x8d\xa1\x8c\x8b\xd0\xa4\x95\xa2\x93\xe4\x94\x9b\x97\xa3\x96\xec\xe7" .
-        "\x98ï";
-        $to = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏĞÑÒÓÔÕÖØÙÚÛÜİŞßàáâãäåæçèéêëìíîïğñòóôõöøùúûışÿ´";
+        "\x98Ã¯";
+        $to = "Ã€ÃÃ‚ÃƒÃ„Ã…Ã†Ã‡ÃˆÃ‰ÃŠÃ‹ÃŒÃÃÃÃÃ‘Ã’Ã“Ã”Ã•Ã–Ã˜Ã™ÃšÃ›ÃœÃÃÃŸÃ Ã¡Ã¢Ã£Ã¤Ã¥Ã¦Ã§Ã¨Ã©ÃªÃ«Ã¬Ã­Ã®Ã¯Ã°Ã±Ã²Ã³Ã´ÃµÃ¶Ã¸Ã¹ÃºÃ»Ã½Ã¾Ã¿Â´";
 
         return strtr($filename, $from, $to);
     }
+
     public function _protect($fullPath)
     {
         // Known hack-attacks (filename like):

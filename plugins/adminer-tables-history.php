@@ -9,10 +9,11 @@
 * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
 * @license http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, version 2 (one or other)
 */
-class AdminerTablesHistory {
-
-	function tablesPrint($tables) {
-		?>
+class AdminerTablesHistory
+{
+    public function tablesPrint($tables)
+    {
+        ?>
 <script type="text/javascript">
 
 	history_length = 5;
@@ -69,14 +70,12 @@ class AdminerTablesHistory {
 <?php if (array_key_exists('adminer_tables_history', $_COOKIE)) : ?>
 <p onmouseover="menuOver(this, event);" onmouseout="menuOut(this);" style="white-space:nowrap;overflow:auto;text-overflow:ellipsis;"><?php
   // print_r($_COOKIE['adminer_tables_history']);
-	foreach (array_reverse(json_decode($_COOKIE['adminer_tables_history'])) as $table) {
-		echo '<a href="' . h(ME) . 'select=' . urlencode($table) . '"' . bold($_GET["select"] == $table) . ">" . lang('select') . "</a>&nbsp;";
-		echo '<a href="' . h(ME) . 'table=' . urlencode($table) . '"' . bold($_GET["table"] == $table) . ">" . h($table) . "</a><br>\n";
-	}
-?></p>
+    foreach (array_reverse(json_decode($_COOKIE['adminer_tables_history'])) as $table) {
+        echo '<a href="' . h(ME) . 'select=' . urlencode($table) . '"' . bold($_GET["select"] == $table) . ">" . lang('select') . "</a>&nbsp;";
+        echo '<a href="' . h(ME) . 'table=' . urlencode($table) . '"' . bold($_GET["table"] == $table) . ">" . h($table) . "</a><br>\n";
+    } ?></p>
 <?php endif; ?>
 <?php
-		return null;
-	}
-
+        return null;
+    }
 }

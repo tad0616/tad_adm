@@ -11,7 +11,7 @@ function xoops_module_update_tad_adm(&$module, $old_version)
     return true;
 }
 
-//­ЧҐїuidДж¦м
+//дї®ж­Јuidж¬„дЅЌ
 function chk_uid()
 {
     global $xoopsDB;
@@ -26,32 +26,32 @@ function chk_uid()
     return false;
 }
 
-//°х¦ж§у·s
+//еџ·иЎЊж›ґж–°
 function go_update_uid()
 {
     global $xoopsDB;
-    $sql = "ALTER TABLE `" . $xoopsDB->prefix("tad_adm") . "` CHANGE `uid` `uid` mediumint(8) unsigned NOT NULL default 0";
+    $sql = "ALTER TABLE `" . $xoopsDB->prefix("tad_adm") . "` CHANGE `uid` `uid` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT 0";
     $xoopsDB->queryF($sql) or redirect_header(XOOPS_URL, 3, $xoopsDB->error());
     return true;
 }
 
-//«ШҐЯҐШїэ
+//е»єз«‹з›®йЊ„
 function mk_dir($dir = "")
 {
-    //­YµLҐШїэ¦WєЩЁqҐXДµ§i°T®§
+    //и‹Ґз„Ўз›®йЊ„еђЌзЁ±з§Ђе‡єи­¦е‘ЉиЁЉжЃЇ
     if (empty($dir)) {
         return;
     }
 
-    //­YҐШїэ¤Ј¦s¦bЄєёЬ«ШҐЯҐШїэ
+    //и‹Ґз›®йЊ„дёЌе­ењЁзљ„и©±е»єз«‹з›®йЊ„
     if (!is_dir($dir)) {
         umask(000);
-        //­Y«ШҐЯҐў±СЁqҐXДµ§i°T®§
+        //и‹Ґе»єз«‹е¤±ж•—з§Ђе‡єи­¦е‘ЉиЁЉжЃЇ
         mkdir($dir, 0777);
     }
 }
 
-//«юЁ©ҐШїэ
+//ж‹·иІќз›®йЊ„
 function full_copy($source = "", $target = "")
 {
     if (is_dir($source)) {
@@ -104,7 +104,6 @@ function delete_directory($dirname)
             } else {
                 delete_directory($dirname . '/' . $file);
             }
-
         }
     }
     closedir($dir_handle);
