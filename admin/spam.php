@@ -29,7 +29,7 @@ function list_user($op = "", $mode = "normal")
     $sql     = $PageBar['sql'];
     $total   = $PageBar['total'];
 
-    $result                = $xoopsDB->query($sql) or web_error($sql);
+    $result = $xoopsDB->query($sql) or web_error($sql);
     $_SESSION['chk_start'] = time();
     $i                     = 0;
     $all_data              = array();
@@ -47,7 +47,6 @@ function list_user($op = "", $mode = "normal")
         if ($adm['email'] == $email) {
             $appears = $adm['result'];
         } else {
-
             $handle = fopen("http://www.stopforumspam.com/api?email={$email}&f=json", "r");
             if ($handle) {
                 $json = fgets($handle, 4096);
@@ -133,7 +132,11 @@ function list_spam()
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
 
-    $sql = "select a.uid,a.email,a.chk_date,b.`name`, b.`uname`, b.`email`, b.`url`, b.`user_avatar`, b.`user_regdate`, b.`user_icq`, b.`user_from`, b.`user_sig`, b.`user_viewemail`, b.`actkey`, b.`user_aim`, b.`user_yim`, b.`user_msnm`, b.`pass`, b.`posts`, b.`attachsig`, b.`rank`, b.`level`, b.`theme`, b.`timezone_offset`, b.`last_login`, b.`umode`, b.`uorder`, b.`notify_method`, b.`notify_mode`, b.`user_occ`, b.`bio`, b.`user_intrest`, b.`user_mailok` from " . $xoopsDB->prefix("tad_adm") . " as a left join " . $xoopsDB->prefix("users") . " as b on a.uid=b.uid where a.`result`='1' order by a.uid desc";
+    $sql = "SELECT a.uid,a.email,a.chk_date,b.`name`, b.`uname`, b.`email`, b.`url`, b.`user_avatar`, b.`user_regdate`, b.`user_icq`, b.`user_from`, b.`user_sig`, b.`user_viewemail`, b.`actkey`, b.`user_aim`, b.`user_yim`, b.`user_msnm`, b.`pass`, b.`posts`, b.`attachsig`, b.`rank`, b.`level`, b.`theme`, b.`timezone_offset`, b.`last_login`, b.`umode`, b.`uorder`, b.`notify_method`, b.`notify_mode`, b.`user_occ`, b.`bio`, b.`user_intrest`, b.`user_mailok` FROM "
+           . $xoopsDB->prefix("tad_adm")
+           . " AS a LEFT JOIN "
+           . $xoopsDB->prefix("users")
+           . " AS b ON a.uid=b.uid WHERE a.`result`='1' ORDER BY a.uid DESC";
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
     $PageBar = getPageBar($sql, 500, 10);
@@ -214,7 +217,6 @@ function replace_tad_adm($uid = '', $email = '', $result = '')
   (`uid` , `email` , `result` , `chk_date`)
   values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
     $xoopsDB->queryF($sql) or web_error($sql);
-
 }
 
 //以流水號取得某筆tad_adm資料
@@ -225,9 +227,9 @@ function get_tad_adm($uid = "")
         return;
     }
 
-    $sql    = "select * from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$uid}'";
+    $sql = "select * from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$uid}'";
     $result = $xoopsDB->query($sql) or web_error($sql);
-    $data   = $xoopsDB->fetchArray($result);
+    $data = $xoopsDB->fetchArray($result);
     return $data;
 }
 
@@ -270,6 +272,7 @@ function del_all_user($uid_arr = array())
         del_user($del_uid);
     }
 }
+
 /*-----------執行動作判斷區----------*/
 include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op   = system_CleanVars($_REQUEST, 'op', '', 'string');
@@ -296,7 +299,7 @@ switch ($op) {
         }
         break;
 
-        /*---判斷動作請貼在上方---*/
+    /*---判斷動作請貼在上方---*/
 }
 
 /*-----------秀出結果區--------------*/

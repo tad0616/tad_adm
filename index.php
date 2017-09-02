@@ -181,7 +181,7 @@ switch ($op) {
 function unable_modules()
 {
     global $xoopsDB;
-    $sql    = "select mid from " . $xoopsDB->prefix("modules") . " where `isactive`=1 and `dirname`!='system' and `dirname`!='tad_adm'";
+    $sql = "SELECT mid FROM " . $xoopsDB->prefix("modules") . " WHERE `isactive`=1 AND `dirname`!='system' AND `dirname`!='tad_adm'";
     $result = $xoopsDB->query($sql) or web_error($sql);
     while (list($mid) = $xoopsDB->fetchRow($result)) {
         $mid_array[] = $mid;
@@ -210,7 +210,7 @@ function enable_modules()
 function unable_blocks()
 {
     global $xoopsDB;
-    $sql    = "select bid from " . $xoopsDB->prefix("newblocks") . " where `visible`=1";
+    $sql = "SELECT bid FROM " . $xoopsDB->prefix("newblocks") . " WHERE `visible`=1";
     $result = $xoopsDB->query($sql) or web_error($sql);
     while (list($bid) = $xoopsDB->fetchRow($result)) {
         $bid_array[] = $bid;
@@ -416,7 +416,7 @@ function debug_mode_tool()
 {
     global $xoopsDB;
 
-    $sql         = "select conf_value from " . $xoopsDB->prefix("config") . " where conf_name='debug_mode'";
+    $sql = "SELECT conf_value FROM " . $xoopsDB->prefix("config") . " WHERE conf_name='debug_mode'";
     $result      = $xoopsDB->queryF($sql) or web_error($sql);
     list($debug) = $xoopsDB->fetchRow($result);
     if ($debug == 1) {
@@ -449,27 +449,27 @@ $other = "";
 if ($xoopsDB) {
 
     //註冊人數
-    $sql                  = "select count(*) from " . $xoopsDB->prefix("users") . "";
+    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . "";
     $result               = $xoopsDB->query($sql) or web_error($sql);
     list($all_user_count) = $xoopsDB->fetchRow($result);
 
     //從未登入人數
-    $sql                          = "select count(*) from " . $xoopsDB->prefix("users") . " where last_login=0";
+    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE last_login=0";
     $result                       = $xoopsDB->query($sql) or web_error($sql);
     list($never_login_user_count) = $xoopsDB->fetchRow($result);
 
     //未啟用人數
-    $sql                          = "select count(*) from " . $xoopsDB->prefix("users") . " where user_regdate=0";
+    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE user_regdate=0";
     $result                       = $xoopsDB->query($sql) or web_error($sql);
     list($never_start_user_count) = $xoopsDB->fetchRow($result);
 
     //正常會員人數
-    $sql                     = "select count(*) from " . $xoopsDB->prefix("users") . " where user_regdate!=0 and last_login!=0";
+    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE user_regdate!=0 AND last_login!=0";
     $result                  = $xoopsDB->query($sql) or web_error($sql);
     list($normal_user_count) = $xoopsDB->fetchRow($result);
 
     //各群組人數
-    $sql = "select a.`groupid`, a.`uid`, b.`name` from " . $xoopsDB->prefix("groups_users_link") . " as a left join " . $xoopsDB->prefix("groups") . " as b on a.`groupid` = b.`groupid` order by a.`groupid`";
+    $sql = "SELECT a.`groupid`, a.`uid`, b.`name` FROM " . $xoopsDB->prefix("groups_users_link") . " AS a LEFT JOIN " . $xoopsDB->prefix("groups") . " AS b ON a.`groupid` = b.`groupid` ORDER BY a.`groupid`";
 
     $result        = $xoopsDB->query($sql) or web_error($sql);
     $groupid_count = $group_name = array();
@@ -656,17 +656,21 @@ $main2 = "
   </ul>
 </div>";
 
-$close_site = $xoopsConfig['closesite'] == '1' ? "<li class='list-group-item'><a href='index.php?op=close_site&v=0'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_ENABLE_WEB . "'></i> " . _MD_TADADM_ENABLE_WEB . "</a></li>" : "<li class='list-group-item'><a href='index.php?op=close_site&v=1'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_UNABLE_WEB . "'></i> " . _MD_TADADM_UNABLE_WEB . "</a></li>";
+$close_site = $xoopsConfig['closesite'] == '1' ? "<li class='list-group-item'><a href='index.php?op=close_site&v=0'><i class='fa fa-chevron-circle-right'  title='"
+                                                 . _MD_TADADM_ENABLE_WEB
+                                                 . "'></i> "
+                                                 . _MD_TADADM_ENABLE_WEB
+                                                 . "</a></li>" : "<li class='list-group-item'><a href='index.php?op=close_site&v=1'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_UNABLE_WEB . "'></i> " . _MD_TADADM_UNABLE_WEB . "</a></li>";
 
 $admin_options = "";
-$sql           = "select a.uid,b.uname from " . $xoopsDB->prefix("groups_users_link") . " as a left join " . $xoopsDB->prefix("users") . " as b on a.uid=b.uid where a.groupid=1";
+$sql           = "SELECT a.uid,b.uname FROM " . $xoopsDB->prefix("groups_users_link") . " AS a LEFT JOIN " . $xoopsDB->prefix("users") . " AS b ON a.uid=b.uid WHERE a.groupid=1";
 $result        = $xoopsDB->query($sql) or web_error($sql);
 while (list($uid, $uname) = $xoopsDB->fetchRow($result)) {
     $admin_options .= "<option value='{$uid}'>{$uname}</option>";
 }
 
 $XoopsFormSelectUserOption = "";
-$sql                       = "select a.uid,b.uname,b.name from " . $xoopsDB->prefix("groups_users_link") . " as a left join " . $xoopsDB->prefix("users") . " as b on a.uid=b.uid where a.groupid=2 order by b.uname";
+$sql                       = "SELECT a.uid,b.uname,b.name FROM " . $xoopsDB->prefix("groups_users_link") . " AS a LEFT JOIN " . $xoopsDB->prefix("users") . " AS b ON a.uid=b.uid WHERE a.groupid=2 ORDER BY b.uname";
 $result                    = $xoopsDB->query($sql) or web_error($sql);
 while (list($uid, $uname, $name) = $xoopsDB->fetchRow($result)) {
     if (empty($uname)) {
@@ -682,7 +686,7 @@ if ($xoopsModuleConfig['module_id_temp'] != "") {
     $modules_tool   = "<a href='index.php?op=enable_modules'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_ENABLE_ALL_MODS, $modules_amount) . "'></i> " . sprintf(_MD_TADADM_ENABLE_ALL_MODS, $modules_amount) . "</a>";
 } else {
     //計算模組數量
-    $sql                  = "select count(*) from " . $xoopsDB->prefix("modules") . " where `isactive`=1 and `dirname`!='system' and `dirname`!='tad_adm'";
+    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("modules") . " WHERE `isactive`=1 AND `dirname`!='system' AND `dirname`!='tad_adm'";
     $result               = $xoopsDB->query($sql) or web_error($sql);
     list($modules_amount) = $xoopsDB->fetchRow($result);
 
@@ -694,7 +698,7 @@ if ($xoopsModuleConfig['block_id_temp'] != "") {
     $blocks_tool   = "<a href='index.php?op=enable_blocks'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_ENABLE_ALL_BLOCKS, $blocks_amount) . "'></i> " . sprintf(_MD_TADADM_ENABLE_ALL_BLOCKS, $blocks_amount) . "</a>";
 } else {
     //計算區塊數量
-    $sql                 = "select count(*) from " . $xoopsDB->prefix("newblocks") . " where `visible`=1";
+    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("newblocks") . " WHERE `visible`=1";
     $result              = $xoopsDB->query($sql) or web_error($sql);
     list($blocks_amount) = $xoopsDB->fetchRow($result);
 
