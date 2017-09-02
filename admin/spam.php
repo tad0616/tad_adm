@@ -110,9 +110,9 @@ function list_user($op = "", $mode = "normal")
     $_SESSION['chk_end'] = time();
 
     $time    = $_SESSION['chk_end'] - $_SESSION['chk_start'];
-    $days    = isset($_REQUEST['days']) ? intval($_REQUEST['days']) : 0;
+    $days    = isset($_REQUEST['days']) ? (int)$_REQUEST['days'] : 0;
     $days    = empty($days) ? 100 : $days;
-    $g2p     = isset($_GET['g2p']) ? intval($_GET['g2p']) : 1;
+    $g2p     = isset($_GET['g2p']) ? (int)$_GET['g2p'] : 1;
     $byemail = isset($_REQUEST['byemail']) ? $_REQUEST['byemail'] : "";
     $max     = $xoopsModuleConfig['list_amount'] * 20;
 

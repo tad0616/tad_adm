@@ -50,9 +50,9 @@ function list_modules($mode = "tpl")
         $all_data[$i]['hascomments']     = $hascomments ? _MA_TADADM_1 : _MA_TADADM_0;
         $all_data[$i]['hasnotification'] = $hasnotification ? _MA_TADADM_1 : _MA_TADADM_0;
 
-        $version     = intval($version);
+        $version     = (int)$version;
         $new_version = $mod[$dirname]['module']['new_version'] * 100;
-        $new_version = intval($new_version);
+        $new_version = (int)$new_version;
 
         $last_update     = strtotime($all_data[$i]['last_update']);
         $new_last_update = strtotime($all_data[$i]['new_last_update']);
@@ -107,9 +107,9 @@ function list_modules($mode = "tpl")
         $all_data[$i]['hascomments']     = $hascomments ? _MA_TADADM_1 : _MA_TADADM_0;
         $all_data[$i]['hasnotification'] = $hasnotification ? _MA_TADADM_1 : _MA_TADADM_0;
 
-        $version     = intval($version);
+        $version     = (int)$version;
         $new_version = $mod[$dirname]['fix']['new_version'] * 100;
-        $new_version = intval($new_version);
+        $new_version = (int)$new_version;
 
         $last_update     = strtotime($all_data[$i]['last_update']);
         $new_last_update = strtotime($all_data[$i]['new_last_update']);
@@ -175,8 +175,8 @@ function list_modules($mode = "tpl")
 
                 $version     = $Version * 100;
                 $new_version = $data['adm_tpl']['new_version'] * 100;
-                $version     = intval($version);
-                $new_version = intval($new_version);
+                $version     = (int)$version;
+                $new_version = (int)$new_version;
 
                 $last_update               = strtotime($all_data[$i]['last_update']);
                 $new_last_update           = strtotime($all_data[$i]['new_last_update']);
@@ -286,8 +286,8 @@ function list_modules($mode = "tpl")
 
                 $version     = $Version * 100;
                 $new_version = $data['theme']['new_version'] * 100;
-                $version     = intval($version);
-                $new_version = intval($new_version);
+                $version     = (int)$version;
+                $new_version = (int)$new_version;
 
                 $last_update               = strtotime($all_data[$i]['last_update']);
                 $new_last_update           = strtotime($all_data[$i]['new_last_update']);
