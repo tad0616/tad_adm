@@ -1,6 +1,6 @@
 <?php
 include_once '../../tadtools/language/' . $xoopsConfig['language'] . '/admin_common.php';
-define('_TAD_NEED_TADTOOLS', 'This module needs TadTools module. You can download TadTools from <a href="http://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS EasyGO</a>.');
+define('_TAD_NEED_TADTOOLS', 'This module needs TadTools module. You can download TadTools from <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS EasyGO</a>.');
 
 //phpini.php
 define('_MA_TADADM_PHPINI_ITEM', 'Setting item');
@@ -98,3 +98,5 @@ define('_MA_TADADM_ADM_TPL_INSTALL_OK', 'Cpanel  %s  install success!');
 define('_MA_TADADM_ADM_TPL_UPDATE_OK', 'Cpanel upgrade success!');
 
 define('_MA_TADADM_MOD_CLOSED', 'Module closed');
+define('_MA_TADADM_CLEAN', 'Delete all custom templates');
+define('_MA_TADADM_CLEANED', 'There is currently no custom template');

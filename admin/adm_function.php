@@ -1,10 +1,19 @@
 <?php
+global $xoopsModule;
+if ($xoopsModule->dirname() != 'tad_adm') {
+    $modhandler        = xoops_gethandler('module');
+    $xModule           = $modhandler->getByDirname("tad_adm");
+    $config_handler    = xoops_gethandler('config');
+    $xoopsModuleConfig = $config_handler->getConfigsByCat(0, $xModule->mid());
+    // die('aaa' . var_dump($xoopsModuleConfig));
+}
+
 //列出所有模組
 function list_modules($mode = "tpl")
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
-    $mod = get_tad_modules_info();
-    $sql = "SELECT * FROM " . $xoopsDB->prefix("modules") . " ORDER BY hasmain DESC, weight";
+    $mod    = get_tad_modules_info();
+    $sql    = "SELECT * FROM " . $xoopsDB->prefix("modules") . " ORDER BY hasmain DESC, weight";
     $result = $xoopsDB->query($sql) or web_error($sql);
 
     $i = 0;
@@ -129,98 +138,99 @@ function list_modules($mode = "tpl")
     }
 
     //後台部份
+    $all_admin = $all_un_admin = array();
     foreach ($mod as $dirname => $data) {
         if (isset($ok['adm_tpl']) and in_array($dirname, $ok['adm_tpl'])) {
             continue;
         }
 
         $Version = "";
-        //佈景部份
+        //後台部份
         if (isset($data['adm_tpl']['kind']) and $data['adm_tpl']['kind'] == "adm_tpl") {
             $ok['adm_tpl'][] = $dirname;
             if (is_dir(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")) {
                 $Version = file_get_contents(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt");
 
                 $status                      = ($data['adm_tpl']['new_status_version']) ? " {$data['adm_tpl']['new_status']}{$data['adm_tpl']['new_status_version']}" : "";
-                $all_data[$i]['mid']         = "";
-                $all_data[$i]['name']        = $data['adm_tpl']['module_title'];
-                $all_data[$i]['version']     = $Version;
-                $all_data[$i]['new_version'] = ($data['adm_tpl']['new_version']) ? $data['adm_tpl']['new_version'] . $status : "";
+                $all_admin[$i]['mid']         = "";
+                $all_admin[$i]['name']        = $data['adm_tpl']['module_title'];
+                $all_admin[$i]['version']     = $Version;
+                $all_admin[$i]['new_version'] = ($data['adm_tpl']['new_version']) ? $data['adm_tpl']['new_version'] . $status : "";
 
                 if (file_exists(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt")) {
                     $last_update = filemtime(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt");
                 } else {
                     $last_update = $data['adm_tpl']['new_last_update'];
                 }
-                $all_data[$i]['last_update'] = date("Y-m-d H:i", $last_update);
+                $all_admin[$i]['last_update'] = date("Y-m-d H:i", $last_update);
 
-                $all_data[$i]['new_last_update'] = ($data['adm_tpl']['new_last_update']) ? date("Y-m-d H:i", $data['adm_tpl']['new_last_update']) : "";
+                $all_admin[$i]['new_last_update'] = ($data['adm_tpl']['new_last_update']) ? date("Y-m-d H:i", $data['adm_tpl']['new_last_update']) : "";
 
                 if (file_exists(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")) {
-                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
-                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
-                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/themes/{$dirname}")), -4);
+                    $all_admin[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_admin[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_admin[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/themes/{$dirname}")), -4);
                 } else {
-                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                    $all_admin[$i]['fileowner'] = $all_admin[$i]['filegroup'] = $all_admin[$i]['fileperms'] = '';
                 }
-                $all_data[$i]['weight']          = "";
-                $all_data[$i]['isactive']        = "";
-                $all_data[$i]['dirname']         = $dirname;
-                $all_data[$i]['hasmain']         = "";
-                $all_data[$i]['hasadmin']        = "";
-                $all_data[$i]['hassearch']       = "";
-                $all_data[$i]['hasconfig']       = "";
-                $all_data[$i]['hascomments']     = "";
-                $all_data[$i]['hasnotification'] = "";
+                $all_admin[$i]['weight']          = "";
+                $all_admin[$i]['isactive']        = "";
+                $all_admin[$i]['dirname']         = $dirname;
+                $all_admin[$i]['hasmain']         = "";
+                $all_admin[$i]['hasadmin']        = "";
+                $all_admin[$i]['hassearch']       = "";
+                $all_admin[$i]['hasconfig']       = "";
+                $all_admin[$i]['hascomments']     = "";
+                $all_admin[$i]['hasnotification'] = "";
 
                 $version     = $Version * 100;
                 $new_version = $data['adm_tpl']['new_version'] * 100;
                 $version     = intval($version);
                 $new_version = intval($new_version);
 
-                $last_update               = strtotime($all_data[$i]['last_update']);
-                $new_last_update           = strtotime($all_data[$i]['new_last_update']);
-                $all_data[$i]['function']  = ($new_version > $version or $new_last_update > $last_update) ? 'update_adm_tpl' : 'last_adm_tpl';
-                $all_data[$i]['update_sn'] = $data['adm_tpl']['update_sn'];
-                $all_data[$i]['descript']  = $data['adm_tpl']['module_descript'];
-                $all_data[$i]['module_sn'] = $data['adm_tpl']['module_sn'];
-                $all_data[$i]['file_link'] = $data['adm_tpl']['file_link'];
-                $all_data[$i]['kind']      = $data['adm_tpl']['kind'];
+                $last_update               = strtotime($all_admin[$i]['last_update']);
+                $new_last_update           = strtotime($all_admin[$i]['new_last_update']);
+                $all_admin[$i]['function']  = ($new_version > $version or $new_last_update > $last_update) ? 'update_adm_tpl' : 'last_adm_tpl';
+                $all_admin[$i]['update_sn'] = $data['adm_tpl']['update_sn'];
+                $all_admin[$i]['descript']  = $data['adm_tpl']['module_descript'];
+                $all_admin[$i]['module_sn'] = $data['adm_tpl']['module_sn'];
+                $all_admin[$i]['file_link'] = $data['adm_tpl']['file_link'];
+                $all_admin[$i]['kind']      = $data['adm_tpl']['kind'];
 
                 $i++;
             } else {
                 $status                          = ($data['adm_tpl']['new_status_version']) ? " {$data['adm_tpl']['new_status']}{$data['adm_tpl']['new_status_version']}" : "";
-                $all_data[$i]['mid']             = "";
-                $all_data[$i]['name']            = $data['adm_tpl']['module_title'];
-                $all_data[$i]['version']         = "";
-                $all_data[$i]['new_version']     = ($data['adm_tpl']['new_version']) ? $data['adm_tpl']['new_version'] . $status : "";
+                $all_un_admin[$i]['mid']             = "";
+                $all_un_admin[$i]['name']            = $data['adm_tpl']['module_title'];
+                $all_un_admin[$i]['version']         = "";
+                $all_un_admin[$i]['new_version']     = ($data['adm_tpl']['new_version']) ? $data['adm_tpl']['new_version'] . $status : "";
                 $last_update                     = file_exists((XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt")) ? filemtime(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt") : "";
-                $all_data[$i]['last_update']     = empty($last_update) ? _MA_TADADM_MOD_UNINSTALL : date("Y-m-d H:i", $last_update);
-                $all_data[$i]['new_last_update'] = ($data['adm_tpl']['new_last_update']) ? date("Y-m-d H:i", $data['adm_tpl']['new_last_update']) : "";
+                $all_un_admin[$i]['last_update']     = empty($last_update) ? _MA_TADADM_MOD_UNINSTALL : date("Y-m-d H:i", $last_update);
+                $all_un_admin[$i]['new_last_update'] = ($data['adm_tpl']['new_last_update']) ? date("Y-m-d H:i", $data['adm_tpl']['new_last_update']) : "";
 
                 if (file_exists(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")) {
-                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
-                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
-                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")), -4);
+                    $all_un_admin[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_un_admin[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_un_admin[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")), -4);
                 } else {
-                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                    $all_un_admin[$i]['fileowner'] = $all_un_admin[$i]['filegroup'] = $all_un_admin[$i]['fileperms'] = '';
                 }
 
-                $all_data[$i]['weight']          = "";
-                $all_data[$i]['isactive']        = "";
-                $all_data[$i]['dirname']         = $dirname;
-                $all_data[$i]['hasmain']         = "";
-                $all_data[$i]['hasadmin']        = "";
-                $all_data[$i]['hassearch']       = "";
-                $all_data[$i]['hasconfig']       = "";
-                $all_data[$i]['hascomments']     = "";
-                $all_data[$i]['hasnotification'] = "";
-                $all_data[$i]['function']        = ($data['adm_tpl']['new_last_update'] > $last_update) ? 'install_adm_tpl' : 'last_adm_tpl';
-                $all_data[$i]['update_sn']       = $data['adm_tpl']['update_sn'];
-                $all_data[$i]['descript']        = $data['adm_tpl']['module_descript'];
-                $all_data[$i]['module_sn']       = $data['adm_tpl']['module_sn'];
-                $all_data[$i]['file_link']       = $data['adm_tpl']['file_link'];
-                $all_data[$i]['kind']            = $data['adm_tpl']['kind'];
+                $all_un_admin[$i]['weight']          = "";
+                $all_un_admin[$i]['isactive']        = "";
+                $all_un_admin[$i]['dirname']         = $dirname;
+                $all_un_admin[$i]['hasmain']         = "";
+                $all_un_admin[$i]['hasadmin']        = "";
+                $all_un_admin[$i]['hassearch']       = "";
+                $all_un_admin[$i]['hasconfig']       = "";
+                $all_un_admin[$i]['hascomments']     = "";
+                $all_un_admin[$i]['hasnotification'] = "";
+                $all_un_admin[$i]['function']        = ($data['adm_tpl']['new_last_update'] > $last_update) ? 'install_adm_tpl' : 'last_adm_tpl';
+                $all_un_admin[$i]['update_sn']       = $data['adm_tpl']['update_sn'];
+                $all_un_admin[$i]['descript']        = $data['adm_tpl']['module_descript'];
+                $all_un_admin[$i]['module_sn']       = $data['adm_tpl']['module_sn'];
+                $all_un_admin[$i]['file_link']       = $data['adm_tpl']['file_link'];
+                $all_un_admin[$i]['kind']            = $data['adm_tpl']['kind'];
 
                 $i++;
             }
@@ -230,6 +240,7 @@ function list_modules($mode = "tpl")
     }
 
     //佈景部份
+    $all_theme = $all_un_theme = array();
     foreach ($mod as $dirname => $data) {
         if (isset($ok['theme']) and in_array($dirname, $ok['theme'])) {
             continue;
@@ -252,86 +263,86 @@ function list_modules($mode = "tpl")
                     fclose($handle);
                 }
 
-                $status                      = ($data['theme']['new_status_version']) ? " {$data['theme']['new_status']}{$data['theme']['new_status_version']}" : "";
-                $all_data[$i]['mid']         = "";
-                $all_data[$i]['name']        = $data['theme']['module_title'];
-                $all_data[$i]['version']     = $Version;
-                $all_data[$i]['new_version'] = ($data['theme']['new_version']) ? $data['theme']['new_version'] . $status : "";
+                $status                       = ($data['theme']['new_status_version']) ? " {$data['theme']['new_status']}{$data['theme']['new_status_version']}" : "";
+                $all_theme[$i]['mid']         = "";
+                $all_theme[$i]['name']        = $data['theme']['module_title'];
+                $all_theme[$i]['version']     = $Version;
+                $all_theme[$i]['new_version'] = ($data['theme']['new_version']) ? $data['theme']['new_version'] . $status : "";
 
                 if (file_exists(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini")) {
                     $last_update = filemtime(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini");
                 } else {
                     $last_update = $data['theme']['new_last_update'];
                 }
-                $all_data[$i]['last_update'] = date("Y-m-d H:i", $last_update);
+                $all_theme[$i]['last_update'] = date("Y-m-d H:i", $last_update);
 
-                $all_data[$i]['new_last_update'] = ($data['theme']['new_last_update']) ? date("Y-m-d H:i", $data['theme']['new_last_update']) : "";
+                $all_theme[$i]['new_last_update'] = ($data['theme']['new_last_update']) ? date("Y-m-d H:i", $data['theme']['new_last_update']) : "";
 
                 if (file_exists(XOOPS_ROOT_PATH . "/themes/{$dirname}")) {
-                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
-                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
-                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/themes/{$dirname}")), -4);
+                    $all_theme[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
+                    $all_theme[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
+                    $all_theme[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/themes/{$dirname}")), -4);
                 } else {
-                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                    $all_theme[$i]['fileowner'] = $all_theme[$i]['filegroup'] = $all_theme[$i]['fileperms'] = '';
                 }
-                $all_data[$i]['weight']          = "";
-                $all_data[$i]['isactive']        = "";
-                $all_data[$i]['dirname']         = $dirname;
-                $all_data[$i]['hasmain']         = "";
-                $all_data[$i]['hasadmin']        = "";
-                $all_data[$i]['hassearch']       = "";
-                $all_data[$i]['hasconfig']       = "";
-                $all_data[$i]['hascomments']     = "";
-                $all_data[$i]['hasnotification'] = "";
+                $all_theme[$i]['weight']          = "";
+                $all_theme[$i]['isactive']        = "";
+                $all_theme[$i]['dirname']         = $dirname;
+                $all_theme[$i]['hasmain']         = "";
+                $all_theme[$i]['hasadmin']        = "";
+                $all_theme[$i]['hassearch']       = "";
+                $all_theme[$i]['hasconfig']       = "";
+                $all_theme[$i]['hascomments']     = "";
+                $all_theme[$i]['hasnotification'] = "";
 
                 $version     = $Version * 100;
                 $new_version = $data['theme']['new_version'] * 100;
                 $version     = intval($version);
                 $new_version = intval($new_version);
 
-                $last_update               = strtotime($all_data[$i]['last_update']);
-                $new_last_update           = strtotime($all_data[$i]['new_last_update']);
-                $all_data[$i]['function']  = ($new_version > $version or $new_last_update > $last_update) ? 'update_theme' : 'last_theme';
-                $all_data[$i]['update_sn'] = $data['theme']['update_sn'];
-                $all_data[$i]['descript']  = $data['theme']['module_descript'];
-                $all_data[$i]['module_sn'] = $data['theme']['module_sn'];
-                $all_data[$i]['file_link'] = $data['theme']['file_link'];
-                $all_data[$i]['kind']      = $data['theme']['kind'];
+                $last_update                = strtotime($all_theme[$i]['last_update']);
+                $new_last_update            = strtotime($all_theme[$i]['new_last_update']);
+                $all_theme[$i]['function']  = ($new_version > $version or $new_last_update > $last_update) ? 'update_theme' : 'last_theme';
+                $all_theme[$i]['update_sn'] = $data['theme']['update_sn'];
+                $all_theme[$i]['descript']  = $data['theme']['module_descript'];
+                $all_theme[$i]['module_sn'] = $data['theme']['module_sn'];
+                $all_theme[$i]['file_link'] = $data['theme']['file_link'];
+                $all_theme[$i]['kind']      = $data['theme']['kind'];
 
                 $i++;
             } else {
-                $status                          = ($data['theme']['new_status_version']) ? " {$data['theme']['new_status']}{$data['theme']['new_status_version']}" : "";
-                $all_data[$i]['mid']             = "";
-                $all_data[$i]['name']            = $data['theme']['module_title'];
-                $all_data[$i]['version']         = "";
-                $all_data[$i]['new_version']     = ($data['theme']['new_version']) ? $data['theme']['new_version'] . $status : "";
-                $last_update                     = file_exists((XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini")) ? filemtime(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini") : "";
-                $all_data[$i]['last_update']     = empty($last_update) ? _MA_TADADM_MOD_UNINSTALL : date("Y-m-d H:i", $last_update);
-                $all_data[$i]['new_last_update'] = ($data['theme']['new_last_update']) ? date("Y-m-d H:i", $data['theme']['new_last_update']) : "";
+                $status                              = ($data['theme']['new_status_version']) ? " {$data['theme']['new_status']}{$data['theme']['new_status_version']}" : "";
+                $all_un_theme[$i]['mid']             = "";
+                $all_un_theme[$i]['name']            = $data['theme']['module_title'];
+                $all_un_theme[$i]['version']         = "";
+                $all_un_theme[$i]['new_version']     = ($data['theme']['new_version']) ? $data['theme']['new_version'] . $status : "";
+                $last_update                         = file_exists((XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini")) ? filemtime(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini") : "";
+                $all_un_theme[$i]['last_update']     = empty($last_update) ? _MA_TADADM_MOD_UNINSTALL : date("Y-m-d H:i", $last_update);
+                $all_un_theme[$i]['new_last_update'] = ($data['theme']['new_last_update']) ? date("Y-m-d H:i", $data['theme']['new_last_update']) : "";
 
                 if (file_exists(XOOPS_ROOT_PATH . "/themes/{$dirname}")) {
-                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
-                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
-                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/themes/{$dirname}")), -4);
+                    $all_un_theme[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
+                    $all_un_theme[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/themes/{$dirname}");
+                    $all_un_theme[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/themes/{$dirname}")), -4);
                 } else {
-                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                    $all_un_theme[$i]['fileowner'] = $all_un_theme[$i]['filegroup'] = $all_un_theme[$i]['fileperms'] = '';
                 }
 
-                $all_data[$i]['weight']          = "";
-                $all_data[$i]['isactive']        = "";
-                $all_data[$i]['dirname']         = $dirname;
-                $all_data[$i]['hasmain']         = "";
-                $all_data[$i]['hasadmin']        = "";
-                $all_data[$i]['hassearch']       = "";
-                $all_data[$i]['hasconfig']       = "";
-                $all_data[$i]['hascomments']     = "";
-                $all_data[$i]['hasnotification'] = "";
-                $all_data[$i]['function']        = ($data['theme']['new_last_update'] > $last_update) ? 'install_theme' : 'last_theme';
-                $all_data[$i]['update_sn']       = $data['theme']['update_sn'];
-                $all_data[$i]['descript']        = $data['theme']['module_descript'];
-                $all_data[$i]['module_sn']       = $data['theme']['module_sn'];
-                $all_data[$i]['file_link']       = $data['theme']['file_link'];
-                $all_data[$i]['kind']            = $data['theme']['kind'];
+                $all_un_theme[$i]['weight']          = "";
+                $all_un_theme[$i]['isactive']        = "";
+                $all_un_theme[$i]['dirname']         = $dirname;
+                $all_un_theme[$i]['hasmain']         = "";
+                $all_un_theme[$i]['hasadmin']        = "";
+                $all_un_theme[$i]['hassearch']       = "";
+                $all_un_theme[$i]['hasconfig']       = "";
+                $all_un_theme[$i]['hascomments']     = "";
+                $all_un_theme[$i]['hasnotification'] = "";
+                $all_un_theme[$i]['function']        = ($data['theme']['new_last_update'] > $last_update) ? 'install_theme' : 'last_theme';
+                $all_un_theme[$i]['update_sn']       = $data['theme']['update_sn'];
+                $all_un_theme[$i]['descript']        = $data['theme']['module_descript'];
+                $all_un_theme[$i]['module_sn']       = $data['theme']['module_sn'];
+                $all_un_theme[$i]['file_link']       = $data['theme']['file_link'];
+                $all_un_theme[$i]['kind']            = $data['theme']['kind'];
 
                 $i++;
             }
@@ -341,6 +352,7 @@ function list_modules($mode = "tpl")
     }
 
     //未安裝部份
+    $all_mods = array();
     foreach ($mod as $dirname => $item) {
         foreach ($item as $kind => $data) {
             if (in_array($dirname, $ok['module']) and $kind == "module") {
@@ -360,45 +372,45 @@ function list_modules($mode = "tpl")
             }
 
             $status                      = ($data['new_status_version']) ? " {$data['new_status']}{$data['new_status_version']}" : "";
-            $all_data[$i]['mid']         = "";
-            $all_data[$i]['name']        = $data['module_title'];
-            $all_data[$i]['version']     = $Version;
-            $all_data[$i]['new_version'] = ($data['new_version']) ? $data['new_version'] . $status : "";
+            $all_mods[$i]['mid']         = "";
+            $all_mods[$i]['name']        = $data['module_title'];
+            $all_mods[$i]['version']     = $Version;
+            $all_mods[$i]['new_version'] = ($data['new_version']) ? $data['new_version'] . $status : "";
 
-            $all_data[$i]['last_update']     = _MA_TADADM_MOD_UNINSTALL;
-            $all_data[$i]['new_last_update'] = ($data['new_last_update']) ? date("Y-m-d H:i", $data['new_last_update']) : "";
+            $all_mods[$i]['last_update']     = _MA_TADADM_MOD_UNINSTALL;
+            $all_mods[$i]['new_last_update'] = ($data['new_last_update']) ? date("Y-m-d H:i", $data['new_last_update']) : "";
             if ($kind == "adm_tpl") {
                 if (file_exists(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")) {
-                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
-                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
-                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")), -4);
+                    $all_mods[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_mods[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}");
+                    $all_mods[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")), -4);
                 } else {
-                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                    $all_mods[$i]['fileowner'] = $all_mods[$i]['filegroup'] = $all_mods[$i]['fileperms'] = '';
                 }
             } else {
                 if (file_exists(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}")) {
-                    $all_data[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}");
-                    $all_data[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}");
-                    $all_data[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}")), -4);
+                    $all_mods[$i]['fileowner'] = getpwuid(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}");
+                    $all_mods[$i]['filegroup'] = getgrgid(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}");
+                    $all_mods[$i]['fileperms'] = substr(sprintf('%o', fileperms(XOOPS_ROOT_PATH . "/{$kind}s/{$dirname}")), -4);
                 } else {
-                    $all_data[$i]['fileowner'] = $all_data[$i]['filegroup'] = $all_data[$i]['fileperms'] = '';
+                    $all_mods[$i]['fileowner'] = $all_mods[$i]['filegroup'] = $all_mods[$i]['fileperms'] = '';
                 }
             }
-            $all_data[$i]['weight']          = "";
-            $all_data[$i]['isactive']        = "";
-            $all_data[$i]['dirname']         = $dirname;
-            $all_data[$i]['hasmain']         = "";
-            $all_data[$i]['hasadmin']        = "";
-            $all_data[$i]['hassearch']       = "";
-            $all_data[$i]['hasconfig']       = "";
-            $all_data[$i]['hascomments']     = "";
-            $all_data[$i]['hasnotification'] = "";
-            $all_data[$i]['function']        = ($kind == "fix") ? "update" : "install";
-            $all_data[$i]['update_sn']       = $data['update_sn'];
-            $all_data[$i]['descript']        = $data['module_descript'];
-            $all_data[$i]['module_sn']       = $data['module_sn'];
-            $all_data[$i]['file_link']       = $data['file_link'];
-            $all_data[$i]['kind']            = $data['kind'];
+            $all_mods[$i]['weight']          = "";
+            $all_mods[$i]['isactive']        = "";
+            $all_mods[$i]['dirname']         = $dirname;
+            $all_mods[$i]['hasmain']         = "";
+            $all_mods[$i]['hasadmin']        = "";
+            $all_mods[$i]['hassearch']       = "";
+            $all_mods[$i]['hasconfig']       = "";
+            $all_mods[$i]['hascomments']     = "";
+            $all_mods[$i]['hasnotification'] = "";
+            $all_mods[$i]['function']        = ($kind == "fix") ? "update" : "install";
+            $all_mods[$i]['update_sn']       = $data['update_sn'];
+            $all_mods[$i]['descript']        = $data['module_descript'];
+            $all_mods[$i]['module_sn']       = $data['module_sn'];
+            $all_mods[$i]['file_link']       = $data['file_link'];
+            $all_mods[$i]['kind']            = $data['kind'];
 
             $i++;
         }
@@ -413,42 +425,66 @@ function list_modules($mode = "tpl")
         return $all_data;
     }
     $xoopsTpl->assign('all_data', $all_data);
+    $xoopsTpl->assign('all_mods', $all_mods);
+    $xoopsTpl->assign('all_theme', $all_theme);
+    $xoopsTpl->assign('all_un_theme', $all_un_theme);
+    $xoopsTpl->assign('all_admin', $all_admin);
+    $xoopsTpl->assign('all_un_admin', $all_un_admin);
+
+    if (!file_exists(XOOPS_ROOT_PATH . "/modules/tadtools/easy_responsive_tabs.php")) {
+        redirect_header("index.php", 3, _MA_NEED_TADTOOLS);
+    }
+    include_once XOOPS_ROOT_PATH . "/modules/tadtools/easy_responsive_tabs.php";
+    $responsive_tabs = new easy_responsive_tabs('#admTab');
+    $responsive_tabs->rander();
 }
 
 //取得更新訊息
 function get_tad_modules_info()
 {
-    $url = "http://120.115.2.90/uploads/tad_modules/all.txt";
+    global $xoopsModuleConfig;
+    $source = empty($xoopsModuleConfig['source']) ? 'http://120.115.2.90' : $xoopsModuleConfig['source'];
+    $url    = "{$source}/uploads/tad_modules/all.json";
     if (function_exists('curl_init')) {
+        // die('curl_init');
         $ch      = curl_init();
         $timeout = 5;
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+
         $data = curl_exec($ch);
         curl_close($ch);
     } elseif (function_exists('file_get_contents')) {
+        // die('file_get_contents');
         $data = file_get_contents($url);
     } else {
+        // die('fopen');
         $handle = fopen($url, "rb");
         $data   = stream_get_contents($handle);
         fclose($handle);
     }
-    $all = explode('||', $data);
-    foreach ($all as $arr_data) {
-        list($module_title, $dirname, $update_sn, $new_version, $new_status, $new_status_version, $new_last_update, $file_link, $update_descript, $module_sn, $module_descript, $kind) = explode("-+-", $arr_data);
-        $mod[$dirname][$kind]['module_title']       = $module_title;
-        $mod[$dirname][$kind]['update_sn']          = $update_sn;
-        $mod[$dirname][$kind]['new_version']        = $new_version;
-        $mod[$dirname][$kind]['new_status']         = $new_status;
-        $mod[$dirname][$kind]['new_status_version'] = $new_status_version;
-        $mod[$dirname][$kind]['new_last_update']    = $new_last_update;
-        $mod[$dirname][$kind]['update_descript']    = str_replace("\n", "\\n", $update_descript);
-        $mod[$dirname][$kind]['module_sn']          = $module_sn;
-        $mod[$dirname][$kind]['module_descript']    = str_replace("\n", "\\n", $module_descript);
-        $mod[$dirname][$kind]['file_link']          = $file_link;
-        $mod[$dirname][$kind]['kind']               = $kind;
-    }
+    $mod = json_decode($data, true);
+
+    // foreach ($all as $kind => $arr_data) {
+    // list($module_title, $dirname, $update_sn, $new_version, $new_status, $new_status_version, $new_last_update, $file_link, $update_descript, $module_sn, $module_descript, $kind) = explode("-+-", $arr_data);
+    //     foreach ($arr_data as $dirname => $m) {
+
+    //         $mod[$dirname][$kind]['module_title']       = $module_title;
+    //         $mod[$dirname][$kind]['update_sn']          = $update_sn;
+    //         $mod[$dirname][$kind]['new_version']        = $new_version;
+    //         $mod[$dirname][$kind]['new_status']         = $new_status;
+    //         $mod[$dirname][$kind]['new_status_version'] = $new_status_version;
+    //         $mod[$dirname][$kind]['new_last_update']    = $new_last_update;
+    //         $mod[$dirname][$kind]['update_descript']    = str_replace("\n", "\\n", $update_descript);
+    //         $mod[$dirname][$kind]['module_sn']          = $module_sn;
+    //         $mod[$dirname][$kind]['module_descript']    = str_replace("\n", "\\n", $module_descript);
+    //         $mod[$dirname][$kind]['file_link']          = $file_link;
+    //         $mod[$dirname][$kind]['kind']               = $kind;
+    //     }
+    // }
     return $mod;
 }
 
@@ -483,9 +519,14 @@ function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = "", $dirname = 
         }
     }
 
-    $the_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", "", $file_link);
-    $new_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/uploads/", $file_link);
-
+    $file_link = str_replace("[source]", $xoopsModuleConfig['source'], $file_link);
+    if ($dirname == "tad_adm") {
+        $the_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", "", $file_link);
+        $new_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/uploads/", $file_link);
+    } else {
+        $the_file = str_replace("{$xoopsModuleConfig['source']}/uploads/tad_modules/file/", "", $file_link);
+        $new_file = str_replace("{$xoopsModuleConfig['source']}/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/uploads/", $file_link);
+    }
     mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm");
     copyemz($file_link, $new_file, $update_sn);
 
@@ -597,7 +638,8 @@ function chmod_R($path, $filemode, $dirmode)
 //安裝套件
 function install_module($file_link = "", $dirname = "", $act = "install", $update_sn = "", $kind = "module")
 {
-    global $xoopsTpl;
+    global $xoopsTpl, $xoopsModuleConfig;
+    // die('aaaa');
     if (empty($file_link)) {
         header("location:{$_SERVER['PHP_SELF']}");
     }
@@ -609,13 +651,19 @@ function install_module($file_link = "", $dirname = "", $act = "install", $updat
     } else {
         $kind_dir = "modules";
     }
-
-    //http://120.115.2.90/uploads/tad_modules/file/tadgallery_20120726_2.01.zip
+    // die('sss-' . var_dump($xoopsModuleConfig));
+    //https://campus-xoops.tn.edu.tw/uploads/tad_modules/file/tadgallery_20120726_2.01.zip
 
     $is_writable = is_writable(XOOPS_ROOT_PATH . "/{$kind_dir}/");
 
     if ($is_writable) {
-        $new_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/{$kind_dir}/", $file_link);
+        $file_link = str_replace("[source]", $xoopsModuleConfig['source'], $file_link);
+        if ($dirname == "tad_adm") {
+            $new_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/{$kind_dir}/", $file_link);
+        } else {
+            $new_file = str_replace("{$xoopsModuleConfig['source']}/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/{$kind_dir}/", $file_link);
+        }
+        // die($file_link . '  ->>' . $new_file);
         //下載檔案 for windows
         if (copyemz($file_link, $new_file, $update_sn)) {
             module_act($new_file, $dirname, $act, $kind);
@@ -740,13 +788,16 @@ function add_theme_config($theme)
 
 function copyemz($file1, $file2, $update_sn)
 {
-    global $xoopsConfig;
-    $add_count_url = "http://120.115.2.90/modules/tad_modules/api.php?update_sn={$update_sn}&from=" . XOOPS_URL . "&sitename={$xoopsConfig['sitename']}";
-
+    global $xoopsConfig, $xoopsModuleConfig;
+    $add_count_url = "{$xoopsModuleConfig['source']}/modules/tad_modules/api.php?update_sn={$update_sn}&from=" . XOOPS_URL . "&sitename={$xoopsConfig['sitename']}";
+    // die("$file1");
     $url = $file1;
     if (function_exists('curl_init')) {
         $ch      = curl_init();
         $timeout = 5;
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
@@ -755,6 +806,9 @@ function copyemz($file1, $file2, $update_sn)
 
         $ch      = curl_init();
         $timeout = 5;
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_URL, $add_count_url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);

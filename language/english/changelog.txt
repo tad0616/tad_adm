@@ -1,3 +1,16 @@
+Tad Adm 2.71 (2017-10-10 released)
+==================================================================
+1. Module download source can be set to their own
+2. Add the old template check and delete function
+
+
+Tad Adm 2.7 (2017-10-03 released)
+==================================================================
+1. Strengthen the cache removal mechanism
+2. Update the MySQL version information method
+3. Change to SSL connection
+
+
 Tad Adm 2.6 (2017-06-16 released)
 ==================================================================
 1. Simplify the SSH login mechanism
@@ -12,7 +25,6 @@ Tad Adm 2.5.9 (2017-04-20 released)
 3. Add several Adminer plugins
 4. Add the XOOPS cpanel online upgrade feature
 5. Remove the FTP login
-
 
 
 Tad Adm 2.5.8 (2017-02-13 released)

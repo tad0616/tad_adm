@@ -1,6 +1,6 @@
 <?php
 include_once '../../tadtools/language/' . $xoopsConfig['language'] . '/admin_common.php';
-define('_TAD_NEED_TADTOOLS', '需要 tadtools 模組，可至<a href="http://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS輕鬆架</a>下載。');
+define('_TAD_NEED_TADTOOLS', '需要 tadtools 模組，可至<a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS輕鬆架</a>下載。');
 
 //phpini.php
 define('_MA_TADADM_PHPINI_ITEM', '設定項目');
@@ -98,3 +98,5 @@ define('_MA_TADADM_ADM_TPL_INSTALL_OK', '後台佈景 %s 安裝成功！並已�
 define('_MA_TADADM_ADM_TPL_UPDATE_OK', '後台佈景升級成功！');
 
 define('_MA_TADADM_MOD_CLOSED', '模組關閉中');
+define('_MA_TADADM_CLEAN', '清除選取的自訂樣板');
+define('_MA_TADADM_CLEANED', '目前沒有自訂的舊樣板');
