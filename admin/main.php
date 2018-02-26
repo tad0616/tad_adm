@@ -21,6 +21,13 @@ include_once XOOPS_ROOT_PATH . "/modules/tadtools/fancybox.php";
 $fancybox = new fancybox('.modulesadmin', '640', '480');
 $fancybox->render(true);
 
+function active_module($mid)
+{
+    global $xoopsDB;
+    $sql = "UPDATE " . $xoopsDB->prefix("modules") . " SET isactive='1' WHERE `mid`='{$mid}'";
+    $xoopsDB->queryF($sql) or web_error($sql);
+}
+
 /*-----------執行動作判斷區----------*/
 include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op         = system_CleanVars($_REQUEST, 'op', '', 'string');
@@ -33,6 +40,7 @@ $ssh_id     = system_CleanVars($_REQUEST, 'ssh_id', '', 'string');
 $ssh_passwd = system_CleanVars($_REQUEST, 'ssh_passwd', '', 'string');
 $ssh_host   = system_CleanVars($_REQUEST, 'ssh_host', '', 'string');
 $kind       = system_CleanVars($_REQUEST, 'kind', '', 'string');
+$mid        = system_CleanVars($_REQUEST, 'mid', 0, 'int');
 
 switch ($op) {
     /*---判斷動作請貼在下方---*/
@@ -49,6 +57,10 @@ switch ($op) {
         install_module($file_link, $dirname, "update", $update_sn, $kind);
         break;
 
+    case "active":
+        active_module($mid);
+        header("location: main.php");
+        break;
     default:
         list_modules();
         break;

@@ -50,47 +50,44 @@
 
 
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-sm-12">
 
-      <h1><{$smarty.const._MA_TADADM_FREE_SPACE}><{$free_space}></h1>
-      <form action="zip.php" method="post" class="form-horizontal" role="form">
-        <div class="panel panel-primary" style="width: 640px;">
-          <div class="panel-heading">
+  <h1><{$smarty.const._MA_TADADM_FREE_SPACE}><{$free_space}></h1>
+  <form action="zip.php" method="post" class="form-horizontal" role="form">
+    <div class="panel panel-primary"  style="width: auto;">
+      <div class="panel-heading">
+        <label class="checkbox-inline">
+          <input id="clickAll" type="checkbox" checked="checked">
+          <{$dir}> (<span id="totalSize"><{$total_size}></span>)
+        </label>
+      </div>
+      <!-- Table -->
+      <table class="table">
+      <{foreach from=$all_dir item=dir}>
+        <tr>
+          <td>
             <label class="checkbox-inline">
-              <input id="clickAll" type="checkbox" checked="checked">
-              <{$dir}> (<span id="totalSize"><{$total_size}></span>)
+              <input type="checkbox" name="dirs[]" value="<{$dir.dir_path}>" checked="checked" title="<{$dir.size}>" class="dirfile">
+              <i class="fa fa-folder-open-o" aria-hidden="true"></i> <{$dir.dir_name}>
             </label>
-          </div>
-          <!-- Table -->
-          <table class="table">
-          <{foreach from=$all_dir item=dir}>
-            <tr>
-              <td>
-                <label class="checkbox-inline">
-                  <input type="checkbox" name="dirs[]" value="<{$dir.dir_path}>" checked="checked" title="<{$dir.size}>" class="dirfile">
-                  <i class="fa fa-folder-open-o" aria-hidden="true"></i> <{$dir.dir_name}>
-                </label>
-              </td>
-              <td style="text-align: right;"><{$dir.dir_size}></td>
-              </tr>
-          <{/foreach}>
-          <{foreach from=$all_files item=file}>
-            <tr>
-              <td>
-                <label class="checkbox-inline text-info">
-                  <input type="checkbox" name="files[]" value="<{$file.file_path}>" checked="checked" title="<{$file.size}>" class="dirfile">
-                  <i class="fa fa-file-text-o" aria-hidden="true"></i> <{$file.file_name}>
-                </label>
-              </td>
-              <td style="text-align: right;"><{$file.file_size}></td>
-              </tr>
-          <{/foreach}>
-          </table>
-        </div>
-
-        <button type="submit" class="btn btn-primary"><{$smarty.const._MA_TADADM_DOWNLOAD_ZIP}></button>
-      </form>
+          </td>
+          <td style="text-align: right;"><{$dir.dir_size}></td>
+          </tr>
+      <{/foreach}>
+      <{foreach from=$all_files item=file}>
+        <tr>
+          <td>
+            <label class="checkbox-inline text-info">
+              <input type="checkbox" name="files[]" value="<{$file.file_path}>" checked="checked" title="<{$file.size}>" class="dirfile">
+              <i class="fa fa-file-text-o" aria-hidden="true"></i> <{$file.file_name}>
+            </label>
+          </td>
+          <td style="text-align: right;"><{$file.file_size}></td>
+          </tr>
+      <{/foreach}>
+      </table>
     </div>
-  </div>
+
+    <button type="submit" class="btn btn-primary"><{$smarty.const._MA_TADADM_DOWNLOAD_ZIP}></button>
+  </form>
+
 </div>

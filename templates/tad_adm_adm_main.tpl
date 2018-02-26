@@ -38,7 +38,7 @@
         </div>
       </div>
     </div>
-  <{elseif $all_data}>
+  <{elseif $all_active_modules}>
     <style type="text/css" media="screen">
       .footable th{
         color: #000;
@@ -47,7 +47,7 @@
 
   <div id="admTab">
     <ul class="resp-tabs-list vert">
-      <{if $all_data}><li>已安裝模組</li><{/if}>
+      <{if $all_active_modules}><li>已安裝模組</li><{/if}>
       <{if $all_admin}><li>已安裝後台</li><{/if}>
       <{if $all_theme}><li>已安裝佈景</li><{/if}>
       <{if $all_mods}><li>可安裝模組</li><{/if}>
@@ -57,7 +57,7 @@
     
     <div class="resp-tabs-container vert">
       
-      <{if $all_data}>
+      <{if $all_active_modules}>
         <div>
           <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_install_modules.tpl"}>
         </div>
@@ -93,3 +93,4 @@
 
   <{/if}>
 </div>
+

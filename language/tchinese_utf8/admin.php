@@ -15,7 +15,7 @@ define('_MA_TADADM_MOD_UPDATE_MODULE', '立即升級到');
 define('_MA_TADADM_MOD_INSTALL_MODULE', '立即安裝');
 define('_MA_TADADM_MOD_UPDATE_THEME', '升級佈景到');
 define('_MA_TADADM_MOD_INSTALL_THEME', '安裝佈景');
-define('_MA_TADADM_MOD_LATEST', '已是最新');
+define('_MA_TADADM_MOD_LATEST', '已是最新的');
 define('_MA_TADADM_NO_MODS', '沒有任何模組');
 define('_MA_TADADM_MOD_NAME', '模組名稱');
 define('_MA_TADADM_MOD_VERSION', '目前版本');
@@ -100,3 +100,6 @@ define('_MA_TADADM_ADM_TPL_UPDATE_OK', '後台佈景升級成功！');
 define('_MA_TADADM_MOD_CLOSED', '模組關閉中');
 define('_MA_TADADM_CLEAN', '清除選取的自訂樣板');
 define('_MA_TADADM_CLEANED', '目前沒有自訂的舊樣板');
+
+define('_MA_TADADM_MOD_PREF', '偏好設定');
+define('_MA_TADADM_CAN_UPDATE_TO', '可升級至');
