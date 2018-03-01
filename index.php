@@ -656,11 +656,7 @@ $main2 = "
   </ul>
 </div>";
 
-$close_site = $xoopsConfig['closesite'] == '1' ? "<li class='list-group-item'><a href='index.php?op=close_site&v=0'><i class='fa fa-chevron-circle-right'  title='"
-                                                 . _MD_TADADM_ENABLE_WEB
-                                                 . "'></i> "
-                                                 . _MD_TADADM_ENABLE_WEB
-                                                 . "</a></li>" : "<li class='list-group-item'><a href='index.php?op=close_site&v=1'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_UNABLE_WEB . "'></i> " . _MD_TADADM_UNABLE_WEB . "</a></li>";
+$close_site = $xoopsConfig['closesite'] == '1' ? "<li class='list-group-item'><a href='index.php?op=close_site&v=0'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_ENABLE_WEB . "'></i> " . _MD_TADADM_ENABLE_WEB . "</a></li>" : "<li class='list-group-item'><a href='index.php?op=close_site&v=1'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_UNABLE_WEB . "'></i> " . _MD_TADADM_UNABLE_WEB . "</a></li>";
 
 $admin_options = "";
 $sql           = "SELECT a.uid,b.uname FROM " . $xoopsDB->prefix("groups_users_link") . " AS a LEFT JOIN " . $xoopsDB->prefix("users") . " AS b ON a.uid=b.uid WHERE a.groupid=1";

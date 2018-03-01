@@ -19,40 +19,22 @@
         <{foreach from=$all_theme item=mod}>
             <tr>
                 <td nowrap>
-                <{if $mod.kind=="module"}>
-                    <span class="label label-info"><{$smarty.const._MA_TADADM_MODULE}></span>
-                <{elseif $mod.kind=="adm_tpl"}>
-                    <span class="label label-success"><{$smarty.const._MA_TADADM_ADMTPL}></span>
-                <{elseif $mod.kind=="theme"}>
                     <span class="label label-danger"><{$smarty.const._MA_TADADM_THEME}></span>
-                <{elseif $mod.kind=="fix"}>
-                    <span class="label label-warning"><{$smarty.const._MA_TADADM_FIX}></span>
-                <{/if}>
-                </td>
-                <td><a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" target="_blank"><{$mod.name}></a></td>
+                 </td>
+                <td 
+                    <{if $theme_set==$mod.dirname}>
+                        style="background: #94f7ae;"
+                    <{elseif $mod.dirname|in_array:$theme_set_allowed && $mod.allowed!=1}>
+                        style="background: #ffdbdb;"
+                    <{elseif $mod.dirname|in_array:$theme_set_allowed}>
+                        style="background: #cbf4d6;"                         
+                    <{/if}>
+                ><a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" target="_blank"><{$mod.name}></a></td>
                 <td nowrap style="text-align:center;">
-                <{if $mod.isactive=='0'}>
-                    <a href="<{$xoops_url}>/modules/<{$mod.dirname}>" class="btn btn-xs btn-danger" target="_blank" alt="<{$smarty.const._MA_GUIDE_TO_MODULE}>" title="<{$smarty.const._MA_GUIDE_TO_MODULE}>"><i class="fa fa-times-circle-o" aria-hidden="true"></i></a>
-                    <a href="main.php?op=update_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin"  data-fancybox-type="iframe" style="color: #934949;"><{$smarty.const._MA_TADADM_MOD_CLOSED}></a>
-                <{elseif $mod.function=='install'}>
-                    <a href="main.php?op=install&kind=module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-primary modulesadmin" data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_INSTALL_MODULE}></a>
-                <{elseif $mod.function=='update'}>
-                    <a href="main.php?op=update&kind=module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-danger modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_UPDATE_MODULE}> <{$mod.new_version}></a>
-
-                <{elseif $mod.function=='update_adm_tpl'}>
-                    <a href="main.php?op=update&kind=adm_tpl&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-danger modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_UPDATE_ADMTPL}> <{$mod.new_version}></a>
-                <{elseif $mod.function=='install_adm_tpl'}>
-                    <a href="main.php?op=install&kind=adm_tpl&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-primary modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_INSTALL_ADMTPL}></a>
-
-                <{elseif $mod.function=='update_theme'}>
+                <{if $mod.function=='update_theme'}>
                     <a href="main.php?op=update&kind=theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-danger modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_UPDATE_THEME}> <{$mod.new_version}></a>
                 <{elseif $mod.function=='install_theme'}>
                     <a href="main.php?op=install&kind=theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-primary modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_INSTALL_THEME}></a>
-
-                <{elseif $mod.function=='last_mod'}>
-                    <a href="main.php?op=update&kind=module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin"  data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_LATEST}></a>
-                <{elseif $mod.function=='last_adm_tpl'}>
-                    <a href="main.php?op=update&kind=adm_tpl&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" ><{$smarty.const._MA_TADADM_ADM_TPL_LATEST}></a>
                 <{elseif $mod.function=='last_theme'}>
                     <a href="main.php?op=update&kind=theme&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>" ><{$smarty.const._MA_TADADM_MOD_LATEST}></a>
                 <{elseif $mod.new_last_update}>
