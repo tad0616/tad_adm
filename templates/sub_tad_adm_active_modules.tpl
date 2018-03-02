@@ -14,7 +14,6 @@
                         <a href="<{$xoops_url}>/modules/system/admin.php?fct=modulesadmin&op=update&module=<{$mod.dirname}>&tad_adm_tpl=clean" title="<{$smarty.const._MA_TADADM_MODULES_UPDATING}><{$mod.dirname}>" class="modulesadmin" data-fancybox-type="iframe"><i class="fa fa-refresh" ></i></a>
 
                         <a href="<{$xoops_url}>/modules/<{$mod.dirname}>/admin/index.php" title="<{$mod.dirname}><{$smarty.const._MA_TADADM_MOD_BLOCK}>" target="_blank"><i class="fa fa-th" ></i></a>
-                        </a>
                     <{/if}>
                 </div>
             </div>
@@ -27,10 +26,10 @@
                 </div>
 
                 <{if $mod.function=='update'}>
-                    <a href="main.php?op=update&kind=module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-sm btn-block btn-danger modulesadmin"  data-fancybox-type="iframe" title="<{$mod.dirname}> <{$mod.version}> (<{$mod.last_update}>) to <{$mod.new_version}> (<{$mod.new_last_update}>)"><{$mod.version}>
+                    <a href="main.php?op=update_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-sm btn-block btn-danger modulesadmin"  data-fancybox-type="iframe" title="<{$mod.dirname}> <{$mod.version}> (<{$mod.last_update}>) to <{$mod.new_version}> (<{$mod.new_last_update}>)"><{$mod.version}>
                         <{$smarty.const._MA_TADADM_CAN_UPDATE_TO}> <{$mod.new_version}></a>
                 <{else}>
-                    <a href="main.php?op=update&kind=module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin"  data-fancybox-type="iframe" style="font-size:1.2em;">
+                    <a href="main.php?op=update_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin"  data-fancybox-type="iframe" style="font-size:1.2em;">
                         <i class="fa fa-check-circle" aria-hidden="true"></i>
                         <{$smarty.const._MA_TADADM_MOD_LATEST}> <{$mod.new_version}>
                     </a>

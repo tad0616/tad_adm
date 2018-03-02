@@ -16,7 +16,7 @@
                     <a class="btn btn-default modulesadmin" href="#m<{$mod.module_sn}>">
                         <{$smarty.const._MA_TADADM_MOD_ABOUT_MOD}>
                     </a>
-                    <a href="main.php?op=install&kind=module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-primary modulesadmin" data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_INSTALL_MODULE}> <{$mod.dirname}> <{$mod.new_version}></a>
+                    <a href="main.php?op=install_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-primary modulesadmin" data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_INSTALL_MODULE}> <{$mod.dirname}> <{$mod.new_version}></a>
                 </div>
 
 

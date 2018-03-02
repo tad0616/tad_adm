@@ -1,12 +1,24 @@
+<h2><{$smarty.const._MA_TADADM_INSTALLED_MODS}></h2>
 <div class="row">
-    <{foreach from=$all_active_modules item=mod}>
-        <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_active_modules.tpl" }>
+    <{foreach from=$all_active_modules.update item=mod}>
+        <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_active_modules.tpl"}>
+    <{/foreach}>
+</div>
+<div class="row">
+    <{foreach from=$all_active_modules.last_mod item=mod}>
+        <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_active_modules.tpl"}>
     <{/foreach}>
 </div>
 
-<h2>已安裝但被關閉的模組</h2>
-<div class="row">
-    <{foreach from=$all_un_active_modules item=mod}>
-        <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_un_active_modules.tpl" }>
-    <{/foreach}>
-</div>
+<{if $all_un_active_modules}>
+    <h2><{$smarty.const._MA_TADADM_INSTALLED_UNABLE_MODS}></h2>
+    <div class="row">
+        <{foreach from=$all_un_active_modules.update item=mod}>
+            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_un_active_modules.tpl"}>
+        <{/foreach}>
+
+        <{foreach from=$all_un_active_modules.last_mod item=mod}>
+            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_un_active_modules.tpl"}>
+        <{/foreach}>
+    </div>
+<{/if}>

@@ -13,13 +13,12 @@
                 </div>
 
                 <{if $mod.function=='update_adm_tpl'}>
-                    <a href="main.php?op=update&kind=adm_tpl&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean"
-                        class="btn btn-xs btn-danger modulesadmin" data-fancybox-type="iframe">
+                    <a href="main.php?op=update_adm_tpl&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-xs btn-danger modulesadmin" data-fancybox-type="iframe">
                         <{$smarty.const._MA_TADADM_MOD_UPDATE_ADMTPL}>
                             <{$mod.new_version}>
                     </a>
                 <{else}>
-                    <a href="main.php?op=update&kind=module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin"  data-fancybox-type="iframe" style="font-size:1.2em;">
+                    <a href="main.php?op=update_adm_tpl&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin"  data-fancybox-type="iframe" style="font-size:1.2em;">
                         <i class="fa fa-check-circle" aria-hidden="true"></i>
                         <{$smarty.const._MA_TADADM_MOD_LATEST}> <{$mod.new_version}>
                     </a>
