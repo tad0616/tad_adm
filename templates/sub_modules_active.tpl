@@ -22,6 +22,7 @@
                     <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=
                         <{$mod.module_sn}>" title="<{$mod.dirname}><{$smarty.const._MA_TADADM_MOD_ADMIN}>" target="_blank" style="font-weight: bold;">
                     <{$mod.name}></a>
+                    <br>
                     <a href="<{$xoops_url}>/modules/<{$mod.dirname}>" target="_blank"><{$mod.dirname}></a>
                 </div>
 

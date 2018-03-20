@@ -114,3 +114,11 @@ define('_MA_TADADM_WRITABLE', '可寫入');
 define('_MA_TADADM_ALLOWED_THEMES', '可選用網站佈景');
 define('_MA_TADADM_NOT_ALLOWED_THEMES', '不開放選用的網站佈景');
 define('_MA_TADADM_SPECIAL_THEMES', '特殊佈景');
+define('_MA_TADADM_THEME_DELETE_OK', '佈景移除成功！');
+
+define('_MA_TADADM_FAILED_TO_GET_JSON', '無法取得檔案清單');
+
+define('_MA_TADADM_ALLOWED_ENABLE_THEMES', '可安裝網站佈景');
+define('_MA_TADADM_SPECIAL_ENABLE_THEMES', '可安裝特殊佈景');
+define('_MA_TADADM_SPECIAL_THEMES_CANT_DEFAULT', '特殊佈景，不可為預設佈景');
+define('_MA_TADADM_SPECIAL_THEMES_CANT_USEABLE', '特殊佈景，不應該可被使用者選用');

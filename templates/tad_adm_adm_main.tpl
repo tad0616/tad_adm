@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <{if $now_op=="login_form"}>
-    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_login_form.tpl"}>
+    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
   <{elseif $all_active_modules}>
     <style type="text/css" media="screen">
       .footable th{
@@ -22,32 +22,32 @@
         
         <{if $all_active_modules}>
           <div>
-            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_install_modules.tpl"}>
+            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_installed.tpl"}>
           </div>
         <{/if}>
         <{if $all_mods}>          
           <div>
-            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_uninstall_modules.tpl"}>
+            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_uninstall.tpl"}>
           </div>
         <{/if}>
         <{if $all_admin}>
           <div>
-            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_admin.tpl"}>
+            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_admin_installed.tpl"}>
           </div>
         <{/if}>
         <{if $all_un_admin}>
           <div>
-            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_un_admin.tpl"}>
+            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_admin_uninstall.tpl"}>
           </div>
         <{/if}>
         <{if $all_theme}>          
           <div>
-            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_themes.tpl"}>
+            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_themes_installed.tpl"}>
           </div>
         <{/if}>
         <{if $all_un_theme}>
           <div>
-            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_tad_adm_un_themes.tpl"}>
+            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_themes_uninstall.tpl"}>
           </div>
         <{/if}>
       </div>

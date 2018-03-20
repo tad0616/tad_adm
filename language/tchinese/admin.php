@@ -100,3 +100,25 @@ define('_MA_TADADM_ADM_TPL_UPDATE_OK', '後台佈景升級成功！');
 define('_MA_TADADM_MOD_CLOSED', '模組關閉中');
 define('_MA_TADADM_CLEAN', '清除選取的自訂樣板');
 define('_MA_TADADM_CLEANED', '目前沒有自訂的舊樣板');
+
+define('_MA_TADADM_MOD_PREF', '偏好設定');
+define('_MA_TADADM_CAN_UPDATE_TO', '可升級至');
+define('_MA_TADADM_ENABLE_MOD', '啟用模組');
+define('_MA_TADADM_INSTALLED_MODS', '已安裝模組');
+define('_MA_TADADM_INSTALLED_UNABLE_MODS', '已安裝但被關閉的模組');
+define('_MA_TADADM_REMOVE', '移除');
+define('_MA_TADADM_DEFAULT_THEME', '目前預設佈景');
+define('_MA_TADADM_UPDATE_TO_ALLOWED', '改為可選');
+define('_MA_TADADM_UPDATE_TO_NOT_ALLOWED', '改為不可選');
+define('_MA_TADADM_WRITABLE', '可寫入');
+define('_MA_TADADM_ALLOWED_THEMES', '可選用網站佈景');
+define('_MA_TADADM_NOT_ALLOWED_THEMES', '不開放選用的網站佈景');
+define('_MA_TADADM_SPECIAL_THEMES', '特殊佈景');
+define('_MA_TADADM_THEME_DELETE_OK', '佈景移除成功！');
+
+define('_MA_TADADM_FAILED_TO_GET_JSON', '無法取得檔案清單');
+
+define('_MA_TADADM_ALLOWED_ENABLE_THEMES', '可安裝網站佈景');
+define('_MA_TADADM_SPECIAL_ENABLE_THEMES', '可安裝特殊佈景');
+define('_MA_TADADM_SPECIAL_THEMES_CANT_DEFAULT', '特殊佈景，不可為預設佈景');
+define('_MA_TADADM_SPECIAL_THEMES_CANT_USEABLE', '特殊佈景，不應該可被使用者選用');
