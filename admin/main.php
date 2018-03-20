@@ -21,6 +21,9 @@ include_once XOOPS_ROOT_PATH . "/modules/tadtools/fancybox.php";
 $fancybox = new fancybox('.modulesadmin', '640', '480');
 $fancybox->render(true);
 
+$fancybox2 = new fancybox('.readme', '640', '480');
+$fancybox2->render(false);
+
 function active_module($mid)
 {
     global $xoopsDB;

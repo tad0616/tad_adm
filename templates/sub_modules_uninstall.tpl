@@ -15,10 +15,13 @@
                     <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" target="_blank"><{$mod.name}></a>
                 </div>
                 <div class="text-center">                
-                    <a class="btn btn-default modulesadmin" href="#m<{$mod.module_sn}>">
+                    <a class="btn btn-default readme" href="#m<{$mod.module_sn}>">
+                        <i class="fa fa-book" aria-hidden="true"></i>
                         <{$smarty.const._MA_TADADM_MOD_ABOUT_MOD}>
                     </a>
-                    <a href="main.php?op=install_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-primary modulesadmin" data-fancybox-type="iframe"><{$smarty.const._MA_TADADM_MOD_INSTALL_MODULE}></a>
+                    <a href="main.php?op=install_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-success modulesadmin" data-fancybox-type="iframe">
+                        <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                        <{$smarty.const._MA_TADADM_MOD_INSTALL_MODULE}></a>
                 </div>
 
 
