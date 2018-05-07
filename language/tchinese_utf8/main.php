@@ -62,3 +62,4 @@ define('_MD_TADADM_USER_AND_GROUP', '群組與使用者資訊');
 define('_MD_TADADM_XOOPS_ROOT_PATH', '實體路徑');
 define('_MD_TADADM_XOOPS_VAR_PATH', 'xoops_data 路徑');
 define('_MD_TADADM_XOOPS_TRUST_PATH', 'xoops_lib 路徑');
+define('_MD_TADADM_MOVE288', '網站搬移（限台南市）');

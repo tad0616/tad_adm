@@ -139,3 +139,7 @@ $modversion['templates'][$i]['description'] = 'tad_adm_adm_backup.tpl';
 $i++;
 $modversion['templates'][$i]['file']        = 'tad_adm_adm_clean.tpl';
 $modversion['templates'][$i]['description'] = 'tad_adm_adm_clean.tpl';
+
+$i++;
+$modversion['templates'][$i]['file']        = 'tad_adm_tn_manager.tpl';
+$modversion['templates'][$i]['description'] = 'tad_adm_tn_manager.tpl';

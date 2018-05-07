@@ -30,14 +30,14 @@
                     <a href="main.php?op=update_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-sm btn-block btn-danger modulesadmin"  data-fancybox-type="iframe" title="<{$mod.dirname}> <{$mod.version}> (<{$mod.last_update}>) to <{$mod.new_version}> (<{$mod.new_last_update}>)"><{$mod.version}>
                         <{$smarty.const._MA_TADADM_CAN_UPDATE_TO}> <{$mod.new_version}></a>
                 <{else}>
-                    <a href="main.php?op=update_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin"  data-fancybox-type="iframe" style="font-size:1.2em;">
+                    <a href="main.php?op=update_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin" title="<{$mod.dirname}> <{$mod.version}> (<{$mod.last_update}>) to <{$mod.new_version}> (<{$mod.new_last_update}>)" data-fancybox-type="iframe" style="font-size:1.1em;font-weight: bold;">
                         <i class="fa fa-check-circle" aria-hidden="true"></i>
                         <{$smarty.const._MA_TADADM_MOD_LATEST}> <{$mod.new_version}>
                     </a>
                 <{/if}>
 
                 <div>
-                    <{if $mod.fileowner.name}>
+                    <{if isset($mod.fileowner.name)}>
                         <{$mod.fileowner.name}>:<{$mod.filegroup.name}>
                     <{/if}>
                     <{if $mod.fileperms=='0777'}>

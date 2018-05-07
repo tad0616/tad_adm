@@ -24,7 +24,7 @@
             <{/if}>
         </div>
         <div>
-            <{if $mod.fileowner.name}>
+            <{if isset($mod.fileowner.name)}>
                 <{$mod.fileowner.name}>:<{$mod.filegroup.name}>
             <{/if}>
             <{if $mod.fileperms=='0777'}>

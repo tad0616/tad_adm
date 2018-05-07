@@ -46,7 +46,7 @@ class AdminerSimpleMenu
         </style>
 
         <?php
-    }
+}
 
     /**
      * Prints table list in menu.
@@ -63,15 +63,15 @@ class AdminerSimpleMenu
         }
 
         foreach ($tables as $table => $status) {
-            $name = Adminer::tableName($status);
-            $active = in_array($table, [$_GET["select"], $_GET["edit"], $_GET["table"], $_GET["create"], $_GET["indexes"], $_GET["foreign"], $_GET["trigger"]]);
+            $name   = Adminer::tableName($status);
+            $active = in_array($table, array($_GET["select"], $_GET["edit"], $_GET["table"], $_GET["create"], $_GET["indexes"], $_GET["foreign"], $_GET["trigger"]));
 
             if ($this->preferSelect) {
                 $action = "select";
-                $title = "Select data";
+                $title  = "Select data";
             } else {
                 $action = "table";
-                $title = "Show structure";
+                $title  = "Show structure";
             }
 
             echo "<li>";
@@ -104,7 +104,7 @@ class AdminerSimpleMenu
 
         echo '<p class="links">';
 
-        $links = [];
+        $links = array();
 
         if ($this->preferSelect) {
             $links["select"] = lang('Select data');

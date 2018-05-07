@@ -1,6 +1,7 @@
 <?php
 include_once "../../mainfile.php";
 include_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/main.php";
+include_once "function.php";
 
 $op = isset($_REQUEST['op']) ? $_REQUEST['op'] : "";
 
@@ -66,7 +67,8 @@ if (!$_SESSION['isAdmin']) {
                     <div class="form-group">
                         <label class="col-xs-3 control-label"><a href="index.php?op=forgot" style="font-size:12px;color:gray;">' . _MD_TADADM_FORGOT . '</a></label>
                         <div class="col-xs-9">
-                            <input type="hidden" name="op" value="login">
+                            <input type="hidden" name="op" value="login">                            
+                            <input type="hidden" name="xoops_redirect" value="' . $_SERVER['PHP_SELF'] . '">
                             <button type="submit" class="btn btn-primary">' . _MD_TADADM_LOGIN . '</button>
                         </div>
                     </div>
@@ -181,7 +183,7 @@ switch ($op) {
 function unable_modules()
 {
     global $xoopsDB;
-    $sql = "SELECT mid FROM " . $xoopsDB->prefix("modules") . " WHERE `isactive`=1 AND `dirname`!='system' AND `dirname`!='tad_adm'";
+    $sql    = "SELECT mid FROM " . $xoopsDB->prefix("modules") . " WHERE `isactive`=1 AND `dirname`!='system' AND `dirname`!='tad_adm'";
     $result = $xoopsDB->query($sql) or web_error($sql);
     while (list($mid) = $xoopsDB->fetchRow($result)) {
         $mid_array[] = $mid;
@@ -210,7 +212,7 @@ function enable_modules()
 function unable_blocks()
 {
     global $xoopsDB;
-    $sql = "SELECT bid FROM " . $xoopsDB->prefix("newblocks") . " WHERE `visible`=1";
+    $sql    = "SELECT bid FROM " . $xoopsDB->prefix("newblocks") . " WHERE `visible`=1";
     $result = $xoopsDB->query($sql) or web_error($sql);
     while (list($bid) = $xoopsDB->fetchRow($result)) {
         $bid_array[] = $bid;
@@ -416,7 +418,7 @@ function debug_mode_tool()
 {
     global $xoopsDB;
 
-    $sql = "SELECT conf_value FROM " . $xoopsDB->prefix("config") . " WHERE conf_name='debug_mode'";
+    $sql         = "SELECT conf_value FROM " . $xoopsDB->prefix("config") . " WHERE conf_name='debug_mode'";
     $result      = $xoopsDB->queryF($sql) or web_error($sql);
     list($debug) = $xoopsDB->fetchRow($result);
     if ($debug == 1) {
@@ -449,22 +451,22 @@ $other = "";
 if ($xoopsDB) {
 
     //註冊人數
-    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . "";
+    $sql                  = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . "";
     $result               = $xoopsDB->query($sql) or web_error($sql);
     list($all_user_count) = $xoopsDB->fetchRow($result);
 
     //從未登入人數
-    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE last_login=0";
+    $sql                          = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE last_login=0";
     $result                       = $xoopsDB->query($sql) or web_error($sql);
     list($never_login_user_count) = $xoopsDB->fetchRow($result);
 
     //未啟用人數
-    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE user_regdate=0";
+    $sql                          = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE user_regdate=0";
     $result                       = $xoopsDB->query($sql) or web_error($sql);
     list($never_start_user_count) = $xoopsDB->fetchRow($result);
 
     //正常會員人數
-    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE user_regdate!=0 AND last_login!=0";
+    $sql                     = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE user_regdate!=0 AND last_login!=0";
     $result                  = $xoopsDB->query($sql) or web_error($sql);
     list($normal_user_count) = $xoopsDB->fetchRow($result);
 
@@ -682,7 +684,7 @@ if ($xoopsModuleConfig['module_id_temp'] != "") {
     $modules_tool   = "<a href='index.php?op=enable_modules'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_ENABLE_ALL_MODS, $modules_amount) . "'></i> " . sprintf(_MD_TADADM_ENABLE_ALL_MODS, $modules_amount) . "</a>";
 } else {
     //計算模組數量
-    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("modules") . " WHERE `isactive`=1 AND `dirname`!='system' AND `dirname`!='tad_adm'";
+    $sql                  = "SELECT count(*) FROM " . $xoopsDB->prefix("modules") . " WHERE `isactive`=1 AND `dirname`!='system' AND `dirname`!='tad_adm'";
     $result               = $xoopsDB->query($sql) or web_error($sql);
     list($modules_amount) = $xoopsDB->fetchRow($result);
 
@@ -694,7 +696,7 @@ if ($xoopsModuleConfig['block_id_temp'] != "") {
     $blocks_tool   = "<a href='index.php?op=enable_blocks'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_ENABLE_ALL_BLOCKS, $blocks_amount) . "'></i> " . sprintf(_MD_TADADM_ENABLE_ALL_BLOCKS, $blocks_amount) . "</a>";
 } else {
     //計算區塊數量
-    $sql = "SELECT count(*) FROM " . $xoopsDB->prefix("newblocks") . " WHERE `visible`=1";
+    $sql                 = "SELECT count(*) FROM " . $xoopsDB->prefix("newblocks") . " WHERE `visible`=1";
     $result              = $xoopsDB->query($sql) or web_error($sql);
     list($blocks_amount) = $xoopsDB->fetchRow($result);
 
@@ -779,43 +781,20 @@ $main4 = "
     $into_setup
     $into_module
     <li class='list-group-item'><a href='pma.php' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_DB . "'></i> " . _MD_TADADM_DB . "</a></li>
+    <li class='list-group-item'><a href='move.php' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_MOVE288 . "'></i> " . _MD_TADADM_MOVE288 . "</a></li>
     <li class='list-group-item'><a href='$logout' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_LOGOUT . "'></i> " . _MD_TADADM_LOGOUT . "</a></li>
 
   </ul>
 </div>";
 
-echo '
-<!DOCTYPE html>
-<html lang="' . _LANGCODE . '">
-  <head>
-    <meta charset="' . _CHARSET . '">
-    <title>' . _MD_TADADM_NAME . '</title>
-    <!-- Bootstrap -->
-    <link href="' . XOOPS_URL . '/modules/tadtools/bootstrap3/css/bootstrap.css" rel="stylesheet" media="screen">
-    <link href="' . XOOPS_URL . '/modules/tadtools/css/font-awesome/css/font-awesome.css" rel="stylesheet" media="all">
-    <style>
-        body{
-            font-family: "Microsoft JhengHei", "Microsoft YaHei", sans-serif, "Helvetica Neue", Helvetica, Arial ;
-        }
-    </style>
-  </head>
-  <body>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-12">
-        <div class="page-header">
-          <h1>' . _MD_TADADM_NAME . '</h1>
-        </div>
-        <div class="row">
-          <div class="col-lg-4 col-sm-6">' . $main1 . '</div>
-          <div class="col-lg-4 col-sm-6">' . $main2 . $main3 . '</div>
-          <div class="col-lg-4 col-sm-6">' . $main4 . '</div>
-        </div>
-      </div>
-    </div>
-  </div>
+$content = '
+<div class="page-header">
+    <h1>' . _MD_TADADM_NAME . '</h1>
+</div>
+<div class="row">
+    <div class="col-lg-4 col-sm-6">' . $main1 . '</div>
+    <div class="col-lg-4 col-sm-6">' . $main2 . $main3 . '</div>
+    <div class="col-lg-4 col-sm-6">' . $main4 . '</div>
+</div>';
 
-
-  </body>
-</html>
-';
+echo html5($content, false, true, 3, true, 'container-fluid');

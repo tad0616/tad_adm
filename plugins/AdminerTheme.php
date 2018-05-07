@@ -11,7 +11,7 @@
  */
 class AdminerTheme
 {
-    const CSS_VERSION = 5;
+    const CSS_VERSION   = 5;
     const ICONS_VERSION = 3;
 
     /** @var string */
@@ -24,7 +24,7 @@ class AdminerTheme
      * @param string $defaultTheme Theme name of default theme.
      * @param array $themes array(database-host => theme-name).
      */
-    public function __construct($defaultTheme = "default-orange", array $themes = [])
+    public function __construct($defaultTheme = "default-orange", array $themes = array())
     {
         define("PMTN_ADMINER_THEME", true);
 
@@ -46,8 +46,8 @@ class AdminerTheme
         <link rel="icon" type="image/ico" href="images/favicon.png">
 
         <?php
-            // Condition for Windows Phone has to be the first, because IE11 contains also iPhone and Android keywords.
-            if (strpos($userAgent, "Windows") !== false):
+// Condition for Windows Phone has to be the first, because IE11 contains also iPhone and Android keywords.
+        if (strpos($userAgent, "Windows") !== false):
         ?>
             <meta name="application-name" content="Adminer"/>
             <meta name="msapplication-TileColor" content="#ffffff"/>
@@ -62,7 +62,7 @@ class AdminerTheme
 
         <?php else: ?>
             <link rel="apple-touch-icon" href="images/touchIcon.png?<?php echo self::ICONS_VERSION ?>"/>
-        <?php endif; ?>
+        <?php endif;?>
 
         <link rel="stylesheet" type="text/css" href="css/<?php echo htmlspecialchars($this->themeName) ?>.css?<?php echo self::CSS_VERSION ?>">
 
