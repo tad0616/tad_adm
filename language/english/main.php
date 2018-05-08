@@ -62,4 +62,4 @@ define('_MD_TADADM_USER_AND_GROUP', 'Groups and Users');
 define('_MD_TADADM_XOOPS_ROOT_PATH', 'install path');
 define('_MD_TADADM_XOOPS_VAR_PATH', 'xoops_data path');
 define('_MD_TADADM_XOOPS_TRUST_PATH', 'xoops_lib path');
-define('_MD_TADADM_MOVE288', 'Website Move (Taiwan City only)');
+define('_MD_TADADM_MOVE288', 'Website Upgrade or Migration Guide');
