@@ -89,6 +89,16 @@ switch ($op) {
         to_do($file_link, $dirname, "update_adm_tpl", $update_sn);
         break;
 
+    case "install_block":
+        do_block('install', $update_sn);
+        header("location: main.php#admTab6");
+        exit;
+
+    case "update_block":
+        do_block('update', $update_sn);
+        header("location: main.php#admTab6");
+        exit;
+
     case "active":
         active_module($mid);
         header("location: main.php");

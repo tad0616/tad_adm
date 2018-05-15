@@ -122,3 +122,13 @@ Define('_MA_TADADM_ALLOWED_ENABLE_THEMES', 'Installable Website themes');
 Define('_MA_TADADM_SPECIAL_ENABLE_THEMES', 'Installable special themes');
 define('_MA_TADADM_SPECIAL_THEMES_CANT_DEFAULT', 'Special themes cannot be set as default themes');
 define('_MA_TADADM_SPECIAL_THEMES_CANT_USEABLE', 'Special themes should not be used by users');
+
+define('_MA_TADADM_ENABLE_MODS', 'Installable Module');
+define('_MA_TADADM_INSTALLED_ADM', 'Installed admin panel');
+define('_MA_TADADM_ENABLE_ADM', 'Installable admin panel');
+define('_MA_TADADM_INSTALLED_THEME', 'Installed themes');
+define('_MA_TADADM_ENABLE_THEME', 'Installable themes');
+define('_MA_TADADM_INSTALLED_BLOCK', 'Installed blocks');
+define('_MA_TADADM_ENABLE_BLOCK', 'Installable blocks');
+define('_MA_TADADM_UNABLE_BLOCKS', 'Unable blocks');
+define('_MA_TADADM_MOD_UPDATE_BLOCK', 'Update blocks');

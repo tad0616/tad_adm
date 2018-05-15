@@ -222,6 +222,64 @@ function list_modules($mode = "tpl")
         }
     }
 
+    //區塊部份
+    $all_block = $all_un_block = array();
+    //抓出現有區塊
+    $sql    = "SELECT bid,dirname,visible, last_modified FROM " . $xoopsDB->prefix("newblocks") . " WHERE `mid`=0 AND `dirname`!='' ORDER BY side, weight";
+    $result = $xoopsDB->query($sql) or web_error($sql);
+    while (list($bid, $dirname, $visible, $last_modified) = $xoopsDB->fetchRow($result)) {
+        $bid_array[$bid]             = $dirname;
+        $bid_visible[$dirname]       = $visible;
+        $bid_last_modified[$dirname] = $last_modified;
+    }
+    foreach ($mod as $dirname => $data) {
+        if (isset($ok['block']) and in_array($dirname, $ok['block'])) {
+            continue;
+        }
+
+        //區塊部份
+        if (isset($data['block']['kind']) and $data['block']['kind'] == "block") {
+            $ok['block'][] = $dirname;
+            if (in_array($dirname, $bid_array)) {
+
+                $is_visible = $bid_visible[$dirname];
+
+                $all_block[$is_visible][$i]['allowed']         = $is_visible;
+                $all_block[$is_visible][$i]['name']            = $data['block']['module_title'];
+                $all_block[$is_visible][$i]['last_update']     = date("Y-m-d H:i", $bid_last_modified[$dirname]);
+                $all_block[$is_visible][$i]['new_last_update'] = ($data['block']['new_last_update']) ? date("Y-m-d H:i", $data['block']['new_last_update']) : "";
+                $all_block[$is_visible][$i]['dirname']         = $dirname;
+
+                $last_update                             = strtotime($all_block[$is_visible][$i]['last_update']);
+                $new_last_update                         = strtotime($all_block[$is_visible][$i]['new_last_update']);
+                $all_block[$is_visible][$i]['function']  = ($new_last_update > $last_update) ? 'update_block' : 'last_block';
+                $all_block[$is_visible][$i]['update_sn'] = $data['block']['update_sn'];
+                $all_block[$is_visible][$i]['descript']  = $data['block']['module_descript'];
+                $bubblepopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['block']['module_descript'])));
+                $all_block[$is_visible][$i]['module_sn']  = $data['block']['module_sn'];
+                $all_block[$is_visible][$i]['kind']       = $data['block']['kind'];
+                $all_block[$is_visible][$i]['logo']       = $data['block']['logo'];
+                $all_block[$is_visible][$i]['logo_thumb'] = $data['block']['logo_thumb'];
+            } else {
+                $all_un_block[$i]['name']            = $data['block']['module_title'];
+                $all_un_block[$i]['new_last_update'] = ($data['block']['new_last_update']) ? date("Y-m-d H:i", $data['block']['new_last_update']) : "";
+                $all_un_block[$i]['dirname']         = $dirname;
+                $all_un_block[$i]['function']        = 'install_block';
+                $all_un_block[$i]['update_sn']       = $data['block']['update_sn'];
+                $all_un_block[$i]['descript']        = $data['block']['module_descript'];
+                $bubblepopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['block']['module_descript'])));
+                $all_un_block[$i]['module_sn']  = $data['block']['module_sn'];
+                $all_un_block[$i]['kind']       = $data['block']['kind'];
+                $all_un_block[$i]['logo']       = $data['block']['logo'];
+                $all_un_block[$i]['logo_thumb'] = $data['block']['logo_thumb'];
+            }
+
+            $i++;
+        } else {
+            continue;
+        }
+    }
+
     //佈景部份
     $all_theme = $all_un_theme = array();
     foreach ($mod as $dirname => $data) {
@@ -331,6 +389,10 @@ function list_modules($mode = "tpl")
                 continue;
             }
 
+            if (in_array($dirname, $ok['block']) and $kind == "block") {
+                continue;
+            }
+
             if (in_array($dirname, $ok['theme']) and $kind == "theme") {
                 continue;
             }
@@ -339,7 +401,8 @@ function list_modules($mode = "tpl")
                 continue;
             }
 
-            $i = $data['module_sn'];
+            // $i = $data['module_sn'];
+            $i = $dirname;
 
             $all_mods[$i]['name']            = $data['module_title'];
             $all_mods[$i]['new_version']     = ($data['new_version']) ? $data['new_version'] . $status : "";
@@ -351,6 +414,7 @@ function list_modules($mode = "tpl")
             $all_mods[$i]['module_sn']       = $data['module_sn'];
             $all_mods[$i]['file_link']       = $data['file_link'];
             $all_mods[$i]['kind']            = $data['kind'];
+            $all_mods[$i]['logo']            = $data['logo'];
 
             // $i++;
         }
@@ -368,14 +432,17 @@ function list_modules($mode = "tpl")
     $xoopsTpl->assign('all_un_active_modules', $all_un_active_modules);
     ksort($all_mods);
     $xoopsTpl->assign('all_mods', $all_mods);
-    $xoopsTpl->assign('all_theme', $all_theme);
 
+    $xoopsTpl->assign('all_theme', $all_theme);
     $xoopsTpl->assign('theme_set', $xoopsConfig['theme_set']);
     $xoopsTpl->assign('theme_set_allowed', $xoopsConfig['theme_set_allowed']);
-
     $xoopsTpl->assign('all_un_theme', $all_un_theme);
+
     $xoopsTpl->assign('all_admin', $all_admin);
     $xoopsTpl->assign('all_un_admin', $all_un_admin);
+// die(var_export($all_block));
+    $xoopsTpl->assign('all_block', $all_block);
+    $xoopsTpl->assign('all_un_block', $all_un_block);
 
     if (!file_exists(XOOPS_ROOT_PATH . "/modules/tadtools/easy_responsive_tabs.php")) {
         redirect_header("index.php", 3, _MA_NEED_TADTOOLS);
@@ -393,6 +460,12 @@ function list_modules($mode = "tpl")
     $sweet_alert = new sweet_alert();
     $sweet_alert->render("delete_theme", "main.php?op=delete_theme&dirname=", 'theme');
 
+    if (!file_exists(XOOPS_ROOT_PATH . "/modules/tadtools/fancybox.php")) {
+        redirect_header("index.php", 3, _MA_NEED_TADTOOLS);
+    }
+    include_once XOOPS_ROOT_PATH . "/modules/tadtools/fancybox.php";
+    $fancybox = new fancybox('.fancybox');
+    $fancybox->render(false);
 }
 
 //取得更新訊息
@@ -401,23 +474,22 @@ function get_tad_modules_info()
     global $xoopsModuleConfig;
     $source = empty($xoopsModuleConfig['source']) ? 'http://120.115.2.90' : $xoopsModuleConfig['source'];
     $url    = "{$source}/uploads/tad_modules/all.json";
+
     if (function_exists('curl_init')) {
-        // die('curl_init');
         $ch      = curl_init();
         $timeout = 5;
+
         curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-
         $data = curl_exec($ch);
         curl_close($ch);
+
     } elseif (function_exists('file_get_contents')) {
-        // die('file_get_contents');
-        $data = file_get_contents($url);
+        $data  = file_get_contents($url);
     } else {
-        // die('fopen');
         $handle = fopen($url, "rb");
         $data   = stream_get_contents($handle);
         fclose($handle);
@@ -625,6 +697,72 @@ function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
         return true;
     } else {
         redirect_header($_SERVER['PHP_SELF'] . "?tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_MV_FAIL, XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname"));
+    }
+}
+
+//區塊相關動作
+function do_block($act, $update_sn)
+{
+    global $xoopsModuleConfig, $xoopsDB;
+
+    $ver           = intval(str_replace('.', '', substr(XOOPS_VERSION, 6, 5)));
+    $add_count_url = "{$xoopsModuleConfig['source']}/modules/tad_modules/api.php?update_sn={$update_sn}&from=" . XOOPS_URL . "&sitename={$xoopsConfig['sitename']}&theme={$xoopsConfig['theme_set']}&version=$ver&language={$xoopsConfig['language']}";
+
+    $url           = "{$xoopsModuleConfig['source']}/uploads/tad_modules/{$update_sn}.json";
+    // die(var_export($url));
+
+    if (function_exists('curl_init')) {
+        $ch      = curl_init();
+        $timeout = 5;
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        $ch      = curl_init();
+        $timeout = 5;
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt($ch, CURLOPT_URL, $add_count_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
+        $count = curl_exec($ch);
+        curl_close($ch);
+    } elseif (function_exists('file_get_contents')) {
+        $data  = file_get_contents($url);
+        $count = file_get_contents($add_count_url);
+    } else {
+        $handle = fopen($url, "rb");
+        $data   = stream_get_contents($handle);
+        fclose($handle);
+
+        $handle = fopen($add_count_url, "rb");
+        $count  = stream_get_contents($handle);
+        fclose($handle);
+    }
+    // die(var_export($data));
+    $block = json_decode($data, true);
+    // die(var_export($block));
+    $last_modified = time();
+    if ($act == "install") {
+        $sql = "INSERT INTO `" . $xoopsDB->prefix("newblocks") . "` (`mid`,`func_num`,`options`,`name`,`title`,`content`,`side`,`weight`,`visible`,`block_type`,`c_type`,`isactive`,`dirname`,`func_file`,`show_func`,`edit_func`,`template`,`bcachetime`,`last_modified`) values('0', '0', '', '自訂區塊', '{$block['title']}', '{$block['content']}', '{$block['side']}', '0', '1', 'C', '{$block['c_type']}', '1', '{$block['dirname']}', '', '}', '', '', '0', '{$last_modified}')";
+        $xoopsDB->queryF($sql) or web_error($sql);
+        $block_id = $xoopsDB->getInsertId();
+
+        $module_id = ($block['side'] <= 1) ? 0 : -1;
+        $sql       = "INSERT INTO `" . $xoopsDB->prefix("block_module_link") . "` (`block_id` , `module_id`) values('{$block_id}', '{$module_id}')";
+        $xoopsDB->queryF($sql) or web_error($sql);
+
+        $sql = "INSERT INTO `" . $xoopsDB->prefix("group_permission") . "` (`gperm_groupid` , `gperm_itemid` , `gperm_modid` , `gperm_name`) values('1', '{$block_id}', '1', 'block_read'),('2', '{$block_id}', '1', 'block_read'),('3', '{$block_id}', '1', 'block_read')";
+        $xoopsDB->queryF($sql) or web_error($sql);
+    } else {
+        $sql = "UPDATE  `" . $xoopsDB->prefix("newblocks") . "` SET `content`='{$block['content']}',`last_modified`='{$last_modified}' where dirname='{$block['dirname']}'";
+        $xoopsDB->queryF($sql) or web_error($sql);
     }
 }
 
