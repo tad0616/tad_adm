@@ -1,3 +1,11 @@
+Tad Adm 2.73 (released on 2018-05-15)
+================================================== ================
+1. Modify online installation screen
+2. Compatible with PHP 5.3
+3. Add online block installation
+4 new upgrade, migration guide
+5. Remove the tchinese Big5 language
+
 Tad Adm 2.72 (released on 2018-03-20)
 ================================================== ================
 1. Upgrade Adminer to 4.6.2

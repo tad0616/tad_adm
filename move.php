@@ -4,6 +4,7 @@ include_once "../../mainfile.php";
 $isTN  = strpos(XOOPS_URL, '.tn.edu.tw') !== false ? true : false;
 $isDCS = strpos(XOOPS_ROOT_PATH, 'DWASFiles') !== false ? true : false;
 $isWin = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? true : false;
+$isSchoolWeb  = (strpos(XOOPS_URL, 'schoolweb.tn.edu.tw') !== false or strpos(XOOPS_URL, '120.115.2.88') !== false) ? true : false;
 
 include_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/main.php";
 include_once "function.php";
@@ -12,8 +13,8 @@ include_once "admin/adm_function.php";
 $_SESSION['tad_adm_isAdmin'] = ($xoopsUser) ? $xoopsUser->isAdmin(1) : false;
 // $_SESSION['tad_adm_isAdmin'] = 1; //不須密碼模式，危險，沒事勿用。
 
-$on   = '<img src="images/icons/on.png" alt="on" style="margin-right: 4px;">';
-$off  = '<img src="images/icons/off.png" alt="off" style="margin-right: 4px;">';
+$on   = '<img src="images/icons/yes.png" alt="on" style="margin-right: 4px;">';
+$off  = '<img src="images/icons/no.png" alt="off" style="margin-right: 4px;">';
 $add  = '<img src="images/icons/add.png" alt="add" style="margin-right: 4px;">';
 $up   = '<img src="images/icons/up.png" alt="up" style="margin-right: 4px;">';
 $down = '<img src="images/icons/down.png" alt="down" style="margin-right: 4px;">';
@@ -63,7 +64,7 @@ switch ($op) {
 
 function move_step()
 {
-    global $isDCS, $isTN;
+    global $isDCS, $isTN,$isSchoolWeb;
     $id = "帳號";
     if (strpos($_SERVER["SERVER_NAME"], ".tn.edu.tw")) {
         $str = str_replace(".tn.edu.tw", "", $_SERVER["SERVER_NAME"]);
@@ -85,6 +86,10 @@ function move_step()
     </form></li>
     ' . $dcs_note . '' : "<li>本程式會自動偵測環境，並提出升級至 XOOPS 2.5.9 的建議及步驟。</li>
     <li>請盡量使用網域名稱，以得到正確建議。</li>";
+
+    if($isSchoolWeb){
+        $description ="<li>您的網站已經是放在台南市教育局集中式網站中，版本永遠是最新的，所以，以下資訊僅供參考，無需使用。</li>";
+    }
 
     $dcs_note = $isDCS ? "<li class='danger'>您的網站目前是放在台南是的DCS飛番雲上，DCS有嚴重的快取延遲問題（例如程式已經更新，但網站卻仍顯示舊的），故若有任何不正常情況發生（尤其在升級更新時），請登入 <a href='https://cloud.dcs.tn.edu.tw' target='_blank'>https://cloud.dcs.tn.edu.tw</a>，並隨時進行「重啟網站」。</li>" : "";
 
@@ -108,13 +113,13 @@ function move_step()
     }
     </style>
     <div class="page-header">
-        <h1>網站搬移指南</h1>
+        <h1>網站升級、搬移指南</h1>
     </div>
     <ol>
     ' . $description . '
     </ol>
     <div class="page-header">
-        <h2>網站、模組版本檢測</h2>
+        <h2>升級網站至最新版本</h2>
     </div>';
 
     if ($_SESSION['tad_adm_isAdmin']) {
@@ -150,7 +155,7 @@ function move_step()
         } else {
             $content .= '
             <div class="page-header">
-                <h2>精簡網站</h2>
+                <h2>備份網站資料</h2>
             </div>
             <ol>
                 <li>請先到<a href="' . XOOPS_URL . '/modules/system/admin.php?fct=modulesadmin" target="_blank">後台模組管理頁面</a>，將不需要的模組移除掉。</li>
@@ -314,7 +319,7 @@ function xoops_version()
         }
 
         if (version_compare(phpversion(), '5.3.7', '<')) {
-            $php_version = "{$off}本主機的 PHP 版本為 " . phpversion() . "，低於 5.3.7，所以，升級為 XOOPS 2.5.9 後部份功能會有問題（例如：選單會消失、密碼會變空白）。不過升級的目的只在於產生正確的資料表結構，所以，即使升級後，本站顯示不正常，其實也沒關係，只要本頁面能正常運作即可，到時搬到新主機便會正常。";
+            $php_version = "{$off}本主機的 PHP 版本為 " . phpversion() . "，低於 5.3.7，所以，升級為 XOOPS 2.5.9 後部份功能會有問題（例如：選單會消失、密碼會變空白）。<ul><li>如果您的目的是升級而非搬移，建議您就別升級了，升級完是無法正常使用的。</li><li>如果您是要搬到新主機的，那可以繼續進行，因為升級的目的只在於產生正確的資料表結構，所以，即使升級後，本站運作不正常也沒關係（盡量別登出又登入），只要本頁面能正常運作即可，到時搬到新主機便會一切正常。</li></ul>";
         } else {
             $php_version = "{$on}本主機的 PHP 版本為 " . phpversion() . "，高於 5.3.7，所以可以升級為 XOOPS 2.5.9 沒問題。";
         }
