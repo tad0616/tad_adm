@@ -29,7 +29,7 @@ function list_user($op = "", $mode = "normal")
     $sql     = $PageBar['sql'];
     $total   = $PageBar['total'];
 
-    $result = $xoopsDB->query($sql) or web_error($sql);
+    $result                = $xoopsDB->query($sql) or web_error($sql);
     $_SESSION['chk_start'] = time();
     $i                     = 0;
     $all_data              = array();
@@ -122,9 +122,9 @@ function list_user($op = "", $mode = "normal")
     $xoopsTpl->assign('_MA_TADADM_TOTAL', sprintf(_MA_TADADM_TOTAL, $total));
     $xoopsTpl->assign('all_data', $all_data);
     $xoopsTpl->assign('bar', $bar);
-    $xoopsTpl->assign('_MA_TADADM_BY_EMAIL', sprintf(_MA_TADADM_BY_EMAIL, "<input type='text' name='byemail' value='{$byemail}' class='span4' size=20>"));
-    $xoopsTpl->assign('_MA_TADADM_NEVERLOGIN_DAY', sprintf(_MA_TADADM_NEVERLOGIN_DAY, "<input type='text' name='days' value='$days' class='span1' size=4>"));
-    $xoopsTpl->assign('_MA_TADADM_NEVERSTART_DAY', sprintf(_MA_TADADM_NEVERSTART_DAY, "<input type='text' name='days' value='$days' class='span1' size=4>"));
+    $xoopsTpl->assign('_MA_TADADM_BY_EMAIL', sprintf(_MA_TADADM_BY_EMAIL, "<input type='text' name='byemail' value='{$byemail}' class='my-input' size=20>"));
+    $xoopsTpl->assign('_MA_TADADM_NEVERLOGIN_DAY', sprintf(_MA_TADADM_NEVERLOGIN_DAY, "<input type='text' name='days' value='$days' class='my-input' size=4>"));
+    $xoopsTpl->assign('_MA_TADADM_NEVERSTART_DAY', sprintf(_MA_TADADM_NEVERSTART_DAY, "<input type='text' name='days' value='$days' class='my-input' size=4>"));
 }
 
 //列出所有垃圾郵件
@@ -133,10 +133,10 @@ function list_spam()
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
 
     $sql = "SELECT a.uid,a.email,a.chk_date,b.`name`, b.`uname`, b.`email`, b.`url`, b.`user_avatar`, b.`user_regdate`, b.`user_icq`, b.`user_from`, b.`user_sig`, b.`user_viewemail`, b.`actkey`, b.`user_aim`, b.`user_yim`, b.`user_msnm`, b.`pass`, b.`posts`, b.`attachsig`, b.`rank`, b.`level`, b.`theme`, b.`timezone_offset`, b.`last_login`, b.`umode`, b.`uorder`, b.`notify_method`, b.`notify_mode`, b.`user_occ`, b.`bio`, b.`user_intrest`, b.`user_mailok` FROM "
-           . $xoopsDB->prefix("tad_adm")
-           . " AS a LEFT JOIN "
-           . $xoopsDB->prefix("users")
-           . " AS b ON a.uid=b.uid WHERE a.`result`='1' ORDER BY a.uid DESC";
+    . $xoopsDB->prefix("tad_adm")
+    . " AS a LEFT JOIN "
+    . $xoopsDB->prefix("users")
+        . " AS b ON a.uid=b.uid WHERE a.`result`='1' ORDER BY a.uid DESC";
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
     $PageBar = getPageBar($sql, 500, 10);
@@ -227,9 +227,9 @@ function get_tad_adm($uid = "")
         return;
     }
 
-    $sql = "select * from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$uid}'";
+    $sql    = "select * from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$uid}'";
     $result = $xoopsDB->query($sql) or web_error($sql);
-    $data = $xoopsDB->fetchArray($result);
+    $data   = $xoopsDB->fetchArray($result);
     return $data;
 }
 
@@ -299,10 +299,9 @@ switch ($op) {
         }
         break;
 
-    /*---判斷動作請貼在上方---*/
+        /*---判斷動作請貼在上方---*/
 }
 
 /*-----------秀出結果區--------------*/
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/bootstrap3/css/bootstrap.css');
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/css/xoops_adm3.css');
+$xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
 include_once 'footer.php';

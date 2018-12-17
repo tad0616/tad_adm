@@ -21,7 +21,7 @@ switch ($op) {
     //更新模組
     case "tn_module_update":
         tn_module_update($dirname);
-        exit;
+        die("{$dirname}更新完成");
 }
 
 include_once XOOPS_ROOT_PATH . '/footer.php';

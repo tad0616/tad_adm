@@ -76,7 +76,9 @@ function move_step()
     <li>由於集中式網站的XOOPS及所有模組都是最新版，因此，要搬過去之前，必須先將自身網站也升級到最新版，始能無痛搬移。</li>
     <li>請先到<a href="https://schoolweb.tn.edu.tw/index.php" target="_blank">台南市政府教育局校園集中式網站</a>申請一個網站（已申請過就直接填即可），並填入該新網站的帳號名稱（~符號後面的名字，如：<span class="important">' . $id . '</span>）：<form action="' . $_SERVER['PHP_SELF'] . '" method="post">
     <div class="input-group">
-        <span class="input-group-addon" id="sizing-addon1">http://schoolweb.tn.edu.tw/~</span>
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="sizing-addon1">http://schoolweb.tn.edu.tw/~</span>
+        </div>
         <input type="text" name="schoolweb_id" class="form-control" placeholder="如：' . $id . '" value="' . $_SESSION['schoolweb_id'] . '">
         <span class="input-group-btn">
         <input type="hidden" name="op" value="save_schoolweb_id">
@@ -325,7 +327,7 @@ function xoops_version()
         }
 
         $msg3 = "
-        <div class='well' id='upgrade_step'>
+        <div class='well card card-body bg-light' id='upgrade_step'>
         <ol>
             <li>$php_version</li>
 
@@ -599,7 +601,9 @@ function download_sql()
     $msg = '接下來，我們必須匯出本站在資料庫中的所有內容，並且幫您把裡面的一些網址替換掉，故請在下方填入您在集中式主機的完整網址<span class="danger">（網址最後不要有 /）</span>。' . $tn_note . '<p>
     <form action="' . $_SERVER['PHP_SELF'] . '" method="post">
         <div class="input-group">
-            <span class="input-group-addon" id="sizing-addon1">請輸入您在新網站（集中式網站）的網址：</span>
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="sizing-addon1">請輸入您在新網站（集中式網站）的網址：</span>
+            </div>
             <input type="text" name="new_url" class="form-control" value="' . $value . '">
             <span class="input-group-btn">
             <input type="hidden" name="op" value="export_sql">
@@ -673,7 +677,7 @@ function upload_sql()
 
         $msg = "{$up}最後，請登入新主機的資料庫管理（如：http://新主機網址/modules/tad_adm/pma.php），執行匯入，點擊瀏覽按鈕，並選取<code>C:\\move\\mysql.sql</code>，再按「執行」以匯入資料庫內容即可。</li>
         <li>修改 新主機上/xoops_data/data/secure.php，主要是修改底下這幾個資料庫帳密設定，修改後存檔：
-        <div class='well'>
+        <div class='well card card-body bg-light'>
         define('XOOPS_DB_USER', '新主機的資料庫帳號');<br>
         define('XOOPS_DB_PASS', '新主機的資料庫密碼');<br>
         define('XOOPS_DB_NAME', '新主機的資料庫名稱');
@@ -737,25 +741,25 @@ function del_tmp_zip()
 function login_form()
 {
     $form = '
-    <div class="panel panel-primary">
-        <div class="panel-heading">' . _MD_TADADM_LOGIN . '</div>
-        <div class="panel-body">
+    <div class="card">
+        <div class="card-header text-white bg-primary">' . _MD_TADADM_LOGIN . '</div>
+        <div class="card-body">
 
-            <form class="form-horizontal" action="' . XOOPS_URL . '/user.php" method="post" role="form">
-                <div class="form-group">
-                    <label class="col-xs-3 control-label" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
+            <form action="' . XOOPS_URL . '/user.php" method="post" role="form">
+                <div class="form-group row">
+                    <label class="col-xs-3 col-form-label text-sm-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
                     <div class="col-xs-9">
                         <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control" />
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-xs-3 control-label" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
+                <div class="form-group row">
+                    <label class="col-xs-3 col-form-label text-sm-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
                     <div class="col-xs-9">
                         <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control" />
                     </div>
                 </div>
-                <div class="form-group">
-                    <label class="col-xs-3 control-label">
+                <div class="form-group row">
+                    <label class="col-xs-3 col-form-label text-sm-right">
                     </label>
                     <div class="col-xs-9">
                         <input type="hidden" name="op" value="login">

@@ -833,9 +833,9 @@ function act_form($dirname, $op, $title)
     $mod_name = constant($modversion['name']);
 
     $main = "
-        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/bootstrap3/css/bootstrap.css' />
-        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/css/xoops_adm.css' />
-        <div class='well'>
+        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/bootstrap4/css/bootstrap.css' />
+        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/css/xoops_adm4.css' />
+        <div class='well card card-body bg-light'>
             <form action='" . XOOPS_URL . "/modules/system/admin.php' method='post' style='text-align:center'>
             <img src='" . XOOPS_URL . "/modules/{$dirname}/{$modversion['image']}'>
             <div style='font-weight:bold;font-size:11pt;'>{$mod_name}</div>

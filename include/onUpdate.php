@@ -15,8 +15,7 @@ function xoops_module_update_tad_adm(&$module, $old_version)
 function chk_uid()
 {
     global $xoopsDB;
-    $sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS
-  WHERE table_name = '" . $xoopsDB->prefix("tad_adm") . "' AND COLUMN_NAME = 'uid'";
+    $sql        = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '" . $xoopsDB->prefix("tad_adm") . "' AND COLUMN_NAME = 'uid'";
     $result     = $xoopsDB->query($sql);
     list($type) = $xoopsDB->fetchRow($result);
     if ($type == 'smallint') {

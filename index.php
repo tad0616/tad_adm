@@ -25,21 +25,21 @@ if (!$_SESSION['isAdmin']) {
 
     if ($op == "forgot") {
         $form = '
-        <div class="panel panel-primary">
-            <div class="panel-heading">' . _MD_TADADM_FORGOT . '</div>
-            <div class="panel-body">
-                <form class="form-horizontal" action="' . $_SERVER['PHP_SELF'] . '" method="post" role="form">
-                    <div class="form-group">
+        <div class="card">
+            <div class="card-header text-white bg-primary">' . _MD_TADADM_FORGOT . '</div>
+            <div class="card-body">
+                <form action="' . $_SERVER['PHP_SELF'] . '" method="post" role="form">
+                    <div class="form-group row">
                         <label class="col-xs-12">' . _MD_TADADM_INPUT_PASSWD_DESC . '</label>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group row">
                         <label class="col-xs-3" for="help_passwd">' . _MD_TADADM_INPUT_PASSWD . '</label>
                         <div class="col-xs-7">
                             <input type="text" name="help_passwd" id="help_passwd" class="form-control" placeholder="">
                         </div>
                         <div class="col-xs-2">
-                          <input type="hidden" name="op" value="helpme">
-                          <button type="submit" class="btn btn-primary">' . _MD_TADADM_LOGIN . '</button>
+                            <input type="hidden" name="op" value="helpme">
+                            <button type="submit" class="btn btn-primary">' . _MD_TADADM_LOGIN . '</button>
                         </div>
                     </div>
                 </form>
@@ -47,27 +47,27 @@ if (!$_SESSION['isAdmin']) {
         </div>';
     } else {
         $form = '
-        <div class="panel panel-primary">
-            <div class="panel-heading">' . _MD_TADADM_LOGIN . '</div>
-            <div class="panel-body">
+        <div class="card">
+            <div class="card-header text-white bg-primary">' . _MD_TADADM_LOGIN . '</div>
+            <div class="card-body">
 
-                <form class="form-horizontal" action="' . XOOPS_URL . '/user.php" method="post" role="form">
-                    <div class="form-group">
-                        <label class="col-xs-3 control-label" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
+                <form action="' . XOOPS_URL . '/user.php" method="post" role="form">
+                    <div class="form-group row">
+                        <label class="col-xs-3 col-form-label text-sm-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
                         <div class="col-xs-9">
                             <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control" />
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-xs-3 control-label" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
+                    <div class="form-group row">
+                        <label class="col-xs-3 col-form-label text-sm-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
                         <div class="col-xs-9">
                             <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control" />
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-xs-3 control-label"><a href="index.php?op=forgot" style="font-size:12px;color:gray;">' . _MD_TADADM_FORGOT . '</a></label>
+                    <div class="form-group row">
+                        <label class="col-xs-3 col-form-label text-sm-right"><a href="index.php?op=forgot" style="font-size:12px;color:gray;">' . _MD_TADADM_FORGOT . '</a></label>
                         <div class="col-xs-9">
-                            <input type="hidden" name="op" value="login">                            
+                            <input type="hidden" name="op" value="login">
                             <input type="hidden" name="xoops_redirect" value="' . $_SERVER['PHP_SELF'] . '">
                             <button type="submit" class="btn btn-primary">' . _MD_TADADM_LOGIN . '</button>
                         </div>
@@ -78,38 +78,38 @@ if (!$_SESSION['isAdmin']) {
     }
 
     die('
-      <!DOCTYPE html>
-      <html lang="' . _LANGCODE . '">
-        <head>
-          <meta charset="' . _CHARSET . '">
-          <title>' . _MD_TADADM_NAME . '</title>
-          <!-- Bootstrap -->
-          <link href="' . XOOPS_URL . '/modules/tadtools/bootstrap3/css/bootstrap.css" rel="stylesheet" media="screen">
-          <link href="' . XOOPS_URL . '/modules/tadtools/css/font-awesome/css/font-awesome.css" rel="stylesheet" media="all">
-          <style>
-            body{
-                font-family: "Microsoft JhengHei", "Microsoft YaHei", sans-serif, "Helvetica Neue", Helvetica, Arial ;
-            }
-          </style>
-        </head>
-        <body>
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-lg-6 col-lg-offset-3 col-sm-8 col-sm-offset-2 col-sm-10 col-sm-offset-1">
-              <div class="page-header">
-                <h1>' . _MD_TADADM_NAME . '</h1>
-              </div>
-              <div class="row">
-                <div class="col-sm-12">
-                ' . $form . '
-                </div>
-              </div>
+    <!DOCTYPE html>
+    <html lang="' . _LANGCODE . '">
+    <head>
+        <meta charset="' . _CHARSET . '">
+        <title>' . _MD_TADADM_NAME . '</title>
+        <!-- Bootstrap -->
+        <link href="' . XOOPS_URL . '/modules/tadtools/bootstrap4/css/bootstrap.css" rel="stylesheet" media="screen">
+        <link href="' . XOOPS_URL . '/modules/tadtools/css/font-awesome/css/font-awesome.css" rel="stylesheet" media="all">
+        <style>
+        body{
+            font-family: "Microsoft JhengHei", "Microsoft YaHei", sans-serif, "Helvetica Neue", Helvetica, Arial ;
+        }
+        </style>
+    </head>
+    <body>
+    <div class="container-fluid">
+        <div class="row">
+        <div class="col-lg-6 col-lg-offset-3 col-sm-8 col-sm-offset-2 col-sm-10 col-sm-offset-1">
+            <div class="page-header">
+            <h1>' . _MD_TADADM_NAME . '</h1>
             </div>
-          </div>
+            <div class="row">
+            <div class="col-sm-12">
+            ' . $form . '
+            </div>
+            </div>
         </div>
-        </body>
-      </html>
-  ');
+        </div>
+    </div>
+    </body>
+    </html>
+');
 }
 
 $logout = ($xoopsUser) ? XOOPS_URL . "/user.php?op=logout" : "index.php?op=logout";
@@ -548,9 +548,9 @@ if ($xoopsDB) {
 }
 
 $main1 = "
-<div class='panel panel-primary'>
-  <div class='panel-heading'>" . _MD_TADADM_SYSTEM_INFO . "</div>
-  <table class='table table-striped'>
+<div class='card'>
+  <div class='card-header text-white bg-primary'>" . _MD_TADADM_SYSTEM_INFO . "</div>
+  <table class='table table-striped table-responsive table-sm'>
     <tr>
         <th>
             <i class='fa fa-caret-right'  title='XOOPS " . _MD_TADADM_VERSION . "'></i>
@@ -635,10 +635,10 @@ $main1 = "
   </table>
 </div>
 
-<div class='panel panel-info'>
-  <div class='panel-heading'>" . _MD_TADADM_USER_AND_GROUP . "</div>
+<div class='card'>
+  <div class='card-header text-white bg-info'>" . _MD_TADADM_USER_AND_GROUP . "</div>
 
-  <table class='table table-striped'>
+  <table class='table table-striped table-responsive table-sm''>
     $other
   </table>
 </div>";
@@ -646,9 +646,9 @@ $main1 = "
 $theme_set = ($xoopsConfig['theme_set'] == 'default') ? "" : "<li class='list-group-item'><a href='index.php?op=theme_default'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_DEFAULT_THEME . "'></i> " . sprintf(_MD_TADADM_DEFAULT_THEME_DESC, $xoopsConfig['theme_set']) . "</a></li>";
 
 $main2 = "
-<div class='panel panel-warning'>
-  <div class='panel-heading'>" . _MD_TADADM_AID . "</div>
-  <ul class='list-group'>
+<div class='card'>
+  <div class='card-header text-white bg-warning'>" . _MD_TADADM_AID . "</div>
+  <ul class='list-group list-group-flush'>
     " . debug_mode_tool() . "
     <li class='list-group-item'>
         <a href='index.php?op=clear_cache'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_CLEAR_CACHE . "'></i> " . _MD_TADADM_CLEAR_CACHE . files_counter() . "</a></li>
@@ -704,13 +704,13 @@ if ($xoopsModuleConfig['block_id_temp'] != "") {
 }
 
 $main3 = "
-<div class='panel panel-danger'>
-  <div class='panel-heading'>" . _MD_TADADM_WEB_FUNCTION . "</div>
-  <ul class='list-group'>
+<div class='card'>
+  <div class='card-header text-white bg-danger'>" . _MD_TADADM_WEB_FUNCTION . "</div>
+  <ul class='list-group list-group-flush'>
     $close_site
     <li class='list-group-item'>
-        <form  action='{$_SERVER['PHP_SELF']}' method='post' role='form' class='form-horizontal'>
-            <div class='form-group'>
+        <form  action='{$_SERVER['PHP_SELF']}' method='post' role='form'>
+            <div class='form-group row'>
                 <label class='sr-only'>" . _MD_TADADM_RESET_ADMIN_PASSWD . "</label>
                 <div class='col-xs-4'>
                     <select name='uid' class='form-control'>
@@ -728,8 +728,8 @@ $main3 = "
         </form>
     </li>
     <li class='list-group-item'>
-        <form action='{$_SERVER['PHP_SELF']}' method='post' role='form' class='form-horizontal'>
-            <div class='form-group'>
+        <form action='{$_SERVER['PHP_SELF']}' method='post' role='form'>
+            <div class='form-group row'>
                 <label class='sr-only'>" . _MD_TADADM_RESET_MEM_PASSWD . "</label>
                 <div class='col-xs-4'>
                     <select name='uid' class='form-control'>
@@ -756,9 +756,9 @@ $into_setup  = ($xoopsUser) ? "<li class='list-group-item'><a href='" . XOOPS_UR
 $into_module = ($xoopsUser) ? "<li class='list-group-item'><a href='" . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_MODULES . "'></i> " . _MD_TADADM_MODULES . "</a></li>" : "";
 
 $main4 = "
-<div class='panel panel-success'>
-  <div class='panel-heading'>" . _MD_TADADM_LINKS . "</div>
-  <ul class='list-group'>
+<div class='card'>
+  <div class='card-header text-white bg-success'>" . _MD_TADADM_LINKS . "</div>
+  <ul class='list-group list-group-flush'>
     <li class='list-group-item'>
         <a href='" . XOOPS_URL . "' target='_blank'>
             <i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_LINK_TO . " " . XOOPS_URL . "'></i>
@@ -797,4 +797,4 @@ $content = '
     <div class="col-lg-4 col-sm-6">' . $main4 . '</div>
 </div>';
 
-echo html5($content, false, true, 3, true, 'container-fluid');
+echo html5($content, false, true, 4, true, 'container-fluid');

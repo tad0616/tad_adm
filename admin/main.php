@@ -116,6 +116,5 @@ switch ($op) {
 }
 
 /*-----------秀出結果區--------------*/
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/bootstrap3/css/bootstrap.css');
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/css/xoops_adm3.css');
+$xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
 include_once 'footer.php';

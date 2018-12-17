@@ -1,2 +1,2 @@
-<!-- 此檔案為南市資訊中心用來替所有網站進行模組自動更新用檔案，請勿刪除或變更 -->
-<{$xoops_url}>
+<{assign var=this_file value=$smarty.template|basename|replace:'db:':''}>
+<{includeq file="$xoops_rootpath/modules/$xoops_dirname/templates/b4.tpl"}>

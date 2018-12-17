@@ -1,3 +1,13 @@
+Tad Adm 2.75 (released on 2019-01-01)
+==================================================================
+1.Support BootStrap4
+
+Tad Adm 2.74 (released on 2018-12-03)
+=========================================================== ================
+1. Fix the problem that the image savior is blank
+2. Upgrade Adminer to 4.7.0
+
+
 Tad Adm 2.73 (released on 2018-05-15)
 ================================================== ================
 1. Modify online installation screen

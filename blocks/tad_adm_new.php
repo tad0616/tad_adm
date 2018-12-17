@@ -91,7 +91,7 @@ function tad_adm_new($options)
 //區塊編輯函式 (tad_adm_new_edit)
 function tad_adm_new_edit($options)
 {
-    $form = _MB_TADADM_SEARCH_NUM . "<input type='text' name='options[0]' value='{$options[0]}'>
+    $form = _MB_TADADM_SEARCH_NUM . "<input type='text' name='options[0]' class='my-input' value='{$options[0]}'>
   <div>" . _MB_TADADM_SEARCH_NUM_DESC . "</div>";
     return $form;
 }

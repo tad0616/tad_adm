@@ -36,7 +36,7 @@ $i++;
 $adminmenu[$i]['title'] = _MI_TADADM_ADMENU5;
 $adminmenu[$i]['link']  = "admin/clean.php";
 $adminmenu[$i]['desc']  = _MI_TADADM_ADMENU5;
-$adminmenu[$i]['icon']  = "images/admin/spam.png";
+$adminmenu[$i]['icon']  = "images/admin/clean.png";
 
 $i++;
 $adminmenu[$i]['title'] = _MI_TAD_ADMIN_ABOUT;
