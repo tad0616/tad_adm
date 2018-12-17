@@ -636,7 +636,7 @@ $main1 = "
 </div>
 
 <div class='card'>
-  <div class='card-header bg-info'>" . _MD_TADADM_USER_AND_GROUP . "</div>
+  <div class='card-header text-white bg-info'>" . _MD_TADADM_USER_AND_GROUP . "</div>
 
   <table class='table table-striped'>
     $other
@@ -647,7 +647,7 @@ $theme_set = ($xoopsConfig['theme_set'] == 'default') ? "" : "<li class='list-gr
 
 $main2 = "
 <div class='card'>
-  <div class='card-header bg-warning'>" . _MD_TADADM_AID . "</div>
+  <div class='card-header text-white bg-warning'>" . _MD_TADADM_AID . "</div>
   <ul class='list-group list-group-flush'>
     " . debug_mode_tool() . "
     <li class='list-group-item'>
@@ -705,7 +705,7 @@ if ($xoopsModuleConfig['block_id_temp'] != "") {
 
 $main3 = "
 <div class='card'>
-  <div class='card-header bg-danger'>" . _MD_TADADM_WEB_FUNCTION . "</div>
+  <div class='card-header text-white bg-danger'>" . _MD_TADADM_WEB_FUNCTION . "</div>
   <ul class='list-group list-group-flush'>
     $close_site
     <li class='list-group-item'>
@@ -757,7 +757,7 @@ $into_module = ($xoopsUser) ? "<li class='list-group-item'><a href='" . XOOPS_UR
 
 $main4 = "
 <div class='card'>
-  <div class='card-header bg-success'>" . _MD_TADADM_LINKS . "</div>
+  <div class='card-header text-white bg-success'>" . _MD_TADADM_LINKS . "</div>
   <ul class='list-group list-group-flush'>
     <li class='list-group-item'>
         <a href='" . XOOPS_URL . "' target='_blank'>
