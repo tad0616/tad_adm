@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <h3><{$php_ini_path}><{$smarty.const._MA_TADADM_MODULES_PHP_INI_PATH}></h3>
 
-  <table class="table table-striped table-bordered table-hover table-responsive table-sm'">
+  <table class="table table-striped table-bordered table-hover">
   <tr>
     <th><{$smarty.const._MA_TADADM_PHPINI_ITEM}></th>
     <th><{$smarty.const._MA_TADADM_PHPINI_ITEM_VAL}></th>

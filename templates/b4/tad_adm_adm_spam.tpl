@@ -15,7 +15,7 @@
 
         <form action="spam.php" method="post">
             <{$bar}>
-            <table class="table table-striped table-bordered table-hover table-responsive table-sm'">
+            <table class="table table-striped table-bordered table-hover">
                 <tr>
                     <th>uid</th>
                     <th><{$smarty.const._MA_TADADM_UNAME}></th>
@@ -86,7 +86,7 @@
         </form>
         <{$bar}>
         <form action="spam.php" method="post">
-            <table class="table table-striped table-bordered table-hover table-responsive table-sm'">
+            <table class="table table-striped table-bordered table-hover">
             <tr><td colspan=10>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="checkbox" id="clickAll" value="">

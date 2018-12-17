@@ -61,7 +61,7 @@
         </div>
       </div>
       <!-- Table -->
-      <table class="table table-sm'">
+      <table class="table">
       <{foreach from=$all_dir item=dir}>
         <tr>
           <td>
