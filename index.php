@@ -21,7 +21,6 @@ if ($xoopsUser) {
 
 if (!$_SESSION['isAdmin']) {
     $sql = "update " . $xoopsDB->prefix('config') . " set `conf_value`='' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
-    //$xoopsDB->queryF($sql) or die($sql."<br>". $xoopsDB->error());
 
     if ($op == "forgot") {
         $form = '
@@ -30,14 +29,14 @@ if (!$_SESSION['isAdmin']) {
             <div class="card-body">
                 <form action="' . $_SERVER['PHP_SELF'] . '" method="post" role="form">
                     <div class="form-group row">
-                        <label class="col-xs-12">' . _MD_TADADM_INPUT_PASSWD_DESC . '</label>
+                        <label class="col-sm-12">' . _MD_TADADM_INPUT_PASSWD_DESC . '</label>
                     </div>
                     <div class="form-group row">
-                        <label class="col-xs-3" for="help_passwd">' . _MD_TADADM_INPUT_PASSWD . '</label>
-                        <div class="col-xs-7">
+                        <label class="col-sm-3" for="help_passwd">' . _MD_TADADM_INPUT_PASSWD . '</label>
+                        <div class="col-sm-7">
                             <input type="text" name="help_passwd" id="help_passwd" class="form-control" placeholder="">
                         </div>
-                        <div class="col-xs-2">
+                        <div class="col-sm-2">
                             <input type="hidden" name="op" value="helpme">
                             <button type="submit" class="btn btn-primary">' . _MD_TADADM_LOGIN . '</button>
                         </div>
@@ -47,69 +46,48 @@ if (!$_SESSION['isAdmin']) {
         </div>';
     } else {
         $form = '
-        <div class="card">
-            <div class="card-header text-white bg-primary">' . _MD_TADADM_LOGIN . '</div>
-            <div class="card-body">
+        <form action="' . XOOPS_URL . '/user.php" method="post" role="form">
+            <div class="card">
+                <div class="card-header text-white bg-primary">' . _MD_TADADM_LOGIN . '</div>
+                <div class="card-body">
 
-                <form action="' . XOOPS_URL . '/user.php" method="post" role="form">
                     <div class="form-group row">
-                        <label class="col-xs-3 col-form-label text-sm-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
-                        <div class="col-xs-9">
+                        <label class="col-sm-3 col-form-label text-sm-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
+                        <div class="col-sm-9">
                             <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control" />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-xs-3 col-form-label text-sm-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
-                        <div class="col-xs-9">
+                        <label class="col-sm-3 col-form-label text-sm-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
+                        <div class="col-sm-9">
                             <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control" />
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-xs-3 col-form-label text-sm-right"><a href="index.php?op=forgot" style="font-size:12px;color:gray;">' . _MD_TADADM_FORGOT . '</a></label>
-                        <div class="col-xs-9">
+                        <label class="col-sm-3 col-form-label text-sm-right"><a href="index.php?op=forgot" style="font-size:12px;color:gray;">' . _MD_TADADM_FORGOT . '</a></label>
+                        <div class="col-sm-9">
                             <input type="hidden" name="op" value="login">
                             <input type="hidden" name="xoops_redirect" value="' . $_SERVER['PHP_SELF'] . '">
                             <button type="submit" class="btn btn-primary">' . _MD_TADADM_LOGIN . '</button>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>';
+        </form>';
     }
-
-    die('
-    <!DOCTYPE html>
-    <html lang="' . _LANGCODE . '">
-    <head>
-        <meta charset="' . _CHARSET . '">
-        <title>' . _MD_TADADM_NAME . '</title>
-        <!-- Bootstrap -->
-        <link href="' . XOOPS_URL . '/modules/tadtools/bootstrap4/css/bootstrap.css" rel="stylesheet" media="screen">
-        <link href="' . XOOPS_URL . '/modules/tadtools/css/font-awesome/css/font-awesome.css" rel="stylesheet" media="all">
-        <style>
-        body{
-            font-family: "Microsoft JhengHei", "Microsoft YaHei", sans-serif, "Helvetica Neue", Helvetica, Arial ;
-        }
-        </style>
-    </head>
-    <body>
-    <div class="container-fluid">
-        <div class="row">
-        <div class="col-lg-6 col-lg-offset-3 col-sm-8 col-sm-offset-2 col-sm-10 col-sm-offset-1">
-            <div class="page-header">
-            <h1>' . _MD_TADADM_NAME . '</h1>
+    $content='
+    <div class="row">
+        <div class="col-lg-3"></div>
+            <div class="col-lg-6">
+                <div class="page-header">
+                    <h1>' . _MD_TADADM_NAME . '</h1>
+                </div>
+                ' . $form . '
             </div>
-            <div class="row">
-            <div class="col-sm-12">
-            ' . $form . '
-            </div>
-            </div>
-        </div>
-        </div>
+        <div class="col-lg-3"></div>
     </div>
-    </body>
-    </html>
-');
+    ';
+    die(html5($content, false, true, 4, true, 'container-fluid'));
 }
 
 $logout = ($xoopsUser) ? XOOPS_URL . "/user.php?op=logout" : "index.php?op=logout";
@@ -549,113 +527,113 @@ if ($xoopsDB) {
 
 $main1 = "
 <div class='card'>
-  <div class='card-header text-white bg-primary'>" . _MD_TADADM_SYSTEM_INFO . "</div>
-  <table class='table table-striped'>
-    <tr>
-        <th>
-            <i class='fa fa-caret-right'  title='XOOPS " . _MD_TADADM_VERSION . "'></i>
-            XOOPS " . _MD_TADADM_VERSION . _TAD_FOR . "
-        </th>
-        <td>
-            " . XOOPS_VERSION . "
-        </td>
-    </tr>
-    <tr>
-        <th>
-            <i class='fa fa-caret-right'  title='XOOPS " . _MD_TADADM_LANGUAGE . "'></i>
-            XOOPS " . _MD_TADADM_LANGUAGE . _TAD_FOR . "
-        </th>
-        <td>
-            " . $xoopsConfig['language'] . "
-        </td>
-    </tr>
-    <tr>
-        <th>
-            <i class='fa fa-caret-right'  title='XOOPS " . _MD_TADADM_XOOPS_ROOT_PATH . "'></i>
-            XOOPS " . _MD_TADADM_XOOPS_ROOT_PATH . _TAD_FOR . "
-        </th>
-        <td>
-            " . XOOPS_ROOT_PATH . "
-        </td>
-    </tr>
-    <tr>
-        <th>
-            <i class='fa fa-caret-right'  title='" . _MD_TADADM_XOOPS_VAR_PATH . "'></i>
-            " . _MD_TADADM_XOOPS_VAR_PATH . _TAD_FOR . "
-        </th>
-        <td>
-            " . XOOPS_VAR_PATH . "
-        </td>
-    </tr>
-    <tr>
-        <th>
-            <i class='fa fa-caret-right'  title='" . _MD_TADADM_XOOPS_TRUST_PATH . "'></i>
-            " . _MD_TADADM_XOOPS_TRUST_PATH . _TAD_FOR . "
-        </th>
-        <td>
-            " . XOOPS_TRUST_PATH . "
-        </td>
-    </tr>
-    <tr>
-        <th>
-            <i class='fa fa-caret-right'  title='PHP " . _MD_TADADM_VERSION . "'></i>
-            PHP " . _MD_TADADM_VERSION . _TAD_FOR . "
-        </th>
-        <td>
-            " . phpversion() . "
-        </td>
-    </tr>
-    <tr>
-        <th>
-            <i class='fa fa-caret-right'  title='MySQL " . _MD_TADADM_VERSION . "'></i>
-             MySQL" . _MD_TADADM_VERSION . _TAD_FOR . "
-        </th>
-        <td>
-            " . $mysql_version . "
-        </td>
-    </tr>
-    <tr>
-        <th>
-            <i class='fa fa-caret-right'  title='MySQL " . _MD_TADADM_CONNECT . "'></i>
-             MySQL" . _MD_TADADM_CONNECT . _TAD_FOR . "
-        </th>
-        <td>
-            " . $mysql_connect . "
-        </td>
-    </tr>
-    <tr>
-        <th>
-            <i class='fa fa-caret-right'  title='" . _MD_TADADM_AVAILABLE_SPACE . "'></i>
-             " . _MD_TADADM_AVAILABLE_SPACE . _TAD_FOR . "
-        </th>
-        <td>
-            " . get_free_space() . "
-        </td>
-    </tr>
-  </table>
-</div>
+    <div class='card-header text-white bg-primary'>" . _MD_TADADM_SYSTEM_INFO . "</div>
+    <table class='table table-striped'>
+        <tr>
+            <th>
+                <i class='fa fa-caret-right'  title='XOOPS " . _MD_TADADM_VERSION . "'></i>
+                XOOPS " . _MD_TADADM_VERSION . _TAD_FOR . "
+            </th>
+            <td>
+                " . XOOPS_VERSION . "
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class='fa fa-caret-right'  title='XOOPS " . _MD_TADADM_LANGUAGE . "'></i>
+                XOOPS " . _MD_TADADM_LANGUAGE . _TAD_FOR . "
+            </th>
+            <td>
+                " . $xoopsConfig['language'] . "
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class='fa fa-caret-right'  title='XOOPS " . _MD_TADADM_XOOPS_ROOT_PATH . "'></i>
+                XOOPS " . _MD_TADADM_XOOPS_ROOT_PATH . _TAD_FOR . "
+            </th>
+            <td>
+                " . XOOPS_ROOT_PATH . "
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class='fa fa-caret-right'  title='" . _MD_TADADM_XOOPS_VAR_PATH . "'></i>
+                " . _MD_TADADM_XOOPS_VAR_PATH . _TAD_FOR . "
+            </th>
+            <td>
+                " . XOOPS_VAR_PATH . "
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class='fa fa-caret-right'  title='" . _MD_TADADM_XOOPS_TRUST_PATH . "'></i>
+                " . _MD_TADADM_XOOPS_TRUST_PATH . _TAD_FOR . "
+            </th>
+            <td>
+                " . XOOPS_TRUST_PATH . "
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class='fa fa-caret-right'  title='PHP " . _MD_TADADM_VERSION . "'></i>
+                PHP " . _MD_TADADM_VERSION . _TAD_FOR . "
+            </th>
+            <td>
+                " . phpversion() . "
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class='fa fa-caret-right'  title='MySQL " . _MD_TADADM_VERSION . "'></i>
+                MySQL" . _MD_TADADM_VERSION . _TAD_FOR . "
+            </th>
+            <td>
+                " . $mysql_version . "
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class='fa fa-caret-right'  title='MySQL " . _MD_TADADM_CONNECT . "'></i>
+                MySQL" . _MD_TADADM_CONNECT . _TAD_FOR . "
+            </th>
+            <td>
+                " . $mysql_connect . "
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class='fa fa-caret-right'  title='" . _MD_TADADM_AVAILABLE_SPACE . "'></i>
+                " . _MD_TADADM_AVAILABLE_SPACE . _TAD_FOR . "
+            </th>
+            <td>
+                " . get_free_space() . "
+            </td>
+        </tr>
+    </table>
+    </div>
 
-<div class='card'>
-  <div class='card-header text-white bg-info'>" . _MD_TADADM_USER_AND_GROUP . "</div>
+    <div class='card'>
+    <div class='card-header text-white bg-info'>" . _MD_TADADM_USER_AND_GROUP . "</div>
 
-  <table class='table table-striped'>
-    $other
-  </table>
+    <table class='table table-striped'>
+        $other
+    </table>
 </div>";
 
 $theme_set = ($xoopsConfig['theme_set'] == 'default') ? "" : "<li class='list-group-item'><a href='index.php?op=theme_default'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_DEFAULT_THEME . "'></i> " . sprintf(_MD_TADADM_DEFAULT_THEME_DESC, $xoopsConfig['theme_set']) . "</a></li>";
 
 $main2 = "
 <div class='card'>
-  <div class='card-header text-white bg-warning'>" . _MD_TADADM_AID . "</div>
-  <ul class='list-group list-group-flush'>
-    " . debug_mode_tool() . "
-    <li class='list-group-item'>
-        <a href='index.php?op=clear_cache'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_CLEAR_CACHE . "'></i> " . _MD_TADADM_CLEAR_CACHE . files_counter() . "</a></li>
-    <li class='list-group-item'><a href='index.php?op=clear_session'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_CLEAR_SESSION . "'></i> " . _MD_TADADM_CLEAR_SESSION . session_size() . "</a></li>
-    $theme_set
+    <div class='card-header text-white bg-warning'>" . _MD_TADADM_AID . "</div>
+    <ul class='list-group list-group-flush'>
+        " . debug_mode_tool() . "
+        <li class='list-group-item'>
+            <a href='index.php?op=clear_cache'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_CLEAR_CACHE . "'></i> " . _MD_TADADM_CLEAR_CACHE . files_counter() . "</a></li>
+        <li class='list-group-item'><a href='index.php?op=clear_session'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_CLEAR_SESSION . "'></i> " . _MD_TADADM_CLEAR_SESSION . session_size() . "</a></li>
+        $theme_set
 
-  </ul>
+    </ul>
 </div>";
 
 $close_site = $xoopsConfig['closesite'] == '1' ? "<li class='list-group-item'><a href='index.php?op=close_site&v=0'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_ENABLE_WEB . "'></i> " . _MD_TADADM_ENABLE_WEB . "</a></li>" : "<li class='list-group-item'><a href='index.php?op=close_site&v=1'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_UNABLE_WEB . "'></i> " . _MD_TADADM_UNABLE_WEB . "</a></li>";
@@ -705,50 +683,50 @@ if ($xoopsModuleConfig['block_id_temp'] != "") {
 
 $main3 = "
 <div class='card'>
-  <div class='card-header text-white bg-danger'>" . _MD_TADADM_WEB_FUNCTION . "</div>
-  <ul class='list-group list-group-flush'>
-    $close_site
-    <li class='list-group-item'>
-        <form  action='{$_SERVER['PHP_SELF']}' method='post' role='form'>
-            <div class='form-group row'>
-                <label class='sr-only'>" . _MD_TADADM_RESET_ADMIN_PASSWD . "</label>
-                <div class='col-xs-4'>
-                    <select name='uid' class='form-control'>
-                        {$admin_options}
-                    </select>
+    <div class='card-header text-white bg-danger'>" . _MD_TADADM_WEB_FUNCTION . "</div>
+    <ul class='list-group list-group-flush'>
+        $close_site
+        <li class='list-group-item'>
+            <form  action='{$_SERVER['PHP_SELF']}' method='post' role='form'>
+                <div class='form-group row'>
+                    <label class='sr-only'>" . _MD_TADADM_RESET_ADMIN_PASSWD . "</label>
+                    <div class='col-sm-4'>
+                        <select name='uid' class='form-control'>
+                            {$admin_options}
+                        </select>
+                    </div>
+                    <div class='col-sm-4'>
+                        <input type='text' name='new_pass' class='form-control' placeholder='" . _MD_TADADM_RESET_ADMIN_PASSWD . "'>
+                    </div>
+                    <div class='col-sm-4'>
+                        <input type='hidden' name='op' value='reset_mem'>
+                        <button type='submit' class='btn btn-danger btn-block'>" . _MD_TADADM_RESET_ADMIN_PASSWD . "</button>
+                    </div>
                 </div>
-                <div class='col-xs-4'>
-                    <input type='text' name='new_pass' class='form-control' placeholder='" . _MD_TADADM_RESET_ADMIN_PASSWD . "'>
+            </form>
+        </li>
+        <li class='list-group-item'>
+            <form action='{$_SERVER['PHP_SELF']}' method='post' role='form'>
+                <div class='form-group row'>
+                    <label class='sr-only'>" . _MD_TADADM_RESET_MEM_PASSWD . "</label>
+                    <div class='col-sm-4'>
+                        <select name='uid' class='form-control'>
+                        {$XoopsFormSelectUserOption}
+                        </select>
+                    </div>
+                    <div class='col-sm-4'>
+                        <input type='text' name='new_pass' class='form-control' placeholder='" . _MD_TADADM_RESET_MEM_PASSWD . "'>
+                    </div>
+                    <div class='col-sm-4'>
+                        <input type='hidden' name='op' value='reset_mem'>
+                        <button type='submit' class='btn btn-warning btn-block'>" . _MD_TADADM_RESET_MEM_PASSWD . "</button>
+                    </div>
                 </div>
-                <div class='col-xs-4'>
-                    <input type='hidden' name='op' value='reset_mem'>
-                    <button type='submit' class='btn btn-danger btn-block'>" . _MD_TADADM_RESET_ADMIN_PASSWD . "</button>
-                </div>
-            </div>
-        </form>
-    </li>
-    <li class='list-group-item'>
-        <form action='{$_SERVER['PHP_SELF']}' method='post' role='form'>
-            <div class='form-group row'>
-                <label class='sr-only'>" . _MD_TADADM_RESET_MEM_PASSWD . "</label>
-                <div class='col-xs-4'>
-                    <select name='uid' class='form-control'>
-                    {$XoopsFormSelectUserOption}
-                    </select>
-                </div>
-                <div class='col-xs-4'>
-                    <input type='text' name='new_pass' class='form-control' placeholder='" . _MD_TADADM_RESET_MEM_PASSWD . "'>
-                </div>
-                <div class='col-xs-4'>
-                    <input type='hidden' name='op' value='reset_mem'>
-                    <button type='submit' class='btn btn-warning btn-block'>" . _MD_TADADM_RESET_MEM_PASSWD . "</button>
-                </div>
-            </div>
-        </form>
-    </li>
-    <li class='list-group-item'>{$blocks_tool}</li>
-    <li class='list-group-item'>{$modules_tool}</li>
-  </ul>
+            </form>
+        </li>
+        <li class='list-group-item'>{$blocks_tool}</li>
+        <li class='list-group-item'>{$modules_tool}</li>
+    </ul>
 </div>";
 
 $into_admin  = ($xoopsUser) ? "<li class='list-group-item'><a href='" . XOOPS_URL . "/admin.php' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_ADMIN . "'></i> " . _MD_TADADM_ADMIN . "</a></li>" : "";
@@ -757,34 +735,34 @@ $into_module = ($xoopsUser) ? "<li class='list-group-item'><a href='" . XOOPS_UR
 
 $main4 = "
 <div class='card'>
-  <div class='card-header text-white bg-success'>" . _MD_TADADM_LINKS . "</div>
-  <ul class='list-group list-group-flush'>
-    <li class='list-group-item'>
-        <a href='" . XOOPS_URL . "' target='_blank'>
-            <i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_LINK_TO . " " . XOOPS_URL . "'></i>
-            " . _MD_TADADM_LINK_TO . " " . XOOPS_URL . "
-        </a>
-    </li>
-    <li class='list-group-item'>
-        <a href='" . XOOPS_URL . "/user.php' target='_blank'>
-            <i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_LOGIN_PAGE . "'></i>
-            " . _MD_TADADM_LOGIN_PAGE . "
-        </a>
-    </li>
-    <li class='list-group-item'>
-        <a href='index.php?op=phpinfo'>
-        <i class='fa fa-chevron-circle-right'  title='phpinfo'></i>
-        phpinfo()
-        </a>
-    </li>
-    $into_admin
-    $into_setup
-    $into_module
-    <li class='list-group-item'><a href='pma.php' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_DB . "'></i> " . _MD_TADADM_DB . "</a></li>
-    <li class='list-group-item'><a href='move.php' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_MOVE288 . "'></i> " . _MD_TADADM_MOVE288 . "</a></li>
-    <li class='list-group-item'><a href='$logout' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_LOGOUT . "'></i> " . _MD_TADADM_LOGOUT . "</a></li>
+    <div class='card-header text-white bg-success'>" . _MD_TADADM_LINKS . "</div>
+    <ul class='list-group list-group-flush'>
+        <li class='list-group-item'>
+            <a href='" . XOOPS_URL . "' target='_blank'>
+                <i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_LINK_TO . " " . XOOPS_URL . "'></i>
+                " . _MD_TADADM_LINK_TO . " " . XOOPS_URL . "
+            </a>
+        </li>
+        <li class='list-group-item'>
+            <a href='" . XOOPS_URL . "/user.php' target='_blank'>
+                <i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_LOGIN_PAGE . "'></i>
+                " . _MD_TADADM_LOGIN_PAGE . "
+            </a>
+        </li>
+        <li class='list-group-item'>
+            <a href='index.php?op=phpinfo'>
+            <i class='fa fa-chevron-circle-right'  title='phpinfo'></i>
+            phpinfo()
+            </a>
+        </li>
+        $into_admin
+        $into_setup
+        $into_module
+        <li class='list-group-item'><a href='pma.php' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_DB . "'></i> " . _MD_TADADM_DB . "</a></li>
+        <li class='list-group-item'><a href='move.php' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_MOVE288 . "'></i> " . _MD_TADADM_MOVE288 . "</a></li>
+        <li class='list-group-item'><a href='$logout' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_LOGOUT . "'></i> " . _MD_TADADM_LOGOUT . "</a></li>
 
-  </ul>
+    </ul>
 </div>";
 
 $content = '
