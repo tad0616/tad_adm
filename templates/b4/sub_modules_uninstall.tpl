@@ -6,21 +6,21 @@
 <div class="row">
     <{assign var=i value=1}>
     <{foreach from=$all_mods item=mod}>
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
-            <div class="card card-body bg-light m-1">
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+            <div class="card card-body bg-light m-1 d-flex align-items-stretch">
                 <div style="font-size: 1.1em; font-weight: bold; padding-bottom: 10px;">
                     <span class="badge badge-primary"><{$i}></span>
                     <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" target="_blank"><{$mod.name}></a>
                 </div>
                 <div class="row">
                     <{if $mod.logo}>
-                        <div class="col-sm-4">
+                        <div class="col-md-4">
                             <a  href="#m<{$mod.module_sn}>">
                                 <img src="<{$mod.logo}>" alt="<{$mod.name}>" class="img-fluid">
                             </a>
                         </div>
                     <{/if}>
-                    <div class="col-sm-8">
+                    <div class="col-md-8">
 
                         <a href="main.php?op=install_module&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="btn btn-success modulesadmin" data-fancybox-type="iframe">
                         <i class="fa fa-cloud-download" aria-hidden="true"></i>

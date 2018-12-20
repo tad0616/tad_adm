@@ -1,21 +1,21 @@
 <div class="row">
-    <div class="col-sm-12">
+    <div class="col-md-12">
         <h2><{$smarty.const._MA_TADADM_SSH_ID}></h2>
-        <div class="card card-body bg-light m-1">
+        <div class="card card-body bg-light m-1 d-flex align-items-stretch">
             <form action="main.php" method="post" role="form">
                 <div class="form-group row">
-                    <label class="col-sm-2 col-form-label text-sm-right">
+                    <label class="col-md-2 col-form-label text-sm-right">
                     <{$smarty.const._MA_TADADM_SSH_ID}><{$smarty.const._TAD_FOR}>
                     </label>
-                    <div class="col-sm-10">
+                    <div class="col-md-10">
                     <input type="text" name="ssh_id" placeholder="<{$smarty.const._MA_TADADM_SSH_ID}>" class="form-control" value="<{$tad_adm_ssh_id}>">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-sm-2 col-form-label text-sm-right">
+                    <label class="col-md-2 col-form-label text-sm-right">
                     <{$smarty.const._MA_TADADM_SSH_PASS}><{$smarty.const._TAD_FOR}>
                     </label>
-                    <div class="col-sm-10">
+                    <div class="col-md-10">
                     <input type="password" name="ssh_passwd" placeholder="<{$smarty.const._MA_TADADM_SSH_PASS}>" class="form-control" value="<{$tad_adm_ssh_passwd}>">
                     </div>
                 </div>

@@ -747,21 +747,21 @@ function login_form()
 
             <form action="' . XOOPS_URL . '/user.php" method="post" role="form">
                 <div class="form-group row">
-                    <label class="col-xs-3 col-form-label text-sm-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
-                    <div class="col-xs-9">
+                    <label class="col-sm-3 col-form-label text-sm-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
+                    <div class="col-sm-9">
                         <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control" />
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-xs-3 col-form-label text-sm-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
-                    <div class="col-xs-9">
+                    <label class="col-sm-3 col-form-label text-sm-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
+                    <div class="col-sm-9">
                         <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control" />
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-xs-3 col-form-label text-sm-right">
+                    <label class="col-sm-3 col-form-label text-sm-right">
                     </label>
-                    <div class="col-xs-9">
+                    <div class="col-sm-9">
                         <input type="hidden" name="op" value="login">
                         <input type="hidden" name="xoops_redirect" value="' . $_SERVER['PHP_SELF'] . '">
                         <button type="submit" class="btn btn-primary">' . _MD_TADADM_LOGIN . '</button>

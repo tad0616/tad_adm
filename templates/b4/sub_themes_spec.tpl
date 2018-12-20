@@ -1,4 +1,4 @@
-<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+<div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
     <div class="<{if $mod.function=='update_theme'}>alert alert-danger<{else}>card card-body bg-light m-1<{/if}>">
 
         <div style="font-size: 1.1em;">

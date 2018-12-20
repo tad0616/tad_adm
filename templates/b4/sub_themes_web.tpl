@@ -1,10 +1,10 @@
-<div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+<div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
     <div class="alert <{if $mod.function=='update_theme'}>alert-danger<{else}>alert-success<{/if}>">
         <div class="row">
-            <div class="col-xs-6 col-sm-5">
+            <div class="col-sm-6 col-md-5">
                 <img src="<{$mod.logo}>" alt="<{$mod.name}>" style="width: 100%;" id="<{$mod.dirname}>_tip">
             </div>
-            <div class="col-xs-6 col-sm-7">
+            <div class="col-sm-6 col-md-7">
                 <div style="font-size: 1.1em;">
                     <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=
                         <{$mod.module_sn}>" title="<{$mod.dirname}><{$smarty.const._MA_TADADM_MOD_ADMIN}>" target="_blank" style="font-weight: bold;">
