@@ -22,7 +22,8 @@ switch ($op) {
     //更新模組
     case "tn_module_update":
         tn_module_update($dirname);
-        redirect_header("index.php", 3, "{$dirname} 更新完成");
+        echo "{$dirname} 更新完成";
+        // redirect_header("index.php", 3, "{$dirname} 更新完成");
 
 }
 
