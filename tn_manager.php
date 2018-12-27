@@ -16,12 +16,14 @@ include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op      = system_CleanVars($_REQUEST, 'op', '', 'string');
 $tx_sn   = system_CleanVars($_REQUEST, 'tx_sn', '', 'int');
 $dirname = system_CleanVars($_REQUEST, 'dirname', '', 'string');
+$mode    = system_CleanVars($_REQUEST, 'mode', '', 'string');
 
 switch ($op) {
     //更新模組
     case "tn_module_update":
         tn_module_update($dirname);
-        die("{$dirname}更新完成");
+        redirect_header("index.php", 3, "{$dirname} 更新完成");
+
 }
 
 include_once XOOPS_ROOT_PATH . '/footer.php';

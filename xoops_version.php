@@ -15,10 +15,10 @@ $modversion['dirname']     = basename(dirname(__FILE__));
 
 //---模組狀態資訊---//
 $modversion['release_date']        = '2019/01/01';
-$modversion['module_website_url']  = 'http://tad0616.net/';
+$modversion['module_website_url']  = 'https://tad0616.net/';
 $modversion['module_website_name'] = _MI_TAD_WEB;
 $modversion['module_status']       = 'release';
-$modversion['author_website_url']  = 'http://tad0616.net/';
+$modversion['author_website_url']  = 'https://tad0616.net/';
 $modversion['author_website_name'] = _MI_TAD_WEB;
 $modversion['min_php']             = 5.4;
 $modversion['min_xoops']           = '2.5';
