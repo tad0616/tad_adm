@@ -64,13 +64,13 @@ function tad_adm_new($options)
         $last_login   = empty($last_login) ? _MB_TADADM_NEVERLOGIN : date('Y-m-d', $last_login);
 
         $all_data .= "
-    <fieldset style='color:{$color};background-color:{$bgcolor};'>
-    <legend><input type='checkbox' name='uid[]' value='$uid' $checked id='uid_{$uid}'>{$uname}<label for='uid_{$uid}'> ({$uid}){$name}</label></legend>
-    <div style='word-wrap:break-word;word-break:break-all;font-size:10px;'><label for='uid_{$uid}'>$email</label></div>
-    <div style='word-wrap:break-word;word-break:break-all;font-size:10px;'><label for='uid_{$uid}'>$url</label></div>
-    <div style='word-wrap:break-word;word-break:break-all;font-size:10px;'>$user_regdate ~ $last_login</div>
-    <div style='word-wrap:break-word;word-break:break-all;font-size:10px;'>$user_sig</div>
-    </fieldset>";
+        <fieldset style='color:{$color};background-color:{$bgcolor};'>
+        <legend><input type='checkbox' name='uid[]' value='$uid' $checked id='uid_{$uid}'>{$uname}<label for='uid_{$uid}'> ({$uid}){$name}</label></legend>
+        <div style='word-wrap:break-word;word-break:break-all;font-size:10px;'><label for='uid_{$uid}'>$email</label></div>
+        <div style='word-wrap:break-word;word-break:break-all;font-size:10px;'><label for='uid_{$uid}'>$url</label></div>
+        <div style='word-wrap:break-word;word-break:break-all;font-size:10px;'>$user_regdate ~ $last_login</div>
+        <div style='word-wrap:break-word;word-break:break-all;font-size:10px;'>$user_sig</div>
+        </fieldset>";
     }
 
     if (empty($all_data)) {
@@ -78,21 +78,27 @@ function tad_adm_new($options)
     }
 
     $block = "
-  <form action='" . XOOPS_URL . "/modules/tad_adm/admin/spam.php' method='post'>
-    $all_data
-    <input type='hidden' name='g2p' value='{$_GET['g2p']}'>
-    <input type='hidden' name='op' value='del_user'>
-    <input type='submit' value='" . _MB_TADADM_DEL_CHK . "'>
-  </form>
-  ";
+    <form action='" . XOOPS_URL . "/modules/tad_adm/admin/spam.php' method='post'>
+        $all_data
+        <input type='hidden' name='g2p' value='{$_GET['g2p']}'>
+        <input type='hidden' name='op' value='del_user'>
+        <input type='submit' value='" . _MB_TADADM_DEL_CHK . "'>
+    </form>
+    ";
     return $block;
 }
 
 //區塊編輯函式 (tad_adm_new_edit)
 function tad_adm_new_edit($options)
 {
-    $form = _MB_TADADM_SEARCH_NUM . "<input type='text' name='options[0]' class='my-input' value='{$options[0]}'>
-  <div>" . _MB_TADADM_SEARCH_NUM_DESC . "</div>";
+
+    $form = "
+    <div class='my-row'>
+        <lable class='my-label'>" . _MB_TADADM_SEARCH_NUM . "</lable>
+        <input type='text' name='options[0]' value='{$options[0]}' class='my-input' size=5>
+        <span class='my-help'>" . _MB_TADADM_SEARCH_NUM_DESC . "</span>
+    </div>
+    ";
     return $form;
 }
 
@@ -109,8 +115,8 @@ if (!function_exists('replace_tad_adm')) {
         $chk_date = date('Y-m-d H:i:s', xoops_getUserTimestamp(time()));
 
         $sql = "replace into `" . $xoopsDB->prefix("tad_adm") . "`
-    (`uid` , `email` , `result` , `chk_date`)
-    values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
+        (`uid` , `email` , `result` , `chk_date`)
+        values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
         $xoopsDB->queryF($sql) or web_error($sql);
 
     }
