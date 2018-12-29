@@ -34,7 +34,7 @@ function list_modules($mode = "tpl")
 
     //抓出現有模組
     $sql    = "SELECT * FROM " . $xoopsDB->prefix("modules") . " ORDER BY hasmain DESC, weight";
-    $result = $xoopsDB->query($sql) or web_error($sql);
+    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
 
     $i = 0;
     //模組部份
@@ -226,7 +226,7 @@ function list_modules($mode = "tpl")
     $all_block = $all_un_block = array();
     //抓出現有區塊
     $sql    = "SELECT bid,dirname,visible, last_modified FROM " . $xoopsDB->prefix("newblocks") . " WHERE `mid`=0 AND `dirname`!='' ORDER BY side, weight";
-    $result = $xoopsDB->query($sql) or web_error($sql);
+    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
     while (list($bid, $dirname, $visible, $last_modified) = $xoopsDB->fetchRow($result)) {
         $bid_array[$bid]             = $dirname;
         $bid_visible[$dirname]       = $visible;
@@ -751,18 +751,18 @@ function do_block($act, $update_sn)
     $last_modified = time();
     if ($act == "install") {
         $sql = "INSERT INTO `" . $xoopsDB->prefix("newblocks") . "` (`mid`,`func_num`,`options`,`name`,`title`,`content`,`side`,`weight`,`visible`,`block_type`,`c_type`,`isactive`,`dirname`,`func_file`,`show_func`,`edit_func`,`template`,`bcachetime`,`last_modified`) values('0', '0', '', '自訂區塊', '{$block['title']}', '{$block['content']}', '{$block['side']}', '0', '1', 'C', '{$block['c_type']}', '1', '{$block['dirname']}', '', '}', '', '', '0', '{$last_modified}')";
-        $xoopsDB->queryF($sql) or web_error($sql);
+        $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
         $block_id = $xoopsDB->getInsertId();
 
         $module_id = ($block['side'] <= 1) ? 0 : -1;
         $sql       = "INSERT INTO `" . $xoopsDB->prefix("block_module_link") . "` (`block_id` , `module_id`) values('{$block_id}', '{$module_id}')";
-        $xoopsDB->queryF($sql) or web_error($sql);
+        $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 
         $sql = "INSERT INTO `" . $xoopsDB->prefix("group_permission") . "` (`gperm_groupid` , `gperm_itemid` , `gperm_modid` , `gperm_name`) values('1', '{$block_id}', '1', 'block_read'),('2', '{$block_id}', '1', 'block_read'),('3', '{$block_id}', '1', 'block_read')";
-        $xoopsDB->queryF($sql) or web_error($sql);
+        $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
     } else {
         $sql = "UPDATE  `" . $xoopsDB->prefix("newblocks") . "` SET `content`='{$block['content']}',`last_modified`='{$last_modified}' where dirname='{$block['dirname']}'";
-        $xoopsDB->queryF($sql) or web_error($sql);
+        $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
     }
 }
 
@@ -776,7 +776,7 @@ function update_allowed($theme, $val)
         $theme_set_allowed                  = serialize($xoopsConfig['theme_set_allowed']);
 
         $sql = "update " . $xoopsDB->prefix("config") . " set conf_value='{$theme_set_allowed}' where conf_name='theme_set_allowed'";
-        $xoopsDB->queryF($sql) or web_error($sql);
+        $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 
         $sql = "INSERT INTO `" . $xoopsDB->prefix("tadtools_setup") . "` (`tt_theme` , `tt_use_bootstrap`,`tt_bootstrap_color`, `tt_theme_kind`) values('{$theme}', '0', '$bootstrap_color' , '$theme_kind') ON DUPLICATE KEY UPDATE `tt_use_bootstrap` = '0', `tt_bootstrap_color`='$bootstrap_color', `tt_theme_kind`='$theme_kind'";
 
@@ -787,7 +787,7 @@ function update_allowed($theme, $val)
         $theme_set_allowed = serialize($array);
 
         $sql = "update " . $xoopsDB->prefix("config") . " set conf_value='{$theme_set_allowed}' where conf_name='theme_set_allowed'";
-        $xoopsDB->queryF($sql) or web_error($sql);
+        $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 
         $sql = "delete from `" . $xoopsDB->prefix("tadtools_setup") . "` where `tt_theme`='$theme'";
         $xoopsDB->queryF($sql) or redirect_header($_SERVER['PHP_SELF'], 3, $xoopsDB->error());
@@ -857,7 +857,7 @@ function add_adm_tpl_config($theme)
     if ($xoopsConfig['cpanel'] != $theme) {
         $sql = "update " . $xoopsDB->prefix("config") . " set conf_value='{$theme}' where conf_name='cpanel'";
 
-        $xoopsDB->queryF($sql) or web_error($sql);
+        $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
     }
 }
 

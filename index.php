@@ -162,17 +162,17 @@ function unable_modules()
 {
     global $xoopsDB;
     $sql    = "SELECT mid FROM " . $xoopsDB->prefix("modules") . " WHERE `isactive`=1 AND `dirname`!='system' AND `dirname`!='tad_adm'";
-    $result = $xoopsDB->query($sql) or web_error($sql);
+    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
     while (list($mid) = $xoopsDB->fetchRow($result)) {
         $mid_array[] = $mid;
     }
 
     $all_mid = implode(",", $mid_array);
     $sql     = "update " . $xoopsDB->prefix('config') . " set `conf_value`='{$all_mid}' where `conf_name`='module_id_temp'";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 
     $sql = "update " . $xoopsDB->prefix('modules') . " set `isactive`='0' where `mid` in($all_mid)";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 }
 
 //還原所有模組
@@ -180,10 +180,10 @@ function enable_modules()
 {
     global $xoopsDB, $xoopsModuleConfig;
     $sql = "update " . $xoopsDB->prefix('modules') . " set `isactive`='1' where `mid` in({$xoopsModuleConfig['module_id_temp']})";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 
     $sql = "update " . $xoopsDB->prefix('config') . " set `conf_value`='' where `conf_name`='module_id_temp'";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 }
 
 //關閉所有區塊
@@ -191,17 +191,17 @@ function unable_blocks()
 {
     global $xoopsDB;
     $sql    = "SELECT bid FROM " . $xoopsDB->prefix("newblocks") . " WHERE `visible`=1";
-    $result = $xoopsDB->query($sql) or web_error($sql);
+    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
     while (list($bid) = $xoopsDB->fetchRow($result)) {
         $bid_array[] = $bid;
     }
 
     $all_bid = implode(",", $bid_array);
     $sql     = "update " . $xoopsDB->prefix('config') . " set `conf_value`='{$all_bid}' where `conf_name`='block_id_temp'";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 
     $sql = "update " . $xoopsDB->prefix('newblocks') . " set `visible`='0' where `bid` in($all_bid)";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 }
 
 //還原所有區塊
@@ -209,10 +209,10 @@ function enable_blocks()
 {
     global $xoopsDB, $xoopsModuleConfig;
     $sql = "update " . $xoopsDB->prefix('newblocks') . " set `visible`='1' where `bid` in({$xoopsModuleConfig['block_id_temp']})";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 
     $sql = "update " . $xoopsDB->prefix('config') . " set `conf_value`='' where `conf_name`='block_id_temp'";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 }
 
 //重設密碼
@@ -221,7 +221,7 @@ function reset_mem($uid = "", $passwd = "")
     global $xoopsDB;
     $passwd = md5($passwd);
     $sql    = "update " . $xoopsDB->prefix('users') . " set `pass`='{$passwd}' where `uid`='{$uid}'";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 }
 
 //寄發密碼
@@ -230,7 +230,7 @@ function send_passwd()
     global $xoopsConfig, $xoopsDB;
     $passwd = GeraHash(30);
     $sql    = "update " . $xoopsDB->prefix('config') . " set `conf_value`='{$passwd}' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 
     if (empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
         $myip = $_SERVER['REMOTE_ADDR'];
@@ -293,7 +293,7 @@ function theme_default()
     global $xoopsDB;
 
     $sql = "update " . $xoopsDB->prefix("config") . " set conf_value='default' where conf_name='theme_set'";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 }
 
 //清除 session
@@ -301,7 +301,7 @@ function clear_session()
 {
     global $xoopsDB;
     $sql = "TRUNCATE TABLE " . $xoopsDB->prefix("session") . "";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 }
 
 //清除快取
@@ -351,7 +351,7 @@ function session_size()
 {
     global $xoopsDB;
     $sql    = "show table status where name='" . $xoopsDB->prefix("session") . "'";
-    $result = $xoopsDB->queryF($sql) or web_error($sql);
+    $result = $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
     $row    = $xoopsDB->fetchArray($result);
 
     $bytes = ($row['Data_length'] + $row['Index_length']);
@@ -380,7 +380,7 @@ function close_site($v = 0)
     global $xoopsDB;
 
     $sql = "update " . $xoopsDB->prefix("config") . " set conf_value='$v' where conf_name='closesite'";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 }
 
 //修改除錯模式
@@ -389,7 +389,7 @@ function debug_mode($v = 0)
     global $xoopsDB;
 
     $sql = "update " . $xoopsDB->prefix("config") . " set conf_value='$v' where conf_name='debug_mode'";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
 }
 
 function debug_mode_tool()
@@ -397,7 +397,7 @@ function debug_mode_tool()
     global $xoopsDB;
 
     $sql         = "SELECT conf_value FROM " . $xoopsDB->prefix("config") . " WHERE conf_name='debug_mode'";
-    $result      = $xoopsDB->queryF($sql) or web_error($sql);
+    $result      = $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
     list($debug) = $xoopsDB->fetchRow($result);
     if ($debug == 1) {
         $debug_tool = "
@@ -430,28 +430,28 @@ if ($xoopsDB) {
 
     //註冊人數
     $sql                  = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . "";
-    $result               = $xoopsDB->query($sql) or web_error($sql);
+    $result               = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
     list($all_user_count) = $xoopsDB->fetchRow($result);
 
     //從未登入人數
     $sql                          = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE last_login=0";
-    $result                       = $xoopsDB->query($sql) or web_error($sql);
+    $result                       = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
     list($never_login_user_count) = $xoopsDB->fetchRow($result);
 
     //未啟用人數
     $sql                          = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE user_regdate=0";
-    $result                       = $xoopsDB->query($sql) or web_error($sql);
+    $result                       = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
     list($never_start_user_count) = $xoopsDB->fetchRow($result);
 
     //正常會員人數
     $sql                     = "SELECT count(*) FROM " . $xoopsDB->prefix("users") . " WHERE user_regdate!=0 AND last_login!=0";
-    $result                  = $xoopsDB->query($sql) or web_error($sql);
+    $result                  = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
     list($normal_user_count) = $xoopsDB->fetchRow($result);
 
     //各群組人數
     $sql = "SELECT a.`groupid`, a.`uid`, b.`name` FROM " . $xoopsDB->prefix("groups_users_link") . " AS a LEFT JOIN " . $xoopsDB->prefix("groups") . " AS b ON a.`groupid` = b.`groupid` ORDER BY a.`groupid`";
 
-    $result        = $xoopsDB->query($sql) or web_error($sql);
+    $result        = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
     $groupid_count = $group_name = array();
     while (list($groupid, $uid, $name) = $xoopsDB->fetchRow($result)) {
         if (isset($groupid_count[$groupid])) {
@@ -640,14 +640,14 @@ $close_site = $xoopsConfig['closesite'] == '1' ? "<li class='list-group-item'><a
 
 $admin_options = "";
 $sql           = "SELECT a.uid,b.uname FROM " . $xoopsDB->prefix("groups_users_link") . " AS a LEFT JOIN " . $xoopsDB->prefix("users") . " AS b ON a.uid=b.uid WHERE a.groupid=1";
-$result        = $xoopsDB->query($sql) or web_error($sql);
+$result        = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
 while (list($uid, $uname) = $xoopsDB->fetchRow($result)) {
     $admin_options .= "<option value='{$uid}'>{$uname}</option>";
 }
 
 $XoopsFormSelectUserOption = "";
 $sql                       = "SELECT a.uid,b.uname,b.name FROM " . $xoopsDB->prefix("groups_users_link") . " AS a LEFT JOIN " . $xoopsDB->prefix("users") . " AS b ON a.uid=b.uid WHERE a.groupid=2 ORDER BY b.uname";
-$result                    = $xoopsDB->query($sql) or web_error($sql);
+$result                    = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
 while (list($uid, $uname, $name) = $xoopsDB->fetchRow($result)) {
     if (empty($uname)) {
         continue;
@@ -663,7 +663,7 @@ if ($xoopsModuleConfig['module_id_temp'] != "") {
 } else {
     //計算模組數量
     $sql                  = "SELECT count(*) FROM " . $xoopsDB->prefix("modules") . " WHERE `isactive`=1 AND `dirname`!='system' AND `dirname`!='tad_adm'";
-    $result               = $xoopsDB->query($sql) or web_error($sql);
+    $result               = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
     list($modules_amount) = $xoopsDB->fetchRow($result);
 
     $modules_tool = "<a href='index.php?op=unable_modules'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_UNABLE_ALL_MODS, $modules_amount) . "'></i> " . sprintf(_MD_TADADM_UNABLE_ALL_MODS, $modules_amount) . "</a>";
@@ -675,7 +675,7 @@ if ($xoopsModuleConfig['block_id_temp'] != "") {
 } else {
     //計算區塊數量
     $sql                 = "SELECT count(*) FROM " . $xoopsDB->prefix("newblocks") . " WHERE `visible`=1";
-    $result              = $xoopsDB->query($sql) or web_error($sql);
+    $result              = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
     list($blocks_amount) = $xoopsDB->fetchRow($result);
 
     $blocks_tool = "<a href='index.php?op=unable_blocks'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_UNABLE_ALL_BLOCKS, $blocks_amount) . "'></i> " . sprintf(_MD_TADADM_UNABLE_ALL_BLOCKS, $blocks_amount) . "</a>";
