@@ -28,7 +28,7 @@ function active_module($mid)
 {
     global $xoopsDB;
     $sql = "UPDATE " . $xoopsDB->prefix("modules") . " SET isactive='1' WHERE `mid`='{$mid}'";
-    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
 }
 
 function get_theme_color($dirname)

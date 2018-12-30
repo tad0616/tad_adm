@@ -15,7 +15,7 @@ function tad_adm_new($options)
     $all_data = "";
 
     $sql    = "select * from " . $xoopsDB->prefix("users") . " order by uid desc limit 0,{$options[0]}";
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
+    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
 
     while ($data = $xoopsDB->fetchArray($result)) {
         foreach ($data as $k => $v) {
@@ -121,7 +121,7 @@ if (!function_exists('replace_tad_adm')) {
         $sql = "replace into `" . $xoopsDB->prefix("tad_adm") . "`
         (`uid` , `email` , `result` , `chk_date`)
         values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
-        $xoopsDB->queryF($sql) or web_error($sql, __FILE__, _LINE__);
+        $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
 
     }
 }
@@ -136,7 +136,7 @@ if (!function_exists('get_tad_adm')) {
         }
 
         $sql    = "select * from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$uid}'";
-        $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
+        $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
         $data   = $xoopsDB->fetchArray($result);
         return $data;
     }

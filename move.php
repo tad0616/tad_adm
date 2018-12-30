@@ -187,7 +187,7 @@ function modules_version()
 
     //抓出現有模組
     $sql         = "SELECT * FROM " . $xoopsDB->prefix("modules") . " ORDER BY hasmain DESC, weight";
-    $result      = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
+    $result      = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
     $need_update = false;
     $i           = 0;
     $mod_msg     = '';
@@ -377,7 +377,7 @@ function download_modules()
 
     $db_mod = array();
     $sql    = "SELECT `dirname` FROM `" . $xoopsDB->prefix("modules") . "`";
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
+    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
     while (list($dirname) = $xoopsDB->fetchRow($result)) {
         $db_mod[] = $dirname;
     }
@@ -423,7 +423,7 @@ function upload_modules()
         $need_up = array();
         $db_mod  = array();
         $sql     = "SELECT `dirname` FROM `" . $xoopsDB->prefix("modules") . "`";
-        $result  = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
+        $result  = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
         while (list($dirname) = $xoopsDB->fetchRow($result)) {
             $db_mod[] = $dirname;
         }
@@ -574,7 +574,7 @@ function download_sql()
     FROM information_schema.TABLES
     WHERE table_schema='" . XOOPS_DB_NAME . "'";
 
-    $result       = $xoopsDB->query($sql) or web_error($sql, __FILE__, _LINE__);
+    $result       = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
     list($dbsize) = $xoopsDB->fetchRow($result);
 
     if ($isTN) {
