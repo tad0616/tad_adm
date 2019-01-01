@@ -127,7 +127,7 @@ define('_MA_TADADM_ENABLE_MODS', '可安裝模組');
 define('_MA_TADADM_INSTALLED_ADM', '已安裝後台');
 define('_MA_TADADM_ENABLE_ADM', '可安裝後台');
 define('_MA_TADADM_INSTALLED_THEME', '已安裝佈景');
-define('_MA_TADADM_ENABLE_THEME', '可安裝後佈景');
+define('_MA_TADADM_ENABLE_THEME', '可安裝佈景');
 define('_MA_TADADM_INSTALLED_BLOCK', '已安裝區塊');
 define('_MA_TADADM_ENABLE_BLOCK', '可安裝區塊');
 define('_MA_TADADM_UNABLE_BLOCKS', '關閉中區塊');
