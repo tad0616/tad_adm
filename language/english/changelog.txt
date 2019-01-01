@@ -1,8 +1,9 @@
-Tad Adm 2.75 (released on 2019-01-01)
+Tad Adm 2.8 (released on 2019-01-01)
 ==================================================================
 1. Support BootStrap4
 2. Support 7.3
 3. Support MySQL database strict mode
+4. Added XOOPS online upgrade function
 
 
 Tad Adm 2.74 (released on 2018-12-03)

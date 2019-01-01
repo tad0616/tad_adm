@@ -33,7 +33,7 @@ $bad_mods     = array(
     'tad_cbox'        => array('tad_discuss', 8),
 );
 
-$source_mod = get_tad_modules_info();
+$source_mod = get_tad_json_info('all.json');
 
 include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op           = system_CleanVars($_REQUEST, 'op', '', 'string');

@@ -132,3 +132,8 @@ define('_MA_TADADM_INSTALLED_BLOCK', 'Installed blocks');
 define('_MA_TADADM_ENABLE_BLOCK', 'Installable blocks');
 define('_MA_TADADM_UNABLE_BLOCKS', 'Unable blocks');
 define('_MA_TADADM_MOD_UPDATE_BLOCK', 'Update blocks');
+define('_MA_TADADM_UPGRADE_XOOPS', 'Upgrade to ');
+define('_MA_TADADM_PATCH_XOOPS', 'Patch to ');
+define('_MA_TADADM_PATCH_OK', "Patch successed!");
+define('_MA_TADADM_UPGRADE_OK', "Upgrade successed!");
+define('_MA_TADADM_UPGRADE_FROM_URL', "Then please manually upgrade the program");

@@ -31,3 +31,5 @@ define('_MI_TADADM_HELP_OVERVIEW', '概要');
 
 define('_MI_TADADM_SOURCE', '下載清單來源');
 define('_MI_TADADM_SOURCE_DESC', '若無法顯示更新清單，可改為 http://120.115.2.90 試試');
+
+define('_MI_TADADM_XOOPS_UPGRADE', 'XOOPS升級');

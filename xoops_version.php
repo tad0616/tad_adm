@@ -3,7 +3,7 @@ $modversion = array();
 
 //---模組基本資訊---//
 $modversion['name']        = _MI_TADADM_NAME;
-$modversion['version']     = '2.75';
+$modversion['version']     = '2.8';
 $modversion['description'] = _MI_TADADM_DESC;
 $modversion['author']      = _MI_TADADM_AUTHOR;
 $modversion['credits']     = _MI_TADADM_CREDITS;
@@ -143,3 +143,6 @@ $modversion['templates'][$i]['description'] = 'tad_adm_adm_clean.tpl';
 $i++;
 $modversion['templates'][$i]['file']        = 'tad_adm_tn_manager.tpl';
 $modversion['templates'][$i]['description'] = 'tad_adm_tn_manager.tpl';
+$i++;
+$modversion['templates'][$i]['file']        = 'tad_adm_adm_xoops.tpl';
+$modversion['templates'][$i]['description'] = 'tad_adm_adm_xoops.tpl';

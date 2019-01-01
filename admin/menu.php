@@ -13,6 +13,11 @@ $adminmenu[$i]['title'] = _MI_TADADM_ADMENU1;
 $adminmenu[$i]['link']  = "admin/main.php";
 $adminmenu[$i]['desc']  = _MI_TADADM_ADMENU1;
 $adminmenu[$i]['icon']  = "images/admin/update.png";
+$i++;
+$adminmenu[$i]['title'] = _MI_TADADM_XOOPS_UPGRADE;
+$adminmenu[$i]['link']  = "admin/xoops.php";
+$adminmenu[$i]['desc']  = _MI_TADADM_XOOPS_UPGRADE;
+$adminmenu[$i]['icon']  = "images/admin/upload.png";
 
 $i++;
 $adminmenu[$i]['title'] = _MI_TADADM_ADMENU3;
