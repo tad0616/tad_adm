@@ -270,7 +270,7 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
 
     mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm");
     // die("$file_link, $new_file");
-    copyemz($file_link, $new_file, $xoops_sn);
+    copyemz($file_link, $new_file, 0, $xoops_sn);
 
     if (!is_file($new_file)) {
         redirect_header($_SERVER['PHP_SELF'] . "?tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
