@@ -2,7 +2,7 @@
 <div class="card card-body bg-light m-1 d-flex align-items-stretch">
     <form action="<{$action}>" method="post" role="form">
         <div class="form-group row">
-            <label class="col-md-2 col-form-label text-sm-right">
+            <label class="col-md-2 col-form-label text-md-right">
             <{$smarty.const._MA_TADADM_SSH_ID}><{$smarty.const._TAD_FOR}>
             </label>
             <div class="col-md-10">
@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="form-group row">
-            <label class="col-md-2 col-form-label text-sm-right">
+            <label class="col-md-2 col-form-label text-md-right">
             <{$smarty.const._MA_TADADM_SSH_PASS}><{$smarty.const._TAD_FOR}>
             </label>
             <div class="col-md-10">
