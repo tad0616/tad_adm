@@ -37,18 +37,22 @@
             <{if $theme_set==$mod.dirname}>
                 <a href="#" class="btn btn-sm btn-primary"><{$smarty.const._MA_TADADM_DEFAULT_THEME}></a>
             <{elseif $mod.allowed==1}>
-                <a href="javascript:delete_theme('<{$mod.dirname}>')" title="<{$smarty.const._MA_TADADM_REMOVE}> <{$mod.dirname}>" class="btn btn-sm btn-danger">
-                    <i class="fa fa-times"></i> <{$smarty.const._MA_TADADM_REMOVE}>
-                </a>
+                <{if !$mod.is_link}>
+                    <a href="javascript:delete_theme('<{$mod.dirname}>')" title="<{$smarty.const._MA_TADADM_REMOVE}> <{$mod.dirname}>" class="btn btn-sm btn-danger">
+                        <i class="fa fa-times"></i> <{$smarty.const._MA_TADADM_REMOVE}>
+                    </a>
+                <{/if}>
 
                 <a href="main.php?op=update_allowed&val=0&theme=<{$mod.dirname}>" title="<{$mod.dirname}><{$smarty.const._MA_TADADM_MOD_PREF}>" class="btn btn-sm btn-warning">
                     <i class="fa fa-ban"></i> <{$smarty.const._MA_TADADM_UPDATE_TO_NOT_ALLOWED}>
                 </a>
             <{elseif $mod.allowed!=1}>
-                <a href="javascript:delete_theme('<{$mod.dirname}>')"  title="<{$smarty.const._MA_TADADM_REMOVE}> <{$mod.dirname}>" class="btn btn-sm btn-danger">
-                    <i class="fa fa-times"></i>
-                    <{$smarty.const._MA_TADADM_REMOVE}>
-                </a>
+                <{if !$mod.is_link}>
+                    <a href="javascript:delete_theme('<{$mod.dirname}>')"  title="<{$smarty.const._MA_TADADM_REMOVE}> <{$mod.dirname}>" class="btn btn-sm btn-danger">
+                        <i class="fa fa-times"></i>
+                        <{$smarty.const._MA_TADADM_REMOVE}>
+                    </a>
+                <{/if}>
 
                 <a href="main.php?op=update_allowed&val=1&theme=<{$mod.dirname}>" title="<{$mod.dirname}><{$smarty.const._MA_TADADM_MOD_PREF}>" class="btn btn-sm btn-success">
                     <i class="fa fa-check-square-o"></i> <{$smarty.const._MA_TADADM_UPDATE_TO_ALLOWED}>

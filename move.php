@@ -70,6 +70,9 @@ function move_step()
         $str = str_replace(".tn.edu.tw", "", $_SERVER["SERVER_NAME"]);
         $s   = explode('.', $str);
         $id  = $s[1] ? "{$s[1]}_{$s[0]}" : $s[0];
+        if(isset($_SESSION['schoolweb_id'])){
+            $_SESSION['schoolweb_id']=$id;
+        }
     }
 
     $description = $isTN ? '<li>此工具是針對<a href="https://schoolweb.tn.edu.tw/index.php" target="_blank">台南市政府教育局校園集中式網站</a>而製作的，協助台南市學校從原本的網站搬移至該主機。</li>

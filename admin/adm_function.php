@@ -123,7 +123,7 @@ function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = "", $dirname = 
 //安裝套件
 function to_do($file_link = "", $dirname = "", $act = "install_module", $update_sn = "")
 {
-    global $xoopsTpl, $xoopsModuleConfig;
+    global $xoopsTpl, $xoopsModuleConfig, $inSchoolWeb;
     $op = get_act_op($act);
     if (empty($file_link) and ($op == 'install' or $op == 'update')) {
         header("location:{$_SERVER['PHP_SELF']}");
@@ -134,7 +134,7 @@ function to_do($file_link = "", $dirname = "", $act = "install_module", $update_
     $is_writable = is_writable(XOOPS_ROOT_PATH . "/{$work_dir}/");
 
     //若是可以寫入
-    if ($is_writable) {
+    if ($is_writable or $inSchoolWeb) {
         next_to_do($file_link, $dirname, $work_dir, $update_sn, $act);
     } else {
         $xoopsTpl->assign('action', 'main.php');
@@ -152,43 +152,42 @@ function to_do($file_link = "", $dirname = "", $act = "install_module", $update_
 
 function next_to_do($file_link = '', $dirname = '', $work_dir = '', $update_sn = '', $act = '', $ssh = '')
 {
-    global $xoopsModuleConfig;
+    global $xoopsModuleConfig, $inSchoolWeb;
 
     $op = get_act_op($act);
 
     if ($act == "install_theme") {
-        if (get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
+        if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             update_allowed($dirname, 1);
             redirect_header("main.php?#admTab4", 3, sprintf(_MA_TADADM_THEME_INSTALL_OK, $dirname));
         }
     } elseif ($act == "update_theme") {
-        if (get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
+        if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             update_allowed($dirname, 1);
             redirect_header("main.php?#admTab4", 3, _MA_TADADM_THEME_UPDATE_OK);
         }
     } elseif ($act == "delete_theme") {
-        // die(var_dump($ssh));
-        if (delete_directory(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}", $ssh)) {
+        if ($inSchoolWeb or delete_directory(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}", $ssh)) {
             update_allowed($dirname, 0);
         }
         redirect_header("main.php#admTab4", 3, _MA_TADADM_THEME_DELETE_OK);
     } elseif ($act == "install_adm_tpl") {
-        if (get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
+        if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             add_adm_tpl_config($dirname);
             redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules&tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_ADM_TPL_INSTALL_OK, $dirname));
         }
     } elseif ($act == "update_adm_tpl") {
-        if (get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
+        if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             add_adm_tpl_config($dirname);
             redirect_header($_SERVER['PHP_SELF'] . "?op=list_all_modules&tad_adm_tpl=clean", 3, _MA_TADADM_ADM_TPL_UPDATE_OK);
         }
     } elseif ($act == "install_module") {
-        if (get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
+        if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             header("location:" . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module={$dirname}&tad_adm_tpl=clean");
             exit;
         }
     } elseif ($act == "update_module") {
-        if (get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
+        if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             header("location:" . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module={$dirname}&tad_adm_tpl=clean");
             exit;
         }
@@ -213,48 +212,50 @@ function next_to_up($file_link = '', $xoops_sn = '', $act = '', $ssh = '')
 
 function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
 {
-    global $xoopsConfig, $xoopsDB, $xoopsModuleConfig;
-    // echo '$work_dir='.$work_dir.'<br>';
-    $file_link = str_replace("[source]", $xoopsModuleConfig['source'], $file_link);
-    if ($dirname == "tad_adm") {
-        $new_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/uploads/", $file_link);
-    } else {
-        $new_file = str_replace("{$xoopsModuleConfig['source']}/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/uploads/", $file_link);
+    global $xoopsConfig, $xoopsDB, $xoopsModuleConfig, $inSchoolWeb;
+    if (!$inSchoolWeb) {
+        $file_link = str_replace("[source]", $xoopsModuleConfig['source'], $file_link);
+        if ($dirname == "tad_adm") {
+            $new_file = str_replace("http://120.115.2.90/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/uploads/", $file_link);
+        } else {
+            $new_file = str_replace("{$xoopsModuleConfig['source']}/uploads/tad_modules/file/", XOOPS_ROOT_PATH . "/uploads/", $file_link);
+        }
+        mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm");
+        copyemz($file_link, $new_file, $update_sn);
+
+        if (!is_file($new_file)) {
+            redirect_header($_SERVER['PHP_SELF'] . "?tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
+        }
+
+        if (is_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname")) {
+            delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
+        }
+
+        require_once XOOPS_ROOT_PATH . "/modules/tad_adm/class/dunzip2/dUnzip2.inc.php";
+        require_once XOOPS_ROOT_PATH . "/modules/tad_adm/class/dunzip2/dZip.inc.php";
+        $zip = new dUnzip2($new_file);
+        $zip->getList();
+        $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/");
+        $zip->close($new_file);
+
+        if ($ssh != "") {
+            $ssh->exec("cp -fr " . XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname " . XOOPS_ROOT_PATH . "/{$work_dir}/");
+            $ssh->exec("chmod -R 755 " . XOOPS_ROOT_PATH . "/{$work_dir}/$dirname");
+            $ssh->exec("chown -R {$ssh_id}:{$ssh_id} " . XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}");
+            $ssh->exec("rm -fr " . XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}");
+            $ssh->exec("rm -f $new_file");
+        } else {
+            // echo XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname<br>";
+            // echo XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}";
+            // exit;
+
+            full_copy(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname", XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}/");
+            //重設權限
+            chmod_R(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}", 0755, 0755);
+            unlink($new_file);
+        }
     }
-    mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm");
-    copyemz($file_link, $new_file, $update_sn);
 
-    if (!is_file($new_file)) {
-        redirect_header($_SERVER['PHP_SELF'] . "?tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
-    }
-
-    if (is_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname")) {
-        delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
-    }
-
-    require_once XOOPS_ROOT_PATH . "/modules/tad_adm/class/dunzip2/dUnzip2.inc.php";
-    require_once XOOPS_ROOT_PATH . "/modules/tad_adm/class/dunzip2/dZip.inc.php";
-    $zip = new dUnzip2($new_file);
-    $zip->getList();
-    $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/");
-    $zip->close($new_file);
-
-    if ($ssh != "") {
-        $ssh->exec("cp -fr " . XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname " . XOOPS_ROOT_PATH . "/{$work_dir}/");
-        $ssh->exec("chmod -R 755 " . XOOPS_ROOT_PATH . "/{$work_dir}/$dirname");
-        $ssh->exec("chown -R {$ssh_id}:{$ssh_id} " . XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}");
-        $ssh->exec("rm -fr " . XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}");
-        $ssh->exec("rm -f $new_file");
-    } else {
-        // echo XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname<br>";
-        // echo XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}";
-        // exit;
-
-        full_copy(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname", XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}/");
-        //重設權限
-        chmod_R(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}", 0755, 0755);
-        unlink($new_file);
-    }
     if (is_dir(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}")) {
         return true;
     } else {
@@ -288,7 +289,7 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
     $zip->close($new_file);
     if ($ssh != "") {
-        $sh="#!/bin/sh\n";
+        $sh     = "#!/bin/sh\n";
         $handle = fopen(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/ssh.txt", "r");
         if ($handle) {
             while (($buffer = fgets($handle, 4096)) !== false) {
@@ -298,12 +299,12 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
                 $buffer = str_replace('NEW_FILE', $new_file, $buffer);
                 $buffer = str_replace('XOOPS_SN', $xoops_sn, $buffer);
                 $buffer = str_replace("\r", "\n", $buffer);
-                $sh.=$buffer;
+                $sh .= $buffer;
             }
             fclose($handle);
         }
 
-        file_put_contents(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/upgrade.sh",$sh);
+        file_put_contents(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/upgrade.sh", $sh);
         chmod_R(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/upgrade.sh", 0777, 0777);
         $ssh->exec(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/upgrade.sh");
 
@@ -317,9 +318,9 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
         }
     }
 
-    if($dirname=="upgrade"){
+    if ($dirname == "upgrade") {
         redirect_header(XOOPS_URL . "/upgrade", 3, _MA_TADADM_UPGRADE_FROM_URL);
-    }else{
+    } else {
         return true;
     }
     // if (is_dir(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}")) {

@@ -27,7 +27,10 @@ $fancybox2->render(false);
 //列出所有模組
 function list_modules($mode = "tpl")
 {
-    global $xoopsDB, $xoopsModuleConfig, $xoopsTpl, $xoopsConfig;
+    global $xoopsDB, $xoopsModuleConfig, $xoopsTpl, $xoopsConfig,$inSchoolWeb;
+    $xoopsTpl->assign('inSchoolWeb',$inSchoolWeb);
+
+
     //取得更新訊息
     $mod = get_tad_json_info('all.json');
     //         $mod[$dirname]['module'][$kind]['module_title']       = $module_title;
@@ -319,6 +322,7 @@ function list_modules($mode = "tpl")
                 $all_theme[$type][$is_allowed][$i]['name']        = $data['theme']['module_title'];
                 $all_theme[$type][$is_allowed][$i]['version']     = $Version;
                 $all_theme[$type][$is_allowed][$i]['new_version'] = ($data['theme']['new_version']) ? $data['theme']['new_version'] . $status : "";
+                $all_theme[$type][$is_allowed][$i]['is_link']     = is_link(XOOPS_ROOT_PATH . "/themes/{$dirname}");
 
                 if (file_exists(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini")) {
                     $last_update = filemtime(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini");
