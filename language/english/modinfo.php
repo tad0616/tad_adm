@@ -23,7 +23,7 @@ define('_MI_TADADM_SSH_PORT', 'SSH port');
 define('_MI_TADADM_SSH_PORT_DESC', 'Setup SSH port');
 
 define('_MI_TADADM_DIRNAME', basename(dirname(dirname(__DIR__))));
-define('_MI_TADADM_HELP_HEADER', __DIR__ . '/help/helpheader.html');
+define('_MI_TADADM_HELP_HEADER', __DIR__ . '/help/helpheader.tpl');
 define('_MI_TADADM_BACK_2_ADMIN', 'Back to Administration of ');
 
 //help
