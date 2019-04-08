@@ -52,62 +52,6 @@ function view_file()
     $xoopsTpl->assign('free_space', format_size($free_space));
 }
 
-function GetDirectorySize($path)
-{
-    global $isWin;
-    if ($isWin) {
-        $bytestotal = 0;
-        $obj        = new COM('scripting.filesystemobject');
-        if (is_object($obj)) {
-            $ref = $obj->getfolder($path);
-            return $ref->size;
-            $obj = null;
-        } else {
-            die('can not create object');
-        }
-    } else {
-        $io   = popen('/usr/bin/du -sk ' . $path, 'r');
-        $size = fgets($io, 4096);
-        $size = substr($size, 0, strpos($size, "\t"));
-        pclose($io);
-        $size = $size * 1024;
-        return $size;
-    }
-
-}
-
-//
-function format_size($bytes = "")
-{
-    $si_prefix = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
-    $base      = 1024;
-    $class     = min((int) log($bytes, $base), count($si_prefix) - 1);
-    $space     = sprintf('%1.2f', $bytes / pow($base, $class)) . ' ' . $si_prefix[$class];
-    return $space;
-}
-
-function foldersize($path)
-{
-    $total_size = 0;
-    $files      = scandir($path);
-    $cleanPath  = rtrim($path, '/') . '/';
-
-    foreach ($files as $t) {
-        if ($t != "." && $t != "..") {
-            $currentFile = $cleanPath . $t;
-            if (is_dir($currentFile)) {
-                $size = foldersize($currentFile);
-                $total_size += $size;
-            } else {
-                $size = filesize($currentFile);
-                $total_size += $size;
-            }
-        }
-    }
-
-    return $total_size;
-}
-
 /*-----------執行動作判斷區----------*/
 include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op  = system_CleanVars($_REQUEST, 'op', '', 'string');
@@ -124,6 +68,5 @@ switch ($op) {
 
 /*-----------秀出結果區--------------*/
 $xoopsTpl->assign('op', $op);
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/bootstrap3/css/bootstrap.css');
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/css/xoops_adm3.css');
+$xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
 include_once 'footer.php';

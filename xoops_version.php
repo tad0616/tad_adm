@@ -3,7 +3,7 @@ $modversion = array();
 
 //---模組基本資訊---//
 $modversion['name']        = _MI_TADADM_NAME;
-$modversion['version']     = '2.58';
+$modversion['version']     = '2.8';
 $modversion['description'] = _MI_TADADM_DESC;
 $modversion['author']      = _MI_TADADM_AUTHOR;
 $modversion['credits']     = _MI_TADADM_CREDITS;
@@ -14,13 +14,13 @@ $modversion['image']       = "images/logo_{$xoopsConfig['language']}.png";
 $modversion['dirname']     = basename(dirname(__FILE__));
 
 //---模組狀態資訊---//
-$modversion['release_date']        = '2017/02/13';
-$modversion['module_website_url']  = 'http://tad0616.net/';
+$modversion['release_date']        = '2019/01/01';
+$modversion['module_website_url']  = 'https://tad0616.net/';
 $modversion['module_website_name'] = _MI_TAD_WEB;
 $modversion['module_status']       = 'release';
-$modversion['author_website_url']  = 'http://tad0616.net/';
+$modversion['author_website_url']  = 'https://tad0616.net/';
 $modversion['author_website_name'] = _MI_TAD_WEB;
-$modversion['min_php']             = 5.3;
+$modversion['min_php']             = 5.4;
 $modversion['min_xoops']           = '2.5';
 
 //---paypal資訊---//
@@ -48,9 +48,9 @@ $modversion['hasMain'] = 1;
 //$modversion['sub'][1]['url'] = '';
 
 //---模組自動功能---//
-//$modversion['onInstall'] = "include/install.php";
-//$modversion['onUpdate'] = "include/update.php";
-//$modversion['onUninstall'] = "include/onUninstall.php";
+$modversion['onInstall']   = "include/onInstall.php";
+$modversion['onUpdate']    = "include/onUpdate.php";
+$modversion['onUninstall'] = "include/onUninstall.php";
 
 //---偏好設定---//
 $modversion['config']                    = array();
@@ -94,6 +94,14 @@ $modversion['config'][$i]['formtype']    = 'textbox';
 $modversion['config'][$i]['valuetype']   = 'int';
 $modversion['config'][$i]['default']     = '22';
 
+$i++;
+$modversion['config'][$i]['name']        = 'source';
+$modversion['config'][$i]['title']       = '_MI_TADADM_SOURCE';
+$modversion['config'][$i]['description'] = '_MI_TADADM_SOURCE_DESC';
+$modversion['config'][$i]['formtype']    = 'textbox';
+$modversion['config'][$i]['valuetype']   = 'text';
+$modversion['config'][$i]['default']     = 'https://campus-xoops.tn.edu.tw';
+
 //---搜尋---//
 //$modversion['hasSearch'] = 1;
 //$modversion['search']['file'] = "include/search.php";
@@ -127,3 +135,14 @@ $modversion['templates'][$i]['description'] = 'tad_adm_adm_phpini.tpl';
 $i++;
 $modversion['templates'][$i]['file']        = 'tad_adm_adm_backup.tpl';
 $modversion['templates'][$i]['description'] = 'tad_adm_adm_backup.tpl';
+
+$i++;
+$modversion['templates'][$i]['file']        = 'tad_adm_adm_clean.tpl';
+$modversion['templates'][$i]['description'] = 'tad_adm_adm_clean.tpl';
+
+$i++;
+$modversion['templates'][$i]['file']        = 'tad_adm_tn_manager.tpl';
+$modversion['templates'][$i]['description'] = 'tad_adm_tn_manager.tpl';
+$i++;
+$modversion['templates'][$i]['file']        = 'tad_adm_adm_xoops.tpl';
+$modversion['templates'][$i]['description'] = 'tad_adm_adm_xoops.tpl';

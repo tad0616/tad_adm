@@ -8,6 +8,7 @@ define('_MI_TADADM_ADMENU1', '模組隨選');
 define('_MI_TADADM_ADMENU3', '清理垃圾帳戶');
 define('_MI_TADADM_ADMENU2', '主機環境');
 define('_MI_TADADM_ADMENU4', '備份');
+define('_MI_TADADM_ADMENU5', '畫面救星');
 define('_MI_TADADM_BNAME1', '新的垃圾帳戶');
 define('_MI_TADADM_BDESC1', '新的垃圾帳戶區塊');
 define('_MI_TADADM_LIST_AMOUNT', '每頁顯示的帳號數');
@@ -27,3 +28,8 @@ define('_MI_TADADM_BACK_2_ADMIN', '管理');
 
 //help
 define('_MI_TADADM_HELP_OVERVIEW', '概要');
+
+define('_MI_TADADM_SOURCE', '下載清單來源');
+define('_MI_TADADM_SOURCE_DESC', '若無法顯示更新清單，可改為 http://120.115.2.90 試試');
+
+define('_MI_TADADM_XOOPS_UPGRADE', 'XOOPS升級');

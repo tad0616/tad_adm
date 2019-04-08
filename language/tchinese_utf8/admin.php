@@ -1,6 +1,6 @@
 <?php
 include_once '../../tadtools/language/' . $xoopsConfig['language'] . '/admin_common.php';
-define('_TAD_NEED_TADTOOLS', '需要 tadtools 模組，可至<a href="http://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS輕鬆架</a>下載。');
+define('_TAD_NEED_TADTOOLS', '需要 tadtools 模組，可至<a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS輕鬆架</a>下載。');
 
 //phpini.php
 define('_MA_TADADM_PHPINI_ITEM', '設定項目');
@@ -15,7 +15,7 @@ define('_MA_TADADM_MOD_UPDATE_MODULE', '立即升級到');
 define('_MA_TADADM_MOD_INSTALL_MODULE', '立即安裝');
 define('_MA_TADADM_MOD_UPDATE_THEME', '升級佈景到');
 define('_MA_TADADM_MOD_INSTALL_THEME', '安裝佈景');
-define('_MA_TADADM_MOD_LATEST', '已是最新');
+define('_MA_TADADM_MOD_LATEST', '已是最新的');
 define('_MA_TADADM_NO_MODS', '沒有任何模組');
 define('_MA_TADADM_MOD_NAME', '模組名稱');
 define('_MA_TADADM_MOD_VERSION', '目前版本');
@@ -89,3 +89,53 @@ define('_MA_TADADM_DOWNLOAD_ZIP', '開始壓縮備份');
 define('_MA_TADADM_CHMOD_FAILED', '<ul><li>無法將 %s 的讀寫權限設為 %s，該檔案目錄的擁有者為 %s:%s，屬性為 %s。</li></ul>');
 define('_MA_TADADM_OWNER', '擁有者:擁有群組');
 define('_MA_TADADM_PERMS', '讀寫權限');
+
+define('_MA_TADADM_ADMTPL', '後台');
+define('_MA_TADADM_MOD_UPDATE_ADMTPL', '更新後台');
+define('_MA_TADADM_MOD_INSTALL_ADMTPL', '安裝後台');
+define('_MA_TADADM_ADM_TPL_LATEST', '已是最新');
+define('_MA_TADADM_ADM_TPL_INSTALL_OK', '後台佈景 %s 安裝成功！並已自動替換之。');
+define('_MA_TADADM_ADM_TPL_UPDATE_OK', '後台佈景升級成功！');
+
+define('_MA_TADADM_MOD_CLOSED', '模組關閉中');
+define('_MA_TADADM_CLEAN', '清除選取的自訂樣板');
+define('_MA_TADADM_CLEANED', '目前沒有自訂的舊樣板');
+
+define('_MA_TADADM_MOD_PREF', '偏好設定');
+define('_MA_TADADM_CAN_UPDATE_TO', '可升級至');
+define('_MA_TADADM_ENABLE_MOD', '啟用模組');
+define('_MA_TADADM_INSTALLED_MODS', '已安裝模組');
+define('_MA_TADADM_INSTALLED_UNABLE_MODS', '已安裝但被關閉的模組');
+define('_MA_TADADM_REMOVE', '移除');
+define('_MA_TADADM_DEFAULT_THEME', '目前預設佈景');
+define('_MA_TADADM_UPDATE_TO_ALLOWED', '改為可選');
+define('_MA_TADADM_UPDATE_TO_NOT_ALLOWED', '改為不可選');
+define('_MA_TADADM_WRITABLE', '可寫入');
+define('_MA_TADADM_ALLOWED_THEMES', '可選用網站佈景');
+define('_MA_TADADM_NOT_ALLOWED_THEMES', '不開放選用的網站佈景');
+define('_MA_TADADM_SPECIAL_THEMES', '特殊佈景');
+define('_MA_TADADM_THEME_DELETE_OK', '佈景移除成功！');
+
+define('_MA_TADADM_FAILED_TO_GET_JSON', '無法取得檔案清單');
+
+define('_MA_TADADM_ALLOWED_ENABLE_THEMES', '可安裝網站佈景');
+define('_MA_TADADM_SPECIAL_ENABLE_THEMES', '可安裝特殊佈景');
+define('_MA_TADADM_SPECIAL_THEMES_CANT_DEFAULT', '特殊佈景，不可為預設佈景');
+define('_MA_TADADM_SPECIAL_THEMES_CANT_USEABLE', '特殊佈景，不應該可被使用者選用');
+
+define('_MA_TADADM_ENABLE_MODS', '可安裝模組');
+define('_MA_TADADM_INSTALLED_ADM', '已安裝後台');
+define('_MA_TADADM_ENABLE_ADM', '可安裝後台');
+define('_MA_TADADM_INSTALLED_THEME', '已安裝佈景');
+define('_MA_TADADM_ENABLE_THEME', '可安裝佈景');
+define('_MA_TADADM_INSTALLED_BLOCK', '已安裝區塊');
+define('_MA_TADADM_ENABLE_BLOCK', '可安裝區塊');
+define('_MA_TADADM_UNABLE_BLOCKS', '關閉中區塊');
+define('_MA_TADADM_MOD_UPDATE_BLOCK', '立即升級區塊');
+define('_MA_TADADM_UPGRADE_XOOPS', '立即升級至');
+define('_MA_TADADM_PATCH_XOOPS', '加入');
+define('_MA_TADADM_UPGRADE_XOOPS_ITEMS', '可升級的項目');
+define('_MA_TADADM_PATCH_XOOPS_ITEMS', '可補丁的項目');
+define('_MA_TADADM_PATCH_OK', "補丁成功！");
+define('_MA_TADADM_UPGRADE_OK', "升級成功！");
+define('_MA_TADADM_UPGRADE_FROM_URL', "接著請手動進行升級程序");

@@ -1,6 +1,6 @@
 <?php
 include_once '../../tadtools/language/' . $xoopsConfig['language'] . '/admin_common.php';
-define('_TAD_NEED_TADTOOLS', 'This module needs TadTools module. You can download TadTools from <a href="http://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS EasyGO</a>.');
+define('_TAD_NEED_TADTOOLS', 'This module needs TadTools module. You can download TadTools from <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS EasyGO</a>.');
 
 //phpini.php
 define('_MA_TADADM_PHPINI_ITEM', 'Setting item');
@@ -89,3 +89,51 @@ define('_MA_TADADM_DOWNLOAD_ZIP', 'Download backup zip');
 define('_MA_TADADM_CHMOD_FAILED', '<ul><li>Could not set read/write permissions for %s to %s, possibly because the file directory owner is not correct.</li></ul>');
 define('_MA_TADADM_OWNER', 'Owner:Group');
 define('_MA_TADADM_PERMS', 'Permissions');
+
+define('_MA_TADADM_ADMTPL', 'Cpanel');
+define('_MA_TADADM_MOD_UPDATE_ADMTPL', 'Update Cpanel');
+define('_MA_TADADM_MOD_INSTALL_ADMTPL', 'Install Cpanel');
+define('_MA_TADADM_ADM_TPL_LATEST', 'Is up to date');
+define('_MA_TADADM_ADM_TPL_INSTALL_OK', 'Cpanel  %s  install success!');
+define('_MA_TADADM_ADM_TPL_UPDATE_OK', 'Cpanel upgrade success!');
+
+define('_MA_TADADM_MOD_CLOSED', 'Module closed');
+define('_MA_TADADM_CLEAN', 'Delete all custom templates');
+define('_MA_TADADM_CLEANED', 'There is currently no custom template');
+
+Define('_MA_TADADM_MOD_PREF', 'Preferences');
+Define('_MA_TADADM_CAN_UPDATE_TO', 'can be upgraded to ');
+Define('_MA_TADADM_ENABLE_MOD', 'Enable module');
+Define('_MA_TADADM_INSTALLED_MODS', 'Installed module');
+Define('_MA_TADADM_INSTALLED_UNABLE_MODS', 'nstalled but closed modules');
+Define('_MA_TADADM_REMOVE', 'Remove');
+Define('_MA_TADADM_DEFAULT_THEME', 'Currently default theme');
+Define('_MA_TADADM_UPDATE_TO_ALLOWED', 'Changed to useable');
+Define('_MA_TADADM_UPDATE_TO_NOT_ALLOWED', 'Changed to unusable');
+Define('_MA_TADADM_WRITABLE', 'Writable');
+Define('_MA_TADADM_ALLOWED_THEMES', 'Useable themes');
+Define('_MA_TADADM_NOT_ALLOWED_THEMES', 'Unusable themes');
+Define('_MA_TADADM_SPECIAL_THEMES', 'Special themes');
+Define('_MA_TADADM_THEME_DELETE_OK', 'Theme removed successfully!');
+
+Define('_MA_TADADM_FAILED_TO_GET_JSON', 'Failed to get file list');
+
+Define('_MA_TADADM_ALLOWED_ENABLE_THEMES', 'Installable Website themes');
+Define('_MA_TADADM_SPECIAL_ENABLE_THEMES', 'Installable special themes');
+define('_MA_TADADM_SPECIAL_THEMES_CANT_DEFAULT', 'Special themes cannot be set as default themes');
+define('_MA_TADADM_SPECIAL_THEMES_CANT_USEABLE', 'Special themes should not be used by users');
+
+define('_MA_TADADM_ENABLE_MODS', 'Installable Module');
+define('_MA_TADADM_INSTALLED_ADM', 'Installed admin panel');
+define('_MA_TADADM_ENABLE_ADM', 'Installable admin panel');
+define('_MA_TADADM_INSTALLED_THEME', 'Installed themes');
+define('_MA_TADADM_ENABLE_THEME', 'Installable themes');
+define('_MA_TADADM_INSTALLED_BLOCK', 'Installed blocks');
+define('_MA_TADADM_ENABLE_BLOCK', 'Installable blocks');
+define('_MA_TADADM_UNABLE_BLOCKS', 'Unable blocks');
+define('_MA_TADADM_MOD_UPDATE_BLOCK', 'Update blocks');
+define('_MA_TADADM_UPGRADE_XOOPS', 'Upgrade to ');
+define('_MA_TADADM_PATCH_XOOPS', 'Patch to ');
+define('_MA_TADADM_PATCH_OK', "Patch successed!");
+define('_MA_TADADM_UPGRADE_OK', "Upgrade successed!");
+define('_MA_TADADM_UPGRADE_FROM_URL', "Then please manually upgrade the program");

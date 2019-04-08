@@ -1,13 +1,13 @@
 <?php
 //需加入模組語系
-define('_TAD_NEED_TADTOOLS', '需要 tadtools 模組，可至<a href="http://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS輕鬆架</a>下載。');
+define('_TAD_NEED_TADTOOLS', '需要 tadtools 模組，可至<a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS輕鬆架</a>下載。');
 
 define('_MD_TADADM_SET', '設定');
 define('_MD_TADADM_NAME', '站長工具箱');
 define('_MD_TADADM_PASSWD', '救援密碼');
 define('_MD_TADADM_INPUT_PASSWD', '【步驟二】輸入救援密碼：');
 define('_MD_TADADM_INPUT_PASSWD_DESC', '【步驟一】<a href="index.php?op=send_passwd">先點此寄送救援密碼至管理員信箱</a>');
-define('_MD_TADADM_MAIL_CONTENT', '救援密碼為：<span style="color:red;">%s</span><p>請連至：<a href="' . XOOPS_URL . '/modules/tad_adm">' . XOOPS_URL . '/modules/tad_adm</a> 輸入之</p><p>若這不是您索取的，表示有人（來自：%s）對貴站心懷不軌，建議您將' . XOOPS_ROOT_PATH . '/modules/tad_adm/index.php檔案改名（如：xxx.php），以免被其他人亂用。</p>');
+define('_MD_TADADM_MAIL_CONTENT', '救援密碼為：<span style="color:red;">%s</span><p>請連至：<a href="' . XOOPS_URL . '/modules/tad_adm">' . XOOPS_URL . '/modules/tad_adm</a> 輸入之</p><p>若這不是您索取的，一般是搜尋引擎觸發了此機制，無須介意，對網站亦無影響。但如果在短時間內一直收到，那表示或許有人（來自：%s）對貴站心懷不軌，建議您將' . XOOPS_ROOT_PATH . '/modules/tad_adm/index.php檔案改名（如：xxx.php），以免被其他人亂用。</p>');
 define('_MD_TADADM_MAIL_PASSWD_OK', '救援密碼已寄至 %s');
 define('_MD_TADADM_MAIL_PASSWD_FAIL', '救援密碼寄至 %s 失敗！');
 define('_MD_TADADM_LOGIN', '登入');
@@ -62,3 +62,4 @@ define('_MD_TADADM_USER_AND_GROUP', '群組與使用者資訊');
 define('_MD_TADADM_XOOPS_ROOT_PATH', '實體路徑');
 define('_MD_TADADM_XOOPS_VAR_PATH', 'xoops_data 路徑');
 define('_MD_TADADM_XOOPS_TRUST_PATH', 'xoops_lib 路徑');
+define('_MD_TADADM_MOVE288', '網站升級或搬移指南');

@@ -13,6 +13,11 @@ $adminmenu[$i]['title'] = _MI_TADADM_ADMENU1;
 $adminmenu[$i]['link']  = "admin/main.php";
 $adminmenu[$i]['desc']  = _MI_TADADM_ADMENU1;
 $adminmenu[$i]['icon']  = "images/admin/update.png";
+$i++;
+$adminmenu[$i]['title'] = _MI_TADADM_XOOPS_UPGRADE;
+$adminmenu[$i]['link']  = "admin/xoops.php";
+$adminmenu[$i]['desc']  = _MI_TADADM_XOOPS_UPGRADE;
+$adminmenu[$i]['icon']  = "images/admin/upload.png";
 
 $i++;
 $adminmenu[$i]['title'] = _MI_TADADM_ADMENU3;
@@ -31,6 +36,12 @@ $adminmenu[$i]['title'] = _MI_TADADM_ADMENU4;
 $adminmenu[$i]['link']  = "admin/backup.php";
 $adminmenu[$i]['desc']  = _MI_TADADM_ADMENU4;
 $adminmenu[$i]['icon']  = "images/admin/backup.png";
+
+$i++;
+$adminmenu[$i]['title'] = _MI_TADADM_ADMENU5;
+$adminmenu[$i]['link']  = "admin/clean.php";
+$adminmenu[$i]['desc']  = _MI_TADADM_ADMENU5;
+$adminmenu[$i]['icon']  = "images/admin/clean.png";
 
 $i++;
 $adminmenu[$i]['title'] = _MI_TAD_ADMIN_ABOUT;

@@ -1,3 +1,61 @@
+Tad Adm 2.8 (released on 2019-01-01)
+==================================================================
+1. Support BootStrap4
+2. Support 7.3
+3. Support MySQL database strict mode
+4. Added XOOPS online upgrade function
+
+
+Tad Adm 2.74 (released on 2018-12-03)
+=========================================================== ================
+1. Fix the problem that the image savior is blank
+2. Upgrade Adminer to 4.7.0
+
+
+Tad Adm 2.73 (released on 2018-05-15)
+================================================== ================
+1. Modify online installation screen
+2. Compatible with PHP 5.3
+3. Add online block installation
+4 new upgrade, migration guide
+5. Remove the tchinese Big5 language
+
+Tad Adm 2.72 (released on 2018-03-20)
+================================================== ================
+1. Upgrade Adminer to 4.6.2
+2. Supports PHP 7.1
+3. Modify onine installation, upgrade interface
+
+
+Tad Adm 2.71 (2017-10-10 released)
+==================================================================
+1. Module download source can be set to their own
+2. Add the old template check and delete function
+
+
+Tad Adm 2.7 (2017-10-03 released)
+==================================================================
+1. Strengthen the cache removal mechanism
+2. Update the MySQL version information method
+3. Change to SSL connection
+
+
+Tad Adm 2.6 (2017-06-16 released)
+==================================================================
+1. Simplify the SSH login mechanism
+2. Complete accessibility 2.0 A level detection
+3. Mark the module to be closed
+
+
+Tad Adm 2.5.9 (2017-04-20 released)
+==================================================================
+1. Upgrade Adminer to 4.3.1
+2. Modify Adminer as an responsive template
+3. Add several Adminer plugins
+4. Add the XOOPS cpanel online upgrade feature
+5. Remove the FTP login
+
+
 Tad Adm 2.5.8 (2017-02-13 released)
 ==================================================================
 1.Fixed a bug that does not support the posix extension suite on Windows caused a blank screen

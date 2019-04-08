@@ -9,7 +9,7 @@ include_once "../function.php";
 function list_user($op = "", $mode = "normal")
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
-    $all_data = "";
+
     if ($op == "byNeverLoginDays") {
         $dayLimit    = time() - $_GET['days'] * 86400;
         $andDayLimit = " and last_login=0 and user_regdate <= $dayLimit";
@@ -29,10 +29,10 @@ function list_user($op = "", $mode = "normal")
     $sql     = $PageBar['sql'];
     $total   = $PageBar['total'];
 
-    $result                = $xoopsDB->query($sql) or web_error($sql);
+    $result                = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
     $_SESSION['chk_start'] = time();
     $i                     = 0;
-    $all_data              = "";
+    $all_data              = array();
     while ($data = $xoopsDB->fetchArray($result)) {
         foreach ($data as $k => $v) {
             $$k = $v;
@@ -47,7 +47,6 @@ function list_user($op = "", $mode = "normal")
         if ($adm['email'] == $email) {
             $appears = $adm['result'];
         } else {
-
             $handle = fopen("http://www.stopforumspam.com/api?email={$email}&f=json", "r");
             if ($handle) {
                 $json = fgets($handle, 4096);
@@ -123,18 +122,21 @@ function list_user($op = "", $mode = "normal")
     $xoopsTpl->assign('_MA_TADADM_TOTAL', sprintf(_MA_TADADM_TOTAL, $total));
     $xoopsTpl->assign('all_data', $all_data);
     $xoopsTpl->assign('bar', $bar);
-    $xoopsTpl->assign('_MA_TADADM_BY_EMAIL', sprintf(_MA_TADADM_BY_EMAIL, "<input type='text' name='byemail' value='{$byemail}' class='span4' size=20>"));
-    $xoopsTpl->assign('_MA_TADADM_NEVERLOGIN_DAY', sprintf(_MA_TADADM_NEVERLOGIN_DAY, "<input type='text' name='days' value='$days' class='span1' size=4>"));
-    $xoopsTpl->assign('_MA_TADADM_NEVERSTART_DAY', sprintf(_MA_TADADM_NEVERSTART_DAY, "<input type='text' name='days' value='$days' class='span1' size=4>"));
+    $xoopsTpl->assign('_MA_TADADM_BY_EMAIL', sprintf(_MA_TADADM_BY_EMAIL, "<input type='text' name='byemail' value='{$byemail}' class='my-input' size=20>"));
+    $xoopsTpl->assign('_MA_TADADM_NEVERLOGIN_DAY', sprintf(_MA_TADADM_NEVERLOGIN_DAY, "<input type='text' name='days' value='$days' class='my-input' size=4>"));
+    $xoopsTpl->assign('_MA_TADADM_NEVERSTART_DAY', sprintf(_MA_TADADM_NEVERSTART_DAY, "<input type='text' name='days' value='$days' class='my-input' size=4>"));
 }
 
 //列出所有垃圾郵件
 function list_spam()
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
-    $all_data = "";
 
-    $sql = "select a.uid,a.email,a.chk_date,b.`name`, b.`uname`, b.`email`, b.`url`, b.`user_avatar`, b.`user_regdate`, b.`user_icq`, b.`user_from`, b.`user_sig`, b.`user_viewemail`, b.`actkey`, b.`user_aim`, b.`user_yim`, b.`user_msnm`, b.`pass`, b.`posts`, b.`attachsig`, b.`rank`, b.`level`, b.`theme`, b.`timezone_offset`, b.`last_login`, b.`umode`, b.`uorder`, b.`notify_method`, b.`notify_mode`, b.`user_occ`, b.`bio`, b.`user_intrest`, b.`user_mailok` from " . $xoopsDB->prefix("tad_adm") . " as a left join " . $xoopsDB->prefix("users") . " as b on a.uid=b.uid where a.`result`='1' order by a.uid desc";
+    $sql = "SELECT a.uid,a.email,a.chk_date,b.`name`, b.`uname`, b.`email`, b.`url`, b.`user_avatar`, b.`user_regdate`, b.`user_icq`, b.`user_from`, b.`user_sig`, b.`user_viewemail`, b.`actkey`, b.`user_aim`, b.`user_yim`, b.`user_msnm`, b.`pass`, b.`posts`, b.`attachsig`, b.`rank`, b.`level`, b.`theme`, b.`timezone_offset`, b.`last_login`, b.`umode`, b.`uorder`, b.`notify_method`, b.`notify_mode`, b.`user_occ`, b.`bio`, b.`user_intrest`, b.`user_mailok` FROM "
+    . $xoopsDB->prefix("tad_adm")
+    . " AS a LEFT JOIN "
+    . $xoopsDB->prefix("users")
+        . " AS b ON a.uid=b.uid WHERE a.`result`='1' ORDER BY a.uid DESC";
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
     $PageBar = getPageBar($sql, 500, 10);
@@ -142,9 +144,9 @@ function list_spam()
     $sql     = $PageBar['sql'];
     $total   = $PageBar['total'];
 
-    $result = $xoopsDB->query($sql) or web_error($sql);
+    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
 
-    $all_data = "";
+    $all_data = array();
     $i        = 0;
 
     while ($all = $xoopsDB->fetchArray($result)) {
@@ -214,8 +216,7 @@ function replace_tad_adm($uid = '', $email = '', $result = '')
     $sql = "replace into `" . $xoopsDB->prefix("tad_adm") . "`
   (`uid` , `email` , `result` , `chk_date`)
   values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
-    $xoopsDB->queryF($sql) or web_error($sql);
-
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
 }
 
 //以流水號取得某筆tad_adm資料
@@ -227,7 +228,7 @@ function get_tad_adm($uid = "")
     }
 
     $sql    = "select * from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$uid}'";
-    $result = $xoopsDB->query($sql) or web_error($sql);
+    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
     $data   = $xoopsDB->fetchArray($result);
     return $data;
 }
@@ -241,9 +242,9 @@ function del_user($del_uid)
     }
 
     $sql = "delete from `" . $xoopsDB->prefix("tad_adm") . "` where `uid` = '{$del_uid}'";
-    $xoopsDB->queryF($sql) or web_error($sql);
+    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
 
-    $member_handler = xoops_gethandler('member');
+    $member_handler = xoops_getHandler('member');
     $user           = &$member_handler->getUser($del_uid);
     if (empty($user)) {
         return;
@@ -255,7 +256,7 @@ function del_user($del_uid)
     } elseif (!$member_handler->deleteUser($user)) {
         redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_DEL_FAIL);
     } else {
-        $online_handler = xoops_gethandler('online');
+        $online_handler = xoops_getHandler('online');
         $online_handler->destroy($del_uid);
         xoops_notification_deletebyuser($del_uid);
         return;
@@ -271,6 +272,7 @@ function del_all_user($uid_arr = array())
         del_user($del_uid);
     }
 }
+
 /*-----------執行動作判斷區----------*/
 include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op   = system_CleanVars($_REQUEST, 'op', '', 'string');
@@ -301,6 +303,5 @@ switch ($op) {
 }
 
 /*-----------秀出結果區--------------*/
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/bootstrap3/css/bootstrap.css');
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/css/xoops_adm3.css');
+$xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
 include_once 'footer.php';
