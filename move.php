@@ -675,7 +675,7 @@ function upload_sql()
         } else {
             list($schooldomain, $subdomain) = explode('_', $_SESSION['schoolweb_id']);
         }
-        $msg = "{$up}最後，請登入<a href='https://schoolweb.tn.edu.tw/~{$id}/modules/tad_adm/pma.php?username={$id}&db={$id}&import=' target='_blank'>新主機的資料庫匯入程式</a>，點擊瀏覽按鈕，並選取<code>C:\\move\\mysql.sql</code>，再按「執行」以匯入資料庫內容即可。";
+        $msg = "{$up}最後，請登入<a href='https://schoolweb.tn.edu.tw/~{$id}/modules/tad_adm/pma.php?server=schooldb.tn.edu.tw&username={$id}&db={$id}&import=' target='_blank'>新主機的資料庫匯入程式</a>，點擊瀏覽按鈕，並選取<code>C:\\move\\mysql.sql</code>，再按「執行」以匯入資料庫內容即可。";
     } else {
 
         $msg = "{$up}最後，請登入新主機的資料庫管理（如：http://新主機網址/modules/tad_adm/pma.php），執行匯入，點擊瀏覽按鈕，並選取<code>C:\\move\\mysql.sql</code>，再按「執行」以匯入資料庫內容即可。</li>

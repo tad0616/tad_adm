@@ -5,4 +5,3 @@ CREATE TABLE `tad_adm` (
   `chk_date` datetime NOT NULL COMMENT '檢查日',
 PRIMARY KEY (`uid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
