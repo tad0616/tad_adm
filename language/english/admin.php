@@ -101,25 +101,25 @@ define('_MA_TADADM_MOD_CLOSED', 'Module closed');
 define('_MA_TADADM_CLEAN', 'Delete all custom templates');
 define('_MA_TADADM_CLEANED', 'There is currently no custom template');
 
-Define('_MA_TADADM_MOD_PREF', 'Preferences');
-Define('_MA_TADADM_CAN_UPDATE_TO', 'can be upgraded to ');
-Define('_MA_TADADM_ENABLE_MOD', 'Enable module');
-Define('_MA_TADADM_INSTALLED_MODS', 'Installed module');
-Define('_MA_TADADM_INSTALLED_UNABLE_MODS', 'nstalled but closed modules');
-Define('_MA_TADADM_REMOVE', 'Remove');
-Define('_MA_TADADM_DEFAULT_THEME', 'Currently default theme');
-Define('_MA_TADADM_UPDATE_TO_ALLOWED', 'Changed to useable');
-Define('_MA_TADADM_UPDATE_TO_NOT_ALLOWED', 'Changed to unusable');
-Define('_MA_TADADM_WRITABLE', 'Writable');
-Define('_MA_TADADM_ALLOWED_THEMES', 'Useable themes');
-Define('_MA_TADADM_NOT_ALLOWED_THEMES', 'Unusable themes');
-Define('_MA_TADADM_SPECIAL_THEMES', 'Special themes');
-Define('_MA_TADADM_THEME_DELETE_OK', 'Theme removed successfully!');
+define('_MA_TADADM_MOD_PREF', 'Preferences');
+define('_MA_TADADM_CAN_UPDATE_TO', 'can be upgraded to ');
+define('_MA_TADADM_ENABLE_MOD', 'Enable module');
+define('_MA_TADADM_INSTALLED_MODS', 'Installed module');
+define('_MA_TADADM_INSTALLED_UNABLE_MODS', 'nstalled but closed modules');
+define('_MA_TADADM_REMOVE', 'Remove');
+define('_MA_TADADM_DEFAULT_THEME', 'Currently default theme');
+define('_MA_TADADM_UPDATE_TO_ALLOWED', 'Changed to useable');
+define('_MA_TADADM_UPDATE_TO_NOT_ALLOWED', 'Changed to unusable');
+define('_MA_TADADM_WRITABLE', 'Writable');
+define('_MA_TADADM_ALLOWED_THEMES', 'Useable themes');
+define('_MA_TADADM_NOT_ALLOWED_THEMES', 'Unusable themes');
+define('_MA_TADADM_SPECIAL_THEMES', 'Special themes');
+define('_MA_TADADM_THEME_DELETE_OK', 'Theme removed successfully!');
 
-Define('_MA_TADADM_FAILED_TO_GET_JSON', 'Failed to get file list');
+define('_MA_TADADM_FAILED_TO_GET_JSON', 'Failed to get file list');
 
-Define('_MA_TADADM_ALLOWED_ENABLE_THEMES', 'Installable Website themes');
-Define('_MA_TADADM_SPECIAL_ENABLE_THEMES', 'Installable special themes');
+define('_MA_TADADM_ALLOWED_ENABLE_THEMES', 'Installable Website themes');
+define('_MA_TADADM_SPECIAL_ENABLE_THEMES', 'Installable special themes');
 define('_MA_TADADM_SPECIAL_THEMES_CANT_DEFAULT', 'Special themes cannot be set as default themes');
 define('_MA_TADADM_SPECIAL_THEMES_CANT_USEABLE', 'Special themes should not be used by users');
 

@@ -1,9 +1,9 @@
 <?php
 global $xoopsModule;
 if ($xoopsModule->dirname() != 'tad_adm') {
-    $modhandler        = xoops_gethandler('module');
+    $modhandler        = xoops_getHandler('module');
     $xModule           = $modhandler->getByDirname("tad_adm");
-    $config_handler    = xoops_gethandler('config');
+    $config_handler    = xoops_getHandler('config');
     $xoopsModuleConfig = $config_handler->getConfigsByCat(0, $xModule->mid());
     // die('aaa' . var_dump($xoopsModuleConfig));
 }
