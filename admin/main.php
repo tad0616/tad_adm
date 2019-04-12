@@ -57,7 +57,7 @@ function list_modules($mode = "tpl")
 
     $i = 0;
     //模組部份
-    $all_install_modules = array();
+    $all_install_modules = [];
     while ($data = $xoopsDB->fetchArray($result)) {
         foreach ($data as $k => $v) {
             $$k = $v;
@@ -131,11 +131,11 @@ function list_modules($mode = "tpl")
         $i++;
     }
 
-    $all_active_modules    = isset($all_install_modules[1]) ? $all_install_modules[1] : array();
-    $all_un_active_modules = isset($all_install_modules[0]) ? $all_install_modules[0] : array();
+    $all_active_modules    = isset($all_install_modules[1]) ? $all_install_modules[1] : [];
+    $all_un_active_modules = isset($all_install_modules[0]) ? $all_install_modules[0] : [];
 
     //後台部份
-    $all_admin = $all_un_admin = array();
+    $all_admin = $all_un_admin = [];
     foreach ($mod as $dirname => $data) {
         if (isset($ok['adm_tpl']) and in_array($dirname, $ok['adm_tpl'])) {
             continue;
@@ -242,7 +242,7 @@ function list_modules($mode = "tpl")
     }
 
     //區塊部份
-    $all_block = $all_un_block = array();
+    $all_block = $all_un_block = [];
     //抓出現有區塊
     $sql    = "SELECT bid,dirname,visible, last_modified FROM " . $xoopsDB->prefix("newblocks") . " WHERE `mid`=0 AND `dirname`!='' ORDER BY side, weight";
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
@@ -300,7 +300,7 @@ function list_modules($mode = "tpl")
     }
 
     //佈景部份
-    $all_theme = $all_un_theme = array();
+    $all_theme = $all_un_theme = [];
     foreach ($mod as $dirname => $data) {
         if (isset($ok['theme']) and in_array($dirname, $ok['theme'])) {
             continue;
@@ -398,7 +398,7 @@ function list_modules($mode = "tpl")
     }
 
     //未安裝部份
-    $all_mods = array();
+    $all_mods = [];
     foreach ($mod as $dirname => $item) {
         foreach ($item as $kind => $data) {
             if (in_array($dirname, $ok['module']) and $kind == "module") {
@@ -499,7 +499,7 @@ function get_theme_color($dirname)
 {
     global $xoopsConfig;
     include XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
-    return array($theme_color, $theme_kind);
+    return [$theme_color, $theme_kind];
 }
 
 /*-----------執行動作判斷區----------*/

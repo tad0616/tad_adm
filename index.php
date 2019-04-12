@@ -280,7 +280,7 @@ function GeraHash($qtd)
 function get_free_space()
 {
     $bytes     = disk_free_space(".");
-    $si_prefix = array('B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB');
+    $si_prefix = ['B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB'];
     $base      = 1024;
     $class     = min((int) log($bytes, $base), count($si_prefix) - 1);
     $space     = sprintf('%1.2f', $bytes / pow($base, $class)) . ' ' . $si_prefix[$class];
@@ -356,7 +356,7 @@ function session_size()
 
     $bytes = ($row['Data_length'] + $row['Index_length']);
 
-    $si_prefix = array('B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB');
+    $si_prefix = ['B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB'];
     $base      = 1024;
     $class     = min((int) log($bytes, $base), count($si_prefix) - 1);
     $space     = sprintf('%1.2f', $bytes / pow($base, $class)) . ' ' . $si_prefix[$class];
@@ -452,7 +452,7 @@ if ($xoopsDB) {
     $sql = "SELECT a.`groupid`, a.`uid`, b.`name` FROM " . $xoopsDB->prefix("groups_users_link") . " AS a LEFT JOIN " . $xoopsDB->prefix("groups") . " AS b ON a.`groupid` = b.`groupid` ORDER BY a.`groupid`";
 
     $result        = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-    $groupid_count = $group_name = array();
+    $groupid_count = $group_name = [];
     while (list($groupid, $uid, $name) = $xoopsDB->fetchRow($result)) {
         if (isset($groupid_count[$groupid])) {
             $groupid_count[$groupid]++;

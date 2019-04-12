@@ -32,7 +32,7 @@ function list_user($op = "", $mode = "normal")
     $result                = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
     $_SESSION['chk_start'] = time();
     $i                     = 0;
-    $all_data              = array();
+    $all_data              = [];
     while ($data = $xoopsDB->fetchArray($result)) {
         foreach ($data as $k => $v) {
             $$k = $v;
@@ -146,7 +146,7 @@ function list_spam()
 
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
 
-    $all_data = array();
+    $all_data = [];
     $i        = 0;
 
     while ($all = $xoopsDB->fetchArray($result)) {
@@ -266,7 +266,7 @@ function del_user($del_uid)
 }
 
 //刪除所有選取的使用者
-function del_all_user($uid_arr = array())
+function del_all_user($uid_arr = [])
 {
     foreach ($uid_arr as $del_uid) {
         del_user($del_uid);

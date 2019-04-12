@@ -11,7 +11,7 @@ function view_file()
     global $xoopsTpl, $isWin, $xoopsConfig;
 
     $theme_name = $xoopsConfig['theme_set'];
-    $all_dir    = $all_files    = array();
+    $all_dir    = $all_files    = [];
     $dir        = XOOPS_ROOT_PATH . "/themes/{$theme_name}/modules/";
     $i          = 0;
     if (is_dir($dir)) {
@@ -47,7 +47,7 @@ function view_file()
     // $xoopsTpl->assign('free_space', format_size($free_space));
 }
 
-function del_templates($dirs = array(), $files = array())
+function del_templates($dirs = [], $files = [])
 {
     if (is_array($dirs)) {
         foreach ($dirs as $dir) {

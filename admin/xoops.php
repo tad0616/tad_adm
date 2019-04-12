@@ -51,7 +51,7 @@ function list_xoops($mode = "tpl")
     $my_php_version   = (float) phpversion();
 
     //後台部份
-    $all_patch = $all_upgrade = array();
+    $all_patch = $all_upgrade = [];
     foreach ($xoops_patch as $k => $xoops) {
         $xoops_version     = (float) $xoops['xoops_version'];
         $xoops_min_version = (float) $xoops['xoops_min_version'];
@@ -81,7 +81,7 @@ function list_xoops($mode = "tpl")
     }
     // die(var_export($xoops_patch));
     if ($mode == "return") {
-        return array('xoops_patch' => $all_patch, 'xoops_upgrade' => $all_upgrade);
+        return ['xoops_patch' => $all_patch, 'xoops_upgrade' => $all_upgrade];
     }
     $xoopsTpl->assign('xoops_patch', $all_patch);
     $xoopsTpl->assign('xoops_upgrade', $all_upgrade);

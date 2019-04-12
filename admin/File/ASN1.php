@@ -156,7 +156,7 @@ class File_ASN1
      * @access private
      * @link http://en.wikipedia.org/wiki/Object_identifier
      */
-    public $oids = array();
+    public $oids = [];
 
     /**
      * Default date format
@@ -199,7 +199,7 @@ class File_ASN1
      * @var Array
      * @access public
      */
-    public $ANYmap = array(
+    public $ANYmap = [
         FILE_ASN1_TYPE_BOOLEAN           => true,
         FILE_ASN1_TYPE_INTEGER           => true,
         FILE_ASN1_TYPE_BIT_STRING        => 'bitString',
@@ -222,7 +222,7 @@ class File_ASN1
         FILE_ASN1_TYPE_UNIVERSAL_STRING  => 'universalString',
         //FILE_ASN1_TYPE_CHARACTER_STRING     => 'characterString',
         FILE_ASN1_TYPE_BMP_STRING        => 'bmpString',
-    );
+    ];
 
     /**
      * String type to character size mapping table.
@@ -233,7 +233,7 @@ class File_ASN1
      * @var Array
      * @access public
      */
-    public $stringTypeSize = array(
+    public $stringTypeSize = [
         FILE_ASN1_TYPE_UTF8_STRING      => 0,
         FILE_ASN1_TYPE_BMP_STRING       => 2,
         FILE_ASN1_TYPE_UNIVERSAL_STRING => 4,
@@ -241,7 +241,7 @@ class File_ASN1
         FILE_ASN1_TYPE_TELETEX_STRING   => 1,
         FILE_ASN1_TYPE_IA5_STRING       => 1,
         FILE_ASN1_TYPE_VISIBLE_STRING   => 1,
-    );
+    ];
 
     /**
      * Default Constructor.
@@ -292,10 +292,10 @@ class File_ASN1
      */
     public function _decode_ber(&$encoded, $start = 0)
     {
-        $decoded = array();
+        $decoded = [];
 
         while (strlen($encoded)) {
-            $current = array('start' => $start);
+            $current = ['start' => $start];
 
             $type = ord($this->_string_shift($encoded));
             $start++;
@@ -332,11 +332,11 @@ class File_ASN1
                 $length &= 0x7F;
                 $temp = $this->_string_shift($encoded, $length);
                 // tags of indefinite length don't really have a header length; this length includes the tag
-                $current += array('headerlength' => $length + 2);
+                $current += ['headerlength' => $length + 2];
                 $start += $length;
                 extract(unpack('Nlength', substr(str_pad($temp, 4, chr(0), STR_PAD_LEFT), -4)));
             } else {
-                $current += array('headerlength' => 2);
+                $current += ['headerlength' => 2];
             }
 
             // End-of-content, see paragraphs 8.1.1.3, 8.1.3.2, 8.1.3.6, 8.1.5, and (for an example) 8.6.4.2
@@ -359,17 +359,17 @@ class File_ASN1
                 case FILE_ASN1_CLASS_APPLICATION:
                 case FILE_ASN1_CLASS_PRIVATE:
                 case FILE_ASN1_CLASS_CONTEXT_SPECIFIC:
-                    $decoded[] = array(
+                    $decoded[] = [
                         'type'     => $class,
                         'constant' => $tag,
                         'content'  => $constructed ? $this->_decode_ber($content, $start) : $content,
                         'length'   => $length + $start - $current['start'],
-                    ) + $current;
+                                 ] + $current;
                     $start += $length;
                     continue 2;
             }
 
-            $current += array('type' => $tag);
+            $current += ['type' => $tag];
 
             // decode UNIVERSAL tags
             switch ($tag) {
@@ -493,7 +493,7 @@ class File_ASN1
             }
 
             $start += $length;
-            $decoded[] = $current + array('length' => $start - $current['start']);
+            $decoded[] = $current + ['length' => $start - $current['start']];
         }
 
         return $decoded;
@@ -523,7 +523,7 @@ class File_ASN1
                 }
                 $inmap = $this->ANYmap[$intype];
                 if (is_string($inmap)) {
-                    return array($inmap => $this->asn1map($decoded, array('type' => $intype) + $mapping));
+                    return [$inmap => $this->asn1map($decoded, ['type' => $intype] + $mapping)];
                 }
                 break;
             case $mapping['type'] == FILE_ASN1_TYPE_CHOICE:
@@ -540,7 +540,7 @@ class File_ASN1
                             }
                     }
                     if (isset($value)) {
-                        return array($key => $value);
+                        return [$key => $value];
                     }
                 }
                 return null;
@@ -558,7 +558,7 @@ class File_ASN1
 
         switch ($decoded['type']) {
             case FILE_ASN1_TYPE_SEQUENCE:
-                $map = array();
+                $map = [];
 
                 // ignore the min and max
                 if (isset($mapping['min']) && isset($mapping['max'])) {
@@ -600,7 +600,7 @@ class File_ASN1
                                 $maymatch = $constant == $temp['constant'] && $childClass == $tempClass;
                             } else {
                                 // Can only match if no constant expected and type matches or is generic.
-                                $maymatch = !isset($child['constant']) && array_search($child['type'], array($temp['type'], FILE_ASN1_TYPE_ANY, FILE_ASN1_TYPE_CHOICE)) !== false;
+                                $maymatch = !isset($child['constant']) && array_search($child['type'], [$temp['type'], FILE_ASN1_TYPE_ANY, FILE_ASN1_TYPE_CHOICE]) !== false;
                             }
                         }
                     }
@@ -627,7 +627,7 @@ class File_ASN1
 
             // the main diff between sets and sequences is the encapsulation of the foreach in another for loop
             case FILE_ASN1_TYPE_SET:
-                $map = array();
+                $map = [];
 
                 // ignore the min and max
                 if (isset($mapping['min']) && isset($mapping['max'])) {
@@ -669,7 +669,7 @@ class File_ASN1
                                 $maymatch = $constant == $temp['constant'] && $childClass == $tempClass;
                             } else {
                                 // Can only match if no constant expected and type matches or is generic.
-                                $maymatch = !isset($child['constant']) && array_search($child['type'], array($temp['type'], FILE_ASN1_TYPE_ANY, FILE_ASN1_TYPE_CHOICE)) !== false;
+                                $maymatch = !isset($child['constant']) && array_search($child['type'], [$temp['type'], FILE_ASN1_TYPE_ANY, FILE_ASN1_TYPE_CHOICE]) !== false;
                             }
                         }
 
@@ -719,7 +719,7 @@ class File_ASN1
                     therefore ensure that different semantics are not associated with such values which differ only in the number of trailing
                     0 bits."
                      */
-                    $bits = count($mapping['mapping']) == $size ? array() : array_fill(0, count($mapping['mapping']) - $size, false);
+                    $bits = count($mapping['mapping']) == $size ? [] : array_fill(0, count($mapping['mapping']) - $size, false);
                     for ($i = strlen($decoded['content']) - 1; $i > 0; $i--) {
                         $current = ord($decoded['content'][$i]);
                         for ($j = $offset; $j < 8; $j++) {
@@ -727,7 +727,7 @@ class File_ASN1
                         }
                         $offset = 0;
                     }
-                    $values = array();
+                    $values = [];
                     $map    = array_reverse($mapping['mapping']);
                     foreach ($map as $i => $value) {
                         if ($bits[$i]) {
@@ -784,7 +784,7 @@ class File_ASN1
      */
     public function encodeDER($source, $mapping)
     {
-        $this->location = array();
+        $this->location = [];
         return $this->_encode_der($source, $mapping);
     }
 
@@ -1005,19 +1005,19 @@ class File_ASN1
 
                 switch (true) {
                     case !isset($source):
-                        return $this->_encode_der(null, array('type' => FILE_ASN1_TYPE_NULL) + $mapping);
+                        return $this->_encode_der(null, ['type' => FILE_ASN1_TYPE_NULL] + $mapping);
                     case is_int($source):
                     case is_object($source) && strtolower(get_class($source)) == 'math_biginteger':
-                        return $this->_encode_der($source, array('type' => FILE_ASN1_TYPE_INTEGER) + $mapping);
+                        return $this->_encode_der($source, ['type' => FILE_ASN1_TYPE_INTEGER] + $mapping);
                     case is_float($source):
-                        return $this->_encode_der($source, array('type' => FILE_ASN1_TYPE_REAL) + $mapping);
+                        return $this->_encode_der($source, ['type' => FILE_ASN1_TYPE_REAL] + $mapping);
                     case is_bool($source):
-                        return $this->_encode_der($source, array('type' => FILE_ASN1_TYPE_BOOLEAN) + $mapping);
+                        return $this->_encode_der($source, ['type' => FILE_ASN1_TYPE_BOOLEAN] + $mapping);
                     case is_array($source) && count($source) == 1:
                         $typename = implode('', array_keys($source));
                         $outtype  = array_search($typename, $this->ANYmap, true);
                         if ($outtype !== false) {
-                            return $this->_encode_der($source[$typename], array('type' => $outtype) + $mapping);
+                            return $this->_encode_der($source[$typename], ['type' => $outtype] + $mapping);
                         }
                 }
 

@@ -9,7 +9,7 @@ function adminer_object()
         include_once "./$filename";
     }
 
-    $plugins = array(
+    $plugins = [
         // specify enabled plugins here
         new FasterTablesFilter,
         new AdminerRestoreMenuScroll,
@@ -19,7 +19,7 @@ function adminer_object()
         new AdminerJsonColumn,
         new AdminerTablesHistory,
         //new AdminerTheme("default-blue"),
-    );
+    ];
 
     /* It is possible to combine customization and plugins:
     class AdminerCustomization extends AdminerPlugin {

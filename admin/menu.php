@@ -1,5 +1,5 @@
 <?php
-$adminmenu = array();
+$adminmenu = [];
 $icon_dir  = substr(XOOPS_VERSION, 6, 3) == '2.6' ? "" : "images/";
 
 $i                      = 1;

@@ -759,7 +759,7 @@ class Net_SFTP_Stream
         if (!method_exists($this, $name)) {
             return false;
         }
-        return call_user_func_array(array($this, $name), $arguments);
+        return call_user_func_array([$this, $name], $arguments);
     }
 }
 

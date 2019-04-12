@@ -48,7 +48,7 @@ function folderSize($dir)
 //
 function format_size($bytes = "")
 {
-    $si_prefix = array('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+    $si_prefix = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     $base      = 1024;
     $class     = min((int) log($bytes, $base), count($si_prefix) - 1);
     $space     = sprintf('%1.2f', $bytes / pow($base, $class)) . ' ' . $si_prefix[$class];

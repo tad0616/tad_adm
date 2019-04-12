@@ -1,5 +1,5 @@
 <?php
-$modversion = array();
+$modversion = [];
 
 //---模組基本資訊---//
 $modversion['name']        = _MI_TADADM_NAME;
@@ -24,7 +24,7 @@ $modversion['min_php']             = 5.4;
 $modversion['min_xoops']           = '2.5';
 
 //---paypal資訊---//
-$modversion['paypal']                  = array();
+$modversion['paypal']                  = [];
 $modversion['paypal']['business']      = 'tad0616@gmail.com';
 $modversion['paypal']['item_name']     = 'Donation : ' . _MI_TAD_WEB;
 $modversion['paypal']['amount']        = 0;
@@ -53,7 +53,7 @@ $modversion['onUpdate']    = "include/onUpdate.php";
 $modversion['onUninstall'] = "include/onUninstall.php";
 
 //---偏好設定---//
-$modversion['config']                    = array();
+$modversion['config']                    = [];
 $i                                       = 0;
 $modversion['config'][$i]['name']        = 'list_amount';
 $modversion['config'][$i]['title']       = '_MI_TADADM_LIST_AMOUNT';
@@ -108,7 +108,7 @@ $modversion['config'][$i]['default']     = 'https://campus-xoops.tn.edu.tw';
 //$modversion['search']['func'] = "搜尋函數名稱";
 
 //---區塊設定---//
-$modversion['blocks']                    = array();
+$modversion['blocks']                    = [];
 $i                                       = 1;
 $modversion['blocks'][$i]['file']        = 'tad_adm_new.php';
 $modversion['blocks'][$i]['name']        = _MI_TADADM_BNAME1;
@@ -119,7 +119,7 @@ $modversion['blocks'][$i]['edit_func']   = "tad_adm_new_edit";
 $modversion['blocks'][$i]['options']     = "10";
 
 //---樣板設定---//
-$modversion['templates']                    = array();
+$modversion['templates']                    = [];
 $i                                          = 1;
 $modversion['templates'][$i]['file']        = 'tad_adm_adm_main.tpl';
 $modversion['templates'][$i]['description'] = 'tad_adm_adm_main.tpl';

@@ -19,19 +19,19 @@ $add  = '<img src="images/icons/add.png" alt="add" style="margin-right: 4px;">';
 $up   = '<img src="images/icons/up.png" alt="up" style="margin-right: 4px;">';
 $down = '<img src="images/icons/down.png" alt="down" style="margin-right: 4px;">';
 
-$system_mods  = array('system', 'profile', 'pm', 'protector');
-$system_theme = array('default', 'suico', 'zetagenesis');
-$bad_mods     = array(
-    'fred_honorboard' => array('tad_honor', 66),
-    'fred_place'      => array('jill_booking', 71),
-    'eguide'          => array('tad_form', 9),
-    'fred_repair'     => array('tad_repair', 4),
-    'fred_marquee'    => array('yaoh_light', 20),
-    'mytabs'          => array('tadnews', 2),
-    'newbb'           => array('tad_discuss', 8),
-    'xforum'          => array('tad_discuss', 8),
-    'tad_cbox'        => array('tad_discuss', 8),
-);
+$system_mods  = ['system', 'profile', 'pm', 'protector'];
+$system_theme = ['default', 'suico', 'zetagenesis'];
+$bad_mods     = [
+    'fred_honorboard' => ['tad_honor', 66],
+    'fred_place'      => ['jill_booking', 71],
+    'eguide'          => ['tad_form', 9],
+    'fred_repair'     => ['tad_repair', 4],
+    'fred_marquee'    => ['yaoh_light', 20],
+    'mytabs'          => ['tadnews', 2],
+    'newbb'           => ['tad_discuss', 8],
+    'xforum'          => ['tad_discuss', 8],
+    'tad_cbox'        => ['tad_discuss', 8],
+];
 
 $source_mod = get_tad_json_info('all.json');
 
@@ -195,7 +195,7 @@ function modules_version()
     $i           = 0;
     $mod_msg     = '';
     //模組部份
-    $all_install_modules = array();
+    $all_install_modules = [];
     while ($data = $xoopsDB->fetchArray($result)) {
         foreach ($data as $k => $v) {
             $$k = $v;
@@ -375,10 +375,10 @@ function download_modules()
     $mypath    = XOOPS_ROOT_PATH . '/modules/';
     $d         = opendir($mypath);
     $mod_msg   = "";
-    $need_down = array();
+    $need_down = [];
     $download  = false;
 
-    $db_mod = array();
+    $db_mod = [];
     $sql    = "SELECT `dirname` FROM `" . $xoopsDB->prefix("modules") . "`";
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
     while (list($dirname) = $xoopsDB->fetchRow($result)) {
@@ -423,8 +423,8 @@ function upload_modules()
         $mypath  = XOOPS_ROOT_PATH . '/modules/';
         $d       = opendir($mypath);
         $mod_msg = "";
-        $need_up = array();
-        $db_mod  = array();
+        $need_up = [];
+        $db_mod  = [];
         $sql     = "SELECT `dirname` FROM `" . $xoopsDB->prefix("modules") . "`";
         $result  = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
         while (list($dirname) = $xoopsDB->fetchRow($result)) {
@@ -473,7 +473,7 @@ function download_themes()
 
     $d         = opendir($mypath);
     $mod_msg   = "";
-    $need_down = array();
+    $need_down = [];
     $download  = false;
     while (($file = readdir($d)) !== false) {
         if ($file != "." && $file != "..") {
@@ -504,7 +504,7 @@ function upload_themes()
 
     $d       = opendir($mypath);
     $mod_msg = "";
-    $need_up = array();
+    $need_up = [];
     while (($file = readdir($d)) !== false) {
         if ($file != "." && $file != "..") {
             $typepath = $mypath . $file;

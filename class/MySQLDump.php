@@ -20,9 +20,9 @@ class MySQLDump
     const ALL      = 15; // DROP | CREATE | DATA | TRIGGERS
 
     /** @var array */
-    public $tables = array(
+    public $tables = [
         '*' => self::ALL,
-    );
+    ];
 
     /** @var mysqli */
     private $connection;
@@ -71,7 +71,7 @@ class MySQLDump
             throw new Exception('Argument must be stream resource.');
         }
 
-        $tables = $views = array();
+        $tables = $views = [];
 
         $res = $this->connection->query('SHOW FULL TABLES');
         while ($row = $res->fetch_row()) {
@@ -133,9 +133,9 @@ class MySQLDump
         }
 
         if (!$view && ($mode & self::DATA)) {
-            $numeric = array();
+            $numeric = [];
             $res     = $this->connection->query("SHOW COLUMNS FROM $delTable");
-            $cols    = array();
+            $cols    = [];
             while ($row = $res->fetch_assoc()) {
                 $col           = $row['Field'];
                 $cols[]        = $this->delimite($col);

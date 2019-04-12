@@ -217,7 +217,7 @@ class Crypt_RC4
         }
 
         $keyLength = strlen($key);
-        $keyStream = array();
+        $keyStream = [];
         for ($i = 0; $i < 256; $i++) {
             $keyStream[$i] = $i;
         }
@@ -229,7 +229,7 @@ class Crypt_RC4
             $keyStream[$j] = $temp;
         }
 
-        $this->encryptIndex  = $this->decryptIndex  = array(0, 0);
+        $this->encryptIndex  = $this->decryptIndex  = [0, 0];
         $this->encryptStream = $this->decryptStream = $keyStream;
     }
 
@@ -389,11 +389,11 @@ class Crypt_RC4
             switch ($mode) {
                 case CRYPT_RC4_ENCRYPT:
                     $this->encryptStream = $keyStream;
-                    $this->encryptIndex  = array($i, $j);
+                    $this->encryptIndex  = [$i, $j];
                     break;
                 case CRYPT_RC4_DECRYPT:
                     $this->decryptStream = $keyStream;
-                    $this->decryptIndex  = array($i, $j);
+                    $this->decryptIndex  = [$i, $j];
             }
         }
 
@@ -458,7 +458,7 @@ class Crypt_RC4
     public function disableContinuousBuffer()
     {
         if (CRYPT_RC4_MODE == CRYPT_RC4_MODE_INTERNAL) {
-            $this->encryptIndex  = $this->decryptIndex  = array(0, 0);
+            $this->encryptIndex  = $this->decryptIndex  = [0, 0];
             $this->encryptStream = $this->decryptStream = false;
         }
 

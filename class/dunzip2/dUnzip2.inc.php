@@ -83,7 +83,7 @@ class dUnzip2
         $this->fileName       = $fileName;
         $this->compressedList =
         $this->centralDirList =
-        $this->endOfCentral   = array();
+        $this->endOfCentral   = [];
     }
 
     public function getList($stopOnFile = false)
@@ -380,7 +380,7 @@ class dUnzip2
                 $eodir['offset_start_cd']    = unpack("V", fread($fh, 4)); // offset of start of central directory with respect to the starting disk number
                 $zipFileCommentLenght        = unpack("v", fread($fh, 2)); // zipfile comment length
                 $eodir['zipfile_comment']    = $zipFileCommentLenght[1] ? fread($fh, $zipFileCommentLenght[1]) : ''; // zipfile comment
-                $this->endOfCentral          = array(
+                $this->endOfCentral          = [
                     'disk_number_this'   => $eodir['disk_number_this'][1],
                     'disk_number'        => $eodir['disk_number'][1],
                     'total_entries_this' => $eodir['total_entries_this'][1],
@@ -388,7 +388,7 @@ class dUnzip2
                     'size_of_cd'         => $eodir['size_of_cd'][1],
                     'offset_start_cd'    => $eodir['offset_start_cd'][1],
                     'zipfile_comment'    => $eodir['zipfile_comment'],
-                );
+                ];
 
                 // Then, load file list
                 fseek($fh, $this->endOfCentral['offset_start_cd']);
@@ -432,7 +432,7 @@ class dUnzip2
                         continue;
                     }
 
-                    $this->centralDirList[$dir['file_name']] = array(
+                    $this->centralDirList[$dir['file_name']] = [
                         'version_madeby'       => $dir['version_madeby'][1],
                         'version_needed'       => $dir['version_needed'][1],
                         'general_bit_flag'     => str_pad(decbin($dir['general_bit_flag'][1]), 8, '0', STR_PAD_LEFT),
@@ -452,7 +452,7 @@ class dUnzip2
                         'file_name'            => $dir['file_name'],
                         'extra_field'          => $dir['extra_field'],
                         'file_comment'         => $dir['file_comment'],
-                    );
+                    ];
                     $signature                               = fread($fh, 4);
                 }
 
@@ -554,7 +554,7 @@ class dUnzip2
             }
 
             // Mount file table
-            $i = array(
+            $i = [
                 'file_name'            => $file['file_name'],
                 'compression_method'   => $file['compression_method'][1],
                 'version_needed'       => $file['version_needed'][1],
@@ -568,7 +568,7 @@ class dUnzip2
                 'extra_field'          => $file['extra_field'],
                 'general_bit_flag'     => str_pad(decbin($file['general_bit_flag'][1]), 8, '0', STR_PAD_LEFT),
                 'contents-startOffset' => $file['contents-startOffset'],
-            );
+            ];
             return $i;
         }
         return false;

@@ -24,7 +24,7 @@ class AdminerTheme
      * @param string $defaultTheme Theme name of default theme.
      * @param array $themes array(database-host => theme-name).
      */
-    public function __construct($defaultTheme = "default-orange", array $themes = array())
+    public function __construct($defaultTheme = "default-orange", array $themes = [])
     {
         define("PMTN_ADMINER_THEME", true);
 

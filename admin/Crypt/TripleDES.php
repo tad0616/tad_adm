@@ -116,11 +116,11 @@ class Crypt_TripleDES extends Crypt_DES
 
         if ($mode == CRYPT_DES_MODE_3CBC) {
             $this->mode = CRYPT_DES_MODE_3CBC;
-            $this->des  = array(
+            $this->des  = [
                 new Crypt_DES(CRYPT_DES_MODE_CBC),
                 new Crypt_DES(CRYPT_DES_MODE_CBC),
                 new Crypt_DES(CRYPT_DES_MODE_CBC),
-            );
+            ];
             $this->paddable = true;
 
             // we're going to be doing the padding, ourselves, so disable it in the Crypt_DES objects
@@ -158,11 +158,11 @@ class Crypt_TripleDES extends Crypt_DES
 
                 break;
             default:
-                $this->des = array(
+                $this->des = [
                     new Crypt_DES(CRYPT_DES_MODE_ECB),
                     new Crypt_DES(CRYPT_DES_MODE_ECB),
                     new Crypt_DES(CRYPT_DES_MODE_ECB),
-                );
+                ];
 
                 // we're going to be doing the padding, ourselves, so disable it in the Crypt_DES objects
                 $this->des[0]->disablePadding();
@@ -225,7 +225,7 @@ class Crypt_TripleDES extends Crypt_DES
 
                 // Merge the three DES-1-dim-key-arrays for 3DES-inline-en/decrypting
                 if ($this->use_inline_crypt && $this->mode != CRYPT_DES_MODE_3CBC) {
-                    $this->keys = array(
+                    $this->keys = [
                         CRYPT_DES_ENCRYPT_1DIM => array_merge(
                             $this->des[0]->keys[CRYPT_DES_ENCRYPT_1DIM],
                             $this->des[1]->keys[CRYPT_DES_DECRYPT_1DIM],
@@ -236,7 +236,7 @@ class Crypt_TripleDES extends Crypt_DES
                             $this->des[1]->keys[CRYPT_DES_ENCRYPT_1DIM],
                             $this->des[0]->keys[CRYPT_DES_DECRYPT_1DIM]
                         ),
-                    );
+                    ];
                 }
         }
         $this->enchanged = $this->dechanged = true;
@@ -502,10 +502,10 @@ class Crypt_TripleDES extends Crypt_DES
 
                     $iv = $block ^ $xor;
                     if ($continuousBuffer && strlen($iv) != 8) {
-                        $buffer = array(
+                        $buffer = [
                             'encrypted' => $iv,
                             'xor'       => substr($xor, strlen($iv)),
-                        );
+                        ];
                     }
                     $ciphertext .= $iv;
                 }
@@ -829,8 +829,8 @@ class Crypt_TripleDES extends Crypt_DES
         $this->decryptIV        = $this->iv;
         $this->enchanged        = true;
         $this->dechanged        = true;
-        $this->enbuffer         = array('encrypted' => '', 'xor' => '', 'pos' => 0, 'enmcrypt_init' => true);
-        $this->debuffer         = array('ciphertext' => '', 'xor' => '', 'pos' => 0, 'demcrypt_init' => true);
+        $this->enbuffer         = ['encrypted' => '', 'xor' => '', 'pos' => 0, 'enmcrypt_init' => true];
+        $this->debuffer         = ['ciphertext' => '', 'xor' => '', 'pos' => 0, 'demcrypt_init' => true];
 
         if ($this->mode == CRYPT_DES_MODE_3CBC) {
             $this->des[0]->disableContinuousBuffer();

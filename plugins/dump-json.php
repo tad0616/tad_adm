@@ -11,7 +11,7 @@ class AdminerDumpJson {
 	var $database = false;
 	
 	function dumpFormat() {
-		return array('json' => 'JSON');
+		return ['json' => 'JSON'];
 	}
 
 	function dumpTable($table, $style, $is_view = false) {
@@ -31,7 +31,7 @@ class AdminerDumpJson {
 			} else {
 				$this->database = true;
 				echo "{\n";
-				register_shutdown_function(array($this, '_database'));
+				register_shutdown_function([$this, '_database']);
 			}
 			$connection = connection();
 			$result = $connection->query($query, 1);

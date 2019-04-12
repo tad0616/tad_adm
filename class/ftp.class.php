@@ -26,7 +26,7 @@
 class ftp
 {
     public $conn_id;
-    public $natij = array();
+    public $natij = [];
     public $orgDir;
 
     public function __construct($ftp_server = "localhost")

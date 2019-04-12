@@ -15,9 +15,9 @@ function phpini()
     $php_ini_path = php_ini_loaded_file();
     $xoopsTpl->assign('php_ini_path', $php_ini_path);
 
-    $show_ini = array('allow_url_fopen', 'date.timezone', 'display_errors', 'file_uploads', 'max_execution_time', 'max_file_uploads', 'max_input_time', 'max_input_vars', 'memory_limit', 'post_max_size', 'upload_max_filesize');
+    $show_ini = ['allow_url_fopen', 'date.timezone', 'display_errors', 'file_uploads', 'max_execution_time', 'max_file_uploads', 'max_input_time', 'max_input_vars', 'memory_limit', 'post_max_size', 'upload_max_filesize'];
 
-    $adv_val = array(
+    $adv_val = [
         'max_execution_time'  => '150', //380
         'max_input_time'      => '120', //390
         'max_input_vars'      => '5000', //397
@@ -29,13 +29,13 @@ function phpini()
         'max_file_uploads'    => '300', //824
         'allow_url_fopen'     => '1', //832
         'date.timezone'       => 'Asia/Taipei', //940
-    );
+    ];
 
     $allini = ini_get_all();
     //die(var_export(ini_get_all()));
 
     $i    = 0;
-    $main = array();
+    $main = [];
     foreach ($allini as $k => $v) {
 
         if (!in_array($k, $show_ini)) {

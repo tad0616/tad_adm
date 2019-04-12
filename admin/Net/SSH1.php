@@ -321,7 +321,7 @@ class Net_SSH1
      * @var Array
      * @access private
      */
-    public $supported_ciphers = array(
+    public $supported_ciphers = [
         NET_SSH1_CIPHER_NONE       => 'No encryption',
         NET_SSH1_CIPHER_IDEA       => 'IDEA in CFB mode',
         NET_SSH1_CIPHER_DES        => 'DES in CBC mode',
@@ -329,7 +329,7 @@ class Net_SSH1
         NET_SSH1_CIPHER_BROKEN_TSS => 'TRI\'s Simple Stream encryption CBC',
         NET_SSH1_CIPHER_RC4        => 'RC4',
         NET_SSH1_CIPHER_BLOWFISH   => 'Blowfish',
-    );
+    ];
 
     /**
      * Supported Authentications
@@ -340,12 +340,12 @@ class Net_SSH1
      * @var Array
      * @access private
      */
-    public $supported_authentications = array(
+    public $supported_authentications = [
         NET_SSH1_AUTH_RHOSTS     => '.rhosts or /etc/hosts.equiv',
         NET_SSH1_AUTH_RSA        => 'pure RSA authentication',
         NET_SSH1_AUTH_PASSWORD   => 'password authentication',
         NET_SSH1_AUTH_RHOSTS_RSA => '.rhosts with RSA host authentication',
-    );
+    ];
 
     /**
      * Server Identification
@@ -363,7 +363,7 @@ class Net_SSH1
      * @var Array
      * @access private
      */
-    public $protocol_flags = array();
+    public $protocol_flags = [];
 
     /**
      * Protocol Flag Log
@@ -372,7 +372,7 @@ class Net_SSH1
      * @var Array
      * @access private
      */
-    public $protocol_flag_log = array();
+    public $protocol_flag_log = [];
 
     /**
      * Message Log
@@ -381,7 +381,7 @@ class Net_SSH1
      * @var Array
      * @access private
      */
-    public $message_log = array();
+    public $message_log = [];
 
     /**
      * Real-time log file pointer
@@ -462,7 +462,7 @@ class Net_SSH1
             require_once 'Crypt/Random.php';
         }
 
-        $this->protocol_flags = array(
+        $this->protocol_flags = [
             1  => 'NET_SSH1_MSG_DISCONNECT',
             2  => 'NET_SSH1_SMSG_PUBLIC_KEY',
             3  => 'NET_SSH1_CMSG_SESSION_KEY',
@@ -479,7 +479,7 @@ class Net_SSH1
             19 => 'NET_SSH1_CMSG_EOF',
             20 => 'NET_SSH1_SMSG_EXITSTATUS',
             33 => 'NET_SSH1_CMSG_EXIT_CONFIRMATION',
-        );
+        ];
 
         $this->_define_array($this->protocol_flags);
 
@@ -561,32 +561,32 @@ class Net_SSH1
         if ($server_key_public_modulus->compare($host_key_public_modulus) < 0) {
             $double_encrypted_session_key = $this->_rsa_crypt(
                 $double_encrypted_session_key,
-                array(
+                [
                     $server_key_public_exponent,
                     $server_key_public_modulus,
-                )
+                ]
             );
             $double_encrypted_session_key = $this->_rsa_crypt(
                 $double_encrypted_session_key,
-                array(
+                [
                     $host_key_public_exponent,
                     $host_key_public_modulus,
-                )
+                ]
             );
         } else {
             $double_encrypted_session_key = $this->_rsa_crypt(
                 $double_encrypted_session_key,
-                array(
+                [
                     $host_key_public_exponent,
                     $host_key_public_modulus,
-                )
+                ]
             );
             $double_encrypted_session_key = $this->_rsa_crypt(
                 $double_encrypted_session_key,
-                array(
+                [
                     $server_key_public_exponent,
                     $server_key_public_modulus,
-                )
+                ]
             );
         }
 
@@ -932,7 +932,7 @@ class Net_SSH1
             return false;
         }
 
-        $read  = array($this->fsock);
+        $read  = [$this->fsock];
         $write = $except = null;
         if (stream_select($read, $write, $except, 0)) {
             $response = $this->_get_binary_packet();
@@ -1017,7 +1017,7 @@ class Net_SSH1
         }
 
         if ($this->curTimeout) {
-            $read  = array($this->fsock);
+            $read  = [$this->fsock];
             $write = $except = null;
 
             $start = strtok(microtime(), ' ') + strtok(''); // http://php.net/microtime#61838
@@ -1069,10 +1069,10 @@ class Net_SSH1
             $this->_append_log($temp, $data);
         }
 
-        return array(
+        return [
             NET_SSH1_RESPONSE_TYPE => $type,
             NET_SSH1_RESPONSE_DATA => $data,
-        );
+        ];
     }
 
     /**
@@ -1135,7 +1135,7 @@ class Net_SSH1
      */
     public function _crc($data)
     {
-        static $crc_lookup_table = array(
+        static $crc_lookup_table = [
             0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA,
             0x076DC419, 0x706AF48F, 0xE963A535, 0x9E6495A3,
             0x0EDB8832, 0x79DCB8A4, 0xE0D5E91E, 0x97D2D988,
@@ -1200,7 +1200,7 @@ class Net_SSH1
             0xBAD03605, 0xCDD70693, 0x54DE5729, 0x23D967BF,
             0xB3667A2E, 0xC4614AB8, 0x5D681B02, 0x2A6F2B94,
             0xB40BBE37, 0xC30C8EA1, 0x5A05DF1B, 0x2D02EF8D,
-        );
+        ];
 
         // For this function to yield the same output as PHP's crc32 function, $crc would have to be
         // set to 0xFFFFFFFF, initially - not 0x00000000 as it currently is.
@@ -1517,7 +1517,7 @@ class Net_SSH1
             // passwords won't be filtered out and select other packets may not be correctly
             // identified
             case NET_SSH1_LOG_REALTIME:
-                echo "<pre>\r\n" . $this->_format_log(array($message), array($protocol_flags)) . "\r\n</pre>\r\n";
+                echo "<pre>\r\n" . $this->_format_log([$message], [$protocol_flags]) . "\r\n</pre>\r\n";
                 @flush();
                 @ob_flush();
                 break;
@@ -1535,7 +1535,7 @@ class Net_SSH1
                 if (!is_resource($this->realtime_log_file)) {
                     break;
                 }
-                $entry = $this->_format_log(array($message), array($protocol_flags));
+                $entry = $this->_format_log([$message], [$protocol_flags]);
                 if ($this->realtime_log_wrap) {
                     $temp = "<<< START >>>\r\n";
                     $entry .= $temp;
