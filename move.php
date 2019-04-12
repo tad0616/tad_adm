@@ -205,10 +205,10 @@ function modules_version()
         }
         if ($source_mod[$dirname]['module']['kind'] == "module") {
 
-            $version     = intval($version);
+            $version     = (int)$version;
             $old_version = round($version / 100, 2);
             $new_version = $source_mod[$dirname]['module']['new_version'] * 100;
-            $new_version = intval($new_version);
+            $new_version = (int)$new_version;
 
             $last_update     = filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php");
             $new_last_update = $source_mod[$dirname]['module']['new_last_update'];

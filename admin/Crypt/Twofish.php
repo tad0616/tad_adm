@@ -1224,7 +1224,7 @@ class Crypt_Twofish
         $lambda_functions = &Crypt_Twofish::get_lambda_functions();
         $block_size       = 16;
         $mode             = $this->mode;
-        $code_hash        = "$mode";
+        $code_hash        = (string)$mode;
 
         if (!isset($lambda_functions[$code_hash])) {
             $init_cryptBlock = '
