@@ -29,7 +29,7 @@ class ftp
     public $natij = array();
     public $orgDir;
 
-    public function ftp($ftp_server = "localhost")
+    public function __construct($ftp_server = "localhost")
     {
         $this->conn_id = ftp_connect($ftp_server);
     }

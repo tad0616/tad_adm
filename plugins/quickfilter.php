@@ -10,7 +10,7 @@
  */
 class AdminerQuickFilterTables
 {
-	public function AdminerQuickFilterTables()
+	public function __construct()
 	{
 	}
 	public function head()

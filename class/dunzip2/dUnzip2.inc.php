@@ -78,7 +78,7 @@ class dUnzip2
     public $dirSignatureE = "\x50\x4b\x05\x06"; // end of central dir signature
 
     // Public
-    public function dUnzip2($fileName)
+    public function __construct($fileName)
     {
         $this->fileName       = $fileName;
         $this->compressedList =
