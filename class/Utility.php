@@ -63,7 +63,9 @@ class Utility
         if (!is_dir($dir)) {
             umask(000);
             //若建立失敗秀出警告訊息
-            mkdir($dir, 0777);
+            if (!mkdir($dir, 0777) && !is_dir($dir)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
+            }
         }
     }
 
@@ -72,7 +74,9 @@ class Utility
     public static function full_copy($source = '', $target = '')
     {
         if (is_dir($source)) {
-            @mkdir($target);
+            if (!mkdir($target) && !is_dir($target)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $target));
+            }
             $d = dir($source);
             while (false !== ($entry = $d->read())) {
                 if ('.' == $entry || '..' == $entry) {
