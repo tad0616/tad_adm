@@ -1,12 +1,12 @@
 <?php
-$ini['allow_url_fopen'] = "whether to allow open remote file";
-$ini['date.timezone']   = "TZ environment variable is not set for the default date and time functions for all time zones. Priority
+$ini['allow_url_fopen'] = 'whether to allow open remote file';
+$ini['date.timezone'] = 'TZ environment variable is not set for the default date and time functions for all time zones. Priority
 <br> application time zone is:
 <br> 1. time zone setting function with date_default_timezone_set () (If you set it)
 <br> 2. TZ environment variable (if non-empty words)
 <br> 3. the instruction value (if set words)
 <br> 4. PHP own speculation (if the operating system supports)
-<br> 5. If the above are not successful, then use UTC ";
+<br> 5. If the above are not successful, then use UTC ';
 
 $ini['display_errors'] = 'This determines whether errors should be printed to the screen as part of the output or if they should be hidden from the user.
 <br> You\'re strongly advised to use error logging in place of error displaying on production web sites,

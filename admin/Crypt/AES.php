@@ -139,7 +139,7 @@ class Crypt_AES extends Crypt_Rijndael
      * Since mcrypt operates in continuous mode, by default, it'll need to be recreated when in non-continuous mode.
      *
      * @see Crypt_AES::encrypt()
-     * @var String
+     * @var string
      * @access private
      */
     public $enmcrypt;
@@ -151,7 +151,7 @@ class Crypt_AES extends Crypt_Rijndael
      * Since mcrypt operates in continuous mode, by default, it'll need to be recreated when in non-continuous mode.
      *
      * @see Crypt_AES::decrypt()
-     * @var String
+     * @var string
      * @access private
      */
     public $demcrypt;
@@ -161,7 +161,7 @@ class Crypt_AES extends Crypt_Rijndael
      *
      * @see Crypt_AES::encrypt()
      * @see Crypt_AES::decrypt()
-     * @var String
+     * @var string
      * @access private
      */
     public $ecb;
@@ -180,7 +180,7 @@ class Crypt_AES extends Crypt_Rijndael
     {
         if (!defined('CRYPT_AES_MODE')) {
             switch (true) {
-                case extension_loaded('mcrypt') && in_array('rijndael-128', mcrypt_list_algorithms()):
+                case extension_loaded('mcrypt') && in_array('rijndael-128', mcrypt_list_algorithms(), true):
                     define('CRYPT_AES_MODE', CRYPT_AES_MODE_MCRYPT);
                     break;
                 default:
@@ -193,7 +193,7 @@ class Crypt_AES extends Crypt_Rijndael
                 switch ($mode) {
                     case CRYPT_AES_MODE_ECB:
                         $this->paddable = true;
-                        $this->mode     = MCRYPT_MODE_ECB;
+                        $this->mode = MCRYPT_MODE_ECB;
                         break;
                     case CRYPT_AES_MODE_CTR:
                         // ctr doesn't have a constant associated with it even though it appears to be fairly widely
@@ -211,7 +211,7 @@ class Crypt_AES extends Crypt_Rijndael
                     case CRYPT_AES_MODE_CBC:
                     default:
                         $this->paddable = true;
-                        $this->mode     = MCRYPT_MODE_CBC;
+                        $this->mode = MCRYPT_MODE_CBC;
                 }
 
                 break;
@@ -219,7 +219,7 @@ class Crypt_AES extends Crypt_Rijndael
                 switch ($mode) {
                     case CRYPT_AES_MODE_ECB:
                         $this->paddable = true;
-                        $this->mode     = CRYPT_RIJNDAEL_MODE_ECB;
+                        $this->mode = CRYPT_RIJNDAEL_MODE_ECB;
                         break;
                     case CRYPT_AES_MODE_CTR:
                         $this->mode = CRYPT_RIJNDAEL_MODE_CTR;
@@ -233,14 +233,13 @@ class Crypt_AES extends Crypt_Rijndael
                     case CRYPT_AES_MODE_CBC:
                     default:
                         $this->paddable = true;
-                        $this->mode     = CRYPT_RIJNDAEL_MODE_CBC;
+                        $this->mode = CRYPT_RIJNDAEL_MODE_CBC;
                 }
         }
 
         if (CRYPT_AES_MODE == CRYPT_AES_MODE_INTERNAL) {
             parent::__construct($this->mode);
         }
-
     }
 
     /**
@@ -249,11 +248,10 @@ class Crypt_AES extends Crypt_Rijndael
      * Since Crypt_AES extends Crypt_Rijndael, this function is, technically, available, but it doesn't do anything.
      *
      * @access public
-     * @param Integer $length
+     * @param int $length
      */
     public function setBlockLength($length)
     {
-        return;
     }
 
     /**
@@ -263,7 +261,7 @@ class Crypt_AES extends Crypt_Rijndael
      * to be all zero's.
      *
      * @access public
-     * @param String $iv
+     * @param string $iv
      */
     public function setIV($iv)
     {
@@ -288,7 +286,7 @@ class Crypt_AES extends Crypt_Rijndael
      *
      * @see Crypt_AES::decrypt()
      * @access public
-     * @param String $plaintext
+     * @param string $plaintext
      */
     public function encrypt($plaintext)
     {
@@ -298,15 +296,15 @@ class Crypt_AES extends Crypt_Rijndael
             // re: http://phpseclib.sourceforge.net/cfb-demo.phps
             // using mcrypt's default handing of CFB the above would output two different things.  using phpseclib's
             // rewritten CFB implementation the above outputs the same thing twice.
-            if ($this->mode == 'ncfb' && $this->continuousBuffer) {
-                $iv         = &$this->encryptIV;
-                $pos        = &$this->enbuffer['pos'];
-                $len        = strlen($plaintext);
+            if ('ncfb' == $this->mode && $this->continuousBuffer) {
+                $iv = &$this->encryptIV;
+                $pos = &$this->enbuffer['pos'];
+                $len = mb_strlen($plaintext);
                 $ciphertext = '';
-                $i          = 0;
+                $i = 0;
                 if ($pos) {
                     $orig_pos = $pos;
-                    $max      = 16 - $pos;
+                    $max = 16 - $pos;
                     if ($len >= $max) {
                         $i = $max;
                         $len -= $max;
@@ -316,22 +314,22 @@ class Crypt_AES extends Crypt_Rijndael
                         $pos += $len;
                         $len = 0;
                     }
-                    $ciphertext                      = substr($iv, $orig_pos) ^ $plaintext;
-                    $iv                              = substr_replace($iv, $ciphertext, $orig_pos, $i);
+                    $ciphertext = mb_substr($iv, $orig_pos) ^ $plaintext;
+                    $iv = substr_replace($iv, $ciphertext, $orig_pos, $i);
                     $this->enbuffer['enmcrypt_init'] = true;
                 }
                 if ($len >= 16) {
-                    if ($this->enbuffer['enmcrypt_init'] === false || $len > 280) {
-                        if ($this->enbuffer['enmcrypt_init'] === true) {
+                    if (false === $this->enbuffer['enmcrypt_init'] || $len > 280) {
+                        if (true === $this->enbuffer['enmcrypt_init']) {
                             mcrypt_generic_init($this->enmcrypt, $this->key, $iv);
                             $this->enbuffer['enmcrypt_init'] = false;
                         }
-                        $ciphertext .= mcrypt_generic($this->enmcrypt, substr($plaintext, $i, $len - $len % 16));
-                        $iv = substr($ciphertext, -16);
+                        $ciphertext .= mcrypt_generic($this->enmcrypt, mb_substr($plaintext, $i, $len - $len % 16));
+                        $iv = mb_substr($ciphertext, -16);
                         $len %= 16;
                     } else {
                         while ($len >= 16) {
-                            $iv = mcrypt_generic($this->ecb, $iv) ^ substr($plaintext, $i, 16);
+                            $iv = mcrypt_generic($this->ecb, $iv) ^ mb_substr($plaintext, $i, 16);
                             $ciphertext .= $iv;
                             $len -= 16;
                             $i += 16;
@@ -340,9 +338,9 @@ class Crypt_AES extends Crypt_Rijndael
                 }
 
                 if ($len) {
-                    $iv    = mcrypt_generic($this->ecb, $iv);
-                    $block = $iv ^ substr($plaintext, -$len);
-                    $iv    = substr_replace($iv, $block, 0, $len);
+                    $iv = mcrypt_generic($this->ecb, $iv);
+                    $block = $iv ^ mb_substr($plaintext, -$len);
+                    $iv = substr_replace($iv, $block, 0, $len);
                     $ciphertext .= $block;
                     $pos = $len;
                 }
@@ -373,22 +371,22 @@ class Crypt_AES extends Crypt_Rijndael
      *
      * @see Crypt_AES::encrypt()
      * @access public
-     * @param String $ciphertext
+     * @param string $ciphertext
      */
     public function decrypt($ciphertext)
     {
         if (CRYPT_AES_MODE == CRYPT_AES_MODE_MCRYPT) {
             $this->_mcryptSetup();
 
-            if ($this->mode == 'ncfb' && $this->continuousBuffer) {
-                $iv        = &$this->decryptIV;
-                $pos       = &$this->debuffer['pos'];
-                $len       = strlen($ciphertext);
+            if ('ncfb' == $this->mode && $this->continuousBuffer) {
+                $iv = &$this->decryptIV;
+                $pos = &$this->debuffer['pos'];
+                $len = mb_strlen($ciphertext);
                 $plaintext = '';
-                $i         = 0;
+                $i = 0;
                 if ($pos) {
                     $orig_pos = $pos;
-                    $max      = 16 - $pos;
+                    $max = 16 - $pos;
                     if ($len >= $max) {
                         $i = $max;
                         $len -= $max;
@@ -399,19 +397,19 @@ class Crypt_AES extends Crypt_Rijndael
                         $len = 0;
                     }
                     // ie. $i = min($max, $len), $len-= $i, $pos+= $i, $pos%= $blocksize
-                    $plaintext = substr($iv, $orig_pos) ^ $ciphertext;
-                    $iv        = substr_replace($iv, substr($ciphertext, 0, $i), $orig_pos, $i);
+                    $plaintext = mb_substr($iv, $orig_pos) ^ $ciphertext;
+                    $iv = substr_replace($iv, mb_substr($ciphertext, 0, $i), $orig_pos, $i);
                 }
                 if ($len >= 16) {
-                    $cb = substr($ciphertext, $i, $len - $len % 16);
+                    $cb = mb_substr($ciphertext, $i, $len - $len % 16);
                     $plaintext .= mcrypt_generic($this->ecb, $iv . $cb) ^ $cb;
-                    $iv = substr($cb, -16);
+                    $iv = mb_substr($cb, -16);
                     $len %= 16;
                 }
                 if ($len) {
                     $iv = mcrypt_generic($this->ecb, $iv);
-                    $plaintext .= $iv ^ substr($ciphertext, -$len);
-                    $iv  = substr_replace($iv, substr($ciphertext, -$len), 0, $len);
+                    $plaintext .= $iv ^ mb_substr($ciphertext, -$len);
+                    $iv = substr_replace($iv, mb_substr($ciphertext, -$len), 0, $len);
                     $pos = $len;
                 }
 
@@ -421,7 +419,7 @@ class Crypt_AES extends Crypt_Rijndael
             if ($this->paddable) {
                 // we pad with chr(0) since that's what mcrypt_generic does.  to quote from http://php.net/function.mcrypt-generic :
                 // "The data is padded with "\0" to make sure the length of the data is n * blocksize."
-                $ciphertext = str_pad($ciphertext, (strlen($ciphertext) + 15) & 0xFFFFFFF0, chr(0));
+                $ciphertext = str_pad($ciphertext, (mb_strlen($ciphertext) + 15) & 0xFFFFFFF0, chr(0));
             }
 
             $plaintext = mdecrypt_generic($this->demcrypt, $ciphertext);
@@ -451,13 +449,13 @@ class Crypt_AES extends Crypt_Rijndael
 
         if (!$this->explicit_key_length) {
             // this just copied from Crypt_Rijndael::_setup()
-            $length = strlen($this->key) >> 2;
+            $length = mb_strlen($this->key) >> 2;
             if ($length > 8) {
                 $length = 8;
-            } else if ($length < 4) {
+            } elseif ($length < 4) {
                 $length = 4;
             }
-            $this->Nk       = $length;
+            $this->Nk = $length;
             $this->key_size = $length << 2;
         }
 
@@ -474,8 +472,8 @@ class Crypt_AES extends Crypt_Rijndael
                 $this->key_size = 32;
         }
 
-        $this->key       = str_pad(substr($this->key, 0, $this->key_size), $this->key_size, chr(0));
-        $this->encryptIV = $this->decryptIV = $this->iv = str_pad(substr($this->iv, 0, 16), 16, chr(0));
+        $this->key = str_pad(mb_substr($this->key, 0, $this->key_size), $this->key_size, chr(0));
+        $this->encryptIV = $this->decryptIV = $this->iv = str_pad(mb_substr($this->iv, 0, 16), 16, chr(0));
 
         if (!isset($this->enmcrypt)) {
             $mode = $this->mode;
@@ -484,16 +482,15 @@ class Crypt_AES extends Crypt_Rijndael
             $this->demcrypt = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', $mode, '');
             $this->enmcrypt = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', $mode, '');
 
-            if ($mode == 'ncfb') {
+            if ('ncfb' == $mode) {
                 $this->ecb = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, '');
             }
-
         } // else should mcrypt_generic_deinit be called?
 
         mcrypt_generic_init($this->demcrypt, $this->key, $this->iv);
         mcrypt_generic_init($this->enmcrypt, $this->key, $this->iv);
 
-        if ($this->mode == 'ncfb') {
+        if ('ncfb' == $this->mode) {
             mcrypt_generic_init($this->ecb, $this->key, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
         }
 

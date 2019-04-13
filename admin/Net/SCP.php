@@ -92,7 +92,7 @@ class Net_SCP
     /**
      * SSH Object
      *
-     * @var Object
+     * @var object
      * @access private
      */
     public $ssh;
@@ -100,7 +100,7 @@ class Net_SCP
     /**
      * Packet Size
      *
-     * @var Integer
+     * @var int
      * @access private
      */
     public $packet_size;
@@ -108,7 +108,7 @@ class Net_SCP
     /**
      * Mode
      *
-     * @var Integer
+     * @var int
      * @access private
      */
     public $mode;
@@ -118,9 +118,9 @@ class Net_SCP
      *
      * Connects to an SSH server
      *
-     * @param String $host
      * @param optional Integer $port
      * @param optional Integer $timeout
+     * @param mixed $ssh
      * @return Net_SCP
      * @access public
      */
@@ -130,13 +130,13 @@ class Net_SCP
             return;
         }
 
-        switch (strtolower(get_class($ssh))) {
+        switch (mb_strtolower(get_class($ssh))) {
             case 'net_ssh2':
                 $this->mode = NET_SCP_SSH2;
                 break;
             case 'net_ssh1':
                 $this->packet_size = 50000;
-                $this->mode        = NET_SCP_SSH1;
+                $this->mode = NET_SCP_SSH1;
                 break;
             default:
                 return;
@@ -159,10 +159,10 @@ class Net_SCP
      * Currently, only binary mode is supported.  As such, if the line endings need to be adjusted, you will need to take
      * care of that, yourself.
      *
-     * @param String $remote_file
-     * @param String $data
+     * @param string $remote_file
+     * @param string $data
      * @param optional Integer $mode
-     * @return Boolean
+     * @return bool
      * @access public
      */
     public function put($remote_file, $data, $mode = NET_SCP_STRING)
@@ -178,23 +178,24 @@ class Net_SCP
             return false;
         }
 
-        if ($this->mode == NET_SCP_SSH2) {
+        if (NET_SCP_SSH2 == $this->mode) {
             $this->packet_size = $this->ssh->packet_size_client_to_server[NET_SSH2_CHANNEL_EXEC];
         }
 
         $remote_file = basename($remote_file);
-        $this->_send('C0644 ' . strlen($data) . ' ' . $remote_file . "\n");
+        $this->_send('C0644 ' . mb_strlen($data) . ' ' . $remote_file . "\n");
 
         $temp = $this->_receive();
         if ($temp !== chr(0)) {
             return false;
         }
 
-        if ($mode == NET_SCP_STRING) {
+        if (NET_SCP_STRING == $mode) {
             $this->_send($data);
         } else {
             if (!is_file($data)) {
-                user_error("$data is not a valid file", E_USER_NOTICE);
+                trigger_error("$data is not a valid file", E_USER_NOTICE);
+
                 return false;
             }
             $fp = @fopen($data, 'rb');
@@ -217,9 +218,9 @@ class Net_SCP
      * the operation was unsuccessful.  If $local_file is defined, returns true or false depending on the success of the
      * operation
      *
-     * @param String $remote_file
+     * @param string $remote_file
      * @param optional String $local_file
-     * @return Mixed
+     * @return mixed
      * @access public
      */
     public function get($remote_file, $local_file = false)
@@ -240,7 +241,7 @@ class Net_SCP
 
         $size = 0;
 
-        if ($local_file !== false) {
+        if (false !== $local_file) {
             $fp = @fopen($local_file, 'wb');
             if (!$fp) {
                 return false;
@@ -251,19 +252,20 @@ class Net_SCP
         while ($size < $info['size']) {
             $data = $this->_receive();
             // SCP usually seems to split stuff out into 16k chunks
-            $size += strlen($data);
+            $size += mb_strlen($data);
 
-            if ($local_file === false) {
+            if (false === $local_file) {
                 $content .= $data;
             } else {
-                fputs($fp, $data);
+                fwrite($fp, $data);
             }
         }
 
         $this->_close();
 
-        if ($local_file !== false) {
+        if (false !== $local_file) {
             fclose($fp);
+
             return true;
         }
 
@@ -273,7 +275,7 @@ class Net_SCP
     /**
      * Sends a packet to an SSH server
      *
-     * @param String $data
+     * @param string $data
      * @access private
      */
     public function _send($data)
@@ -283,7 +285,7 @@ class Net_SCP
                 $this->ssh->_send_channel_packet(NET_SSH2_CHANNEL_EXEC, $data);
                 break;
             case NET_SCP_SSH1:
-                $data = pack('CNa*', NET_SSH1_CMSG_STDIN_DATA, strlen($data), $data);
+                $data = pack('CNa*', NET_SSH1_CMSG_STDIN_DATA, mb_strlen($data), $data);
                 $this->ssh->_send_binary_packet($data);
         }
     }
@@ -291,7 +293,7 @@ class Net_SCP
     /**
      * Receives a packet from an SSH server
      *
-     * @return String
+     * @return string
      * @access private
      */
     public function _receive()
@@ -308,6 +310,7 @@ class Net_SCP
                     switch ($response[NET_SSH1_RESPONSE_TYPE]) {
                         case NET_SSH1_SMSG_STDOUT_DATA:
                             extract(unpack('Nlength', $response[NET_SSH1_RESPONSE_DATA]));
+
                             return $this->ssh->_string_shift($response[NET_SSH1_RESPONSE_DATA], $length);
                         case NET_SSH1_SMSG_STDERR_DATA:
                             break;
@@ -315,9 +318,11 @@ class Net_SCP
                             $this->ssh->_send_binary_packet(chr(NET_SSH1_CMSG_EXIT_CONFIRMATION));
                             fclose($this->ssh->fsock);
                             $this->ssh->bitmap = 0;
+
                             return false;
                         default:
-                            user_error('Unknown packet received', E_USER_NOTICE);
+                            trigger_error('Unknown packet received', E_USER_NOTICE);
+
                             return false;
                     }
                 }

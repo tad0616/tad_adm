@@ -50,7 +50,7 @@ class File_ANSI
     /**
      * Max Width
      *
-     * @var Integer
+     * @var int
      * @access private
      */
     public $max_x;
@@ -58,7 +58,7 @@ class File_ANSI
     /**
      * Max Height
      *
-     * @var Integer
+     * @var int
      * @access private
      */
     public $max_y;
@@ -66,7 +66,7 @@ class File_ANSI
     /**
      * Max History
      *
-     * @var Integer
+     * @var int
      * @access private
      */
     public $max_history;
@@ -74,7 +74,7 @@ class File_ANSI
     /**
      * History
      *
-     * @var Array
+     * @var array
      * @access private
      */
     public $history;
@@ -82,7 +82,7 @@ class File_ANSI
     /**
      * History Attributes
      *
-     * @var Array
+     * @var array
      * @access private
      */
     public $history_attrs;
@@ -90,7 +90,7 @@ class File_ANSI
     /**
      * Current Column
      *
-     * @var Integer
+     * @var int
      * @access private
      */
     public $x;
@@ -98,7 +98,7 @@ class File_ANSI
     /**
      * Current Row
      *
-     * @var Integer
+     * @var int
      * @access private
      */
     public $y;
@@ -106,7 +106,7 @@ class File_ANSI
     /**
      * Old Column
      *
-     * @var Integer
+     * @var int
      * @access private
      */
     public $old_x;
@@ -114,7 +114,7 @@ class File_ANSI
     /**
      * Old Row
      *
-     * @var Integer
+     * @var int
      * @access private
      */
     public $old_y;
@@ -122,7 +122,7 @@ class File_ANSI
     /**
      * An empty attribute row
      *
-     * @var Array
+     * @var array
      * @access private
      */
     public $attr_row;
@@ -130,7 +130,7 @@ class File_ANSI
     /**
      * The current screen text
      *
-     * @var Array
+     * @var array
      * @access private
      */
     public $screen;
@@ -138,7 +138,7 @@ class File_ANSI
     /**
      * The current screen attributes
      *
-     * @var Array
+     * @var array
      * @access private
      */
     public $attrs;
@@ -146,7 +146,7 @@ class File_ANSI
     /**
      * The current foreground color
      *
-     * @var String
+     * @var string
      * @access private
      */
     public $foreground;
@@ -154,7 +154,7 @@ class File_ANSI
     /**
      * The current background color
      *
-     * @var String
+     * @var string
      * @access private
      */
     public $background;
@@ -162,7 +162,7 @@ class File_ANSI
     /**
      * Bold flag
      *
-     * @var Boolean
+     * @var bool
      * @access private
      */
     public $bold;
@@ -170,7 +170,7 @@ class File_ANSI
     /**
      * Underline flag
      *
-     * @var Boolean
+     * @var bool
      * @access private
      */
     public $underline;
@@ -178,7 +178,7 @@ class File_ANSI
     /**
      * Blink flag
      *
-     * @var Boolean
+     * @var bool
      * @access private
      */
     public $blink;
@@ -186,7 +186,7 @@ class File_ANSI
     /**
      * Reverse flag
      *
-     * @var Boolean
+     * @var bool
      * @access private
      */
     public $reverse;
@@ -194,7 +194,7 @@ class File_ANSI
     /**
      * Color flag
      *
-     * @var Boolean
+     * @var bool
      * @access private
      */
     public $color;
@@ -202,7 +202,7 @@ class File_ANSI
     /**
      * Current ANSI code
      *
-     * @var String
+     * @var string
      * @access private
      */
     public $ansi;
@@ -224,26 +224,26 @@ class File_ANSI
      *
      * Resets the screen as well
      *
-     * @param Integer $x
-     * @param Integer $y
+     * @param int $x
+     * @param int $y
      * @access public
      */
     public function setDimensions($x, $y)
     {
-        $this->max_x      = $x - 1;
-        $this->max_y      = $y - 1;
-        $this->x          = $this->y          = 0;
-        $this->history    = $this->history_attrs    = [];
-        $this->attr_row   = array_fill(0, $this->max_x + 1, '');
-        $this->screen     = array_fill(0, $this->max_y + 1, '');
-        $this->attrs      = array_fill(0, $this->max_y + 1, $this->attr_row);
+        $this->max_x = $x - 1;
+        $this->max_y = $y - 1;
+        $this->x = $this->y = 0;
+        $this->history = $this->history_attrs = [];
+        $this->attr_row = array_fill(0, $this->max_x + 1, '');
+        $this->screen = array_fill(0, $this->max_y + 1, '');
+        $this->attrs = array_fill(0, $this->max_y + 1, $this->attr_row);
         $this->foreground = 'white';
         $this->background = 'black';
-        $this->bold       = false;
-        $this->underline  = false;
-        $this->blink      = false;
-        $this->reverse    = false;
-        $this->color      = false;
+        $this->bold = false;
+        $this->underline = false;
+        $this->blink = false;
+        $this->reverse = false;
+        $this->color = false;
 
         $this->ansi = '';
     }
@@ -251,8 +251,7 @@ class File_ANSI
     /**
      * Set the number of lines that should be logged past the terminal height
      *
-     * @param Integer $x
-     * @param Integer $y
+     * @param mixed $history
      * @access public
      */
     public function setHistory($history)
@@ -263,7 +262,7 @@ class File_ANSI
     /**
      * Load a string
      *
-     * @param String $source
+     * @param string $source
      * @access public
      */
     public function loadString($source)
@@ -275,23 +274,23 @@ class File_ANSI
     /**
      * Appdend a string
      *
-     * @param String $source
+     * @param string $source
      * @access public
      */
     public function appendString($source)
     {
-        for ($i = 0; $i < strlen($source); $i++) {
-            if (strlen($this->ansi)) {
+        for ($i = 0; $i < mb_strlen($source); $i++) {
+            if (mb_strlen($this->ansi)) {
                 $this->ansi .= $source[$i];
                 $chr = ord($source[$i]);
                 // http://en.wikipedia.org/wiki/ANSI_escape_code#Sequence_elements
                 // single character CSI's not currently supported
                 switch (true) {
-                    case $this->ansi == "\x1B=":
+                    case "\x1B=" == $this->ansi:
                         $this->ansi = '';
                         continue 2;
-                    case strlen($this->ansi) == 2 && $chr >= 64 && $chr <= 95 && $chr != ord('['):
-                    case strlen($this->ansi) > 2 && $chr >= 64 && $chr <= 126:
+                    case 2 == mb_strlen($this->ansi) && $chr >= 64 && $chr <= 95 && $chr != ord('['):
+                    case mb_strlen($this->ansi) > 2 && $chr >= 64 && $chr <= 126:
                         break;
                     default:
                         continue 2;
@@ -301,27 +300,28 @@ class File_ANSI
                     case "\x1B[H": // Move cursor to upper left corner
                         $this->old_x = $this->x;
                         $this->old_y = $this->y;
-                        $this->x     = $this->y     = 0;
+                        $this->x = $this->y = 0;
                         break;
                     case "\x1B[J": // Clear screen from cursor down
                         $this->history = array_merge($this->history, array_slice(array_splice($this->screen, $this->y + 1), 0, $this->old_y));
-                        $this->screen  = array_merge($this->screen, array_fill($this->y, $this->max_y, ''));
+                        $this->screen = array_merge($this->screen, array_fill($this->y, $this->max_y, ''));
 
                         $this->history_attrs = array_merge($this->history_attrs, array_slice(array_splice($this->attrs, $this->y + 1), 0, $this->old_y));
-                        $this->attrs         = array_merge($this->attrs, array_fill($this->y, $this->max_y, $this->attr_row));
+                        $this->attrs = array_merge($this->attrs, array_fill($this->y, $this->max_y, $this->attr_row));
 
                         if (count($this->history) == $this->max_history) {
                             array_shift($this->history);
                             array_shift($this->history_attrs);
                         }
+                        // no break
                     case "\x1B[K": // Clear screen from cursor right
-                        $this->screen[$this->y] = substr($this->screen[$this->y], 0, $this->x);
+                        $this->screen[$this->y] = mb_substr($this->screen[$this->y], 0, $this->x);
 
                         array_splice($this->attrs[$this->y], $this->x + 1);
                         break;
                     case "\x1B[2K": // Clear entire line
                         $this->screen[$this->y] = str_repeat(' ', $this->x);
-                        $this->attrs[$this->y]  = $this->attr_row;
+                        $this->attrs[$this->y] = $this->attr_row;
                         break;
                     case "\x1B[?1h": // set cursor key to application
                     case "\x1B[?25h": // show the cursor
@@ -335,12 +335,12 @@ class File_ANSI
                             case preg_match('#\x1B\[(\d+);(\d+)H#', $this->ansi, $match): // Move cursor to screen location v,h
                                 $this->old_x = $this->x;
                                 $this->old_y = $this->y;
-                                $this->x     = $match[2] - 1;
-                                $this->y     = $match[1] - 1;
+                                $this->x = $match[2] - 1;
+                                $this->y = $match[1] - 1;
                                 break;
                             case preg_match('#\x1B\[(\d+)C#', $this->ansi, $match): // Move cursor right n lines
                                 $this->old_x = $this->x;
-                                $x           = $match[1] - 1;
+                                $x = $match[1] - 1;
                                 break;
                             case preg_match('#\x1B\[(\d+);(\d+)r#', $this->ansi, $match): // Set top and bottom lines of a window
                                 break;
@@ -368,7 +368,7 @@ class File_ANSI
                                             }
 
                                             if ($this->reverse) {
-                                                $temp             = $this->background;
+                                                $temp = $this->background;
                                                 $this->background = $this->foreground;
                                                 $this->foreground = $temp;
                                             }
@@ -378,26 +378,26 @@ class File_ANSI
                                         case 1: // Turn bold mode on
                                             if (!$this->bold) {
                                                 $this->attrs[$this->y][$this->x] = '<b>';
-                                                $this->bold                      = true;
+                                                $this->bold = true;
                                             }
                                             break;
                                         case 4: // Turn underline mode on
                                             if (!$this->underline) {
                                                 $this->attrs[$this->y][$this->x] = '<u>';
-                                                $this->underline                 = true;
+                                                $this->underline = true;
                                             }
                                             break;
                                         case 5: // Turn blinking mode on
                                             if (!$this->blink) {
                                                 $this->attrs[$this->y][$this->x] = '<blink>';
-                                                $this->blink                     = true;
+                                                $this->blink = true;
                                             }
                                             break;
                                         case 7: // Turn reverse video on
-                                            $this->reverse                   = !$this->reverse;
-                                            $temp                            = $this->background;
-                                            $this->background                = $this->foreground;
-                                            $this->foreground                = $temp;
+                                            $this->reverse = !$this->reverse;
+                                            $temp = $this->background;
+                                            $this->background = $this->foreground;
+                                            $this->foreground = $temp;
                                             $this->attrs[$this->y][$this->x] = '<span style="color: ' . $this->foreground . '; background: ' . $this->background . '">';
                                             if ($this->color) {
                                                 $this->attrs[$this->y][$this->x] = '</span>' . $this->attrs[$this->y][$this->x];
@@ -426,7 +426,6 @@ class File_ANSI
                                                     break;
                                                 case 37:$front = 'white';
                                                     break;
-
                                                 case 40:$back = 'black';
                                                     break;
                                                 case 41:$back = 'red';
@@ -443,9 +442,8 @@ class File_ANSI
                                                     break;
                                                 case 47:$back = 'white';
                                                     break;
-
                                                 default:
-                                                    user_error('Unsupported attribute: ' . $mod);
+                                                    trigger_error('Unsupported attribute: ' . $mod);
                                                     $this->ansi = '';
                                                     break 2;
                                             }
@@ -460,7 +458,7 @@ class File_ANSI
                                 }
                                 break;
                             default:
-                                user_error("{$this->ansi} unsupported\r\n");
+                                trigger_error("{$this->ansi} unsupported\r\n");
                         }
                 }
                 $this->ansi = '';
@@ -511,11 +509,11 @@ class File_ANSI
         //}
 
         while ($this->y >= $this->max_y) {
-            $this->history  = array_merge($this->history, [array_shift($this->screen)]);
+            $this->history = array_merge($this->history, [array_shift($this->screen)]);
             $this->screen[] = '';
 
             $this->history_attrs = array_merge($this->history_attrs, [array_shift($this->attrs)]);
-            $this->attrs[]       = $this->attr_row;
+            $this->attrs[] = $this->attr_row;
 
             if (count($this->history) >= $this->max_history) {
                 array_shift($this->history);
@@ -531,7 +529,7 @@ class File_ANSI
      * Returns the current screen without preformating
      *
      * @access private
-     * @return String
+     * @return string
      */
     public function _getScreen()
     {
@@ -547,6 +545,7 @@ class File_ANSI
             }
             $output .= "\r\n";
         }
+
         return rtrim($output);
     }
 
@@ -554,7 +553,7 @@ class File_ANSI
      * Returns the current screen
      *
      * @access public
-     * @return String
+     * @return string
      */
     public function getScreen()
     {
@@ -565,7 +564,7 @@ class File_ANSI
      * Returns the current screen and the x previous lines
      *
      * @access public
-     * @return String
+     * @return string
      */
     public function getHistory()
     {

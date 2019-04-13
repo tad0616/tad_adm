@@ -12,12 +12,12 @@ class MySQLDump
 {
     const MAX_SQL_SIZE = 1e6;
 
-    const NONE     = 0;
-    const DROP     = 1;
-    const CREATE   = 2;
-    const DATA     = 4;
+    const NONE = 0;
+    const DROP = 1;
+    const CREATE = 2;
+    const DATA = 4;
     const TRIGGERS = 8;
-    const ALL      = 15; // DROP | CREATE | DATA | TRIGGERS
+    const ALL = 15; // DROP | CREATE | DATA | TRIGGERS
 
     /** @var array */
     public $tables = [
@@ -30,6 +30,7 @@ class MySQLDump
     /**
      * Connects to database.
      * @param  mysqli connection
+     * @param mixed $charset
      */
     public function __construct(mysqli $connection, $charset = 'utf8')
     {
@@ -37,7 +38,6 @@ class MySQLDump
 
         if ($connection->connect_errno) {
             throw new Exception($connection->connect_error);
-
         } elseif (!$connection->set_charset($charset)) {
             // was added in MySQL 5.0.7 and PHP 5.0.5, fixed in PHP 5.1.5)
             throw new Exception($connection->error);
@@ -47,11 +47,11 @@ class MySQLDump
     /**
      * Saves dump to the file.
      * @param  string filename
-     * @return void
+     * @param mixed $file
      */
     public function save($file)
     {
-        $handle = strcasecmp(substr($file, -3), '.gz') ? fopen($file, 'wb') : gzopen($file, 'wb');
+        $handle = strcasecmp(mb_substr($file, -3), '.gz') ? fopen($file, 'wb') : gzopen($file, 'wb');
         if (!$handle) {
             throw new Exception("ERROR: Cannot write file '$file'.");
         }
@@ -61,13 +61,13 @@ class MySQLDump
     /**
      * Writes dump to logical file.
      * @param  resource
-     * @return void
+     * @param null|mixed $handle
      */
     public function write($handle = null)
     {
-        if ($handle === null) {
+        if (null === $handle) {
             $handle = fopen('php://output', 'wb');
-        } elseif (!is_resource($handle) || get_resource_type($handle) !== 'stream') {
+        } elseif (!is_resource($handle) || 'stream' !== get_resource_type($handle)) {
             throw new Exception('Argument must be stream resource.');
         }
 
@@ -75,7 +75,7 @@ class MySQLDump
 
         $res = $this->connection->query('SHOW FULL TABLES');
         while ($row = $res->fetch_row()) {
-            if ($row[1] === 'VIEW') {
+            if ('VIEW' === $row[1]) {
                 $views[] = $row[0];
             } else {
                 $tables[] = $row[0];
@@ -88,7 +88,9 @@ class MySQLDump
         $this->connection->query('LOCK TABLES `' . implode('` READ, `', $tables) . '` READ');
 
         $db = $this->connection->query('SELECT DATABASE()')->fetch_row();
-        fwrite($handle, '-- Created at ' . date('j.n.Y G:i') . " using David Grudl MySQL Dump Utility\n"
+        fwrite(
+            $handle,
+            '-- Created at ' . date('j.n.Y G:i') . " using David Grudl MySQL Dump Utility\n"
             . (isset($_SERVER['HTTP_HOST']) ? "-- Host: $_SERVER[HTTP_HOST]\n" : '')
             . '-- MySQL Server: ' . $this->connection->server_info . "\n"
             . '-- Database: ' . $db[0] . "\n"
@@ -110,13 +112,14 @@ class MySQLDump
     /**
      * Dumps table to logical file.
      * @param  resource
-     * @return void
+     * @param mixed $handle
+     * @param mixed $table
      */
     public function dumpTable($handle, $table)
     {
         $delTable = $this->delimite($table);
-        $res      = $this->connection->query("SHOW CREATE TABLE $delTable") or die($this->connection->error);
-        $row      = $res->fetch_assoc();
+        $res = $this->connection->query("SHOW CREATE TABLE $delTable") or die($this->connection->error);
+        $row = $res->fetch_assoc();
         $res->close();
 
         fwrite($handle, "-- --------------------------------------------------------\n\n");
@@ -134,22 +137,22 @@ class MySQLDump
 
         if (!$view && ($mode & self::DATA)) {
             $numeric = [];
-            $res     = $this->connection->query("SHOW COLUMNS FROM $delTable");
-            $cols    = [];
+            $res = $this->connection->query("SHOW COLUMNS FROM $delTable");
+            $cols = [];
             while ($row = $res->fetch_assoc()) {
-                $col           = $row['Field'];
-                $cols[]        = $this->delimite($col);
+                $col = $row['Field'];
+                $cols[] = $this->delimite($col);
                 $numeric[$col] = (bool) preg_match('#^[^(]*(BYTE|COUNTER|SERIAL|INT|LONG$|CURRENCY|REAL|MONEY|FLOAT|DOUBLE|DECIMAL|NUMERIC|NUMBER)#i', $row['Type']);
             }
             $cols = '(' . implode(', ', $cols) . ')';
             $res->close();
 
             $size = 0;
-            $res  = $this->connection->query("SELECT * FROM $delTable", MYSQLI_USE_RESULT);
+            $res = $this->connection->query("SELECT * FROM $delTable", MYSQLI_USE_RESULT);
             while ($row = $res->fetch_assoc()) {
                 $s = '(';
                 foreach ($row as $key => $value) {
-                    if ($value === null) {
+                    if (null === $value) {
                         $s .= "NULL,\t";
                     } elseif ($numeric[$key]) {
                         $s .= $value . ",\t";
@@ -158,13 +161,13 @@ class MySQLDump
                     }
                 }
 
-                if ($size == 0) {
+                if (0 == $size) {
                     $s = "INSERT INTO $delTable $cols VALUES\n$s";
                 } else {
                     $s = ",\n$s";
                 }
 
-                $len         = strlen($s) - 1;
+                $len = mb_strlen($s) - 1;
                 $s[$len - 1] = ')';
                 fwrite($handle, $s, $len);
 

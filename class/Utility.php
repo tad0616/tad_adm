@@ -1,4 +1,6 @@
-<?php namespace XoopsModules\Tad_adm;
+<?php
+
+namespace XoopsModules\Tad_adm;
 
 /*
  Utility Class Definition
@@ -28,10 +30,10 @@ class Utility
     public static function chk_uid()
     {
         global $xoopsDB;
-        $sql    = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '" . $xoopsDB->prefix("tad_adm") . "' AND COLUMN_NAME = 'uid'";
+        $sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '" . $xoopsDB->prefix('tad_adm') . "' AND COLUMN_NAME = 'uid'";
         $result = $xoopsDB->query($sql);
         list($type) = $xoopsDB->fetchRow($result);
-        if ($type == 'smallint') {
+        if ('smallint' == $type) {
             return true;
         }
 
@@ -42,14 +44,15 @@ class Utility
     public static function go_update_uid()
     {
         global $xoopsDB;
-        $sql = "ALTER TABLE `" . $xoopsDB->prefix("tad_adm") . "` CHANGE `uid` `uid` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT 0";
+        $sql = 'ALTER TABLE `' . $xoopsDB->prefix('tad_adm') . '` CHANGE `uid` `uid` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT 0';
         $xoopsDB->queryF($sql) or redirect_header(XOOPS_URL, 3, $xoopsDB->error());
+
         return true;
     }
 
     //建立目錄
 
-    public static function mk_dir($dir = "")
+    public static function mk_dir($dir = '')
     {
         //若無目錄名稱秀出警告訊息
         if (empty($dir)) {
@@ -66,13 +69,13 @@ class Utility
 
     //拷貝目錄
 
-    public static function full_copy($source = "", $target = "")
+    public static function full_copy($source = '', $target = '')
     {
         if (is_dir($source)) {
             @mkdir($target);
             $d = dir($source);
             while (false !== ($entry = $d->read())) {
-                if ($entry == '.' || $entry == '..') {
+                if ('.' == $entry || '..' == $entry) {
                     continue;
                 }
 
@@ -94,10 +97,13 @@ class Utility
         if (!rename($oldfile, $newfile)) {
             if (copy($oldfile, $newfile)) {
                 unlink($oldfile);
+
                 return true;
             }
+
             return false;
         }
+
         return true;
     }
 
@@ -112,9 +118,9 @@ class Utility
         }
 
         while ($file = readdir($dir_handle)) {
-            if ($file != "." && $file != "..") {
-                if (!is_dir($dirname . "/" . $file)) {
-                    unlink($dirname . "/" . $file);
+            if ('.' != $file && '..' != $file) {
+                if (!is_dir($dirname . '/' . $file)) {
+                    unlink($dirname . '/' . $file);
                 } else {
                     static::delete_directory($dirname . '/' . $file);
                 }
@@ -122,7 +128,7 @@ class Utility
         }
         closedir($dir_handle);
         rmdir($dirname);
+
         return true;
     }
-
 }

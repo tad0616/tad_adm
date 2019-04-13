@@ -46,7 +46,7 @@
  *
  * @access private
  */
-define('CRYPT_RANDOM_IS_WINDOWS', strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
+define('CRYPT_RANDOM_IS_WINDOWS', 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)));
 
 /**
  * Generate a random string.
@@ -55,8 +55,8 @@ define('CRYPT_RANDOM_IS_WINDOWS', strtoupper(substr(PHP_OS, 0, 3)) === 'WIN');
  * microoptimizations because this function has the potential of being called a huge number of times.
  * eg. for RSA key generation.
  *
- * @param Integer $length
- * @return String
+ * @param int $length
+ * @return string
  * @access public
  */
 function crypt_random_string($length)
@@ -90,12 +90,12 @@ function crypt_random_string($length)
         }
         // method 2
         static $fp = true;
-        if ($fp === true) {
+        if (true === $fp) {
             // warning's will be output unles the error suppression operator is used. errors such as
             // "open_basedir restriction in effect", "Permission denied", "No such file or directory", etc.
             $fp = @fopen('/dev/urandom', 'rb');
         }
-        if ($fp !== true && $fp !== false) { // surprisingly faster than !is_bool() or is_resource()
+        if (true !== $fp && false !== $fp) { // surprisingly faster than !is_bool() or is_resource()
             return fread($fp, $length);
         }
         // method 3. pretty much does the same thing as method 2 per the following url:
@@ -127,7 +127,7 @@ function crypt_random_string($length)
     // full control over his own http requests. he, however, is not going to have control over
     // everyone's http requests.
     static $crypto = false, $v;
-    if ($crypto === false) {
+    if (false === $crypto) {
         // save old session data
         $old_session_id = session_id();
         $old_use_cookies = ini_get('session.use_cookies');
@@ -135,7 +135,7 @@ function crypt_random_string($length)
         if (isset($_SESSION)) {
             $_OLD_SESSION = $_SESSION;
         }
-        if ($old_session_id != '') {
+        if ('' != $old_session_id) {
             session_write_close();
         }
 
@@ -161,7 +161,7 @@ function crypt_random_string($length)
         session_write_close();
 
         // restore old session data
-        if ($old_session_id != '') {
+        if ('' != $old_session_id) {
             session_id($old_session_id);
             session_start();
             ini_set('session.use_cookies', $old_use_cookies);
@@ -204,6 +204,7 @@ function crypt_random_string($length)
                 break;
             default:
                 $crypto = $seed;
+
                 return crypt_random_string($length);
         }
 
@@ -225,25 +226,27 @@ function crypt_random_string($length)
         // ANSI X9.31 recommends ciphers be used and phpseclib does use them if they're available (see
         // later on in the code) but if they're not we'll use sha1
         $result = '';
-        while (strlen($result) < $length) { // each loop adds 20 bytes
+        while (mb_strlen($result) < $length) { // each loop adds 20 bytes
             // microtime() isn't packed as "densely" as it could be but then neither is that the idea.
             // the idea is simply to ensure that each "block" has a unique element to it.
             $i = pack('H*', sha1(microtime()));
             $r = pack('H*', sha1($i ^ $v));
             $v = pack('H*', sha1($r ^ $i));
-            $result.= $r;
+            $result .= $r;
         }
-        return substr($result, 0, $length);
+
+        return mb_substr($result, 0, $length);
     }
 
     //return $crypto->encrypt(str_repeat("\0", $length));
 
     $result = '';
-    while (strlen($result) < $length) {
+    while (mb_strlen($result) < $length) {
         $i = $crypto->encrypt(microtime());
         $r = $crypto->encrypt($i ^ $v);
         $v = $crypto->encrypt($r ^ $i);
-        $result.= $r;
+        $result .= $r;
     }
-    return substr($result, 0, $length);
+
+    return mb_substr($result, 0, $length);
 }

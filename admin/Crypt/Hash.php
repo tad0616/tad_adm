@@ -87,7 +87,7 @@ class Crypt_Hash
      * Byte-length of compression blocks / key (Internal HMAC)
      *
      * @see Crypt_Hash::setAlgorithm()
-     * @var Integer
+     * @var int
      * @access private
      */
     public $b;
@@ -96,7 +96,7 @@ class Crypt_Hash
      * Byte-length of hash output (Internal HMAC)
      *
      * @see Crypt_Hash::setHash()
-     * @var Integer
+     * @var int
      * @access private
      */
     public $l = false;
@@ -105,7 +105,7 @@ class Crypt_Hash
      * Hash Algorithm
      *
      * @see Crypt_Hash::setHash()
-     * @var String
+     * @var string
      * @access private
      */
     public $hash;
@@ -114,7 +114,7 @@ class Crypt_Hash
      * Key
      *
      * @see Crypt_Hash::setKey()
-     * @var String
+     * @var string
      * @access private
      */
     public $key = false;
@@ -123,7 +123,7 @@ class Crypt_Hash
      * Outer XOR (Internal HMAC)
      *
      * @see Crypt_Hash::setKey()
-     * @var String
+     * @var string
      * @access private
      */
     public $opad;
@@ -132,7 +132,7 @@ class Crypt_Hash
      * Inner XOR (Internal HMAC)
      *
      * @see Crypt_Hash::setKey()
-     * @var String
+     * @var string
      * @access private
      */
     public $ipad;
@@ -179,11 +179,11 @@ class Crypt_Hash
      * Sets the hash function.
      *
      * @access public
-     * @param String $hash
+     * @param string $hash
      */
     public function setHash($hash)
     {
-        $hash = strtolower($hash);
+        $hash = mb_strtolower($hash);
         switch ($hash) {
             case 'md5-96':
             case 'sha1-96':
@@ -208,7 +208,7 @@ class Crypt_Hash
 
         switch ($hash) {
             case 'md2':
-                $mode = CRYPT_HASH_MODE == CRYPT_HASH_MODE_HASH && in_array('md2', hash_algos()) ?
+                $mode = CRYPT_HASH_MODE == CRYPT_HASH_MODE_HASH && in_array('md2', hash_algos(), true) ?
                 CRYPT_HASH_MODE_HASH : CRYPT_HASH_MODE_INTERNAL;
                 break;
             case 'sha384':
@@ -234,50 +234,54 @@ class Crypt_Hash
                     default:
                         $this->hash = MHASH_SHA1;
                 }
+
                 return;
             case CRYPT_HASH_MODE_HASH:
                 switch ($hash) {
                     case 'md5':
                     case 'md5-96':
                         $this->hash = 'md5';
+
                         return;
                     case 'md2':
                     case 'sha256':
                     case 'sha384':
                     case 'sha512':
                         $this->hash = $hash;
+
                         return;
                     case 'sha1':
                     case 'sha1-96':
                     default:
                         $this->hash = 'sha1';
                 }
+
                 return;
         }
 
         switch ($hash) {
             case 'md2':
-                $this->b    = 16;
+                $this->b = 16;
                 $this->hash = [$this, '_md2'];
                 break;
             case 'md5':
             case 'md5-96':
-                $this->b    = 64;
+                $this->b = 64;
                 $this->hash = [$this, '_md5'];
                 break;
             case 'sha256':
-                $this->b    = 64;
+                $this->b = 64;
                 $this->hash = [$this, '_sha256'];
                 break;
             case 'sha384':
             case 'sha512':
-                $this->b    = 128;
+                $this->b = 128;
                 $this->hash = [$this, '_sha512'];
                 break;
             case 'sha1':
             case 'sha1-96':
             default:
-                $this->b    = 64;
+                $this->b = 64;
                 $this->hash = [$this, '_sha1'];
         }
 
@@ -289,8 +293,8 @@ class Crypt_Hash
      * Compute the HMAC.
      *
      * @access public
-     * @param String $text
-     * @return String
+     * @param string $text
+     * @return string
      */
     public function hash($text)
     {
@@ -309,12 +313,12 @@ class Crypt_Hash
                     resultant L byte string as the actual key to HMAC."
 
                     -- http://tools.ietf.org/html/rfc2104#section-2 */
-                    $key = strlen($this->key) > $this->b ? call_user_func($this->hash, $this->key) : $this->key;
+                    $key = mb_strlen($this->key) > $this->b ? call_user_func($this->hash, $this->key) : $this->key;
 
-                    $key  = str_pad($key, $this->b, chr(0)); // step 1
+                    $key = str_pad($key, $this->b, chr(0)); // step 1
                     $temp = $this->ipad ^ $key; // step 2
                     $temp .= $text; // step 3
-                    $temp   = call_user_func($this->hash, $temp); // step 4
+                    $temp = call_user_func($this->hash, $temp); // step 4
                     $output = $this->opad ^ $key; // step 5
                     $output .= $temp; // step 6
                     $output = call_user_func($this->hash, $output); // step 7
@@ -332,14 +336,14 @@ class Crypt_Hash
             }
         }
 
-        return substr($output, 0, $this->l);
+        return mb_substr($output, 0, $this->l);
     }
 
     /**
      * Returns the hash length (in bytes)
      *
      * @access public
-     * @return Integer
+     * @return int
      */
     public function getLength()
     {
@@ -350,7 +354,7 @@ class Crypt_Hash
      * Wrapper for MD5
      *
      * @access private
-     * @param String $m
+     * @param string $m
      */
     public function _md5($m)
     {
@@ -361,7 +365,7 @@ class Crypt_Hash
      * Wrapper for SHA1
      *
      * @access private
-     * @param String $m
+     * @param string $m
      */
     public function _sha1($m)
     {
@@ -374,7 +378,7 @@ class Crypt_Hash
      * See {@link http://tools.ietf.org/html/rfc1319 RFC1319}.
      *
      * @access private
-     * @param String $m
+     * @param string $m
      */
     public function _md2($m)
     {
@@ -400,10 +404,10 @@ class Crypt_Hash
         ];
 
         // Step 1. Append Padding Bytes
-        $pad = 16 - (strlen($m) & 0xF);
+        $pad = 16 - (mb_strlen($m) & 0xF);
         $m .= str_repeat(chr($pad), $pad);
 
-        $length = strlen($m);
+        $length = mb_strlen($m);
 
         // Step 2. Append Checksum
         $c = str_repeat(chr(0), 16);
@@ -414,7 +418,7 @@ class Crypt_Hash
                 //$c[$j] = chr($s[ord($m[$i + $j] ^ $l)]);
                 // per <http://www.rfc-editor.org/errata_search.php?rfc=1319>, however, C[j] should be set to S[c xor L] xor C[j]
                 $c[$j] = chr($s[ord($m[$i + $j] ^ $l)] ^ ord($c[$j]));
-                $l     = $c[$j];
+                $l = $c[$j];
             }
         }
         $m .= $c;
@@ -441,7 +445,7 @@ class Crypt_Hash
         }
 
         // Step 5. Output
-        return substr($x, 0, 16);
+        return mb_substr($x, 0, 16);
     }
 
     /**
@@ -450,7 +454,7 @@ class Crypt_Hash
      * See {@link http://en.wikipedia.org/wiki/SHA_hash_functions#SHA-256_.28a_SHA-2_variant.29_pseudocode SHA-256 (a SHA-2 variant) pseudocode - Wikipedia}.
      *
      * @access private
-     * @param String $m
+     * @param string $m
      */
     public function _sha256($m)
     {
@@ -476,7 +480,7 @@ class Crypt_Hash
         ];
 
         // Pre-processing
-        $length = strlen($m);
+        $length = mb_strlen($m);
         // to round to nearest 56 mod 64, we'll add 64 - (length + (64 - 56)) % 64
         $m .= str_repeat(chr(0), 64 - (($length + 8) & 0x3F));
         $m[$length] = chr(0x80);
@@ -501,7 +505,6 @@ class Crypt_Hash
                 $this->_rightRotate($w[$i - 2], 19) ^
                 $this->_rightShift($w[$i - 2], 10);
                 $w[$i] = $this->_add($w[$i - 16], $s0, $w[$i - 7], $s1);
-
             }
 
             // Initialize hash value for this chunk
@@ -555,7 +558,7 @@ class Crypt_Hash
      * Pure-PHP implementation of SHA384 and SHA512
      *
      * @access private
-     * @param String $m
+     * @param string $m
      */
     public function _sha512($m)
     {
@@ -613,10 +616,10 @@ class Crypt_Hash
             }
         }
 
-        $hash = $this->l == 48 ? $init384 : $init512;
+        $hash = 48 == $this->l ? $init384 : $init512;
 
         // Pre-processing
-        $length = strlen($m);
+        $length = mb_strlen($m);
         // to round to nearest 112 mod 128, we'll add 128 - (length + (128 - 112)) % 128
         $m .= str_repeat(chr(0), 128 - (($length + 16) & 0x7F));
         $m[$length] = chr(0x80);
@@ -640,15 +643,15 @@ class Crypt_Hash
                     $w[$i - 15]->bitwise_rightRotate(8),
                     $w[$i - 15]->bitwise_rightShift(7),
                 ];
-                $s0   = $temp[0]->bitwise_xor($temp[1]);
-                $s0   = $s0->bitwise_xor($temp[2]);
+                $s0 = $temp[0]->bitwise_xor($temp[1]);
+                $s0 = $s0->bitwise_xor($temp[2]);
                 $temp = [
                     $w[$i - 2]->bitwise_rightRotate(19),
                     $w[$i - 2]->bitwise_rightRotate(61),
                     $w[$i - 2]->bitwise_rightShift(6),
                 ];
-                $s1    = $temp[0]->bitwise_xor($temp[1]);
-                $s1    = $s1->bitwise_xor($temp[2]);
+                $s1 = $temp[0]->bitwise_xor($temp[1]);
+                $s1 = $s1->bitwise_xor($temp[2]);
                 $w[$i] = $w[$i - 16]->copy();
                 $w[$i] = $w[$i]->add($s0);
                 $w[$i] = $w[$i]->add($w[$i - 7]);
@@ -672,8 +675,8 @@ class Crypt_Hash
                     $a->bitwise_rightRotate(34),
                     $a->bitwise_rightRotate(39),
                 ];
-                $s0   = $temp[0]->bitwise_xor($temp[1]);
-                $s0   = $s0->bitwise_xor($temp[2]);
+                $s0 = $temp[0]->bitwise_xor($temp[1]);
+                $s0 = $s0->bitwise_xor($temp[2]);
                 $temp = [
                     $a->bitwise_and($b),
                     $a->bitwise_and($c),
@@ -681,15 +684,15 @@ class Crypt_Hash
                 ];
                 $maj = $temp[0]->bitwise_xor($temp[1]);
                 $maj = $maj->bitwise_xor($temp[2]);
-                $t2  = $s0->add($maj);
+                $t2 = $s0->add($maj);
 
                 $temp = [
                     $e->bitwise_rightRotate(14),
                     $e->bitwise_rightRotate(18),
                     $e->bitwise_rightRotate(41),
                 ];
-                $s1   = $temp[0]->bitwise_xor($temp[1]);
-                $s1   = $s1->bitwise_xor($temp[2]);
+                $s1 = $temp[0]->bitwise_xor($temp[1]);
+                $s1 = $s1->bitwise_xor($temp[2]);
                 $temp = [
                     $e->bitwise_and($f),
                     $g->bitwise_and($e->bitwise_not()),
@@ -727,7 +730,7 @@ class Crypt_Hash
         // (Crypt_Hash::hash() trims the output for hashes but not for HMACs.  as such, we trim the output here)
         $temp = $hash[0]->toBytes() . $hash[1]->toBytes() . $hash[2]->toBytes() . $hash[3]->toBytes() .
         $hash[4]->toBytes() . $hash[5]->toBytes();
-        if ($this->l != 48) {
+        if (48 != $this->l) {
             $temp .= $hash[6]->toBytes() . $hash[7]->toBytes();
         }
 
@@ -738,15 +741,16 @@ class Crypt_Hash
      * Right Rotate
      *
      * @access private
-     * @param Integer $int
-     * @param Integer $amt
+     * @param int $int
+     * @param int $amt
      * @see _sha256()
-     * @return Integer
+     * @return int
      */
     public function _rightRotate($int, $amt)
     {
         $invamt = 32 - $amt;
-        $mask   = (1 << $invamt) - 1;
+        $mask = (1 << $invamt) - 1;
+
         return (($int << $invamt) & 0xFFFFFFFF) | (($int >> $amt) & $mask);
     }
 
@@ -754,14 +758,15 @@ class Crypt_Hash
      * Right Shift
      *
      * @access private
-     * @param Integer $int
-     * @param Integer $amt
+     * @param int $int
+     * @param int $amt
      * @see _sha256()
-     * @return Integer
+     * @return int
      */
     public function _rightShift($int, $amt)
     {
         $mask = (1 << (32 - $amt)) - 1;
+
         return ($int >> $amt) & $mask;
     }
 
@@ -769,9 +774,9 @@ class Crypt_Hash
      * Not
      *
      * @access private
-     * @param Integer $int
+     * @param int $int
      * @see _sha256()
-     * @return Integer
+     * @return int
      */
     public function _not($int)
     {
@@ -784,8 +789,7 @@ class Crypt_Hash
      * _sha256() adds multiple unsigned 32-bit integers.  Since PHP doesn't support unsigned integers and since the
      * possibility of overflow exists, care has to be taken.  Math_BigInteger() could be used but this should be faster.
      *
-     * @param Integer $...
-     * @return Integer
+     * @return int
      * @see _sha256()
      * @access private
      */
@@ -796,7 +800,7 @@ class Crypt_Hash
             $mod = pow(2, 32);
         }
 
-        $result    = 0;
+        $result = 0;
         $arguments = func_get_args();
         foreach ($arguments as $argument) {
             $result += $argument < 0 ? ($argument & 0x7FFFFFFF) + 0x80000000 : $argument;
@@ -810,15 +814,16 @@ class Crypt_Hash
      *
      * Inspired by array_shift
      *
-     * @param String $string
+     * @param string $string
      * @param optional Integer $index
-     * @return String
+     * @return string
      * @access private
      */
     public function _string_shift(&$string, $index = 1)
     {
-        $substr = substr($string, 0, $index);
-        $string = substr($string, $index);
+        $substr = mb_substr($string, 0, $index);
+        $string = mb_substr($string, $index);
+
         return $substr;
     }
 }
