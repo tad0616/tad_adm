@@ -7,14 +7,14 @@ $op = isset($_REQUEST['op']) ? $_REQUEST['op'] : '';
 
 if ($xoopsUser) {
     $_SESSION['isAdmin'] = $xoopsUser->isAdmin(1);
-} elseif ('helpme' == $op) {
+} elseif ('helpme' === $op) {
     $modhandler = xoops_getHandler('module');
     $xoopsModule = $modhandler->getByDirname('tad_adm');
     $config_handler = xoops_getHandler('config');
     $xoopsModuleConfig = &$config_handler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
 
     $_SESSION['isAdmin'] = ('' != $xoopsModuleConfig['login'] and '' != $_POST['help_passwd'] and $xoopsModuleConfig['login'] == $_POST['help_passwd']) ? true : false;
-} elseif ('send_passwd' == $op) {
+} elseif ('send_passwd' === $op) {
     send_passwd();
     header("location: {$_SERVER['PHP_SELF']}?op=forgot");
 }
@@ -22,7 +22,7 @@ if ($xoopsUser) {
 if (!$_SESSION['isAdmin']) {
     $sql = 'update ' . $xoopsDB->prefix('config') . " set `conf_value`='' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
 
-    if ('forgot' == $op) {
+    if ('forgot' === $op) {
         $form = '
         <div class="card">
             <div class="card-header text-white bg-primary">' . _MD_TADADM_FORGOT . '</div>
@@ -321,7 +321,7 @@ function delete_directory($dirname)
     }
 
     while ($file = readdir($dir_handle)) {
-        if ('.' != $file && '..' != $file) {
+        if ('.' !== $file && '..' !== $file) {
             if (!is_dir($dirname . '/' . $file)) {
                 unlink($dirname . '/' . $file);
             } else {
@@ -609,7 +609,7 @@ $main1 = "
     </table>
 </div>";
 
-$theme_set = ('default' == $xoopsConfig['theme_set']) ? '' : "<li class='list-group-item'><a href='index.php?op=theme_default'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_DEFAULT_THEME . "'></i> " . sprintf(_MD_TADADM_DEFAULT_THEME_DESC, $xoopsConfig['theme_set']) . '</a></li>';
+$theme_set = ('default' === $xoopsConfig['theme_set']) ? '' : "<li class='list-group-item'><a href='index.php?op=theme_default'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_DEFAULT_THEME . "'></i> " . sprintf(_MD_TADADM_DEFAULT_THEME_DESC, $xoopsConfig['theme_set']) . '</a></li>';
 
 $main2 = "
 <div class='card'>

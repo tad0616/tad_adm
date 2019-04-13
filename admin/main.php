@@ -64,7 +64,7 @@ function list_modules($mode = 'tpl')
         if (!isset($mod[$dirname])) {
             continue;
         }
-        if ('module' == $mod[$dirname]['module']['kind']) {
+        if ('module' === $mod[$dirname]['module']['kind']) {
             $ok['module'][] = $dirname;
         } else {
             continue;
@@ -142,7 +142,7 @@ function list_modules($mode = 'tpl')
 
         $Version = '';
         //後台部份
-        if (isset($data['adm_tpl']['kind']) and 'adm_tpl' == $data['adm_tpl']['kind']) {
+        if (isset($data['adm_tpl']['kind']) and 'adm_tpl' === $data['adm_tpl']['kind']) {
             $ok['adm_tpl'][] = $dirname;
             if (is_dir(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}")) {
                 $Version = file_get_contents(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt");
@@ -256,7 +256,7 @@ function list_modules($mode = 'tpl')
         }
 
         //區塊部份
-        if (isset($data['block']['kind']) and 'block' == $data['block']['kind']) {
+        if (isset($data['block']['kind']) and 'block' === $data['block']['kind']) {
             $ok['block'][] = $dirname;
             if (in_array($dirname, $bid_array, true)) {
                 $is_visible = $bid_visible[$dirname];
@@ -306,7 +306,7 @@ function list_modules($mode = 'tpl')
 
         $Version = '';
         //佈景部份
-        if (isset($data['theme']['kind']) and 'theme' == $data['theme']['kind']) {
+        if (isset($data['theme']['kind']) and 'theme' === $data['theme']['kind']) {
             $ok['theme'][] = $dirname;
             if (is_dir(XOOPS_ROOT_PATH . "/themes/{$dirname}")) {
                 $type = get_theme_type($dirname) ? 'web' : 'spec';
@@ -398,23 +398,23 @@ function list_modules($mode = 'tpl')
     $all_mods = [];
     foreach ($mod as $dirname => $item) {
         foreach ($item as $kind => $data) {
-            if (in_array($dirname, $ok['module'], true) and 'module' == $kind) {
+            if (in_array($dirname, $ok['module'], true) and 'module' === $kind) {
                 continue;
             }
 
-            if (in_array($dirname, $ok['adm_tpl'], true) and 'adm_tpl' == $kind) {
+            if (in_array($dirname, $ok['adm_tpl'], true) and 'adm_tpl' === $kind) {
                 continue;
             }
 
-            if (in_array($dirname, $ok['block'], true) and 'block' == $kind) {
+            if (in_array($dirname, $ok['block'], true) and 'block' === $kind) {
                 continue;
             }
 
-            if (in_array($dirname, $ok['theme'], true) and 'theme' == $kind) {
+            if (in_array($dirname, $ok['theme'], true) and 'theme' === $kind) {
                 continue;
             }
 
-            if (isset($ok['fix']) and in_array($dirname, $ok['fix'], true) and 'fix' == $kind) {
+            if (isset($ok['fix']) and in_array($dirname, $ok['fix'], true) and 'fix' === $kind) {
                 continue;
             }
 
@@ -425,7 +425,7 @@ function list_modules($mode = 'tpl')
             $all_mods[$i]['new_version'] = ($data['new_version']) ? $data['new_version'] . $status : '';
             $all_mods[$i]['new_last_update'] = ($data['new_last_update']) ? date('Y-m-d H:i', $data['new_last_update']) : '';
             $all_mods[$i]['dirname'] = $dirname;
-            $all_mods[$i]['function'] = ('fix' == $kind) ? 'update' : 'install';
+            $all_mods[$i]['function'] = ('fix' === $kind) ? 'update' : 'install';
             $all_mods[$i]['update_sn'] = $data['update_sn'];
             $all_mods[$i]['descript'] = nl2br(trim($data['module_descript']));
             $all_mods[$i]['module_sn'] = $data['module_sn'];
@@ -442,7 +442,7 @@ function list_modules($mode = 'tpl')
     //     exit;
     // }
 
-    if ('return' == $mode) {
+    if ('return' === $mode) {
         return $all_install_modules;
     }
     $xoopsTpl->assign('all_active_modules', $all_active_modules);

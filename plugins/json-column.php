@@ -11,7 +11,7 @@ class AdminerJsonColumn
 {
     private function _testJson($value)
     {
-        if (('{' == mb_substr($value, 0, 1) || '[' == mb_substr($value, 0, 1)) && ($json = json_decode($value, true))) {
+        if (('{' === mb_substr($value, 0, 1) || '[' === mb_substr($value, 0, 1)) && ($json = json_decode($value, true))) {
             return $json;
         }
 

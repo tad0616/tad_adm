@@ -131,7 +131,7 @@ class AdminerSimpleMenu
         }
 
         foreach ($links as $key => $val) {
-            echo " <a href='" . h(ME) . "$key=" . urlencode($tableStatus['Name']) . ('edit' == $key ? $set : '') . "'" . bold(isset($_GET[$key])) . ">$val</a>";
+            echo " <a href='" . h(ME) . "$key=" . urlencode($tableStatus['Name']) . ('edit' === $key ? $set : '') . "'" . bold(isset($_GET[$key])) . ">$val</a>";
         }
 
         echo "\n";

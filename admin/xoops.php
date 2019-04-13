@@ -72,14 +72,14 @@ function list_xoops($mode = 'tpl')
             $xoops_patch[$k]['status'] = 'OK';
         }
 
-        if ('patch' == $xoops['xoops_type']) {
+        if ('patch' === $xoops['xoops_type']) {
             $all_patch[$k] = $xoops_patch[$k];
         } else {
             $all_upgrade[$k] = $xoops_patch[$k];
         }
     }
     // die(var_export($xoops_patch));
-    if ('return' == $mode) {
+    if ('return' === $mode) {
         return ['xoops_patch' => $all_patch, 'xoops_upgrade' => $all_upgrade];
     }
     $xoopsTpl->assign('xoops_patch', $all_patch);

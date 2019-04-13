@@ -64,7 +64,7 @@ class ftp
             }
             foreach ($ar_files as $st_file) {
                 // for each file
-                if ('.' == $st_file || '..' == $st_file) {
+                if ('.' === $st_file || '..' === $st_file) {
                     continue 1;
                 }
 
@@ -92,16 +92,16 @@ class ftp
 
     public function log($result)
     {
-        if ('print' == $result) {
+        if ('print' === $result) {
             foreach ($this->natij as $key => $value) {
-                if ('site' == $key || 'put' == $key || 'mkdir' == $key) {
-                    echo "<font color=green>$value " . ('put' == $key ? 'Files uploaded' : ('mkdir' == $key ? 'Folders created' : 'Permissions changed')) . " successfully.</font>\n";
+                if ('site' === $key || 'put' === $key || 'mkdir' === $key) {
+                    echo "<font color=green>$value " . ('put' === $key ? 'Files uploaded' : ('mkdir' === $key ? 'Folders created' : 'Permissions changed')) . " successfully.</font>\n";
                 } else {
                     echo "<font color=red>Failed to: $value </font>\n";
                 }
             }
         } else {
-            'site' == $result || 'put' == $result || 'mkdir' == $result ? $this->natij[$result]++ : $this->natij[] = $result;
+            'site' === $result || 'put' === $result || 'mkdir' === $result ? $this->natij[$result]++ : $this->natij[] = $result;
         }
     }
 
@@ -132,7 +132,7 @@ class ftp
         }
         if ($open = opendir($local)) {
             while (false !== ($file = readdir($open))) {
-                if ('.' != $file && '..' != $file) {
+                if ('.' !== $file && '..' !== $file) {
                     $remote_file = $remote . mb_substr(realpath($local . $file), mb_strlen($this->orgDir));
                     $local_file = $local . $file;
                     if (!is_dir($local_file)) {

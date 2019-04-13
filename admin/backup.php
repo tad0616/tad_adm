@@ -20,7 +20,7 @@ function view_file()
                     unlink($dir . $file);
                 }
 
-                if ('.' == mb_substr($file, 0, 1) or false !== mb_strpos($file, '_bak_')) {
+                if ('.' === mb_substr($file, 0, 1) or false !== mb_strpos($file, '_bak_')) {
                     continue;
                 }
                 if (is_dir($dir . $file)) {

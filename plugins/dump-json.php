@@ -18,7 +18,7 @@ class AdminerDumpJson
 
     public function dumpTable($table, $style, $is_view = false)
     {
-        if ('json' == $_POST['format']) {
+        if ('json' === $_POST['format']) {
             return true;
         }
     }
@@ -30,7 +30,7 @@ class AdminerDumpJson
 
     public function dumpData($table, $style, $query)
     {
-        if ('json' == $_POST['format']) {
+        if ('json' === $_POST['format']) {
             if ($this->database) {
                 echo ",\n";
             } else {
@@ -60,7 +60,7 @@ class AdminerDumpJson
 
     public function dumpHeaders($identifier, $multi_table = false)
     {
-        if ('json' == $_POST['format']) {
+        if ('json' === $_POST['format']) {
             header('Content-Type: application/json; charset=utf-8');
 
             return 'json';

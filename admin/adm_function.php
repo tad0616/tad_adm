@@ -1,6 +1,6 @@
 <?php
 global $xoopsModule;
-if ('tad_adm' != $xoopsModule->dirname()) {
+if ('tad_adm' !== $xoopsModule->dirname()) {
     $modhandler = xoops_getHandler('module');
     $xModule = $modhandler->getByDirname('tad_adm');
     $config_handler = xoops_getHandler('config');
@@ -125,7 +125,7 @@ function to_do($file_link = '', $dirname = '', $act = 'install_module', $update_
 {
     global $xoopsTpl, $xoopsModuleConfig, $inSchoolWeb;
     $op = get_act_op($act);
-    if (empty($file_link) and ('install' == $op or 'update' == $op)) {
+    if (empty($file_link) and ('install' === $op or 'update' === $op)) {
         header("location:{$_SERVER['PHP_SELF']}");
         exit;
     }
@@ -156,37 +156,37 @@ function next_to_do($file_link = '', $dirname = '', $work_dir = '', $update_sn =
 
     $op = get_act_op($act);
 
-    if ('install_theme' == $act) {
+    if ('install_theme' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             update_allowed($dirname, 1);
             redirect_header('main.php?#admTab4', 3, sprintf(_MA_TADADM_THEME_INSTALL_OK, $dirname));
         }
-    } elseif ('update_theme' == $act) {
+    } elseif ('update_theme' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             update_allowed($dirname, 1);
             redirect_header('main.php?#admTab4', 3, _MA_TADADM_THEME_UPDATE_OK);
         }
-    } elseif ('delete_theme' == $act) {
+    } elseif ('delete_theme' === $act) {
         if ($inSchoolWeb or delete_directory(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}", $ssh)) {
             update_allowed($dirname, 0);
         }
         redirect_header('main.php#admTab4', 3, _MA_TADADM_THEME_DELETE_OK);
-    } elseif ('install_adm_tpl' == $act) {
+    } elseif ('install_adm_tpl' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             add_adm_tpl_config($dirname);
             redirect_header($_SERVER['PHP_SELF'] . '?op=list_all_modules&tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_ADM_TPL_INSTALL_OK, $dirname));
         }
-    } elseif ('update_adm_tpl' == $act) {
+    } elseif ('update_adm_tpl' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             add_adm_tpl_config($dirname);
             redirect_header($_SERVER['PHP_SELF'] . '?op=list_all_modules&tad_adm_tpl=clean', 3, _MA_TADADM_ADM_TPL_UPDATE_OK);
         }
-    } elseif ('install_module' == $act) {
+    } elseif ('install_module' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module={$dirname}&tad_adm_tpl=clean");
             exit;
         }
-    } elseif ('update_module' == $act) {
+    } elseif ('update_module' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module={$dirname}&tad_adm_tpl=clean");
             exit;
@@ -198,11 +198,11 @@ function next_to_up($file_link = '', $xoops_sn = '', $act = '', $ssh = '')
 {
     global $xoopsModuleConfig;
 
-    if ('patch' == $act) {
+    if ('patch' === $act) {
         if (get_upgrade_file($file_link, 'patch', $xoops_sn, $ssh)) {
             redirect_header('xoops.php', 3, _MA_TADADM_PATCH_OK);
         }
-    } elseif ('upgrade' == $act) {
+    } elseif ('upgrade' === $act) {
         if (get_upgrade_file($file_link, 'upgrade', $xoops_sn, $ssh)) {
             redirect_header('xoops.php?#admTab2', 3, _MA_TADADM_UPGRADE_OK);
         }
@@ -214,7 +214,7 @@ function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
     global $xoopsConfig, $xoopsDB, $xoopsModuleConfig, $inSchoolWeb;
     if (!$inSchoolWeb) {
         $file_link = str_replace('[source]', $xoopsModuleConfig['source'], $file_link);
-        if ('tad_adm' == $dirname) {
+        if ('tad_adm' === $dirname) {
             $new_file = str_replace('http://120.115.2.90/uploads/tad_modules/file/', XOOPS_ROOT_PATH . '/uploads/', $file_link);
         } else {
             $new_file = str_replace("{$xoopsModuleConfig['source']}/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
@@ -315,7 +315,7 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
         }
     }
 
-    if ('upgrade' == $dirname) {
+    if ('upgrade' === $dirname) {
         redirect_header(XOOPS_URL . '/upgrade', 3, _MA_TADADM_UPGRADE_FROM_URL);
     } else {
         return true;
@@ -376,7 +376,7 @@ function do_block($act, $update_sn)
     $block = json_decode($data, true);
     // die(var_export($block));
     $last_modified = time();
-    if ('install' == $act) {
+    if ('install' === $act) {
         $sql = 'INSERT INTO `' . $xoopsDB->prefix('newblocks') . "` (`mid`,`func_num`,`options`,`name`,`title`,`content`,`side`,`weight`,`visible`,`block_type`,`c_type`,`isactive`,`dirname`,`func_file`,`show_func`,`edit_func`,`template`,`bcachetime`,`last_modified`) values('0', '0', '', '自訂區塊', '{$block['title']}', '{$block['content']}', '{$block['side']}', '0', '1', 'C', '{$block['c_type']}', '1', '{$block['dirname']}', '', '}', '', '', '0', '{$last_modified}')";
         $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
         $block_id = $xoopsDB->getInsertId();
@@ -429,7 +429,7 @@ function full_copy($source = '', $target = '')
         }
         $d = dir($source);
         while (false !== ($entry = $d->read())) {
-            if ('.' == $entry || '..' == $entry) {
+            if ('.' === $entry || '..' === $entry) {
                 continue;
             }
 
@@ -578,7 +578,7 @@ function get_theme_version($dirname)
     if ($handle) {
         while (false !== ($buffer = fgets($handle, 4096))) {
             $ini = explode('=', $buffer);
-            if ('Version' == trim($ini[0])) {
+            if ('Version' === trim($ini[0])) {
                 $Version = str_replace('"', '', trim($ini[1]));
                 break;
             }
@@ -601,11 +601,11 @@ function recurse_chown_chgrp($mypath, $uid, $gid)
 {
     $d = opendir($mypath);
     while (false !== ($file = readdir($d))) {
-        if ('.' != $file && '..' != $file) {
+        if ('.' !== $file && '..' !== $file) {
             $typepath = $mypath . '/' . $file;
 
             //print $typepath. " : " . filetype ($typepath). "<BR>" ;
-            if ('dir' == filetype($typepath)) {
+            if ('dir' === filetype($typepath)) {
                 recurse_chown_chgrp($typepath, $uid, $gid);
             }
 
@@ -630,7 +630,7 @@ function chmod_R($path, $filemode, $dirmode)
         }
         $dh = opendir($path);
         while (false !== ($file = readdir($dh))) {
-            if ('.' != $file && '..' != $file) {
+            if ('.' !== $file && '..' !== $file) {
                 // skip self and parent pointing directories
                 $fullpath = $path . '/' . $file;
                 chmod_R($fullpath, $filemode, $dirmode);
@@ -671,7 +671,7 @@ function delete_directory($dirname, $ssh = '')
         }
 
         while ($file = readdir($dir_handle)) {
-            if ('.' != $file && '..' != $file) {
+            if ('.' !== $file && '..' !== $file) {
                 if (!is_dir($dirname . '/' . $file)) {
                     unlink($dirname . '/' . $file);
                 } else {

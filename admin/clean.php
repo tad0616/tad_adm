@@ -17,7 +17,7 @@ function view_file()
     if (is_dir($dir)) {
         if ($dh = opendir($dir)) {
             while (false !== ($file = readdir($dh))) {
-                if ('.' == mb_substr($file, 0, 1) or 'system' == $file or 'pm' == $file or 'profile' == $file) {
+                if ('.' === mb_substr($file, 0, 1) or 'system' === $file or 'pm' === $file or 'profile' === $file) {
                     continue;
                 } elseif (is_dir($dir . $file)) {
                     $all_dir[$i]['dir_path'] = $isWin ? iconv('Big5', 'UTF-8', $dir . $file) : $dir . $file;
@@ -71,7 +71,7 @@ function delete_directory($dirname)
     }
 
     while ($file = readdir($dir_handle)) {
-        if ('.' != $file && '..' != $file) {
+        if ('.' !== $file && '..' !== $file) {
             if (!is_dir($dirname . '/' . $file)) {
                 unlink($dirname . '/' . $file);
             } else {

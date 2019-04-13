@@ -10,13 +10,13 @@ function list_user($op = '', $mode = 'normal')
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
 
-    if ('byNeverLoginDays' == $op) {
+    if ('byNeverLoginDays' === $op) {
         $dayLimit = time() - $_GET['days'] * 86400;
         $andDayLimit = " and last_login=0 and user_regdate <= $dayLimit";
-    } elseif ('byNeverStartDays' == $op) {
+    } elseif ('byNeverStartDays' === $op) {
         $dayLimit = time() - $_GET['days'] * 86400;
         $andDayLimit = " and level=0 and user_regdate <= $dayLimit";
-    } elseif ('byEmail' == $op) {
+    } elseif ('byEmail' === $op) {
         $andDayLimit = " and email like '%{$_GET['byemail']}'";
     } else {
         $andDayLimit = '';
@@ -38,7 +38,7 @@ function list_user($op = '', $mode = 'normal')
             $$k = $v;
         }
 
-        if ('force' != $mode) {
+        if ('force' !== $mode) {
             $adm = get_tad_adm($uid);
         } else {
             $adm['email'] = '';
@@ -293,7 +293,7 @@ switch ($op) {
         break;
     default:
         list_user($op, $mode);
-        if ('all' == $op) {
+        if ('all' === $op) {
             $g2p++;
             redirect_header($_SERVER['PHP_SELF'] . "?op=all&mode=$mode&g2p=$g2p", 3, _MA_TADADM_NEXT_PAGE);
         }
