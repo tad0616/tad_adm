@@ -4,25 +4,27 @@ class dZip
     public $filename;
     public $overwrite;
 
-    public $zipSignature  = "\x50\x4b\x03\x04"; // local file header signature
-    public $dirSignature  = "\x50\x4b\x01\x02"; // central dir header signature
+    public $zipSignature = "\x50\x4b\x03\x04"; // local file header signature
+    public $dirSignature = "\x50\x4b\x01\x02"; // central dir header signature
     public $dirSignatureE = "\x50\x4b\x05\x06"; // end of central dir signature
-    public $files_count   = 0;
+    public $files_count = 0;
     public $fh;
 
-    public function dZip($filename, $overwrite = true)
+    public function __construct($filename, $overwrite = true)
     {
-        $this->filename  = $filename;
+        $this->filename = $filename;
         $this->overwrite = $overwrite;
     }
+
     public function addDir($dirname, $fileComments = '')
     {
-        if (substr($dirname, -1) != '/') {
+        if ('/' != mb_substr($dirname, -1)) {
             $dirname .= '/';
         }
 
         $this->addFile(false, $dirname, $fileComments);
     }
+
     public function addFile($filename, $cfilename, $fileComments = '', $data = false)
     {
         if (!($fh = &$this->fh)) {
@@ -30,17 +32,18 @@ class dZip
         }
 
         // $filename can be a local file OR the data wich will be compressed
-        if (substr($cfilename, -1) == '/') {
+        if ('/' == mb_substr($cfilename, -1)) {
             $details['uncsize'] = 0;
-            $data               = '';
+            $data = '';
         } elseif (file_exists($filename)) {
             $details['uncsize'] = filesize($filename);
-            $data               = file_get_contents($filename);
+            $data = file_get_contents($filename);
         } elseif ($filename) {
             echo "<b>Cannot add $filename. File not found</b><br>";
+
             return false;
         } else {
-            $details['uncsize'] = strlen($filename);
+            $details['uncsize'] = mb_strlen($filename);
             // DATA is given.. use it! :|
         }
 
@@ -49,18 +52,18 @@ class dZip
             $details['comsize'] = $details['uncsize'];
             $details['vneeded'] = 10;
             $details['cmethod'] = 0;
-            $zdata              = &$data;
+            $zdata = &$data;
         } else {
             // otherwise, compress it
-            $zdata              = gzcompress($data);
-            $zdata              = substr(substr($zdata, 0, strlen($zdata) - 4), 2); // fix crc bug (thanks to Eric Mueller)
-            $details['comsize'] = strlen($zdata);
+            $zdata = gzcompress($data);
+            $zdata = mb_substr(mb_substr($zdata, 0, mb_strlen($zdata) - 4), 2); // fix crc bug (thanks to Eric Mueller)
+            $details['comsize'] = mb_strlen($zdata);
             $details['vneeded'] = 10;
             $details['cmethod'] = 8;
         }
 
         $details['bitflag'] = 0;
-        $details['crc_32']  = crc32($data);
+        $details['crc_32'] = crc32($data);
 
         // Convert date and time to DOS Format, and set then
         $lastmod_timeS = str_pad(decbin(date('s') >= 32 ? date('s') - 32 : date('s')), 5, '0', STR_PAD_LEFT);
@@ -85,29 +88,31 @@ class dZip
         fwrite($fh, pack('V', $details['crc_32'])); // crc-32
         fwrite($fh, pack('I', $details['comsize'])); // compressed_size
         fwrite($fh, pack('I', $details['uncsize'])); // uncompressed_size
-        fwrite($fh, pack('s', strlen($cfilename))); // file_name_length
+        fwrite($fh, pack('s', mb_strlen($cfilename))); // file_name_length
         fwrite($fh, pack('s', 0)); // extra_field_length
         fwrite($fh, $cfilename); // file_name
         // ignoring extra_field
         fwrite($fh, $zdata);
 
         // Append it to central dir
-        $details['external_attributes'] = (substr($cfilename, -1) == '/' && !$zdata) ? 16 : 32; // Directory or file name
-        $details['comments']            = $fileComments;
+        $details['external_attributes'] = ('/' == mb_substr($cfilename, -1) && !$zdata) ? 16 : 32; // Directory or file name
+        $details['comments'] = $fileComments;
         $this->appendCentralDir($cfilename, $details);
         $this->files_count++;
     }
+
     public function setExtra($filename, $property, $value)
     {
         $this->centraldirs[$filename][$property] = $value;
     }
+
     public function save($zipComments = '')
     {
         if (!($fh = &$this->fh)) {
             $fh = fopen($this->filename, $this->overwrite ? 'w' : 'a+');
         }
 
-        $cdrec = "";
+        $cdrec = '';
         foreach ($this->centraldirs as $filename => $cd) {
             $cdrec .= $this->dirSignature;
             $cdrec .= "\x0\x0"; // version made by
@@ -119,9 +124,9 @@ class dZip
             $cdrec .= pack('V', $cd['crc_32']); // crc32
             $cdrec .= pack('V', $cd['comsize']); // compressed filesize
             $cdrec .= pack('V', $cd['uncsize']); // uncompressed filesize
-            $cdrec .= pack('v', strlen($filename)); // file comment length
+            $cdrec .= pack('v', mb_strlen($filename)); // file comment length
             $cdrec .= pack('v', 0); // extra field length
-            $cdrec .= pack('v', strlen($cd['comments'])); // file comment length
+            $cdrec .= pack('v', mb_strlen($cd['comments'])); // file comment length
             $cdrec .= pack('v', 0); // disk number start
             $cdrec .= pack('v', 0); // internal file attributes
             $cdrec .= pack('V', $cd['external_attributes']); // internal file attributes
@@ -138,9 +143,9 @@ class dZip
         fwrite($fh, pack('v', 0)); // number of the disk with the start of the central directory
         fwrite($fh, pack('v', $this->files_count)); // total # of entries "on this disk"
         fwrite($fh, pack('v', $this->files_count)); // total # of entries overall
-        fwrite($fh, pack('V', strlen($cdrec))); // size of central dir
+        fwrite($fh, pack('V', mb_strlen($cdrec))); // size of central dir
         fwrite($fh, pack('V', $before_cd)); // offset to start of central dir
-        fwrite($fh, pack('v', strlen($zipComments))); // .zip file comment length
+        fwrite($fh, pack('v', mb_strlen($zipComments))); // .zip file comment length
         fwrite($fh, $zipComments);
 
         fclose($fh);

@@ -11,7 +11,7 @@
  */
 class AdminerTheme
 {
-    const CSS_VERSION   = 5;
+    const CSS_VERSION = 5;
     const ICONS_VERSION = 3;
 
     /** @var string */
@@ -24,11 +24,11 @@ class AdminerTheme
      * @param string $defaultTheme Theme name of default theme.
      * @param array $themes array(database-host => theme-name).
      */
-    public function __construct($defaultTheme = "default-orange", array $themes = array())
+    public function __construct($defaultTheme = 'default-orange', array $themes = [])
     {
-        define("PMTN_ADMINER_THEME", true);
+        define('PMTN_ADMINER_THEME', true);
 
-        $this->themeName = isset($_GET["username"]) && isset($themes[SERVER]) ? $themes[SERVER] : $defaultTheme;
+        $this->themeName = isset($_GET['username']) && isset($themes[SERVER]) ? $themes[SERVER] : $defaultTheme;
     }
 
     /**
@@ -37,8 +37,7 @@ class AdminerTheme
      */
     public function head()
     {
-        $userAgent = filter_input(INPUT_SERVER, "HTTP_USER_AGENT");
-        ?>
+        $userAgent = filter_input(INPUT_SERVER, 'HTTP_USER_AGENT'); ?>
 
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
@@ -47,22 +46,22 @@ class AdminerTheme
 
         <?php
 // Condition for Windows Phone has to be the first, because IE11 contains also iPhone and Android keywords.
-        if (strpos($userAgent, "Windows") !== false):
+        if (false !== mb_strpos($userAgent, 'Windows')):
         ?>
             <meta name="application-name" content="Adminer"/>
             <meta name="msapplication-TileColor" content="#ffffff"/>
             <meta name="msapplication-square150x150logo" content="images/tileIcon.png"/>
             <meta name="msapplication-wide310x150logo" content="images/tileIcon-wide.png"/>
 
-        <?php elseif (strpos($userAgent, "iPhone") !== false || strpos($userAgent, "iPad") !== false): ?>
+        <?php elseif (false !== mb_strpos($userAgent, 'iPhone') || false !== mb_strpos($userAgent, 'iPad')): ?>
             <link rel="apple-touch-icon-precomposed" href="images/touchIcon.png?<?php echo self::ICONS_VERSION ?>"/>
 
-        <?php elseif (strpos($userAgent, "Android") !== false): ?>
+        <?php elseif (false !== mb_strpos($userAgent, 'Android')): ?>
             <link rel="apple-touch-icon-precomposed" href="images/touchIcon-android.png?<?php echo self::ICONS_VERSION ?>"/>
 
         <?php else: ?>
             <link rel="apple-touch-icon" href="images/touchIcon.png?<?php echo self::ICONS_VERSION ?>"/>
-        <?php endif;?>
+        <?php endif; ?>
 
         <link rel="stylesheet" type="text/css" href="css/<?php echo htmlspecialchars($this->themeName) ?>.css?<?php echo self::CSS_VERSION ?>">
 
@@ -109,17 +108,17 @@ class AdminerTheme
     {
         $csp = csp();
 
-        if (isset($csp[0]["default-src"])) {
-            unset($csp[0]["default-src"]);
+        if (isset($csp[0]['default-src'])) {
+            unset($csp[0]['default-src']);
         }
-        if (isset($csp[0]["img-src"])) {
-            unset($csp[0]["img-src"]);
+        if (isset($csp[0]['img-src'])) {
+            unset($csp[0]['img-src']);
         }
-        if (!isset($csp[0]["object-src"])) {
-            $csp[0]["object-src"] = "'none'";
+        if (!isset($csp[0]['object-src'])) {
+            $csp[0]['object-src'] = "'none'";
         }
-        if (!isset($csp[0]["base-uri"])) {
-            $csp[0]["base-uri"] = "'none'";
+        if (!isset($csp[0]['base-uri'])) {
+            $csp[0]['base-uri'] = "'none'";
         }
 
         return $csp;

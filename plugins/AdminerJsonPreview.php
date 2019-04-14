@@ -29,8 +29,8 @@ class AdminerJsonPreview
     public function __construct($maxLevel = 0, $inTable = true, $inEdit = true)
     {
         $this->maxLevel = $maxLevel;
-        $this->inTable  = $inTable;
-        $this->inEdit   = $inEdit;
+        $this->inTable = $inTable;
+        $this->inEdit = $inEdit;
     }
 
     /**
@@ -162,7 +162,7 @@ class AdminerJsonPreview
         </script>
 
         <?php
-}
+    }
 
     public function selectVal(&$val, $link, $field, $original)
     {
@@ -172,7 +172,7 @@ class AdminerJsonPreview
             return;
         }
 
-        if (is_string($original) && in_array(substr($original, 0, 1), array('{', '[')) && ($json = json_decode($original, true))) {
+        if (is_string($original) && in_array(mb_substr($original, 0, 1), ['{', '['], true) && ($json = json_decode($original, true))) {
             $val = "<a class='icon json-icon' href='#' title='JSON' data-index='$counter'>JSON</a> " . $val;
             $val .= $this->convertJson($json, 1, $counter++);
         }
@@ -186,7 +186,7 @@ class AdminerJsonPreview
             return;
         }
 
-        if (is_string($value) && in_array(substr($value, 0, 1), array('{', '[')) && ($json = json_decode($value, true))) {
+        if (is_string($value) && in_array(mb_substr($value, 0, 1), ['{', '['], true) && ($json = json_decode($value, true))) {
             echo "<a class='icon json-icon json-link' href='#' title='JSON' data-index='$counter'><span>JSON</span></a><br/>";
             echo $this->convertJson($json, 1, $counter);
         }
@@ -194,26 +194,26 @@ class AdminerJsonPreview
 
     public function convertJson($json, $level = 1, $id = 0)
     {
-        $value = "";
+        $value = '';
 
         $value .= "<table class='json'";
-        if ($level === 1 && $id > 0) {
+        if (1 === $level && $id > 0) {
             $value .= "style='display: none' id='json-code-$id'";
         }
-        $value .= ">";
+        $value .= '>';
 
         foreach ($json as $key => $val) {
-            $value .= "<tr><th><code>" . h($key) . "</code>";
-            $value .= "<td>";
+            $value .= '<tr><th><code>' . h($key) . '</code>';
+            $value .= '<td>';
 
             if (is_array($val) && ($this->maxLevel <= 0 || $level < $this->maxLevel)) {
                 $value .= $this->convertJson($val, $level + 1);
             } elseif (is_array($val)) {
-                $value .= "<code class='jush-js'>" . h(preg_replace('/([,:])([^\s])/', '$1 $2', json_encode($val))) . "</code>";
+                $value .= "<code class='jush-js'>" . h(preg_replace('/([,:])([^\s])/', '$1 $2', json_encode($val))) . '</code>';
             } elseif (is_string($val)) {
                 // Shorten string to max. length.
-                if (mb_strlen($val, "UTF-8") > self::MAX_TEXT_LENGTH) {
-                    $val = mb_substr($val, 0, self::MAX_TEXT_LENGTH - 3, "UTF-8") . "...";
+                if (mb_strlen($val, 'UTF-8') > self::MAX_TEXT_LENGTH) {
+                    $val = mb_substr($val, 0, self::MAX_TEXT_LENGTH - 3, 'UTF-8') . '...';
                 }
 
                 // Add extra new line to make it visible in HTML output.
@@ -221,19 +221,19 @@ class AdminerJsonPreview
                     $val .= "\n";
                 }
 
-                $value .= "<code>" . nl2br(h($val)) . "</code>";
+                $value .= '<code>' . nl2br(h($val)) . '</code>';
             } elseif (is_bool($val)) {
                 // Handle boolean values.
-                $value .= "<code class='jush'>" . h($val ? "true" : "false") . "</code>";
-            } elseif (is_null($val)) {
+                $value .= "<code class='jush'>" . h($val ? 'true' : 'false') . '</code>';
+            } elseif (null === $val) {
                 // Handle null value.
                 $value .= "<code class='jush'>null</code>";
             } else {
-                $value .= "<code class='jush'>" . h($val) . "</code>";
+                $value .= "<code class='jush'>" . h($val) . '</code>';
             }
         }
 
-        $value .= "</table>";
+        $value .= '</table>';
 
         return $value;
     }

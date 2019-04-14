@@ -123,7 +123,7 @@ class Crypt_Twofish
      * The Key as String
      *
      * @see Crypt_Twofish::setKey()
-     * @var Array
+     * @var array
      * @access private
      */
     public $key = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
@@ -132,7 +132,7 @@ class Crypt_Twofish
      * The Encryption Mode
      *
      * @see Crypt_Twofish::Crypt_Twofish()
-     * @var Integer
+     * @var int
      * @access private
      */
     public $mode;
@@ -141,7 +141,7 @@ class Crypt_Twofish
      * Continuous Buffer status
      *
      * @see Crypt_Twofish::enableContinuousBuffer()
-     * @var Boolean
+     * @var bool
      * @access private
      */
     public $continuousBuffer = false;
@@ -150,7 +150,7 @@ class Crypt_Twofish
      * Padding status
      *
      * @see Crypt_Twofish::enablePadding()
-     * @var Boolean
+     * @var bool
      * @access private
      */
     public $padding = true;
@@ -159,7 +159,7 @@ class Crypt_Twofish
      * The Initialization Vector
      *
      * @see Crypt_Twofish::setIV()
-     * @var String
+     * @var string
      * @access private
      */
     public $iv = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
@@ -168,7 +168,7 @@ class Crypt_Twofish
      * A "sliding" Initialization Vector
      *
      * @see Crypt_Twofish::enableContinuousBuffer()
-     * @var String
+     * @var string
      * @access private
      */
     public $encryptIV = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
@@ -177,7 +177,7 @@ class Crypt_Twofish
      * A "sliding" Initialization Vector
      *
      * @see Crypt_Twofish::enableContinuousBuffer()
-     * @var String
+     * @var string
      * @access private
      */
     public $decryptIV = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
@@ -189,7 +189,7 @@ class Crypt_Twofish
      * Since mcrypt operates in continuous mode, by default, it'll need to be recreated when in non-continuous mode.
      *
      * @see Crypt_Twofish::encrypt()
-     * @var String
+     * @var string
      * @access private
      */
     public $enmcrypt;
@@ -201,7 +201,7 @@ class Crypt_Twofish
      * Since mcrypt operates in continuous mode, by default, it'll need to be recreated when in non-continuous mode.
      *
      * @see Crypt_Twofish::decrypt()
-     * @var String
+     * @var string
      * @access private
      */
     public $demcrypt;
@@ -211,7 +211,7 @@ class Crypt_Twofish
      *
      * @see Crypt_Twofish::setKey()
      * @see Crypt_Twofish::setIV()
-     * @var Boolean
+     * @var bool
      * @access private
      */
     public $enchanged = true;
@@ -221,7 +221,7 @@ class Crypt_Twofish
      *
      * @see Crypt_Twofish::setKey()
      * @see Crypt_Twofish::setIV()
-     * @var Boolean
+     * @var bool
      * @access private
      */
     public $dechanged = true;
@@ -230,7 +230,7 @@ class Crypt_Twofish
      * Is the mode one that is paddable?
      *
      * @see Crypt_Twofish::Crypt_Twofish()
-     * @var Boolean
+     * @var bool
      * @access private
      */
     public $paddable = false;
@@ -239,26 +239,26 @@ class Crypt_Twofish
      * Encryption buffer for CTR, OFB and CFB modes
      *
      * @see Crypt_Twofish::encrypt()
-     * @var Array
+     * @var array
      * @access private
      */
-    public $enbuffer = array('encrypted' => '', 'xor' => '', 'pos' => 0, 'enmcrypt_init' => true);
+    public $enbuffer = ['encrypted' => '', 'xor' => '', 'pos' => 0, 'enmcrypt_init' => true];
 
     /**
      * Decryption buffer for CTR, OFB and CFB modes
      *
      * @see Crypt_Twofish::decrypt()
-     * @var Array
+     * @var array
      * @access private
      */
-    public $debuffer = array('ciphertext' => '', 'xor' => '', 'pos' => 0, 'demcrypt_init' => true);
+    public $debuffer = ['ciphertext' => '', 'xor' => '', 'pos' => 0, 'demcrypt_init' => true];
 
     /**
      * mcrypt resource for CFB mode
      *
      * @see Crypt_Twofish::encrypt()
      * @see Crypt_Twofish::decrypt()
-     * @var String
+     * @var string
      * @access private
      */
     public $ecb;
@@ -266,7 +266,7 @@ class Crypt_Twofish
     /**
      * Performance-optimized callback function for en/decrypt()
      *
-     * @var Callback
+     * @var callback
      * @access private
      */
     public $inline_crypt;
@@ -274,10 +274,10 @@ class Crypt_Twofish
     /**
      * Q-Table
      *
-     * @var Array
+     * @var array
      * @access private
      */
-    public $q0 = array(
+    public $q0 = [
         0xA9, 0x67, 0xB3, 0xE8, 0x04, 0xFD, 0xA3, 0x76,
         0x9A, 0x92, 0x80, 0x78, 0xE4, 0xDD, 0xD1, 0x38,
         0x0D, 0xC6, 0x35, 0x98, 0x18, 0xF7, 0xEC, 0x6C,
@@ -310,15 +310,15 @@ class Crypt_Twofish
         0xC8, 0xA8, 0x2B, 0x40, 0xDC, 0xFE, 0x32, 0xA4,
         0xCA, 0x10, 0x21, 0xF0, 0xD3, 0x5D, 0x0F, 0x00,
         0x6F, 0x9D, 0x36, 0x42, 0x4A, 0x5E, 0xC1, 0xE0,
-    );
+    ];
 
     /**
      * Q-Table
      *
-     * @var Array
+     * @var array
      * @access private
      */
-    public $q1 = array(
+    public $q1 = [
         0x75, 0xF3, 0xC6, 0xF4, 0xDB, 0x7B, 0xFB, 0xC8,
         0x4A, 0xD3, 0xE6, 0x6B, 0x45, 0x7D, 0xE8, 0x4B,
         0xD6, 0x32, 0xD8, 0xFD, 0x37, 0x71, 0xF1, 0xE1,
@@ -351,15 +351,15 @@ class Crypt_Twofish
         0x12, 0xA2, 0x0D, 0x52, 0xBB, 0x02, 0x2F, 0xA9,
         0xD7, 0x61, 0x1E, 0xB4, 0x50, 0x04, 0xF6, 0xC2,
         0x16, 0x25, 0x86, 0x56, 0x55, 0x09, 0xBE, 0x91,
-    );
+    ];
 
     /**
      * M-Table
      *
-     * @var Array
+     * @var array
      * @access private
      */
-    public $m0 = array(
+    public $m0 = [
         0xBCBC3275, 0xECEC21F3, 0x202043C6, 0xB3B3C9F4, 0xDADA03DB, 0x02028B7B, 0xE2E22BFB, 0x9E9EFAC8,
         0xC9C9EC4A, 0xD4D409D3, 0x18186BE6, 0x1E1E9F6B, 0x98980E45, 0xB2B2387D, 0xA6A6D2E8, 0x2626B74B,
         0x3C3C57D6, 0x93938A32, 0x8282EED8, 0x525298FD, 0x7B7BD437, 0xBBBB3771, 0x5B5B97F1, 0x474783E1,
@@ -392,15 +392,15 @@ class Crypt_Twofish
         0xABABA212, 0x6F6F3EA2, 0xE6E6540D, 0xDBDBF252, 0x92927BBB, 0xB7B7B602, 0x6969CA2F, 0x3939D9A9,
         0xD3D30CD7, 0xA7A72361, 0xA2A2AD1E, 0xC3C399B4, 0x6C6C4450, 0x07070504, 0x04047FF6, 0x272746C2,
         0xACACA716, 0xD0D07625, 0x50501386, 0xDCDCF756, 0x84841A55, 0xE1E15109, 0x7A7A25BE, 0x1313EF91,
-    );
+    ];
 
     /**
      * M-Table
      *
-     * @var Array
+     * @var array
      * @access private
      */
-    public $m1 = array(
+    public $m1 = [
         0xA9D93939, 0x67901717, 0xB3719C9C, 0xE8D2A6A6, 0x04050707, 0xFD985252, 0xA3658080, 0x76DFE4E4,
         0x9A084545, 0x92024B4B, 0x80A0E0E0, 0x78665A5A, 0xE4DDAFAF, 0xDDB06A6A, 0xD1BF6363, 0x38362A2A,
         0x0D54E6E6, 0xC6432020, 0x3562CCCC, 0x98BEF2F2, 0x181E1212, 0xF724EBEB, 0xECD7A1A1, 0x6C774141,
@@ -433,15 +433,15 @@ class Crypt_Twofish
         0xC8FA9E9E, 0xA882D6D6, 0x2BCF6E6E, 0x40507070, 0xDCEB8585, 0xFE750A0A, 0x328A9393, 0xA48DDFDF,
         0xCA4C2929, 0x10141C1C, 0x2173D7D7, 0xF0CCB4B4, 0xD309D4D4, 0x5D108A8A, 0x0FE25151, 0x00000000,
         0x6F9A1919, 0x9DE01A1A, 0x368F9494, 0x42E6C7C7, 0x4AECC9C9, 0x5EFDD2D2, 0xC1AB7F7F, 0xE0D8A8A8,
-    );
+    ];
 
     /**
      * M-Table
      *
-     * @var Array
+     * @var array
      * @access private
      */
-    public $m2 = array(
+    public $m2 = [
         0xBC75BC32, 0xECF3EC21, 0x20C62043, 0xB3F4B3C9, 0xDADBDA03, 0x027B028B, 0xE2FBE22B, 0x9EC89EFA,
         0xC94AC9EC, 0xD4D3D409, 0x18E6186B, 0x1E6B1E9F, 0x9845980E, 0xB27DB238, 0xA6E8A6D2, 0x264B26B7,
         0x3CD63C57, 0x9332938A, 0x82D882EE, 0x52FD5298, 0x7B377BD4, 0xBB71BB37, 0x5BF15B97, 0x47E14783,
@@ -474,15 +474,15 @@ class Crypt_Twofish
         0xAB12ABA2, 0x6FA26F3E, 0xE60DE654, 0xDB52DBF2, 0x92BB927B, 0xB702B7B6, 0x692F69CA, 0x39A939D9,
         0xD3D7D30C, 0xA761A723, 0xA21EA2AD, 0xC3B4C399, 0x6C506C44, 0x07040705, 0x04F6047F, 0x27C22746,
         0xAC16ACA7, 0xD025D076, 0x50865013, 0xDC56DCF7, 0x8455841A, 0xE109E151, 0x7ABE7A25, 0x139113EF,
-    );
+    ];
 
     /**
      * M-Table
      *
-     * @var Array
+     * @var array
      * @access private
      */
-    public $m3 = array(
+    public $m3 = [
         0xD939A9D9, 0x90176790, 0x719CB371, 0xD2A6E8D2, 0x05070405, 0x9852FD98, 0x6580A365, 0xDFE476DF,
         0x08459A08, 0x024B9202, 0xA0E080A0, 0x665A7866, 0xDDAFE4DD, 0xB06ADDB0, 0xBF63D1BF, 0x362A3836,
         0x54E60D54, 0x4320C643, 0x62CC3562, 0xBEF298BE, 0x1E12181E, 0x24EBF724, 0xD7A1ECD7, 0x77416C77,
@@ -515,47 +515,47 @@ class Crypt_Twofish
         0xFA9EC8FA, 0x82D6A882, 0xCF6E2BCF, 0x50704050, 0xEB85DCEB, 0x750AFE75, 0x8A93328A, 0x8DDFA48D,
         0x4C29CA4C, 0x141C1014, 0x73D72173, 0xCCB4F0CC, 0x09D4D309, 0x108A5D10, 0xE2510FE2, 0x00000000,
         0x9A196F9A, 0xE01A9DE0, 0x8F94368F, 0xE6C742E6, 0xECC94AEC, 0xFDD25EFD, 0xAB7FC1AB, 0xD8A8E0D8,
-    );
+    ];
 
     /**
      * The Key Schedule Array
      *
-     * @var Array
+     * @var array
      * @access private
      */
-    public $K = array();
+    public $K = [];
 
     /**
      * The Key depended S-Table 0
      *
-     * @var Array
+     * @var array
      * @access private
      */
-    public $S0 = array();
+    public $S0 = [];
 
     /**
      * The Key depended S-Table 1
      *
-     * @var Array
+     * @var array
      * @access private
      */
-    public $S1 = array();
+    public $S1 = [];
 
     /**
      * The Key depended S-Table 2
      *
-     * @var Array
+     * @var array
      * @access private
      */
-    public $S2 = array();
+    public $S2 = [];
 
     /**
      * The Key depended S-Table 3
      *
-     * @var Array
+     * @var array
      * @access private
      */
-    public $S3 = array();
+    public $S3 = [];
 
     /**
      * Default Constructor.
@@ -570,7 +570,7 @@ class Crypt_Twofish
     {
         if (!defined('CRYPT_TWOFISH_MODE')) {
             switch (true) {
-                case extension_loaded('mcrypt') && in_array('twofish', mcrypt_list_algorithms()):
+                case extension_loaded('mcrypt') && in_array('twofish', mcrypt_list_algorithms(), true):
                     define('CRYPT_TWOFISH_MODE', CRYPT_TWOFISH_MODE_MCRYPT);
                     break;
                 default:
@@ -583,14 +583,14 @@ class Crypt_Twofish
                 switch ($mode) {
                     case CRYPT_TWOFISH_MODE_ECB:
                         $this->paddable = true;
-                        $this->mode     = MCRYPT_MODE_ECB;
+                        $this->mode = MCRYPT_MODE_ECB;
                         break;
                     case CRYPT_TWOFISH_MODE_CTR:
                         $this->mode = 'ctr';
                         break;
                     case CRYPT_TWOFISH_MODE_CFB:
                         $this->mode = 'ncfb';
-                        $this->ecb  = mcrypt_module_open(MCRYPT_TWOFISH, '', MCRYPT_MODE_ECB, '');
+                        $this->ecb = mcrypt_module_open(MCRYPT_TWOFISH, '', MCRYPT_MODE_ECB, '');
                         break;
                     case CRYPT_TWOFISH_MODE_OFB:
                         $this->mode = MCRYPT_MODE_NOFB;
@@ -598,7 +598,7 @@ class Crypt_Twofish
                     case CRYPT_TWOFISH_MODE_CBC:
                     default:
                         $this->paddable = true;
-                        $this->mode     = MCRYPT_MODE_CBC;
+                        $this->mode = MCRYPT_MODE_CBC;
                 }
                 $this->enmcrypt = mcrypt_module_open(MCRYPT_TWOFISH, '', $this->mode, '');
                 $this->demcrypt = mcrypt_module_open(MCRYPT_TWOFISH, '', $this->mode, '');
@@ -609,7 +609,7 @@ class Crypt_Twofish
                     case CRYPT_TWOFISH_MODE_ECB:
                     case CRYPT_TWOFISH_MODE_CBC:
                         $this->paddable = true;
-                        $this->mode     = $mode;
+                        $this->mode = $mode;
                         break;
                     case CRYPT_TWOFISH_MODE_CTR:
                     case CRYPT_TWOFISH_MODE_CFB:
@@ -618,7 +618,7 @@ class Crypt_Twofish
                         break;
                     default:
                         $this->paddable = true;
-                        $this->mode     = CRYPT_TWOFISH_MODE_CBC;
+                        $this->mode = CRYPT_TWOFISH_MODE_CBC;
                 }
                 $this->inline_crypt_setup();
         }
@@ -634,11 +634,11 @@ class Crypt_Twofish
      * If the key is not explicitly set, it'll be assumed a 128 bits key to be all null bytes.
      *
      * @access public
-     * @param String $key
+     * @param string $key
      */
     public function setKey($key)
     {
-        $keylength = strlen($key);
+        $keylength = mb_strlen($key);
         switch (true) {
             case $keylength <= 16:
                 $key .= str_repeat("\0", 16 - $keylength);
@@ -650,7 +650,7 @@ class Crypt_Twofish
                 $key .= str_repeat("\0", 32 - $keylength);
                 break;
             default:
-                $key = substr($key, 0, 32);
+                $key = mb_substr($key, 0, 32);
         }
         $this->key = $key;
 
@@ -663,17 +663,17 @@ class Crypt_Twofish
 
         /* Key expanding and generating the key-depended s-boxes */
         $le_longs = unpack('V*', $key);
-        $key      = unpack('C*', $key);
-        $m0       = $this->m0;
-        $m1       = $this->m1;
-        $m2       = $this->m2;
-        $m3       = $this->m3;
-        $q0       = $this->q0;
-        $q1       = $this->q1;
+        $key = unpack('C*', $key);
+        $m0 = $this->m0;
+        $m1 = $this->m1;
+        $m2 = $this->m2;
+        $m3 = $this->m3;
+        $q0 = $this->q0;
+        $q1 = $this->q1;
 
-        $K = $S0 = $S1 = $S2 = $S3 = array();
+        $K = $S0 = $S1 = $S2 = $S3 = [];
 
-        switch (strlen($this->key)) {
+        switch (mb_strlen($this->key)) {
             case 16:
                 list($s7, $s6, $s5, $s4) = $this->mds_rem($le_longs[1], $le_longs[2]);
                 list($s3, $s2, $s1, $s0) = $this->mds_rem($le_longs[3], $le_longs[4]);
@@ -686,7 +686,7 @@ class Crypt_Twofish
                     $m1[$q0[$q1[$j] ^ $key[14]] ^ $key[6]] ^
                     $m2[$q1[$q0[$j] ^ $key[15]] ^ $key[7]] ^
                         $m3[$q1[$q1[$j] ^ $key[16]] ^ $key[8]];
-                    $B   = ($B << 8) | ($B >> 24 & 0xff);
+                    $B = ($B << 8) | ($B >> 24 & 0xff);
                     $K[] = $A += $B;
                     $K[] = (($A += $B) << 9 | $A >> 23 & 0x1ff);
                 }
@@ -710,7 +710,7 @@ class Crypt_Twofish
                     $m1[$q0[$q1[$q1[$j] ^ $key[22]] ^ $key[14]] ^ $key[6]] ^
                     $m2[$q1[$q0[$q0[$j] ^ $key[23]] ^ $key[15]] ^ $key[7]] ^
                         $m3[$q1[$q1[$q0[$j] ^ $key[24]] ^ $key[16]] ^ $key[8]];
-                    $B   = ($B << 8) | ($B >> 24 & 0xff);
+                    $B = ($B << 8) | ($B >> 24 & 0xff);
                     $K[] = $A += $B;
                     $K[] = (($A += $B) << 9 | $A >> 23 & 0x1ff);
                 }
@@ -735,7 +735,7 @@ class Crypt_Twofish
                     $m1[$q0[$q1[$q1[$q0[$j] ^ $key[30]] ^ $key[22]] ^ $key[14]] ^ $key[6]] ^
                     $m2[$q1[$q0[$q0[$q0[$j] ^ $key[31]] ^ $key[23]] ^ $key[15]] ^ $key[7]] ^
                         $m3[$q1[$q1[$q0[$q1[$j] ^ $key[32]] ^ $key[24]] ^ $key[16]] ^ $key[8]];
-                    $B   = ($B << 8) | ($B >> 24 & 0xff);
+                    $B = ($B << 8) | ($B >> 24 & 0xff);
                     $K[] = $A += $B;
                     $K[] = (($A += $B) << 9 | $A >> 23 & 0x1ff);
                 }
@@ -747,7 +747,7 @@ class Crypt_Twofish
                 }
         }
 
-        $this->K  = $K;
+        $this->K = $K;
         $this->S0 = $S0;
         $this->S1 = $S1;
         $this->S2 = $S2;
@@ -761,7 +761,7 @@ class Crypt_Twofish
      *     {@link http://en.wikipedia.org/wiki/PBKDF2 pbkdf2}:
      *         $hash, $salt, $count
      *
-     * @param String $password
+     * @param string $password
      * @param optional String $method
      * @access public
      */
@@ -790,7 +790,7 @@ class Crypt_Twofish
                 }
 
                 $i = 1;
-                while (strlen($key) < 32) {
+                while (mb_strlen($key) < 32) {
                     $hmac = new Crypt_Hash();
                     $hmac->setHash($hash);
                     $hmac->setKey($password);
@@ -813,11 +813,11 @@ class Crypt_Twofish
      * to be all null bytes.
      *
      * @access public
-     * @param String $iv
+     * @param string $iv
      */
     public function setIV($iv)
     {
-        $this->encryptIV = $this->decryptIV = $this->iv = str_pad(substr($iv, 0, 16), 16, chr(0));
+        $this->encryptIV = $this->decryptIV = $this->iv = str_pad(mb_substr($iv, 0, 16), 16, chr(0));
         $this->enchanged = true;
         $this->dechanged = true;
     }
@@ -837,7 +837,7 @@ class Crypt_Twofish
      *
      * @see Crypt_Twofish::decrypt()
      * @access public
-     * @param String $plaintext
+     * @param string $plaintext
      */
     public function encrypt($plaintext)
     {
@@ -848,23 +848,23 @@ class Crypt_Twofish
 
             if ($this->enchanged) {
                 mcrypt_generic_init($this->enmcrypt, $this->key, $this->encryptIV);
-                if ($this->mode == 'ncfb') {
+                if ('ncfb' == $this->mode) {
                     mcrypt_generic_init($this->ecb, $this->key, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
                 }
                 $this->enchanged = false;
             }
 
-            if ($this->mode != 'ncfb' || !$this->continuousBuffer) {
+            if ('ncfb' != $this->mode || !$this->continuousBuffer) {
                 $ciphertext = mcrypt_generic($this->enmcrypt, $plaintext);
             } else {
-                $iv         = &$this->encryptIV;
-                $pos        = &$this->enbuffer['pos'];
-                $len        = strlen($plaintext);
+                $iv = &$this->encryptIV;
+                $pos = &$this->enbuffer['pos'];
+                $len = mb_strlen($plaintext);
                 $ciphertext = '';
-                $i          = 0;
+                $i = 0;
                 if ($pos) {
                     $orig_pos = $pos;
-                    $max      = 16 - $pos;
+                    $max = 16 - $pos;
                     if ($len >= $max) {
                         $i = $max;
                         $len -= $max;
@@ -874,22 +874,22 @@ class Crypt_Twofish
                         $pos += $len;
                         $len = 0;
                     }
-                    $ciphertext                      = substr($iv, $orig_pos) ^ $plaintext;
-                    $iv                              = substr_replace($iv, $ciphertext, $orig_pos, $i);
+                    $ciphertext = mb_substr($iv, $orig_pos) ^ $plaintext;
+                    $iv = substr_replace($iv, $ciphertext, $orig_pos, $i);
                     $this->enbuffer['enmcrypt_init'] = true;
                 }
                 if ($len >= 16) {
-                    if ($this->enbuffer['enmcrypt_init'] === false || $len > 600) {
-                        if ($this->enbuffer['enmcrypt_init'] === true) {
+                    if (false === $this->enbuffer['enmcrypt_init'] || $len > 600) {
+                        if (true === $this->enbuffer['enmcrypt_init']) {
                             mcrypt_generic_init($this->enmcrypt, $this->key, $iv);
                             $this->enbuffer['enmcrypt_init'] = false;
                         }
-                        $ciphertext .= mcrypt_generic($this->enmcrypt, substr($plaintext, $i, $len - $len % 16));
-                        $iv = substr($ciphertext, -16);
+                        $ciphertext .= mcrypt_generic($this->enmcrypt, mb_substr($plaintext, $i, $len - $len % 16));
+                        $iv = mb_substr($ciphertext, -16);
                         $len %= 16;
                     } else {
                         while ($len >= 16) {
-                            $iv = mcrypt_generic($this->ecb, $iv) ^ substr($plaintext, $i, 16);
+                            $iv = mcrypt_generic($this->ecb, $iv) ^ mb_substr($plaintext, $i, 16);
                             $ciphertext .= $iv;
                             $len -= 16;
                             $i += 16;
@@ -897,12 +897,13 @@ class Crypt_Twofish
                     }
                 }
                 if ($len) {
-                    $iv    = mcrypt_generic($this->ecb, $iv);
-                    $block = $iv ^ substr($plaintext, -$len);
-                    $iv    = substr_replace($iv, $block, 0, $len);
+                    $iv = mcrypt_generic($this->ecb, $iv);
+                    $block = $iv ^ mb_substr($plaintext, -$len);
+                    $iv = substr_replace($iv, $block, 0, $len);
                     $ciphertext .= $block;
                     $pos = $len;
                 }
+
                 return $ciphertext;
             }
 
@@ -918,6 +919,7 @@ class Crypt_Twofish
         }
 
         $inline = $this->inline_crypt;
+
         return $inline('encrypt', $this, $plaintext);
     }
 
@@ -928,7 +930,7 @@ class Crypt_Twofish
      *
      * @see Crypt_Twofish::encrypt()
      * @access public
-     * @param String $ciphertext
+     * @param string $ciphertext
      */
     public function decrypt($ciphertext)
     {
@@ -936,28 +938,28 @@ class Crypt_Twofish
             if ($this->paddable) {
                 // we pad with chr(0) since that's what mcrypt_generic does.  to quote from http://php.net/function.mcrypt-generic :
                 // "The data is padded with "\0" to make sure the length of the data is n * blocksize."
-                $ciphertext = str_pad($ciphertext, strlen($ciphertext) + (16 - strlen($ciphertext) % 16) % 16, chr(0));
+                $ciphertext = str_pad($ciphertext, mb_strlen($ciphertext) + (16 - mb_strlen($ciphertext) % 16) % 16, chr(0));
             }
 
             if ($this->dechanged) {
                 mcrypt_generic_init($this->demcrypt, $this->key, $this->decryptIV);
-                if ($this->mode == 'ncfb') {
+                if ('ncfb' == $this->mode) {
                     mcrypt_generic_init($this->ecb, $this->key, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
                 }
                 $this->dechanged = false;
             }
 
-            if ($this->mode != 'ncfb' || !$this->continuousBuffer) {
+            if ('ncfb' != $this->mode || !$this->continuousBuffer) {
                 $plaintext = mdecrypt_generic($this->demcrypt, $ciphertext);
             } else {
-                $iv        = &$this->decryptIV;
-                $pos       = &$this->debuffer['pos'];
-                $len       = strlen($ciphertext);
+                $iv = &$this->decryptIV;
+                $pos = &$this->debuffer['pos'];
+                $len = mb_strlen($ciphertext);
                 $plaintext = '';
-                $i         = 0;
+                $i = 0;
                 if ($pos) {
                     $orig_pos = $pos;
-                    $max      = 16 - $pos;
+                    $max = 16 - $pos;
                     if ($len >= $max) {
                         $i = $max;
                         $len -= $max;
@@ -967,21 +969,22 @@ class Crypt_Twofish
                         $pos += $len;
                         $len = 0;
                     }
-                    $plaintext = substr($iv, $orig_pos) ^ $ciphertext;
-                    $iv        = substr_replace($iv, substr($ciphertext, 0, $i), $orig_pos, $i);
+                    $plaintext = mb_substr($iv, $orig_pos) ^ $ciphertext;
+                    $iv = substr_replace($iv, mb_substr($ciphertext, 0, $i), $orig_pos, $i);
                 }
                 if ($len >= 16) {
-                    $cb = substr($ciphertext, $i, $len - $len % 16);
+                    $cb = mb_substr($ciphertext, $i, $len - $len % 16);
                     $plaintext .= mcrypt_generic($this->ecb, $iv . $cb) ^ $cb;
-                    $iv = substr($cb, -16);
+                    $iv = mb_substr($cb, -16);
                     $len %= 16;
                 }
                 if ($len) {
                     $iv = mcrypt_generic($this->ecb, $iv);
-                    $plaintext .= $iv ^ substr($ciphertext, -$len);
-                    $iv  = substr_replace($iv, substr($ciphertext, -$len), 0, $len);
+                    $plaintext .= $iv ^ mb_substr($ciphertext, -$len);
+                    $iv = substr_replace($iv, mb_substr($ciphertext, -$len), 0, $len);
                     $pos = $len;
                 }
+
                 return $plaintext;
             }
 
@@ -997,6 +1000,7 @@ class Crypt_Twofish
         }
 
         $inline = $this->inline_crypt;
+
         return $inline('decrypt', $this, $ciphertext);
     }
 
@@ -1022,10 +1026,10 @@ class Crypt_Twofish
     public function disableContinuousBuffer()
     {
         $this->continuousBuffer = false;
-        $this->encryptIV        = $this->iv;
-        $this->decryptIV        = $this->iv;
-        $this->enbuffer         = array('encrypted' => '', 'xor' => '', 'pos' => 0, 'enmcrypt_init' => true);
-        $this->debuffer         = array('ciphertext' => '', 'xor' => '', 'pos' => 0, 'demcrypt_init' => true);
+        $this->encryptIV = $this->iv;
+        $this->decryptIV = $this->iv;
+        $this->enbuffer = ['encrypted' => '', 'xor' => '', 'pos' => 0, 'enmcrypt_init' => true];
+        $this->debuffer = ['ciphertext' => '', 'xor' => '', 'pos' => 0, 'demcrypt_init' => true];
 
         if (CRYPT_TWOFISH_MODE == CRYPT_TWOFISH_MODE_MCRYPT) {
             mcrypt_generic_init($this->enmcrypt, $this->key, $this->iv);
@@ -1073,18 +1077,18 @@ class Crypt_Twofish
      *
      * @see Crypt_Twofish::_unpad()
      * @access private
+     * @param mixed $text
      */
     public function _pad($text)
     {
-        $length = strlen($text);
+        $length = mb_strlen($text);
 
         if (!$this->padding) {
-            if ($length % 16 == 0) {
+            if (0 == $length % 16) {
                 return $text;
-            } else {
-                user_error("The plaintext's length ($length) is not a multiple of the block size (16)");
-                $this->padding = true;
             }
+            trigger_error("The plaintext's length ($length) is not a multiple of the block size (16)");
+            $this->padding = true;
         }
 
         $pad = 16 - ($length % 16);
@@ -1100,6 +1104,7 @@ class Crypt_Twofish
      *
      * @see Crypt_Twofish::_pad()
      * @access private
+     * @param mixed $text
      */
     public function _unpad($text)
     {
@@ -1107,13 +1112,13 @@ class Crypt_Twofish
             return $text;
         }
 
-        $length = ord($text[strlen($text) - 1]);
+        $length = ord($text[mb_strlen($text) - 1]);
 
         if (!$length || $length > 16) {
             return false;
         }
 
-        return substr($text, 0, -$length);
+        return mb_substr($text, 0, -$length);
     }
 
     /**
@@ -1121,14 +1126,15 @@ class Crypt_Twofish
      *
      * Inspired by array_shift
      *
-     * @param String $string
-     * @return String
+     * @param string $string
+     * @return string
      * @access private
      */
     public function _string_shift(&$string)
     {
-        $substr = substr($string, 0, 16);
-        $string = substr($string, 16);
+        $substr = mb_substr($string, 0, 16);
+        $string = mb_substr($string, 16);
+
         return $substr;
     }
 
@@ -1141,13 +1147,13 @@ class Crypt_Twofish
      * @see Crypt_Twofish::decrypt()
      * @see Crypt_Twofish::encrypt()
      * @access public
-     * @param String $iv
+     * @param string $iv
      */
     public function _generate_xor(&$iv)
     {
         $xor = $iv;
         for ($j = 4; $j <= 16; $j += 4) {
-            $temp = substr($iv, -$j, 4);
+            $temp = mb_substr($iv, -$j, 4);
             switch ($temp) {
                 case "\xFF\xFF\xFF\xFF":
                     $iv = substr_replace($iv, "\x00\x00\x00\x00", -$j, 4);
@@ -1169,9 +1175,9 @@ class Crypt_Twofish
      * mds_rem function using by the twofish cipher algorithm
      *
      * @access private
-     * @param String $A
-     * @param String $B
-     * @return Array
+     * @param string $A
+     * @param string $B
+     * @return array
      */
     public function mds_rem($A, $B)
     {
@@ -1206,11 +1212,12 @@ class Crypt_Twofish
             $B ^= ($u << 24) | ($u << 8);
         }
 
-        return array(
+        return [
             0xff & $B >> 24,
             0xff & $B >> 16,
             0xff & $B >> 8,
-            0xff & $B);
+            0xff & $B,
+        ];
     }
 
     /**
@@ -1220,10 +1227,10 @@ class Crypt_Twofish
      */
     public function inline_crypt_setup()
     {
-        $lambda_functions = &Crypt_Twofish::get_lambda_functions();
-        $block_size       = 16;
-        $mode             = $this->mode;
-        $code_hash        = "$mode";
+        $lambda_functions = &self::get_lambda_functions();
+        $block_size = 16;
+        $mode = $this->mode;
+        $code_hash = (string)$mode;
 
         if (!isset($lambda_functions[$code_hash])) {
             $init_cryptBlock = '
@@ -1653,12 +1660,13 @@ class Crypt_Twofish
      * Holds the lambda_functions table (classwide)
      *
      * @see inline_crypt_setup()
-     * @return Array
+     * @return array
      * @access private
      */
     public function &get_lambda_functions()
     {
-        static $functions = array();
+        static $functions = [];
+
         return $functions;
     }
 }

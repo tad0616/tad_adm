@@ -139,7 +139,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::Crypt_Rijndael()
      *
-     * @var Integer
+     * @var int
      */
     public $mode;
 
@@ -148,7 +148,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::setKey()
      *
-     * @var String
+     * @var string
      */
     public $key = "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0";
 
@@ -157,7 +157,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::setIV()
      *
-     * @var String
+     * @var string
      */
     public $iv = '';
 
@@ -166,7 +166,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::enableContinuousBuffer()
      *
-     * @var String
+     * @var string
      */
     public $encryptIV = '';
 
@@ -175,7 +175,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::enableContinuousBuffer()
      *
-     * @var String
+     * @var string
      */
     public $decryptIV = '';
 
@@ -184,7 +184,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::enableContinuousBuffer()
      *
-     * @var Boolean
+     * @var bool
      */
     public $continuousBuffer = false;
 
@@ -193,7 +193,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::enablePadding()
      *
-     * @var Boolean
+     * @var bool
      */
     public $padding = true;
 
@@ -204,7 +204,7 @@ class Crypt_Rijndael
      * @see setBlockLength()
      * @see setKeyLength()
      *
-     * @var Boolean
+     * @var bool
      */
     public $changed = true;
 
@@ -213,7 +213,7 @@ class Crypt_Rijndael
      *
      * @see setKeyLength()
      *
-     * @var Boolean
+     * @var bool
      */
     public $explicit_key_length = false;
 
@@ -222,7 +222,7 @@ class Crypt_Rijndael
      *
      * @see _setup()
      *
-     * @var Array
+     * @var array
      */
     public $w;
 
@@ -231,7 +231,7 @@ class Crypt_Rijndael
      *
      * @see _setup()
      *
-     * @var Array
+     * @var array
      */
     public $dw;
 
@@ -240,7 +240,7 @@ class Crypt_Rijndael
      *
      * @see setBlockLength()
      *
-     * @var Integer
+     * @var int
      *
      * @internal The max value is 32, the min value is 16.  All valid values are multiples of 4.  Exists in conjunction with
      *     $Nb because we need this value and not $Nb to pad strings appropriately.
@@ -252,7 +252,7 @@ class Crypt_Rijndael
      *
      * @see setBlockLength()
      *
-     * @var Integer
+     * @var int
      *
      * @internal The max value is 256 / 32 = 8, the min value is 128 / 32 = 4.  Exists in conjunction with $block_size
      *    because the encryption / decryption / key schedule creation requires this number and not $block_size.  We could
@@ -266,7 +266,7 @@ class Crypt_Rijndael
      *
      * @see setKeyLength()
      *
-     * @var Integer
+     * @var int
      *
      * @internal The max value is 256 / 8 = 32, the min value is 128 / 8 = 16.  Exists in conjunction with $key_size
      *    because the encryption / decryption / key schedule creation requires this number and not $key_size.  We could
@@ -280,7 +280,7 @@ class Crypt_Rijndael
      *
      * @see setKeyLength()
      *
-     * @var Integer
+     * @var int
      *
      * @internal The max value is 256 / 32 = 8, the min value is 128 / 32 = 4
      */
@@ -289,7 +289,7 @@ class Crypt_Rijndael
     /**
      * The Number of Rounds.
      *
-     * @var Integer
+     * @var int
      *
      * @internal The max value is 14, the min value is 10.
      */
@@ -298,7 +298,7 @@ class Crypt_Rijndael
     /**
      * Shift offsets.
      *
-     * @var Array
+     * @var array
      */
     public $c;
 
@@ -307,7 +307,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael()
      *
-     * @var Array
+     * @var array
      */
     public $t0;
 
@@ -316,7 +316,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael()
      *
-     * @var Array
+     * @var array
      */
     public $t1;
 
@@ -325,7 +325,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael()
      *
-     * @var Array
+     * @var array
      */
     public $t2;
 
@@ -334,7 +334,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael()
      *
-     * @var Array
+     * @var array
      */
     public $t3;
 
@@ -343,7 +343,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael()
      *
-     * @var Array
+     * @var array
      */
     public $dt0;
 
@@ -352,7 +352,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael()
      *
-     * @var Array
+     * @var array
      */
     public $dt1;
 
@@ -361,7 +361,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael()
      *
-     * @var Array
+     * @var array
      */
     public $dt2;
 
@@ -370,7 +370,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael()
      *
-     * @var Array
+     * @var array
      */
     public $dt3;
 
@@ -379,7 +379,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::_encryptBlock()
      *
-     * @var Array
+     * @var array
      */
     public $sbox;
 
@@ -388,7 +388,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::_decryptBlock()
      *
-     * @var Array
+     * @var array
      */
     public $isbox;
 
@@ -400,7 +400,7 @@ class Crypt_Rijndael
      * @see Crypt_Rijndael::inline_crypt_setup()
      * @see Crypt_Rijndael::$use_inline_crypt
      *
-     * @var Callback
+     * @var callback
      */
     public $inline_crypt;
 
@@ -411,7 +411,7 @@ class Crypt_Rijndael
      * @see Crypt_Rijndael::inline_crypt_setup()
      * @see Crypt_Rijndael::$inline_crypt
      *
-     * @var Boolean
+     * @var bool
      */
     public $use_inline_crypt = true;
 
@@ -420,7 +420,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::Crypt_Rijndael()
      *
-     * @var Boolean
+     * @var bool
      */
     public $paddable = false;
 
@@ -429,18 +429,18 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::encrypt()
      *
-     * @var String
+     * @var string
      */
-    public $enbuffer = array('encrypted' => '', 'xor' => '', 'pos' => 0);
+    public $enbuffer = ['encrypted' => '', 'xor' => '', 'pos' => 0];
 
     /**
      * Decryption buffer for CTR, OFB and CFB modes.
      *
      * @see Crypt_Rijndael::decrypt()
      *
-     * @var String
+     * @var string
      */
-    public $debuffer = array('ciphertext' => '', 'xor' => '', 'pos' => 0);
+    public $debuffer = ['ciphertext' => '', 'xor' => '', 'pos' => 0];
 
     /**
      * Default Constructor.
@@ -452,7 +452,7 @@ class Crypt_Rijndael
      *
      * @return Crypt_Rijndael
      */
-    public function Crypt_Rijndael($mode = CRYPT_RIJNDAEL_MODE_CBC)
+    public function __construct($mode = CRYPT_RIJNDAEL_MODE_CBC)
     {
         switch ($mode) {
             case CRYPT_RIJNDAEL_MODE_ECB:
@@ -483,7 +483,7 @@ class Crypt_Rijndael
         // according to <http://csrc.nist.gov/archive/aes/rijndael/Rijndael-ammended.pdf#page=19> (section 5.2.1),
         // precomputed tables can be used in the mixColumns phase.  in that example, they're assigned t0...t3, so
         // those are the names we'll use.
-        $t3 = array(
+        $t3 = [
             0x6363A5C6, 0x7C7C84F8, 0x777799EE, 0x7B7B8DF6, 0xF2F20DFF, 0x6B6BBDD6, 0x6F6FB1DE, 0xC5C55491,
             0x30305060, 0x01010302, 0x6767A9CE, 0x2B2B7D56, 0xFEFE19E7, 0xD7D762B5, 0xABABE64D, 0x76769AEC,
             0xCACA458F, 0x82829D1F, 0xC9C94089, 0x7D7D87FA, 0xFAFA15EF, 0x5959EBB2, 0x4747C98E, 0xF0F00BFB,
@@ -516,9 +516,9 @@ class Crypt_Rijndael
             0x9B9BB62D, 0x1E1E223C, 0x87879215, 0xE9E920C9, 0xCECE4987, 0x5555FFAA, 0x28287850, 0xDFDF7AA5,
             0x8C8C8F03, 0xA1A1F859, 0x89898009, 0x0D0D171A, 0xBFBFDA65, 0xE6E631D7, 0x4242C684, 0x6868B8D0,
             0x4141C382, 0x9999B029, 0x2D2D775A, 0x0F0F111E, 0xB0B0CB7B, 0x5454FCA8, 0xBBBBD66D, 0x16163A2C,
-        );
+        ];
 
-        $dt3 = array(
+        $dt3 = [
             0xF4A75051, 0x4165537E, 0x17A4C31A, 0x275E963A, 0xAB6BCB3B, 0x9D45F11F, 0xFA58ABAC, 0xE303934B,
             0x30FA5520, 0x766DF6AD, 0xCC769188, 0x024C25F5, 0xE5D7FC4F, 0x2ACBD7C5, 0x35448026, 0x62A38FB5,
             0xB15A49DE, 0xBA1B6725, 0xEA0E9845, 0xFEC0E15D, 0x2F7502C3, 0x4CF01281, 0x4697A38D, 0xD3F9C66B,
@@ -551,7 +551,7 @@ class Crypt_Rijndael
             0xD2DF599C, 0xF2733F55, 0x14CE7918, 0xC737BF73, 0xF7CDEA53, 0xFDAA5B5F, 0x3D6F14DF, 0x44DB8678,
             0xAFF381CA, 0x68C43EB9, 0x24342C38, 0xA3405FC2, 0x1DC37216, 0xE2250CBC, 0x3C498B28, 0x0D9541FF,
             0xA8017139, 0x0CB3DE08, 0xB4E49CD8, 0x56C19064, 0xCB84617B, 0x32B670D5, 0x6C5C7448, 0xB85742D0,
-        );
+        ];
 
         for ($i = 0; $i < 256; $i++) {
             $t2[] = (($t3[$i] << 8) & 0xFFFFFF00) | (($t3[$i] >> 24) & 0x000000FF);
@@ -564,7 +564,7 @@ class Crypt_Rijndael
         }
 
         // sbox for the S-Box substitution
-        $this->sbox = array(
+        $this->sbox = [
             0x63, 0x7C, 0x77, 0x7B, 0xF2, 0x6B, 0x6F, 0xC5, 0x30, 0x01, 0x67, 0x2B, 0xFE, 0xD7, 0xAB, 0x76,
             0xCA, 0x82, 0xC9, 0x7D, 0xFA, 0x59, 0x47, 0xF0, 0xAD, 0xD4, 0xA2, 0xAF, 0x9C, 0xA4, 0x72, 0xC0,
             0xB7, 0xFD, 0x93, 0x26, 0x36, 0x3F, 0xF7, 0xCC, 0x34, 0xA5, 0xE5, 0xF1, 0x71, 0xD8, 0x31, 0x15,
@@ -581,10 +581,10 @@ class Crypt_Rijndael
             0x70, 0x3E, 0xB5, 0x66, 0x48, 0x03, 0xF6, 0x0E, 0x61, 0x35, 0x57, 0xB9, 0x86, 0xC1, 0x1D, 0x9E,
             0xE1, 0xF8, 0x98, 0x11, 0x69, 0xD9, 0x8E, 0x94, 0x9B, 0x1E, 0x87, 0xE9, 0xCE, 0x55, 0x28, 0xDF,
             0x8C, 0xA1, 0x89, 0x0D, 0xBF, 0xE6, 0x42, 0x68, 0x41, 0x99, 0x2D, 0x0F, 0xB0, 0x54, 0xBB, 0x16,
-        );
+        ];
 
         // sbox for the inverse S-Box substitution
-        $this->isbox = array(
+        $this->isbox = [
             0x52, 0x09, 0x6A, 0xD5, 0x30, 0x36, 0xA5, 0x38, 0xBF, 0x40, 0xA3, 0x9E, 0x81, 0xF3, 0xD7, 0xFB,
             0x7C, 0xE3, 0x39, 0x82, 0x9B, 0x2F, 0xFF, 0x87, 0x34, 0x8E, 0x43, 0x44, 0xC4, 0xDE, 0xE9, 0xCB,
             0x54, 0x7B, 0x94, 0x32, 0xA6, 0xC2, 0x23, 0x3D, 0xEE, 0x4C, 0x95, 0x0B, 0x42, 0xFA, 0xC3, 0x4E,
@@ -601,7 +601,7 @@ class Crypt_Rijndael
             0x60, 0x51, 0x7F, 0xA9, 0x19, 0xB5, 0x4A, 0x0D, 0x2D, 0xE5, 0x7A, 0x9F, 0x93, 0xC9, 0x9C, 0xEF,
             0xA0, 0xE0, 0x3B, 0x4D, 0xAE, 0x2A, 0xF5, 0xB0, 0xC8, 0xEB, 0xBB, 0x3C, 0x83, 0x53, 0x99, 0x61,
             0x17, 0x2B, 0x04, 0x7E, 0xBA, 0x77, 0xD6, 0x26, 0xE1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0C, 0x7D,
-        );
+        ];
 
         if (!function_exists('create_function') || !is_callable('create_function')) {
             $this->use_inline_crypt = false;
@@ -618,7 +618,7 @@ class Crypt_Rijndael
      *
      * If the key is not explicitly set, it'll be assumed to be all null bytes.
      *
-     * @param String $key
+     * @param string $key
      */
     public function setKey($key)
     {
@@ -632,11 +632,11 @@ class Crypt_Rijndael
      * SetIV is not required when CRYPT_RIJNDAEL_MODE_ECB is being used.  If not explictly set, it'll be assumed
      * to be all zero's.
      *
-     * @param String $iv
+     * @param string $iv
      */
     public function setIV($iv)
     {
-        $this->encryptIV = $this->decryptIV = $this->iv = str_pad(substr($iv, 0, $this->block_size), $this->block_size, chr(0));
+        $this->encryptIV = $this->decryptIV = $this->iv = str_pad(mb_substr($iv, 0, $this->block_size), $this->block_size, chr(0));
     }
 
     /**
@@ -645,7 +645,7 @@ class Crypt_Rijndael
      * Valid key lengths are 128, 160, 192, 224, and 256.  If the length is less than 128, it will be rounded up to
      * 128.  If the length is greater than 128 and invalid, it will be rounded down to the closest valid amount.
      *
-     * @param Integer $length
+     * @param int $length
      */
     public function setKeyLength($length)
     {
@@ -670,7 +670,7 @@ class Crypt_Rijndael
      *         $hash, $salt, $method
      *     Set $dkLen by calling setKeyLength()
      *
-     * @param String          $password
+     * @param string          $password
      * @param optional String $method
      */
     public function setPassword($password, $method = 'pbkdf2')
@@ -698,13 +698,13 @@ class Crypt_Rijndael
                 }
 
                 $i = 1;
-                while (strlen($key) < $this->key_size) {
+                while (mb_strlen($key) < $this->key_size) {
                     // $dkLen == $this->key_size
                     //$dk.= $this->_pbkdf($password, $salt, $count, $i++);
                     $hmac = new Crypt_Hash();
                     $hmac->setHash($hash);
                     $hmac->setKey($password);
-                    $f = $u = $hmac->hash($salt.pack('N', $i++));
+                    $f = $u = $hmac->hash($salt . pack('N', $i++));
                     for ($j = 2; $j <= $count; $j++) {
                         $u = $hmac->hash($u);
                         $f ^= $u;
@@ -713,7 +713,7 @@ class Crypt_Rijndael
                 }
         }
 
-        $this->setKey(substr($key, 0, $this->key_size));
+        $this->setKey(mb_substr($key, 0, $this->key_size));
     }
 
     /**
@@ -722,7 +722,7 @@ class Crypt_Rijndael
      * Valid block lengths are 128, 160, 192, 224, and 256.  If the length is less than 128, it will be rounded up to
      * 128.  If the length is greater than 128 and invalid, it will be rounded down to the closest valid amount.
      *
-     * @param Integer $length
+     * @param int $length
      */
     public function setBlockLength($length)
     {
@@ -746,8 +746,8 @@ class Crypt_Rijndael
      * @see Crypt_Rijndael::decrypt()
      * @see Crypt_Rijndael::encrypt()
      *
-     * @param Integer $length
-     * @param String  $iv
+     * @param int $length
+     * @param string  $iv
      */
     public function _generate_xor($length, &$iv)
     {
@@ -757,7 +757,7 @@ class Crypt_Rijndael
         for ($i = 0; $i < $num_blocks; $i++) {
             $xor .= $iv;
             for ($j = 4; $j <= $block_size; $j += 4) {
-                $temp = substr($iv, -$j, 4);
+                $temp = mb_substr($iv, -$j, 4);
                 switch ($temp) {
                     case "\xFF\xFF\xFF\xFF":
                         $iv = substr_replace($iv, "\x00\x00\x00\x00", -$j, 4);
@@ -792,7 +792,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::decrypt()
      *
-     * @param String $plaintext
+     * @param string $plaintext
      */
     public function encrypt($plaintext)
     {
@@ -813,14 +813,14 @@ class Crypt_Rijndael
         $ciphertext = '';
         switch ($this->mode) {
             case CRYPT_RIJNDAEL_MODE_ECB:
-                for ($i = 0; $i < strlen($plaintext); $i += $block_size) {
-                    $ciphertext .= $this->_encryptBlock(substr($plaintext, $i, $block_size));
+                for ($i = 0; $i < mb_strlen($plaintext); $i += $block_size) {
+                    $ciphertext .= $this->_encryptBlock(mb_substr($plaintext, $i, $block_size));
                 }
                 break;
             case CRYPT_RIJNDAEL_MODE_CBC:
                 $xor = $this->encryptIV;
-                for ($i = 0; $i < strlen($plaintext); $i += $block_size) {
-                    $block = substr($plaintext, $i, $block_size);
+                for ($i = 0; $i < mb_strlen($plaintext); $i += $block_size) {
+                    $block = mb_substr($plaintext, $i, $block_size);
                     $block = $this->_encryptBlock($block ^ $xor);
                     $xor = $block;
                     $ciphertext .= $block;
@@ -831,26 +831,26 @@ class Crypt_Rijndael
                 break;
             case CRYPT_RIJNDAEL_MODE_CTR:
                 $xor = $this->encryptIV;
-                if (strlen($buffer['encrypted'])) {
-                    for ($i = 0; $i < strlen($plaintext); $i += $block_size) {
-                        $block = substr($plaintext, $i, $block_size);
-                        if (strlen($block) > strlen($buffer['encrypted'])) {
+                if (mb_strlen($buffer['encrypted'])) {
+                    for ($i = 0; $i < mb_strlen($plaintext); $i += $block_size) {
+                        $block = mb_substr($plaintext, $i, $block_size);
+                        if (mb_strlen($block) > mb_strlen($buffer['encrypted'])) {
                             $buffer['encrypted'] .= $this->_encryptBlock($this->_generate_xor($block_size, $xor));
                         }
                         $key = $this->_string_shift($buffer['encrypted'], $block_size);
                         $ciphertext .= $block ^ $key;
                     }
                 } else {
-                    for ($i = 0; $i < strlen($plaintext); $i += $block_size) {
-                        $block = substr($plaintext, $i, $block_size);
+                    for ($i = 0; $i < mb_strlen($plaintext); $i += $block_size) {
+                        $block = mb_substr($plaintext, $i, $block_size);
                         $key = $this->_encryptBlock($this->_generate_xor($block_size, $xor));
                         $ciphertext .= $block ^ $key;
                     }
                 }
                 if ($this->continuousBuffer) {
                     $this->encryptIV = $xor;
-                    if ($start = strlen($plaintext) % $block_size) {
-                        $buffer['encrypted'] = substr($key, $start).$buffer['encrypted'];
+                    if ($start = mb_strlen($plaintext) % $block_size) {
+                        $buffer['encrypted'] = mb_substr($key, $start) . $buffer['encrypted'];
                     }
                 }
                 break;
@@ -864,7 +864,7 @@ class Crypt_Rijndael
                     $iv = $this->encryptIV;
                     $pos = 0;
                 }
-                $len = strlen($plaintext);
+                $len = mb_strlen($plaintext);
                 $i = 0;
                 if ($pos) {
                     $orig_pos = $pos;
@@ -879,18 +879,18 @@ class Crypt_Rijndael
                         $len = 0;
                     }
                     // ie. $i = min($max, $len), $len-= $i, $pos+= $i, $pos%= $blocksize
-                    $ciphertext = substr($iv, $orig_pos) ^ $plaintext;
+                    $ciphertext = mb_substr($iv, $orig_pos) ^ $plaintext;
                     $iv = substr_replace($iv, $ciphertext, $orig_pos, $i);
                 }
                 while ($len >= $block_size) {
-                    $iv = $this->_encryptBlock($iv) ^ substr($plaintext, $i, $block_size);
+                    $iv = $this->_encryptBlock($iv) ^ mb_substr($plaintext, $i, $block_size);
                     $ciphertext .= $iv;
                     $len -= $block_size;
                     $i += $block_size;
                 }
                 if ($len) {
                     $iv = $this->_encryptBlock($iv);
-                    $block = $iv ^ substr($plaintext, $i);
+                    $block = $iv ^ mb_substr($plaintext, $i);
                     $iv = substr_replace($iv, $block, 0, $len);
                     $ciphertext .= $block;
                     $pos = $len;
@@ -898,10 +898,10 @@ class Crypt_Rijndael
                 break;
             case CRYPT_RIJNDAEL_MODE_OFB:
                 $xor = $this->encryptIV;
-                if (strlen($buffer['xor'])) {
-                    for ($i = 0; $i < strlen($plaintext); $i += $block_size) {
-                        $block = substr($plaintext, $i, $block_size);
-                        if (strlen($block) > strlen($buffer['xor'])) {
+                if (mb_strlen($buffer['xor'])) {
+                    for ($i = 0; $i < mb_strlen($plaintext); $i += $block_size) {
+                        $block = mb_substr($plaintext, $i, $block_size);
+                        if (mb_strlen($block) > mb_strlen($buffer['xor'])) {
                             $xor = $this->_encryptBlock($xor);
                             $buffer['xor'] .= $xor;
                         }
@@ -909,16 +909,16 @@ class Crypt_Rijndael
                         $ciphertext .= $block ^ $key;
                     }
                 } else {
-                    for ($i = 0; $i < strlen($plaintext); $i += $block_size) {
+                    for ($i = 0; $i < mb_strlen($plaintext); $i += $block_size) {
                         $xor = $this->_encryptBlock($xor);
-                        $ciphertext .= substr($plaintext, $i, $block_size) ^ $xor;
+                        $ciphertext .= mb_substr($plaintext, $i, $block_size) ^ $xor;
                     }
                     $key = $xor;
                 }
                 if ($this->continuousBuffer) {
                     $this->encryptIV = $xor;
-                    if ($start = strlen($plaintext) % $block_size) {
-                        $buffer['xor'] = substr($key, $start).$buffer['xor'];
+                    if ($start = mb_strlen($plaintext) % $block_size) {
+                        $buffer['xor'] = mb_substr($key, $start) . $buffer['xor'];
                     }
                 }
         }
@@ -934,7 +934,7 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::encrypt()
      *
-     * @param String $ciphertext
+     * @param string $ciphertext
      */
     public function decrypt($ciphertext)
     {
@@ -949,7 +949,7 @@ class Crypt_Rijndael
         if ($this->paddable) {
             // we pad with chr(0) since that's what mcrypt_generic does.  to quote from http://php.net/function.mcrypt-generic :
             // "The data is padded with "\0" to make sure the length of the data is n * blocksize."
-            $ciphertext = str_pad($ciphertext, strlen($ciphertext) + ($this->block_size - strlen($ciphertext) % $this->block_size) % $this->block_size, chr(0));
+            $ciphertext = str_pad($ciphertext, mb_strlen($ciphertext) + ($this->block_size - mb_strlen($ciphertext) % $this->block_size) % $this->block_size, chr(0));
         }
 
         $block_size = $this->block_size;
@@ -957,14 +957,14 @@ class Crypt_Rijndael
         $plaintext = '';
         switch ($this->mode) {
             case CRYPT_RIJNDAEL_MODE_ECB:
-                for ($i = 0; $i < strlen($ciphertext); $i += $block_size) {
-                    $plaintext .= $this->_decryptBlock(substr($ciphertext, $i, $block_size));
+                for ($i = 0; $i < mb_strlen($ciphertext); $i += $block_size) {
+                    $plaintext .= $this->_decryptBlock(mb_substr($ciphertext, $i, $block_size));
                 }
                 break;
             case CRYPT_RIJNDAEL_MODE_CBC:
                 $xor = $this->decryptIV;
-                for ($i = 0; $i < strlen($ciphertext); $i += $block_size) {
-                    $block = substr($ciphertext, $i, $block_size);
+                for ($i = 0; $i < mb_strlen($ciphertext); $i += $block_size) {
+                    $block = mb_substr($ciphertext, $i, $block_size);
                     $plaintext .= $this->_decryptBlock($block) ^ $xor;
                     $xor = $block;
                 }
@@ -974,26 +974,26 @@ class Crypt_Rijndael
                 break;
             case CRYPT_RIJNDAEL_MODE_CTR:
                 $xor = $this->decryptIV;
-                if (strlen($buffer['ciphertext'])) {
-                    for ($i = 0; $i < strlen($ciphertext); $i += $block_size) {
-                        $block = substr($ciphertext, $i, $block_size);
-                        if (strlen($block) > strlen($buffer['ciphertext'])) {
+                if (mb_strlen($buffer['ciphertext'])) {
+                    for ($i = 0; $i < mb_strlen($ciphertext); $i += $block_size) {
+                        $block = mb_substr($ciphertext, $i, $block_size);
+                        if (mb_strlen($block) > mb_strlen($buffer['ciphertext'])) {
                             $buffer['ciphertext'] .= $this->_encryptBlock($this->_generate_xor($block_size, $xor));
                         }
                         $key = $this->_string_shift($buffer['ciphertext'], $block_size);
                         $plaintext .= $block ^ $key;
                     }
                 } else {
-                    for ($i = 0; $i < strlen($ciphertext); $i += $block_size) {
-                        $block = substr($ciphertext, $i, $block_size);
+                    for ($i = 0; $i < mb_strlen($ciphertext); $i += $block_size) {
+                        $block = mb_substr($ciphertext, $i, $block_size);
                         $key = $this->_encryptBlock($this->_generate_xor($block_size, $xor));
                         $plaintext .= $block ^ $key;
                     }
                 }
                 if ($this->continuousBuffer) {
                     $this->decryptIV = $xor;
-                    if ($start = strlen($ciphertext) % $block_size) {
-                        $buffer['ciphertext'] = substr($key, $start).$buffer['ciphertext'];
+                    if ($start = mb_strlen($ciphertext) % $block_size) {
+                        $buffer['ciphertext'] = mb_substr($key, $start) . $buffer['ciphertext'];
                     }
                 }
                 break;
@@ -1005,7 +1005,7 @@ class Crypt_Rijndael
                     $iv = $this->decryptIV;
                     $pos = 0;
                 }
-                $len = strlen($ciphertext);
+                $len = mb_strlen($ciphertext);
                 $i = 0;
                 if ($pos) {
                     $orig_pos = $pos;
@@ -1020,12 +1020,12 @@ class Crypt_Rijndael
                         $len = 0;
                     }
                     // ie. $i = min($max, $len), $len-= $i, $pos+= $i, $pos%= $blocksize
-                    $plaintext = substr($iv, $orig_pos) ^ $ciphertext;
-                    $iv = substr_replace($iv, substr($ciphertext, 0, $i), $orig_pos, $i);
+                    $plaintext = mb_substr($iv, $orig_pos) ^ $ciphertext;
+                    $iv = substr_replace($iv, mb_substr($ciphertext, 0, $i), $orig_pos, $i);
                 }
                 while ($len >= $block_size) {
                     $iv = $this->_encryptBlock($iv);
-                    $cb = substr($ciphertext, $i, $block_size);
+                    $cb = mb_substr($ciphertext, $i, $block_size);
                     $plaintext .= $iv ^ $cb;
                     $iv = $cb;
                     $len -= $block_size;
@@ -1033,17 +1033,17 @@ class Crypt_Rijndael
                 }
                 if ($len) {
                     $iv = $this->_encryptBlock($iv);
-                    $plaintext .= $iv ^ substr($ciphertext, $i);
-                    $iv = substr_replace($iv, substr($ciphertext, $i), 0, $len);
+                    $plaintext .= $iv ^ mb_substr($ciphertext, $i);
+                    $iv = substr_replace($iv, mb_substr($ciphertext, $i), 0, $len);
                     $pos = $len;
                 }
                 break;
             case CRYPT_RIJNDAEL_MODE_OFB:
                 $xor = $this->decryptIV;
-                if (strlen($buffer['xor'])) {
-                    for ($i = 0; $i < strlen($ciphertext); $i += $block_size) {
-                        $block = substr($ciphertext, $i, $block_size);
-                        if (strlen($block) > strlen($buffer['xor'])) {
+                if (mb_strlen($buffer['xor'])) {
+                    for ($i = 0; $i < mb_strlen($ciphertext); $i += $block_size) {
+                        $block = mb_substr($ciphertext, $i, $block_size);
+                        if (mb_strlen($block) > mb_strlen($buffer['xor'])) {
                             $xor = $this->_encryptBlock($xor);
                             $buffer['xor'] .= $xor;
                         }
@@ -1051,16 +1051,16 @@ class Crypt_Rijndael
                         $plaintext .= $block ^ $key;
                     }
                 } else {
-                    for ($i = 0; $i < strlen($ciphertext); $i += $block_size) {
+                    for ($i = 0; $i < mb_strlen($ciphertext); $i += $block_size) {
                         $xor = $this->_encryptBlock($xor);
-                        $plaintext .= substr($ciphertext, $i, $block_size) ^ $xor;
+                        $plaintext .= mb_substr($ciphertext, $i, $block_size) ^ $xor;
                     }
                     $key = $xor;
                 }
                 if ($this->continuousBuffer) {
                     $this->decryptIV = $xor;
-                    if ($start = strlen($ciphertext) % $block_size) {
-                        $buffer['xor'] = substr($key, $start).$buffer['xor'];
+                    if ($start = mb_strlen($ciphertext) % $block_size) {
+                        $buffer['xor'] = mb_substr($key, $start) . $buffer['xor'];
                     }
                 }
         }
@@ -1071,13 +1071,13 @@ class Crypt_Rijndael
     /**
      * Encrypts a block.
      *
-     * @param String $in
+     * @param string $in
      *
-     * @return String
+     * @return string
      */
     public function _encryptBlock($in)
     {
-        $state = array();
+        $state = [];
         $words = unpack('N*word', $in);
 
         $w = $this->w;
@@ -1103,7 +1103,7 @@ class Crypt_Rijndael
         // equation (7.4.7) is supposed to use addition instead of subtraction, so we'll do that here, as well.
 
         // [1] http://fp.gladman.plus.com/cryptography_technology/rijndael/aes.spec.v316.pdf
-        $temp = array();
+        $temp = [];
         for ($round = 1; $round < $Nr; ++$round) {
             $i = 0; // $c[0] == 0
             $j = $c[1];
@@ -1171,13 +1171,13 @@ class Crypt_Rijndael
     /**
      * Decrypts a block.
      *
-     * @param String $in
+     * @param string $in
      *
-     * @return String
+     * @return string
      */
     public function _decryptBlock($in)
     {
-        $state = array();
+        $state = [];
         $words = unpack('N*word', $in);
 
         $dw = $this->dw;
@@ -1195,7 +1195,7 @@ class Crypt_Rijndael
             $state[] = $word ^ $dw[$Nr][++$i];
         }
 
-        $temp = array();
+        $temp = [];
         for ($round = $Nr - 1; $round > 0; --$round) {
             $i = 0; // $c[0] == 0
             $j = $Nb - $c[1];
@@ -1265,18 +1265,19 @@ class Crypt_Rijndael
     {
         // Each number in $rcon is equal to the previous number multiplied by two in Rijndael's finite field.
         // See http://en.wikipedia.org/wiki/Finite_field_arithmetic#Multiplicative_inverse
-        static $rcon = array(0,
+        static $rcon = [
+            0,
             0x01000000, 0x02000000, 0x04000000, 0x08000000, 0x10000000,
             0x20000000, 0x40000000, 0x80000000, 0x1B000000, 0x36000000,
             0x6C000000, 0xD8000000, 0xAB000000, 0x4D000000, 0x9A000000,
             0x2F000000, 0x5E000000, 0xBC000000, 0x63000000, 0xC6000000,
             0x97000000, 0x35000000, 0x6A000000, 0xD4000000, 0xB3000000,
             0x7D000000, 0xFA000000, 0xEF000000, 0xC5000000, 0x91000000,
-        );
+        ];
 
         if (!$this->explicit_key_length) {
             // we do >> 2, here, and not >> 5, as we do above, since strlen($this->key) tells us the number of bytes - not bits
-            $length = strlen($this->key) >> 2;
+            $length = mb_strlen($this->key) >> 2;
             if ($length > 8) {
                 $length = 8;
             } elseif ($length < 4) {
@@ -1286,8 +1287,8 @@ class Crypt_Rijndael
             $this->key_size = $length << 2;
         }
 
-        $this->key = str_pad(substr($this->key, 0, $this->key_size), $this->key_size, chr(0));
-        $this->encryptIV = $this->decryptIV = $this->iv = str_pad(substr($this->iv, 0, $this->block_size), $this->block_size, chr(0));
+        $this->key = str_pad(mb_substr($this->key, 0, $this->key_size), $this->key_size, chr(0));
+        $this->encryptIV = $this->decryptIV = $this->iv = str_pad(mb_substr($this->iv, 0, $this->block_size), $this->block_size, chr(0));
 
         // see Rijndael-ammended.pdf#page=44
         $this->Nr = max($this->Nk, $this->Nb) + 6;
@@ -1300,13 +1301,13 @@ class Crypt_Rijndael
             case 4:
             case 5:
             case 6:
-                $this->c = array(0, 1, 2, 3);
+                $this->c = [0, 1, 2, 3];
                 break;
             case 7:
-                $this->c = array(0, 1, 2, 4);
+                $this->c = [0, 1, 2, 4];
                 break;
             case 8:
-                $this->c = array(0, 1, 3, 4);
+                $this->c = [0, 1, 3, 4];
         }
 
         $key = $this->key;
@@ -1316,14 +1317,14 @@ class Crypt_Rijndael
         $length = $this->Nb * ($this->Nr + 1);
         for ($i = $this->Nk; $i < $length; $i++) {
             $temp = $w[$i - 1];
-            if ($i % $this->Nk == 0) {
+            if (0 == $i % $this->Nk) {
                 // according to <http://php.net/language.types.integer>, "the size of an integer is platform-dependent".
                 // on a 32-bit machine, it's 32-bits, and on a 64-bit machine, it's 64-bits. on a 32-bit machine,
                 // 0xFFFFFFFF << 8 == 0xFFFFFF00, but on a 64-bit machine, it equals 0xFFFFFFFF00. as such, doing 'and'
                 // with 0xFFFFFFFF (or 0xFFFFFF00) on a 32-bit machine is unnecessary, but on a 64-bit machine, it is.
                 $temp = (($temp << 8) & 0xFFFFFF00) | (($temp >> 24) & 0x000000FF); // rotWord
                 $temp = $this->_subWord($temp) ^ $rcon[$i / $this->Nk];
-            } elseif ($this->Nk > 6 && $i % $this->Nk == 4) {
+            } elseif ($this->Nk > 6 && 4 == $i % $this->Nk) {
                 $temp = $this->_subWord($temp);
             }
             $w[$i] = $w[$i - $this->Nk] ^ $temp;
@@ -1336,10 +1337,10 @@ class Crypt_Rijndael
         //        1. Apply the Key Expansion.
         //        2. Apply InvMixColumn to all Round Keys except the first and the last one."
         // also, see fips-197.pdf#page=27, "5.3.5 Equivalent Inverse Cipher"
-        $temp = $this->w = $this->dw = array();
+        $temp = $this->w = $this->dw = [];
         for ($i = $row = $col = 0; $i < $length; $i++, $col++) {
             if ($col == $this->Nb) {
-                if ($row == 0) {
+                if (0 == $row) {
                     $this->dw[0] = $this->w[0];
                 } else {
                     // subWord + invMixColumn + invSubWord = invMixColumn
@@ -1385,6 +1386,7 @@ class Crypt_Rijndael
 
     /**
      * Performs S-Box substitutions.
+     * @param mixed $word
      */
     public function _subWord($word)
     {
@@ -1398,6 +1400,7 @@ class Crypt_Rijndael
 
     /**
      * Performs inverse S-Box substitutions.
+     * @param mixed $word
      */
     public function _invSubWord($word)
     {
@@ -1449,18 +1452,18 @@ class Crypt_Rijndael
      * and padding will, hence forth, be enabled.
      *
      * @see Crypt_Rijndael::_unpad()
+     * @param mixed $text
      */
     public function _pad($text)
     {
-        $length = strlen($text);
+        $length = mb_strlen($text);
 
         if (!$this->padding) {
-            if ($length % $this->block_size == 0) {
+            if (0 == $length % $this->block_size) {
                 return $text;
-            } else {
-                user_error("The plaintext's length ($length) is not a multiple of the block size ({$this->block_size})");
-                $this->padding = true;
             }
+            trigger_error("The plaintext's length ($length) is not a multiple of the block size ({$this->block_size})");
+            $this->padding = true;
         }
 
         $pad = $this->block_size - ($length % $this->block_size);
@@ -1475,6 +1478,7 @@ class Crypt_Rijndael
      * and false will be returned.
      *
      * @see Crypt_Rijndael::_pad()
+     * @param mixed $text
      */
     public function _unpad($text)
     {
@@ -1482,13 +1486,13 @@ class Crypt_Rijndael
             return $text;
         }
 
-        $length = ord($text[strlen($text) - 1]);
+        $length = ord($text[mb_strlen($text) - 1]);
 
         if (!$length || $length > $this->block_size) {
             return false;
         }
 
-        return substr($text, 0, -$length);
+        return mb_substr($text, 0, -$length);
     }
 
     /**
@@ -1544,8 +1548,8 @@ class Crypt_Rijndael
         $this->continuousBuffer = false;
         $this->encryptIV = $this->iv;
         $this->decryptIV = $this->iv;
-        $this->enbuffer = array('encrypted' => '', 'xor' => '', 'pos' => 0);
-        $this->debuffer = array('ciphertext' => '', 'xor' => '', 'pos' => 0);
+        $this->enbuffer = ['encrypted' => '', 'xor' => '', 'pos' => 0];
+        $this->debuffer = ['ciphertext' => '', 'xor' => '', 'pos' => 0];
     }
 
     /**
@@ -1553,15 +1557,15 @@ class Crypt_Rijndael
      *
      * Inspired by array_shift
      *
-     * @param String           $string
+     * @param string           $string
      * @param optional Integer $index
      *
-     * @return String
+     * @return string
      */
     public function _string_shift(&$string, $index = 1)
     {
-        $substr = substr($string, 0, $index);
-        $string = substr($string, $index);
+        $substr = mb_substr($string, 0, $index);
+        $string = mb_substr($string, $index);
 
         return $substr;
     }
@@ -1592,14 +1596,14 @@ class Crypt_Rijndael
             $init_decryptBlock = '';
         } else {
             for ($i = 0, $cw = count($this->w); $i < $cw; ++$i) {
-                $w[] = '$w_'.$i;
-                $dw[] = '$dw_'.$i;
+                $w[] = '$w_' . $i;
+                $dw[] = '$dw_' . $i;
             }
             $init_encryptBlock = 'extract($self->w,  EXTR_PREFIX_ALL, "w");';
             $init_decryptBlock = 'extract($self->dw, EXTR_PREFIX_ALL, "dw");';
         }
 
-        $code_hash = md5("$mode, $block_size, ".implode(',', $w));
+        $code_hash = md5("$mode, $block_size, " . implode(',', $w));
 
         if (!isset($lambda_functions[$code_hash])) {
             $Nr = $this->Nr;
@@ -1619,42 +1623,42 @@ class Crypt_Rijndael
             $wc = $Nb - 1;
 
             // Preround: addRoundKey
-            $_encryptBlock = '$in = unpack("N*", $in);'."\n";
+            $_encryptBlock = '$in = unpack("N*", $in);' . "\n";
             for ($i = 0; $i < $Nb; ++$i) {
-                $_encryptBlock .= '$s'.$i.' = $in['.($i + 1).'] ^ '.$w[++$wc].";\n";
+                $_encryptBlock .= '$s' . $i . ' = $in[' . ($i + 1) . '] ^ ' . $w[++$wc] . ";\n";
             }
 
             // Mainrounds: shiftRows + subWord + mixColumns + addRoundKey
             for ($round = 1; $round < $Nr; ++$round) {
-                list($s, $e) = array($e, $s);
+                list($s, $e) = [$e, $s];
                 for ($i = 0; $i < $Nb; ++$i) {
                     $_encryptBlock .=
-                        '$'.$e.$i.' =
-                        $t0[($'.$s.$i.' >> 24) & 0xff] ^
-                        $t1[($'.$s.(($i + $c[1]) % $Nb).' >> 16) & 0xff] ^
-                        $t2[($'.$s.(($i + $c[2]) % $Nb).' >>  8) & 0xff] ^
-                        $t3[ $'.$s.(($i + $c[3]) % $Nb).'        & 0xff] ^
-                        '.$w[++$wc].";\n";
+                        '$' . $e . $i . ' =
+                        $t0[($' . $s . $i . ' >> 24) & 0xff] ^
+                        $t1[($' . $s . (($i + $c[1]) % $Nb) . ' >> 16) & 0xff] ^
+                        $t2[($' . $s . (($i + $c[2]) % $Nb) . ' >>  8) & 0xff] ^
+                        $t3[ $' . $s . (($i + $c[3]) % $Nb) . '        & 0xff] ^
+                        ' . $w[++$wc] . ";\n";
                 }
             }
 
             // Finalround: subWord + shiftRows + addRoundKey
             for ($i = 0; $i < $Nb; ++$i) {
                 $_encryptBlock .=
-                    '$'.$e.$i.' =
-                     $sbox[ $'.$e.$i.'        & 0xff]        |
-                    ($sbox[($'.$e.$i.' >>  8) & 0xff] <<  8) |
-                    ($sbox[($'.$e.$i.' >> 16) & 0xff] << 16) |
-                    ($sbox[($'.$e.$i.' >> 24) & 0xff] << 24);'."\n";
+                    '$' . $e . $i . ' =
+                     $sbox[ $' . $e . $i . '        & 0xff]        |
+                    ($sbox[($' . $e . $i . ' >>  8) & 0xff] <<  8) |
+                    ($sbox[($' . $e . $i . ' >> 16) & 0xff] << 16) |
+                    ($sbox[($' . $e . $i . ' >> 24) & 0xff] << 24);' . "\n";
             }
-            $_encryptBlock .= '$in = pack("N*"'."\n";
+            $_encryptBlock .= '$in = pack("N*"' . "\n";
             for ($i = 0; $i < $Nb; ++$i) {
                 $_encryptBlock .= ',
-                    ($'.$e.$i.' & 0xFF000000) ^
-                    ($'.$e.(($i + $c[1]) % $Nb).' & 0x00FF0000) ^
-                    ($'.$e.(($i + $c[2]) % $Nb).' & 0x0000FF00) ^
-                    ($'.$e.(($i + $c[3]) % $Nb).' & 0x000000FF) ^
-                    '.$w[$i]."\n";
+                    ($' . $e . $i . ' & 0xFF000000) ^
+                    ($' . $e . (($i + $c[1]) % $Nb) . ' & 0x00FF0000) ^
+                    ($' . $e . (($i + $c[2]) % $Nb) . ' & 0x0000FF00) ^
+                    ($' . $e . (($i + $c[3]) % $Nb) . ' & 0x000000FF) ^
+                    ' . $w[$i] . "\n";
             }
             $_encryptBlock .= ');';
 
@@ -1671,70 +1675,70 @@ class Crypt_Rijndael
             $wc = $Nb - 1;
 
             // Preround: addRoundKey
-            $_decryptBlock = '$in = unpack("N*", $in);'."\n";
+            $_decryptBlock = '$in = unpack("N*", $in);' . "\n";
             for ($i = 0; $i < $Nb; ++$i) {
-                $_decryptBlock .= '$s'.$i.' = $in['.($i + 1).'] ^ '.$dw[++$wc].';'."\n";
+                $_decryptBlock .= '$s' . $i . ' = $in[' . ($i + 1) . '] ^ ' . $dw[++$wc] . ';' . "\n";
             }
 
             // Mainrounds: shiftRows + subWord + mixColumns + addRoundKey
             for ($round = 1; $round < $Nr; ++$round) {
-                list($s, $e) = array($e, $s);
+                list($s, $e) = [$e, $s];
                 for ($i = 0; $i < $Nb; ++$i) {
                     $_decryptBlock .=
-                        '$'.$e.$i.' =
-                        $dt0[($'.$s.$i.' >> 24) & 0xff] ^
-                        $dt1[($'.$s.(($Nb + $i - $c[1]) % $Nb).' >> 16) & 0xff] ^
-                        $dt2[($'.$s.(($Nb + $i - $c[2]) % $Nb).' >>  8) & 0xff] ^
-                        $dt3[ $'.$s.(($Nb + $i - $c[3]) % $Nb).'        & 0xff] ^
-                        '.$dw[++$wc].";\n";
+                        '$' . $e . $i . ' =
+                        $dt0[($' . $s . $i . ' >> 24) & 0xff] ^
+                        $dt1[($' . $s . (($Nb + $i - $c[1]) % $Nb) . ' >> 16) & 0xff] ^
+                        $dt2[($' . $s . (($Nb + $i - $c[2]) % $Nb) . ' >>  8) & 0xff] ^
+                        $dt3[ $' . $s . (($Nb + $i - $c[3]) % $Nb) . '        & 0xff] ^
+                        ' . $dw[++$wc] . ";\n";
                 }
             }
 
             // Finalround: subWord + shiftRows + addRoundKey
             for ($i = 0; $i < $Nb; ++$i) {
                 $_decryptBlock .=
-                    '$'.$e.$i.' =
-                     $isbox[ $'.$e.$i.'        & 0xff]        |
-                    ($isbox[($'.$e.$i.' >>  8) & 0xff] <<  8) |
-                    ($isbox[($'.$e.$i.' >> 16) & 0xff] << 16) |
-                    ($isbox[($'.$e.$i.' >> 24) & 0xff] << 24);'."\n";
+                    '$' . $e . $i . ' =
+                     $isbox[ $' . $e . $i . '        & 0xff]        |
+                    ($isbox[($' . $e . $i . ' >>  8) & 0xff] <<  8) |
+                    ($isbox[($' . $e . $i . ' >> 16) & 0xff] << 16) |
+                    ($isbox[($' . $e . $i . ' >> 24) & 0xff] << 24);' . "\n";
             }
-            $_decryptBlock .= '$in = pack("N*"'."\n";
+            $_decryptBlock .= '$in = pack("N*"' . "\n";
             for ($i = 0; $i < $Nb; ++$i) {
                 $_decryptBlock .= ',
-                    ($'.$e.$i.' & 0xFF000000) ^
-                    ($'.$e.(($Nb + $i - $c[1]) % $Nb).' & 0x00FF0000) ^
-                    ($'.$e.(($Nb + $i - $c[2]) % $Nb).' & 0x0000FF00) ^
-                    ($'.$e.(($Nb + $i - $c[3]) % $Nb).' & 0x000000FF) ^
-                    '.$dw[$i]."\n";
+                    ($' . $e . $i . ' & 0xFF000000) ^
+                    ($' . $e . (($Nb + $i - $c[1]) % $Nb) . ' & 0x00FF0000) ^
+                    ($' . $e . (($Nb + $i - $c[2]) % $Nb) . ' & 0x0000FF00) ^
+                    ($' . $e . (($Nb + $i - $c[3]) % $Nb) . ' & 0x000000FF) ^
+                    ' . $dw[$i] . "\n";
             }
             $_decryptBlock .= ');';
 
             // Generating mode of operation code:
             switch ($mode) {
                 case CRYPT_RIJNDAEL_MODE_ECB:
-                    $encrypt = $init_encryptBlock.'
+                    $encrypt = $init_encryptBlock . '
                         $ciphertext = "";
                         $text = $self->_pad($text);
                         $plaintext_len = strlen($text);
 
-                        for ($i = 0; $i < $plaintext_len; $i+= '.$block_size.') {
-                            $in = substr($text, $i, '.$block_size.');
-                            '.$_encryptBlock.'
+                        for ($i = 0; $i < $plaintext_len; $i+= ' . $block_size . ') {
+                            $in = substr($text, $i, ' . $block_size . ');
+                            ' . $_encryptBlock . '
                             $ciphertext.= $in;
                         }
 
                         return $ciphertext;
                         ';
 
-                    $decrypt = $init_decryptBlock.'
+                    $decrypt = $init_decryptBlock . '
                         $plaintext = "";
-                        $text = str_pad($text, strlen($text) + ('.$block_size.' - strlen($text) % '.$block_size.') % '.$block_size.', chr(0));
+                        $text = str_pad($text, strlen($text) + (' . $block_size . ' - strlen($text) % ' . $block_size . ') % ' . $block_size . ', chr(0));
                         $ciphertext_len = strlen($text);
 
-                        for ($i = 0; $i < $ciphertext_len; $i+= '.$block_size.') {
-                            $in = substr($text, $i, '.$block_size.');
-                            '.$_decryptBlock.'
+                        for ($i = 0; $i < $ciphertext_len; $i+= ' . $block_size . ') {
+                            $in = substr($text, $i, ' . $block_size . ');
+                            ' . $_decryptBlock . '
                             $plaintext.= $in;
                         }
 
@@ -1742,16 +1746,16 @@ class Crypt_Rijndael
                         ';
                     break;
                 case CRYPT_RIJNDAEL_MODE_CBC:
-                    $encrypt = $init_encryptBlock.'
+                    $encrypt = $init_encryptBlock . '
                         $ciphertext = "";
                         $text = $self->_pad($text);
                         $plaintext_len = strlen($text);
 
                         $in = $self->encryptIV;
 
-                        for ($i = 0; $i < $plaintext_len; $i+= '.$block_size.') {
-                            $in = substr($text, $i, '.$block_size.') ^ $in;
-                            '.$_encryptBlock.'
+                        for ($i = 0; $i < $plaintext_len; $i+= ' . $block_size . ') {
+                            $in = substr($text, $i, ' . $block_size . ') ^ $in;
+                            ' . $_encryptBlock . '
                             $ciphertext.= $in;
                         }
 
@@ -1762,16 +1766,16 @@ class Crypt_Rijndael
                         return $ciphertext;
                         ';
 
-                    $decrypt = $init_decryptBlock.'
+                    $decrypt = $init_decryptBlock . '
                         $plaintext = "";
-                        $text = str_pad($text, strlen($text) + ('.$block_size.' - strlen($text) % '.$block_size.') % '.$block_size.', chr(0));
+                        $text = str_pad($text, strlen($text) + (' . $block_size . ' - strlen($text) % ' . $block_size . ') % ' . $block_size . ', chr(0));
                         $ciphertext_len = strlen($text);
 
                         $iv = $self->decryptIV;
 
-                        for ($i = 0; $i < $ciphertext_len; $i+= '.$block_size.') {
-                            $in = $block = substr($text, $i, '.$block_size.');
-                            '.$_decryptBlock.'
+                        for ($i = 0; $i < $ciphertext_len; $i+= ' . $block_size . ') {
+                            $in = $block = substr($text, $i, ' . $block_size . ');
+                            ' . $_decryptBlock . '
                             $plaintext.= $in ^ $iv;
                             $iv = $block;
                         }
@@ -1784,35 +1788,35 @@ class Crypt_Rijndael
                         ';
                     break;
                 case CRYPT_RIJNDAEL_MODE_CTR:
-                    $encrypt = $init_encryptBlock.'
+                    $encrypt = $init_encryptBlock . '
                         $ciphertext = "";
                         $plaintext_len = strlen($text);
                         $xor = $self->encryptIV;
                         $buffer = &$self->enbuffer;
 
                         if (strlen($buffer["encrypted"])) {
-                            for ($i = 0; $i < $plaintext_len; $i+= '.$block_size.') {
-                                $block = substr($text, $i, '.$block_size.');
+                            for ($i = 0; $i < $plaintext_len; $i+= ' . $block_size . ') {
+                                $block = substr($text, $i, ' . $block_size . ');
                                 if (strlen($block) > strlen($buffer["encrypted"])) {
-                                    $in = $self->_generate_xor('.$block_size.', $xor);
-                                    '.$_encryptBlock.'
+                                    $in = $self->_generate_xor(' . $block_size . ', $xor);
+                                    ' . $_encryptBlock . '
                                     $buffer["encrypted"].= $in;
                                 }
-                                $key = $self->_string_shift($buffer["encrypted"], '.$block_size.');
+                                $key = $self->_string_shift($buffer["encrypted"], ' . $block_size . ');
                                 $ciphertext.= $block ^ $key;
                             }
                         } else {
-                            for ($i = 0; $i < $plaintext_len; $i+= '.$block_size.') {
-                                $block = substr($text, $i, '.$block_size.');
-                                $in = $self->_generate_xor('.$block_size.', $xor);
-                                '.$_encryptBlock.'
+                            for ($i = 0; $i < $plaintext_len; $i+= ' . $block_size . ') {
+                                $block = substr($text, $i, ' . $block_size . ');
+                                $in = $self->_generate_xor(' . $block_size . ', $xor);
+                                ' . $_encryptBlock . '
                                 $key = $in;
                                 $ciphertext.= $block ^ $key;
                             }
                         }
                         if ($self->continuousBuffer) {
                             $self->encryptIV = $xor;
-                            if ($start = $plaintext_len % '.$block_size.') {
+                            if ($start = $plaintext_len % ' . $block_size . ') {
                                 $buffer["encrypted"] = substr($key, $start) . $buffer["encrypted"];
                             }
                         }
@@ -1820,35 +1824,35 @@ class Crypt_Rijndael
                         return $ciphertext;
                     ';
 
-                    $decrypt = $init_encryptBlock.'
+                    $decrypt = $init_encryptBlock . '
                         $plaintext = "";
                         $ciphertext_len = strlen($text);
                         $xor = $self->decryptIV;
                         $buffer = &$self->debuffer;
 
                         if (strlen($buffer["ciphertext"])) {
-                            for ($i = 0; $i < $ciphertext_len; $i+= '.$block_size.') {
-                                $block = substr($text, $i, '.$block_size.');
+                            for ($i = 0; $i < $ciphertext_len; $i+= ' . $block_size . ') {
+                                $block = substr($text, $i, ' . $block_size . ');
                                 if (strlen($block) > strlen($buffer["ciphertext"])) {
-                                    $in = $self->_generate_xor('.$block_size.', $xor);
-                                    '.$_encryptBlock.'
+                                    $in = $self->_generate_xor(' . $block_size . ', $xor);
+                                    ' . $_encryptBlock . '
                                     $buffer["ciphertext"].= $in;
                                 }
-                                $key = $self->_string_shift($buffer["ciphertext"], '.$block_size.');
+                                $key = $self->_string_shift($buffer["ciphertext"], ' . $block_size . ');
                                 $plaintext.= $block ^ $key;
                             }
                         } else {
-                            for ($i = 0; $i < $ciphertext_len; $i+= '.$block_size.') {
-                                $block = substr($text, $i, '.$block_size.');
-                                $in = $self->_generate_xor('.$block_size.', $xor);
-                                '.$_encryptBlock.'
+                            for ($i = 0; $i < $ciphertext_len; $i+= ' . $block_size . ') {
+                                $block = substr($text, $i, ' . $block_size . ');
+                                $in = $self->_generate_xor(' . $block_size . ', $xor);
+                                ' . $_encryptBlock . '
                                 $key = $in;
                                 $plaintext.= $block ^ $key;
                             }
                         }
                         if ($self->continuousBuffer) {
                             $self->decryptIV = $xor;
-                            if ($start = $ciphertext_len % '.$block_size.') {
+                            if ($start = $ciphertext_len % ' . $block_size . ') {
                                 $buffer["ciphertext"] = substr($key, $start) . $buffer["ciphertext"];
                             }
                         }
@@ -1857,7 +1861,7 @@ class Crypt_Rijndael
                         ';
                     break;
                 case CRYPT_RIJNDAEL_MODE_CFB:
-                    $encrypt = $init_encryptBlock.'
+                    $encrypt = $init_encryptBlock . '
                         $ciphertext = "";
                         $buffer = &$self->enbuffer;
 
@@ -1872,7 +1876,7 @@ class Crypt_Rijndael
                         $i = 0;
                         if ($pos) {
                             $orig_pos = $pos;
-                            $max = '.$block_size.' - $pos;
+                            $max = ' . $block_size . ' - $pos;
                             if ($len >= $max) {
                                 $i = $max;
                                 $len-= $max;
@@ -1885,17 +1889,17 @@ class Crypt_Rijndael
                             $ciphertext = substr($iv, $orig_pos) ^ $text;
                             $iv = substr_replace($iv, $ciphertext, $orig_pos, $i);
                         }
-                        while ($len >= '.$block_size.') {
+                        while ($len >= ' . $block_size . ') {
                             $in = $iv;
-                            '.$_encryptBlock.';
-                            $iv = $in ^ substr($text, $i, '.$block_size.');
+                            ' . $_encryptBlock . ';
+                            $iv = $in ^ substr($text, $i, ' . $block_size . ');
                             $ciphertext.= $iv;
-                            $len-= '.$block_size.';
-                            $i+= '.$block_size.';
+                            $len-= ' . $block_size . ';
+                            $i+= ' . $block_size . ';
                         }
                         if ($len) {
                             $in = $iv;
-                            '.$_encryptBlock.'
+                            ' . $_encryptBlock . '
                             $iv = $in;
                             $block = $iv ^ substr($text, $i);
                             $iv = substr_replace($iv, $block, 0, $len);
@@ -1905,7 +1909,7 @@ class Crypt_Rijndael
                         return $ciphertext;
                     ';
 
-                    $decrypt = $init_encryptBlock.'
+                    $decrypt = $init_encryptBlock . '
                         $plaintext = "";
                         $buffer = &$self->debuffer;
 
@@ -1920,7 +1924,7 @@ class Crypt_Rijndael
                         $i = 0;
                         if ($pos) {
                             $orig_pos = $pos;
-                            $max = '.$block_size.' - $pos;
+                            $max = ' . $block_size . ' - $pos;
                             if ($len >= $max) {
                                 $i = $max;
                                 $len-= $max;
@@ -1933,19 +1937,19 @@ class Crypt_Rijndael
                             $plaintext = substr($iv, $orig_pos) ^ $text;
                             $iv = substr_replace($iv, substr($text, 0, $i), $orig_pos, $i);
                         }
-                        while ($len >= '.$block_size.') {
+                        while ($len >= ' . $block_size . ') {
                             $in = $iv;
-                            '.$_encryptBlock.'
+                            ' . $_encryptBlock . '
                             $iv = $in;
-                            $cb = substr($text, $i, '.$block_size.');
+                            $cb = substr($text, $i, ' . $block_size . ');
                             $plaintext.= $iv ^ $cb;
                             $iv = $cb;
-                            $len-= '.$block_size.';
-                            $i+= '.$block_size.';
+                            $len-= ' . $block_size . ';
+                            $i+= ' . $block_size . ';
                         }
                         if ($len) {
                             $in = $iv;
-                            '.$_encryptBlock.'
+                            ' . $_encryptBlock . '
                             $iv = $in;
                             $plaintext.= $iv ^ substr($text, $i);
                             $iv = substr_replace($iv, substr($text, $i), 0, $len);
@@ -1956,72 +1960,72 @@ class Crypt_Rijndael
                         ';
                     break;
                 case CRYPT_RIJNDAEL_MODE_OFB:
-                    $encrypt = $init_encryptBlock.'
+                    $encrypt = $init_encryptBlock . '
                         $ciphertext = "";
                         $plaintext_len = strlen($text);
                         $xor = $self->encryptIV;
                         $buffer = &$self->enbuffer;
 
                         if (strlen($buffer["xor"])) {
-                            for ($i = 0; $i < $plaintext_len; $i+= '.$block_size.') {
-                                $block = substr($text, $i, '.$block_size.');
+                            for ($i = 0; $i < $plaintext_len; $i+= ' . $block_size . ') {
+                                $block = substr($text, $i, ' . $block_size . ');
                                 if (strlen($block) > strlen($buffer["xor"])) {
                                     $in = $xor;
-                                    '.$_encryptBlock.'
+                                    ' . $_encryptBlock . '
                                     $xor = $in;
                                     $buffer["xor"].= $xor;
                                 }
-                                $key = $self->_string_shift($buffer["xor"], '.$block_size.');
+                                $key = $self->_string_shift($buffer["xor"], ' . $block_size . ');
                                 $ciphertext.= $block ^ $key;
                             }
                         } else {
-                            for ($i = 0; $i < $plaintext_len; $i+= '.$block_size.') {
+                            for ($i = 0; $i < $plaintext_len; $i+= ' . $block_size . ') {
                                 $in = $xor;
-                                '.$_encryptBlock.'
+                                ' . $_encryptBlock . '
                                 $xor = $in;
-                                $ciphertext.= substr($text, $i, '.$block_size.') ^ $xor;
+                                $ciphertext.= substr($text, $i, ' . $block_size . ') ^ $xor;
                             }
                             $key = $xor;
                         }
                         if ($self->continuousBuffer) {
                             $self->encryptIV = $xor;
-                            if ($start = $plaintext_len % '.$block_size.') {
+                            if ($start = $plaintext_len % ' . $block_size . ') {
                                  $buffer["xor"] = substr($key, $start) . $buffer["xor"];
                             }
                         }
                         return $ciphertext;
                         ';
 
-                    $decrypt = $init_encryptBlock.'
+                    $decrypt = $init_encryptBlock . '
                         $plaintext = "";
                         $ciphertext_len = strlen($text);
                         $xor = $self->decryptIV;
                         $buffer = &$self->debuffer;
 
                         if (strlen($buffer["xor"])) {
-                            for ($i = 0; $i < $ciphertext_len; $i+= '.$block_size.') {
-                                $block = substr($text, $i, '.$block_size.');
+                            for ($i = 0; $i < $ciphertext_len; $i+= ' . $block_size . ') {
+                                $block = substr($text, $i, ' . $block_size . ');
                                 if (strlen($block) > strlen($buffer["xor"])) {
                                     $in = $xor;
-                                    '.$_encryptBlock.'
+                                    ' . $_encryptBlock . '
                                     $xor = $in;
                                     $buffer["xor"].= $xor;
                                 }
-                                $key = $self->_string_shift($buffer["xor"], '.$block_size.');
+                                $key = $self->_string_shift($buffer["xor"], ' . $block_size . ');
                                 $plaintext.= $block ^ $key;
                             }
                         } else {
-                            for ($i = 0; $i < $ciphertext_len; $i+= '.$block_size.') {
+                            for ($i = 0; $i < $ciphertext_len; $i+= ' . $block_size . ') {
                                 $in = $xor;
-                                '.$_encryptBlock.'
+                                ' . $_encryptBlock . '
                                 $xor = $in;
-                                $plaintext.= substr($text, $i, '.$block_size.') ^ $xor;
+                                $plaintext.= substr($text, $i, ' . $block_size . ') ^ $xor;
                             }
                             $key = $xor;
                         }
                         if ($self->continuousBuffer) {
                             $self->decryptIV = $xor;
-                            if ($start = $ciphertext_len % '.$block_size.') {
+                            if ($start = $ciphertext_len % ' . $block_size . ') {
                                  $buffer["xor"] = substr($key, $start) . $buffer["xor"];
                             }
                         }
@@ -2029,7 +2033,7 @@ class Crypt_Rijndael
                         ';
                     break;
             }
-            $lambda_functions[$code_hash] = create_function('$action, &$self, $text', 'if ($action == "encrypt") { '.$encrypt.' } else { '.$decrypt.' }');
+            $lambda_functions[$code_hash] = create_function('$action, &$self, $text', 'if ($action == "encrypt") { ' . $encrypt . ' } else { ' . $decrypt . ' }');
         }
         $this->inline_crypt = $lambda_functions[$code_hash];
     }
@@ -2039,11 +2043,11 @@ class Crypt_Rijndael
      *
      * @see Crypt_Rijndael::inline_crypt_setup()
      *
-     * @return Array
+     * @return array
      */
     public function &get_lambda_functions()
     {
-        static $functions = array();
+        static $functions = [];
 
         return $functions;
     }
@@ -2051,4 +2055,3 @@ class Crypt_Rijndael
 
 // vim: ts=4:sw=4:et:
 // vim6: fdl=1:
-
