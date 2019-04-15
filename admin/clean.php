@@ -1,8 +1,8 @@
 <?php
 /*-----------引入檔案區--------------*/
-$xoopsOption['template_main'] = 'tad_adm_adm_clean.tpl';
-include_once 'header.php';
-include_once '../function.php';
+$GLOBALS['xoopsOption']['template_main'] = 'tad_adm_adm_clean.tpl';
+require_once __DIR__ . '/header.php';
+require_once dirname(__DIR__) . '/function.php';
 $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
 /*-----------function區--------------*/
 
@@ -86,7 +86,7 @@ function delete_directory($dirname)
 }
 
 /*-----------執行動作判斷區----------*/
-include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op = system_CleanVars($_REQUEST, 'op', '', 'string');
 $g2p = system_CleanVars($_REQUEST, 'g2p', 0, 'int');
 $dirs = system_CleanVars($_REQUEST, 'dirs', '', 'array');
@@ -107,4 +107,4 @@ switch ($op) {
 /*-----------秀出結果區--------------*/
 $xoopsTpl->assign('op', $op);
 $xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-include_once 'footer.php';
+require_once __DIR__ . '/footer.php';

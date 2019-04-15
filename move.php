@@ -1,14 +1,14 @@
 <?php
-include_once '../../mainfile.php';
+require_once dirname(dirname(__DIR__)) . '/mainfile.php';
 
 $isTN = false !== mb_strpos(XOOPS_URL, '.tn.edu.tw') ? true : false;
 $isDCS = false !== mb_strpos(XOOPS_ROOT_PATH, 'DWASFiles') ? true : false;
 $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
 $isSchoolWeb = (false !== mb_strpos(XOOPS_URL, 'schoolweb.tn.edu.tw') or false !== mb_strpos(XOOPS_URL, '120.115.2.88')) ? true : false;
 
-include_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/main.php";
-include_once 'function.php';
-include_once 'admin/adm_function.php';
+require_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/main.php";
+require_once __DIR__ . '/function.php';
+require_once __DIR__ . '/admin/adm_function.php';
 
 $_SESSION['tad_adm_isAdmin'] = ($xoopsUser) ? $xoopsUser->isAdmin(1) : false;
 // $_SESSION['tad_adm_isAdmin'] = 1; //不須密碼模式，危險，沒事勿用。
@@ -35,7 +35,7 @@ $bad_mods = [
 
 $source_mod = get_tad_json_info('all.json');
 
-include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op = system_CleanVars($_REQUEST, 'op', '', 'string');
 $new_url = system_CleanVars($_REQUEST, 'new_url', '', 'string');
 $dir = system_CleanVars($_REQUEST, 'dir', '', 'string');
@@ -194,7 +194,7 @@ function modules_version()
     $mod_msg = '';
     //模組部份
     $all_install_modules = [];
-    while ($data = $xoopsDB->fetchArray($result)) {
+    while (false !== ($data = $xoopsDB->fetchArray($result))) {
         foreach ($data as $k => $v) {
             $$k = $v;
         }
@@ -377,7 +377,7 @@ function download_modules()
     $db_mod = [];
     $sql = 'SELECT `dirname` FROM `' . $xoopsDB->prefix('modules') . '`';
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-    while (list($dirname) = $xoopsDB->fetchRow($result)) {
+    while (false !== (list($dirname) = $xoopsDB->fetchRow($result))) {
         $db_mod[] = $dirname;
     }
 
@@ -423,7 +423,7 @@ function upload_modules()
         $db_mod = [];
         $sql = 'SELECT `dirname` FROM `' . $xoopsDB->prefix('modules') . '`';
         $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-        while (list($dirname) = $xoopsDB->fetchRow($result)) {
+        while (false !== (list($dirname) = $xoopsDB->fetchRow($result))) {
             $db_mod[] = $dirname;
         }
         while (false !== ($file = readdir($d))) {
@@ -711,7 +711,7 @@ function download_zip($FromDir)
         return;
     }
 
-    include_once 'class/pclzip.lib.php';
+    require_once __DIR__ . '/class/pclzip.lib.php';
     $zipfile = new PclZip($toZip);
     $v_list = $zipfile->create($FromDir, PCLZIP_OPT_REMOVE_PATH, XOOPS_ROOT_PATH . $type);
     if (0 == $v_list) {
@@ -748,13 +748,13 @@ function login_form()
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label text-md-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
                     <div class="col-sm-9">
-                        <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control" />
+                        <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label text-md-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
                     <div class="col-sm-9">
-                        <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control" />
+                        <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">

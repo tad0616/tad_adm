@@ -1,10 +1,13 @@
 <?php
+
+use XoopsModules\Tad_themes\Utility;
+
 global $xoopsModule;
 if ('tad_adm' !== $xoopsModule->dirname()) {
-    $modhandler = xoops_getHandler('module');
-    $xModule = $modhandler->getByDirname('tad_adm');
-    $config_handler = xoops_getHandler('config');
-    $xoopsModuleConfig = $config_handler->getConfigsByCat(0, $xModule->mid());
+    $moduleHandler = xoops_getHandler('module');
+    $xModule = $moduleHandler->getByDirname('tad_adm');
+    $configHandler = xoops_getHandler('config');
+    $xoopsModuleConfig = $configHandler->getConfigsByCat(0, $xModule->mid());
     // die('aaa' . var_dump($xoopsModuleConfig));
 }
 
@@ -91,7 +94,7 @@ function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = '', $dirname = 
 {
     global $xoopsModuleConfig;
     $ssh = '';
-    include XOOPS_ROOT_PATH . '/modules/tad_adm/admin/Net/SSH2.php';
+    require XOOPS_ROOT_PATH . '/modules/tad_adm/admin/Net/SSH2.php';
     $ssh = new Net_SSH2($ssh_host, $xoopsModuleConfig['ssh_port']);
     if (!$ssh->login($ssh_id, $ssh_passwd)) {
         redirect_header("main.php?op={$act}&dirname=$dirname&file_link=$file_link&tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_SSH_LOGIN_FAIL, $ssh_id, $ssh_host));
@@ -219,7 +222,7 @@ function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
         } else {
             $new_file = str_replace("{$xoopsModuleConfig['source']}/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
         }
-        mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
+        Utility::mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
         copyemz($file_link, $new_file, $update_sn);
 
         if (!is_file($new_file)) {
@@ -267,7 +270,7 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     $file_link = str_replace('[source]', $xoopsModuleConfig['source'], $file_link);
     $new_file = str_replace("{$xoopsModuleConfig['source']}/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
 
-    mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
+    Utility::mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
     // die("$file_link, $new_file");
     copyemz($file_link, $new_file, 0, $xoops_sn);
 
@@ -278,7 +281,7 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     if (is_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname")) {
         delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
     }
-    mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
+    Utility::mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
 
     require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
     require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
@@ -452,15 +455,15 @@ function act_form($dirname, $op, $title)
     require_once XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php";
     require_once XOOPS_ROOT_PATH . "/modules/{$dirname}/language/{$xoopsConfig['language']}/modinfo.php";
     // die("$dirname, $op, $title");
-    include_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
+    require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
     $token = new XoopsFormHiddenToken();
     $token_code = $token->render();
 
     $mod_name = constant($modversion['name']);
 
     $main = "
-        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/bootstrap4/css/bootstrap.css' />
-        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/css/xoops_adm4.css' />
+        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/bootstrap4/css/bootstrap.css'>
+        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/css/xoops_adm4.css'>
         <div class='well card card-body bg-light'>
             <form action='" . XOOPS_URL . "/modules/system/admin.php' method='post' style='text-align:center'>
             <img src='" . XOOPS_URL . "/modules/{$dirname}/{$modversion['image']}'>
@@ -566,8 +569,8 @@ function getgrgid($file = '')
 function get_logo($dirname)
 {
     global $xoopsConfig;
-    include XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php";
-    include_once XOOPS_ROOT_PATH . "/modules/{$dirname}/language/{$xoopsConfig['language']}/modinfo.php";
+    require XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php";
+    require_once XOOPS_ROOT_PATH . "/modules/{$dirname}/language/{$xoopsConfig['language']}/modinfo.php";
 
     return XOOPS_URL . "/modules/{$dirname}/{$modversion['image']}";
 }
@@ -592,7 +595,7 @@ function get_theme_version($dirname)
 function get_theme_type($dirname)
 {
     global $xoopsConfig;
-    include XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
+    require XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
 
     return $theme_set_allowed;
 }

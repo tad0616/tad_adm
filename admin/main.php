@@ -1,14 +1,14 @@
 <?php
 /*-----------引入檔案區--------------*/
-$xoopsOption['template_main'] = 'tad_adm_adm_main.tpl';
-include_once 'header.php';
-include_once '../function.php';
-require 'adm_function.php';
+$GLOBALS['xoopsOption']['template_main'] = 'tad_adm_adm_main.tpl';
+require_once __DIR__ . '/header.php';
+require_once dirname(__DIR__) . '/function.php';
+require __DIR__ . '/adm_function.php';
 
 /*-----------function區--------------*/
 
 if (file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/FooTable.php')) {
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/FooTable.php';
+    require_once XOOPS_ROOT_PATH . '/modules/tadtools/FooTable.php';
 
     $FooTable = new FooTable();
     $FooTable->render();
@@ -17,7 +17,7 @@ if (file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/FooTable.php')) {
 if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php')) {
     redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
 }
-include_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
+require_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
 $fancybox = new fancybox('.modulesadmin', '640', '480');
 $fancybox->render(true);
 
@@ -47,7 +47,7 @@ function list_modules($mode = 'tpl')
     if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/bubblepopup.php')) {
         redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
     }
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/bubblepopup.php';
+    require_once XOOPS_ROOT_PATH . '/modules/tadtools/bubblepopup.php';
     $bubblepopup = new bubblepopup();
 
     //抓出現有模組
@@ -57,7 +57,7 @@ function list_modules($mode = 'tpl')
     $i = 0;
     //模組部份
     $all_install_modules = [];
-    while ($data = $xoopsDB->fetchArray($result)) {
+    while (false !== ($data = $xoopsDB->fetchArray($result))) {
         foreach ($data as $k => $v) {
             $$k = $v;
         }
@@ -245,7 +245,7 @@ function list_modules($mode = 'tpl')
     //抓出現有區塊
     $sql = 'SELECT bid,dirname,visible, last_modified FROM ' . $xoopsDB->prefix('newblocks') . " WHERE `mid`=0 AND `dirname`!='' ORDER BY side, weight";
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-    while (list($bid, $dirname, $visible, $last_modified) = $xoopsDB->fetchRow($result)) {
+    while (false !== (list($bid, $dirname, $visible, $last_modified) = $xoopsDB->fetchRow($result))) {
         $bid_array[$bid] = $dirname;
         $bid_visible[$dirname] = $visible;
         $bid_last_modified[$dirname] = $last_modified;
@@ -464,7 +464,7 @@ function list_modules($mode = 'tpl')
     if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/easy_responsive_tabs.php')) {
         redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
     }
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/easy_responsive_tabs.php';
+    require_once XOOPS_ROOT_PATH . '/modules/tadtools/easy_responsive_tabs.php';
     $responsive_tabs = new easy_responsive_tabs('#admTab');
     $responsive_tabs->rander();
 
@@ -473,14 +473,14 @@ function list_modules($mode = 'tpl')
     if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/sweet_alert.php')) {
         redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
     }
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/sweet_alert.php';
+    require_once XOOPS_ROOT_PATH . '/modules/tadtools/sweet_alert.php';
     $sweet_alert = new sweet_alert();
     $sweet_alert->render('delete_theme', 'main.php?op=delete_theme&dirname=', 'theme');
 
     if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php')) {
         redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
     }
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
+    require_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
     $fancybox = new fancybox('.fancybox');
     $fancybox->render(false);
 }
@@ -495,13 +495,13 @@ function active_module($mid)
 function get_theme_color($dirname)
 {
     global $xoopsConfig;
-    include XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
+    require XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
 
     return [$theme_color, $theme_kind];
 }
 
 /*-----------執行動作判斷區----------*/
-include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op = system_CleanVars($_REQUEST, 'op', '', 'string');
 $update_sn = system_CleanVars($_REQUEST, 'update_sn', 0, 'int');
 $xoops_sn = system_CleanVars($_REQUEST, 'xoops_sn', 0, 'int');
@@ -572,4 +572,4 @@ switch ($op) {
 
 /*-----------秀出結果區--------------*/
 $xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-include_once 'footer.php';
+require_once __DIR__ . '/footer.php';

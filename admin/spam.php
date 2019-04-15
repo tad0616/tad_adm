@@ -1,8 +1,8 @@
 <?php
 /*-----------引入檔案區--------------*/
-$xoopsOption['template_main'] = 'tad_adm_adm_spam.tpl';
-include_once 'header.php';
-include_once '../function.php';
+$GLOBALS['xoopsOption']['template_main'] = 'tad_adm_adm_spam.tpl';
+require_once __DIR__ . '/header.php';
+require_once dirname(__DIR__) . '/function.php';
 
 /*-----------function區--------------*/
 //列出所有使用者
@@ -33,7 +33,7 @@ function list_user($op = '', $mode = 'normal')
     $_SESSION['chk_start'] = time();
     $i = 0;
     $all_data = [];
-    while ($data = $xoopsDB->fetchArray($result)) {
+    while (false !== ($data = $xoopsDB->fetchArray($result))) {
         foreach ($data as $k => $v) {
             $$k = $v;
         }
@@ -149,7 +149,7 @@ function list_spam()
     $all_data = [];
     $i = 0;
 
-    while ($all = $xoopsDB->fetchArray($result)) {
+    while (false !== ($all = $xoopsDB->fetchArray($result))) {
         foreach ($all as $k => $v) {
             $$k = $v;
         }
@@ -245,8 +245,8 @@ function del_user($del_uid)
     $sql = 'delete from `' . $xoopsDB->prefix('tad_adm') . "` where `uid` = '{$del_uid}'";
     $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
 
-    $member_handler = xoops_getHandler('member');
-    $user = &$member_handler->getUser($del_uid);
+    $memberHandler = xoops_getHandler('member');
+    $user =  $memberHandler->getUser($del_uid);
     if (empty($user)) {
         return;
     }
@@ -254,11 +254,11 @@ function del_user($del_uid)
     $groups = $user->getGroups();
     if (in_array(XOOPS_GROUP_ADMIN, $groups, true)) {
         redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_DONT_DEL_ROOT);
-    } elseif (!$member_handler->deleteUser($user)) {
+    } elseif (!$memberHandler->deleteUser($user)) {
         redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_DEL_FAIL);
     } else {
-        $online_handler = xoops_getHandler('online');
-        $online_handler->destroy($del_uid);
+        $onlineHandler = xoops_getHandler('online');
+        $onlineHandler->destroy($del_uid);
         xoops_notification_deletebyuser($del_uid);
 
         return;
@@ -276,7 +276,7 @@ function del_all_user($uid_arr = [])
 }
 
 /*-----------執行動作判斷區----------*/
-include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op = system_CleanVars($_REQUEST, 'op', '', 'string');
 $g2p = system_CleanVars($_REQUEST, 'g2p', 0, 'int');
 $mode = system_CleanVars($_REQUEST, 'mode', '', 'string');
@@ -303,4 +303,4 @@ switch ($op) {
 
 /*-----------秀出結果區--------------*/
 $xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-include_once 'footer.php';
+require_once __DIR__ . '/footer.php';

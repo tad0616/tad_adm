@@ -136,7 +136,7 @@ class Net_SFTP_Stream
     public function __construct()
     {
         if (!class_exists('Net_SFTP')) {
-            require_once 'Net/SFTP.php';
+            require_once __DIR__ . '/Net/SFTP.php';
         }
     }
 
@@ -496,7 +496,7 @@ class Net_SFTP_Stream
 
         $path_from = $this->_parse_path($path_from);
         $path_to = parse_url($path_to);
-        if (false == $path_from) {
+        if (false === $path_from) {
             return false;
         }
 

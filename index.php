@@ -1,17 +1,17 @@
 <?php
-include_once '../../mainfile.php';
-include_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/main.php";
-include_once 'function.php';
+require_once dirname(dirname(__DIR__)) . '/mainfile.php';
+require_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/main.php";
+require_once __DIR__ . '/function.php';
 
 $op = isset($_REQUEST['op']) ? $_REQUEST['op'] : '';
 
 if ($xoopsUser) {
     $_SESSION['isAdmin'] = $xoopsUser->isAdmin(1);
 } elseif ('helpme' === $op) {
-    $modhandler = xoops_getHandler('module');
-    $xoopsModule = $modhandler->getByDirname('tad_adm');
-    $config_handler = xoops_getHandler('config');
-    $xoopsModuleConfig = &$config_handler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
+    $moduleHandler = xoops_getHandler('module');
+    $xoopsModule = $moduleHandler->getByDirname('tad_adm');
+    $configHandler = xoops_getHandler('config');
+    $xoopsModuleConfig = &$configHandler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
 
     $_SESSION['isAdmin'] = ('' != $xoopsModuleConfig['login'] and '' != $_POST['help_passwd'] and $xoopsModuleConfig['login'] == $_POST['help_passwd']) ? true : false;
 } elseif ('send_passwd' === $op) {
@@ -54,13 +54,13 @@ if (!$_SESSION['isAdmin']) {
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label text-md-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
                         <div class="col-sm-9">
-                            <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control" />
+                            <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label text-md-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
                         <div class="col-sm-9">
-                            <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control" />
+                            <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -150,7 +150,7 @@ function unable_modules()
     global $xoopsDB;
     $sql = 'SELECT mid FROM ' . $xoopsDB->prefix('modules') . " WHERE `isactive`=1 AND `dirname`!='system' AND `dirname`!='tad_adm'";
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-    while (list($mid) = $xoopsDB->fetchRow($result)) {
+    while (false !== (list($mid) = $xoopsDB->fetchRow($result))) {
         $mid_array[] = $mid;
     }
 
@@ -179,7 +179,7 @@ function unable_blocks()
     global $xoopsDB;
     $sql = 'SELECT bid FROM ' . $xoopsDB->prefix('newblocks') . ' WHERE `visible`=1';
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-    while (list($bid) = $xoopsDB->fetchRow($result)) {
+    while (false !== (list($bid) = $xoopsDB->fetchRow($result))) {
         $bid_array[] = $bid;
     }
 
@@ -356,7 +356,7 @@ function session_size()
 function files_counter()
 {
     $dirname = XOOPS_VAR_PATH . '/caches/smarty_compile/';
-    if (false != glob($dirname . '*.php')) {
+    if (false !== glob($dirname . '*.php')) {
         $filecount = count(glob($dirname . '*.php'));
 
         return sprintf(_MD_TADADM_FILES_COUNT, $filecount);
@@ -412,7 +412,7 @@ $mysql_connect = $xoopsDB ? 'OK' : _MD_TADADM_CANT_CONNECT;
 $sql = 'select version()';
 $result = $xoopsDB->queryF($sql);
 list($mysql_version) = $xoopsDB->fetchRow($result);
-// $mysql_version = function_exists('mysql_get_server_info') ? mysql_get_server_info() : $xoopsDB->getServerVersion();
+// $mysql_version = function_exists('$GLOBALS['xoopsDB']->getServerVersion') ? $GLOBALS['xoopsDB']->getServerVersion() : $xoopsDB->getServerVersion();
 
 $other = '';
 if ($xoopsDB) {
@@ -441,7 +441,7 @@ if ($xoopsDB) {
 
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
     $groupid_count = $group_name = [];
-    while (list($groupid, $uid, $name) = $xoopsDB->fetchRow($result)) {
+    while (false !== (list($groupid, $uid, $name) = $xoopsDB->fetchRow($result))) {
         if (isset($groupid_count[$groupid])) {
             $groupid_count[$groupid]++;
         } else {
@@ -629,14 +629,14 @@ $close_site = '1' == $xoopsConfig['closesite'] ? "<li class='list-group-item'><a
 $admin_options = '';
 $sql = 'SELECT a.uid,b.uname FROM ' . $xoopsDB->prefix('groups_users_link') . ' AS a LEFT JOIN ' . $xoopsDB->prefix('users') . ' AS b ON a.uid=b.uid WHERE a.groupid=1';
 $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-while (list($uid, $uname) = $xoopsDB->fetchRow($result)) {
+while (false !== (list($uid, $uname) = $xoopsDB->fetchRow($result))) {
     $admin_options .= "<option value='{$uid}'>{$uname}</option>";
 }
 
 $XoopsFormSelectUserOption = '';
 $sql = 'SELECT a.uid,b.uname,b.name FROM ' . $xoopsDB->prefix('groups_users_link') . ' AS a LEFT JOIN ' . $xoopsDB->prefix('users') . ' AS b ON a.uid=b.uid WHERE a.groupid=2 ORDER BY b.uname';
 $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-while (list($uid, $uname, $name) = $xoopsDB->fetchRow($result)) {
+while (false !== (list($uid, $uname, $name) = $xoopsDB->fetchRow($result))) {
     if (empty($uname)) {
         continue;
     }

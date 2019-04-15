@@ -56,7 +56,7 @@
         <div class="card">
             <div class="card-header text-white bg-primary">
                 <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="checkbox" id="clickAll" value="" checked="checked">
+                    <input class="form-check-input" type="checkbox" id="clickAll" value="" checked>
                     <label class="form-check-label" for="clickAll"><{$dir}> (<span id="totalSize"><{$total_size}></span>)</label>
                 </div>
             </div>
@@ -66,7 +66,7 @@
                 <tr>
                     <td>
                         <div class="form-check form-check-inline">
-                        <input class="form-check-input dirfile" name="dirs[]" type="checkbox" id="clickAll" value="<{$dir.dir_path}>" checked="checked" title="<{$dir.size}>" >
+                        <input class="form-check-input dirfile" name="dirs[]" type="checkbox" id="clickAll" value="<{$dir.dir_path}>" checked title="<{$dir.size}>" >
                         <label class="form-check-label" for="clickAll">
                             <i class="fa fa-folder-open-o" aria-hidden="true"></i> <{$dir.dir_name}>
                         </label>
@@ -79,7 +79,7 @@
                 <tr>
                     <td>
                         <div class="form-check form-check-inline text-info">
-                        <input class="form-check-input dirfile" name="files[]" type="checkbox" id="clickAll" value="<{$file.file_path}>" checked="checked" title="<{$file.size}>" >
+                        <input class="form-check-input dirfile" name="files[]" type="checkbox" id="clickAll" value="<{$file.file_path}>" checked title="<{$file.size}>" >
                         <label class="form-check-label" for="clickAll">
                             <i class="fa fa-file-text-o" aria-hidden="true"></i> <{$file.file_name}>
                         </label>

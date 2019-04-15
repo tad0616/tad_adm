@@ -40,7 +40,7 @@ class AdminerTheme
         $userAgent = filter_input(INPUT_SERVER, 'HTTP_USER_AGENT'); ?>
 
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
 
         <link rel="icon" type="image/ico" href="images/favicon.png">
 
@@ -48,19 +48,19 @@ class AdminerTheme
 // Condition for Windows Phone has to be the first, because IE11 contains also iPhone and Android keywords.
         if (false !== mb_strpos($userAgent, 'Windows')):
         ?>
-            <meta name="application-name" content="Adminer"/>
-            <meta name="msapplication-TileColor" content="#ffffff"/>
-            <meta name="msapplication-square150x150logo" content="images/tileIcon.png"/>
-            <meta name="msapplication-wide310x150logo" content="images/tileIcon-wide.png"/>
+            <meta name="application-name" content="Adminer">
+            <meta name="msapplication-TileColor" content="#ffffff">
+            <meta name="msapplication-square150x150logo" content="images/tileIcon.png">
+            <meta name="msapplication-wide310x150logo" content="images/tileIcon-wide.png">
 
         <?php elseif (false !== mb_strpos($userAgent, 'iPhone') || false !== mb_strpos($userAgent, 'iPad')): ?>
-            <link rel="apple-touch-icon-precomposed" href="images/touchIcon.png?<?php echo self::ICONS_VERSION ?>"/>
+            <link rel="apple-touch-icon-precomposed" href="images/touchIcon.png?<?php echo self::ICONS_VERSION ?>">
 
         <?php elseif (false !== mb_strpos($userAgent, 'Android')): ?>
-            <link rel="apple-touch-icon-precomposed" href="images/touchIcon-android.png?<?php echo self::ICONS_VERSION ?>"/>
+            <link rel="apple-touch-icon-precomposed" href="images/touchIcon-android.png?<?php echo self::ICONS_VERSION ?>">
 
         <?php else: ?>
-            <link rel="apple-touch-icon" href="images/touchIcon.png?<?php echo self::ICONS_VERSION ?>"/>
+            <link rel="apple-touch-icon" href="images/touchIcon.png?<?php echo self::ICONS_VERSION ?>">
         <?php endif; ?>
 
         <link rel="stylesheet" type="text/css" href="css/<?php echo htmlspecialchars($this->themeName) ?>.css?<?php echo self::CSS_VERSION ?>">

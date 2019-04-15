@@ -57,7 +57,7 @@
  * Include Crypt_DES
  */
 if (!class_exists('Crypt_DES')) {
-    require_once 'DES.php';
+    require_once __DIR__ . '/DES.php';
 }
 
 /**
@@ -274,7 +274,7 @@ class Crypt_TripleDES extends Crypt_DES
                 }
 
                 if (!class_exists('Crypt_Hash')) {
-                    require_once 'Crypt/Hash.php';
+                    require_once __DIR__ . '/Crypt/Hash.php';
                 }
 
                 $i = 1;

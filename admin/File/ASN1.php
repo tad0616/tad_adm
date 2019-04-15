@@ -254,7 +254,7 @@ class File_ASN1
         if (!$static_init) {
             $static_init = true;
             if (!class_exists('Math_BigInteger')) {
-                require_once 'Math/BigInteger.php';
+                require_once __DIR__ . '/Math/BigInteger.php';
             }
         }
     }

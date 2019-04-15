@@ -2,11 +2,11 @@
 function adminer_object()
 {
     // required to run any plugin
-    include_once './plugins/plugin.php';
+    require_once __DIR__ . '/plugins/plugin.php';
 
     // autoloader
     foreach (glob('plugins/*.php') as $filename) {
-        include_once "./$filename";
+        require_once "./$filename";
     }
 
     $plugins = [
@@ -31,4 +31,4 @@ function adminer_object()
 }
 
 // include original Adminer or Adminer Editor
-include './adminer.php';
+require __DIR__ . '/adminer.php';

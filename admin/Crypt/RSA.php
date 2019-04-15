@@ -76,14 +76,14 @@
 // call function_exists() a second time to stop the require_once from being called outside
 // of the auto loader
 if (!function_exists('crypt_random_string')) {
-    require_once 'Random.php';
+    require_once __DIR__ . '/Random.php';
 }
 
 /**
  * Include Crypt_Hash
  */
 if (!class_exists('Crypt_Hash')) {
-    require_once 'Hash.php';
+    require_once __DIR__ . '/Hash.php';
 }
 
 /**#@+
@@ -171,7 +171,7 @@ define('CRYPT_RSA_MODE_OPENSSL', 2);
 /**
  * Default openSSL configuration file.
  */
-define('CRYPT_RSA_OPENSSL_CONFIG', dirname(__FILE__) . '/../openssl.cnf');
+define('CRYPT_RSA_OPENSSL_CONFIG', __DIR__ . '/../openssl.cnf');
 
 /**#@+
  * @access public
@@ -413,7 +413,7 @@ class Crypt_RSA
      * For use with parsing XML formatted keys.  PHP's XML Parser functions use utilized - instead of PHP's DOM functions -
      * because PHP's XML Parser functions work on PHP4 whereas PHP's DOM functions - although surperior - don't.
      *
-     * @see Crypt_RSA::_start_element_handler()
+     * @see Crypt_RSA::_start_elementHandler()
      * @var array
      * @access private
      */
@@ -424,8 +424,8 @@ class Crypt_RSA
      *
      * For use with parsing XML formatted keys.
      *
-     * @see Crypt_RSA::_character_handler()
-     * @see Crypt_RSA::_stop_element_handler()
+     * @see Crypt_RSA::_characterHandler()
+     * @see Crypt_RSA::_stop_elementHandler()
      * @var mixed
      * @access private
      */
@@ -462,7 +462,7 @@ class Crypt_RSA
     public function __construct()
     {
         if (!class_exists('Math_BigInteger')) {
-            require_once 'Math/BigInteger.php';
+            require_once __DIR__ . '/Math/BigInteger.php';
         }
 
         $this->configFile = CRYPT_RSA_OPENSSL_CONFIG;
@@ -770,7 +770,7 @@ class Crypt_RSA
                     $private .= crypt_random_string(16 - (mb_strlen($private) & 15));
                     $source .= pack('Na*', mb_strlen($private), $private);
                     if (!class_exists('Crypt_AES')) {
-                        require_once 'Crypt/AES.php';
+                        require_once __DIR__ . '/Crypt/AES.php';
                     }
                     $sequence = 0;
                     $symkey = '';
@@ -791,7 +791,7 @@ class Crypt_RSA
                 $key .= 'Private-Lines: ' . ((mb_strlen($private) + 32) >> 6) . "\r\n";
                 $key .= chunk_split($private, 64);
                 if (!class_exists('Crypt_Hash')) {
-                    require_once 'Crypt/Hash.php';
+                    require_once __DIR__ . '/Crypt/Hash.php';
                 }
                 $hash = new Crypt_Hash('sha1');
                 $hash->setKey(pack('H*', sha1($hashkey)));
@@ -831,7 +831,7 @@ class Crypt_RSA
                     $symkey = pack('H*', md5($this->password . $iv)); // symkey is short for symmetric key
                     $symkey .= mb_substr(pack('H*', md5($symkey . $this->password . $iv)), 0, 8);
                     if (!class_exists('Crypt_TripleDES')) {
-                        require_once 'Crypt/TripleDES.php';
+                        require_once __DIR__ . '/Crypt/TripleDES.php';
                     }
                     $des = new Crypt_TripleDES();
                     $des->setKey($symkey);
@@ -1005,33 +1005,33 @@ class Crypt_RSA
                     switch ($matches[1]) {
                         case 'AES-256-CBC':
                             if (!class_exists('Crypt_AES')) {
-                                require_once 'Crypt/AES.php';
+                                require_once __DIR__ . '/Crypt/AES.php';
                             }
                             $crypto = new Crypt_AES();
                             break;
                         case 'AES-128-CBC':
                             if (!class_exists('Crypt_AES')) {
-                                require_once 'Crypt/AES.php';
+                                require_once __DIR__ . '/Crypt/AES.php';
                             }
                             $symkey = mb_substr($symkey, 0, 16);
                             $crypto = new Crypt_AES();
                             break;
                         case 'DES-EDE3-CFB':
                             if (!class_exists('Crypt_TripleDES')) {
-                                require_once 'Crypt/TripleDES.php';
+                                require_once __DIR__ . '/Crypt/TripleDES.php';
                             }
                             $crypto = new Crypt_TripleDES(CRYPT_DES_MODE_CFB);
                             break;
                         case 'DES-EDE3-CBC':
                             if (!class_exists('Crypt_TripleDES')) {
-                                require_once 'Crypt/TripleDES.php';
+                                require_once __DIR__ . '/Crypt/TripleDES.php';
                             }
                             $symkey = mb_substr($symkey, 0, 24);
                             $crypto = new Crypt_TripleDES();
                             break;
                         case 'DES-CBC':
                             if (!class_exists('Crypt_DES')) {
-                                require_once 'Crypt/DES.php';
+                                require_once __DIR__ . '/Crypt/DES.php';
                             }
                             $crypto = new Crypt_DES();
                             break;
@@ -1214,8 +1214,8 @@ class Crypt_RSA
 
                 $xml = xml_parser_create('UTF-8');
                 xml_set_object($xml, $this);
-                xml_set_element_handler($xml, '_start_element_handler', '_stop_element_handler');
-                xml_set_character_data_handler($xml, '_data_handler');
+                xml_set_elementHandler($xml, '_start_elementHandler', '_stop_elementHandler');
+                xml_set_character_dataHandler($xml, '_dataHandler');
                 // add <xml></xml> to account for "dangling" tags like <BitStrength>...</BitStrength> that are sometimes added
                 if (!xml_parse($xml, '<xml>' . $key . '</xml>')) {
                     return false;
@@ -1247,7 +1247,7 @@ class Crypt_RSA
                 switch ($encryption) {
                     case 'aes256-cbc':
                         if (!class_exists('Crypt_AES')) {
-                            require_once 'Crypt/AES.php';
+                            require_once __DIR__ . '/Crypt/AES.php';
                         }
                         $symkey = '';
                         $sequence = 0;
@@ -1315,14 +1315,14 @@ class Crypt_RSA
     /**
      * Start Element Handler
      *
-     * Called by xml_set_element_handler()
+     * Called by xml_set_elementHandler()
      *
      * @access private
      * @param resource $parser
      * @param string $name
      * @param array $attribs
      */
-    public function _start_element_handler($parser, $name, $attribs)
+    public function _start_elementHandler($parser, $name, $attribs)
     {
         //$name = strtoupper($name);
         switch ($name) {
@@ -1359,13 +1359,13 @@ class Crypt_RSA
     /**
      * Stop Element Handler
      *
-     * Called by xml_set_element_handler()
+     * Called by xml_set_elementHandler()
      *
      * @access private
      * @param resource $parser
      * @param string $name
      */
-    public function _stop_element_handler($parser, $name)
+    public function _stop_elementHandler($parser, $name)
     {
         //$name = strtoupper($name);
         if ('RSAKEYVALUE' == $name) {
@@ -1377,13 +1377,13 @@ class Crypt_RSA
     /**
      * Data Handler
      *
-     * Called by xml_set_character_data_handler()
+     * Called by xml_set_character_dataHandler()
      *
      * @access private
      * @param resource $parser
      * @param string $data
      */
-    public function _data_handler($parser, $data)
+    public function _dataHandler($parser, $data)
     {
         if (!isset($this->current) || is_object($this->current)) {
             return;
@@ -2319,7 +2319,7 @@ class Crypt_RSA
         // be output.
 
         $emLen = ($emBits + 1) >> 3; // ie. ceil($emBits / 8)
-        $sLen = false == $this->sLen ? $this->hLen : $this->sLen;
+        $sLen = false === $this->sLen ? $this->hLen : $this->sLen;
 
         $mHash = $this->hash->hash($m);
         if ($emLen < $this->hLen + $sLen + 2) {
@@ -2358,7 +2358,7 @@ class Crypt_RSA
         // be output.
 
         $emLen = ($emBits + 1) >> 3; // ie. ceil($emBits / 8);
-        $sLen = false == $this->sLen ? $this->hLen : $this->sLen;
+        $sLen = false === $this->sLen ? $this->hLen : $this->sLen;
 
         $mHash = $this->hash->hash($m);
         if ($emLen < $this->hLen + $sLen + 2) {

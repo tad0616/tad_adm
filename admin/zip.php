@@ -1,5 +1,5 @@
 <?php
-include_once '../../../mainfile.php';
+require_once dirname(dirname(dirname(__DIR__))) . '/mainfile.php';
 $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
 $date = date('YmdHi');
 
@@ -26,7 +26,7 @@ if (file_exists($bak_filename)) {
     header("location: {$bak_filename_url}");
     exit;
 }
-    include_once '../class/pclzip.lib.php';
+    require_once dirname(__DIR__) . '/class/pclzip.lib.php';
     $zipfile = new PclZip($bak_filename);
     $v_list = $zipfile->create($DirFileArr, PCLZIP_OPT_REMOVE_PATH, $dir);
 

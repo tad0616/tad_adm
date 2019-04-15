@@ -450,7 +450,7 @@ class Net_SSH1
     public function __construct($host, $port = 22, $timeout = 10, $cipher = NET_SSH1_CIPHER_3DES)
     {
         if (!class_exists('Math_BigInteger')) {
-            require_once 'Math/BigInteger.php';
+            require_once __DIR__ . '/Math/BigInteger.php';
         }
 
         // Include Crypt_Random
@@ -459,7 +459,7 @@ class Net_SSH1
         // call function_exists() a second time to stop the require_once from being called outside
         // of the auto loader
         if (!function_exists('crypt_random_string') && !class_exists('Crypt_Random') && !function_exists('crypt_random_string')) {
-            require_once 'Crypt/Random.php';
+            require_once __DIR__ . '/Crypt/Random.php';
         }
 
         $this->protocol_flags = [
@@ -609,7 +609,7 @@ class Net_SSH1
             //    break;
             case NET_SSH1_CIPHER_DES:
                 if (!class_exists('Crypt_DES')) {
-                    require_once 'Crypt/DES.php';
+                    require_once __DIR__ . '/Crypt/DES.php';
                 }
                 $this->crypto = new Crypt_DES();
                 $this->crypto->disablePadding();
@@ -618,7 +618,7 @@ class Net_SSH1
                 break;
             case NET_SSH1_CIPHER_3DES:
                 if (!class_exists('Crypt_TripleDES')) {
-                    require_once 'Crypt/TripleDES.php';
+                    require_once __DIR__ . '/Crypt/TripleDES.php';
                 }
                 $this->crypto = new Crypt_TripleDES(CRYPT_DES_MODE_3CBC);
                 $this->crypto->disablePadding();

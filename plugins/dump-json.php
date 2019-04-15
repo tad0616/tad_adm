@@ -43,7 +43,7 @@ class AdminerDumpJson
             if ($result) {
                 echo '"' . addcslashes($table, "\r\n\"\\") . "\": [\n";
                 $first = true;
-                while ($row = $result->fetch_assoc()) {
+                while (false !== ($row = $result->fetch_assoc())) {
                     echo($first ? '' : ', ');
                     $first = false;
                     foreach ($row as $key => $val) {
