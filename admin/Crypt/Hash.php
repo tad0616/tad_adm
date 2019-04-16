@@ -208,7 +208,7 @@ class Crypt_Hash
 
         switch ($hash) {
             case 'md2':
-                $mode = CRYPT_HASH_MODE == CRYPT_HASH_MODE_HASH && in_array('md2', hash_algos(), true) ?
+                $mode = CRYPT_HASH_MODE == CRYPT_HASH_MODE_HASH && in_array('md2', hash_algos()) ?
                 CRYPT_HASH_MODE_HASH : CRYPT_HASH_MODE_INTERNAL;
                 break;
             case 'sha384':
@@ -571,12 +571,12 @@ class Crypt_Hash
         if (!isset($k)) {
             // Initialize variables
             $init384 = [ // initial values for SHA384
-                         'cbbb9d5dc1059ed8', '629a292a367cd507', '9159015a3070dd17', '152fecd8f70e5939',
-                         '67332667ffc00b31', '8eb44a8768581511', 'db0c2e0d64f98fa7', '47b5481dbefa4fa4',
+                'cbbb9d5dc1059ed8', '629a292a367cd507', '9159015a3070dd17', '152fecd8f70e5939',
+                '67332667ffc00b31', '8eb44a8768581511', 'db0c2e0d64f98fa7', '47b5481dbefa4fa4',
             ];
             $init512 = [ // initial values for SHA512
-                         '6a09e667f3bcc908', 'bb67ae8584caa73b', '3c6ef372fe94f82b', 'a54ff53a5f1d36f1',
-                         '510e527fade682d1', '9b05688c2b3e6c1f', '1f83d9abfb41bd6b', '5be0cd19137e2179',
+                '6a09e667f3bcc908', 'bb67ae8584caa73b', '3c6ef372fe94f82b', 'a54ff53a5f1d36f1',
+                '510e527fade682d1', '9b05688c2b3e6c1f', '1f83d9abfb41bd6b', '5be0cd19137e2179',
             ];
 
             for ($i = 0; $i < 8; $i++) {

@@ -472,7 +472,7 @@ class Crypt_Blowfish
     {
         if (!defined('CRYPT_BLOWFISH_MODE')) {
             switch (true) {
-                case extension_loaded('mcrypt') && in_array('blowfish', mcrypt_list_algorithms(), true):
+                case extension_loaded('mcrypt') && in_array('blowfish', mcrypt_list_algorithms()):
                     define('CRYPT_BLOWFISH_MODE', CRYPT_BLOWFISH_MODE_MCRYPT);
                     break;
                 default:
@@ -1066,7 +1066,7 @@ class Crypt_Blowfish
         $lambda_functions = &self::get_lambda_functions();
         $block_size = 8;
         $mode = $this->mode;
-        $code_hash = (string)$mode;
+        $code_hash = (string) $mode;
 
         if (!isset($lambda_functions[$code_hash])) {
             $init_cryptBlock = '

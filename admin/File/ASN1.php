@@ -365,7 +365,7 @@ class File_ASN1
                         'constant' => $tag,
                         'content' => $constructed ? $this->_decode_ber($content, $start) : $content,
                         'length' => $length + $start - $current['start'],
-                                 ] + $current;
+                    ] + $current;
                     $start += $length;
                     continue 2;
             }
@@ -489,7 +489,7 @@ class File_ASN1
                 case FILE_ASN1_TYPE_UTC_TIME:
                 case FILE_ASN1_TYPE_GENERALIZED_TIME:
                     $current['content'] = $this->_decodeTime($content, $tag);
-                    // no break
+                // no break
                 default:
             }
 
@@ -740,7 +740,7 @@ class File_ASN1
 
                     return $values;
                 }
-                // no break
+            // no break
             case FILE_ASN1_TYPE_OCTET_STRING:
                 return base64_encode($decoded['content']);
             case FILE_ASN1_TYPE_NULL:
@@ -951,7 +951,7 @@ class File_ASN1
                     $bits = array_fill(0, count($mapping['mapping']), 0);
                     $size = 0;
                     for ($i = 0; $i < count($mapping['mapping']); $i++) {
-                        if (in_array($mapping['mapping'][$i], $source, true)) {
+                        if (in_array($mapping['mapping'][$i], $source)) {
                             $bits[$i] = 1;
                             $size = $i;
                         }
@@ -974,7 +974,7 @@ class File_ASN1
 
                     break;
                 }
-                // no break
+            // no break
             case FILE_ASN1_TYPE_OCTET_STRING:
                 /* The initial octet shall encode, as an unsigned binary integer with bit 1 as the least significant bit,
                 the number of unused bits in the final subsequent octet. The number shall be in the range zero to seven.
@@ -1241,10 +1241,10 @@ class File_ASN1
                 case 4 == $insize:
                     $c = ($c << 8) | ord($in[$i++]);
                     $c = ($c << 8) | ord($in[$i++]);
-                    // no break
+                // no break
                 case 2 == $insize:
                     $c = ($c << 8) | ord($in[$i++]);
-                    // no break
+                // no break
                 case 1 == $insize:
                     break;
                 case 0x00 == ($c & 0x80):
@@ -1273,11 +1273,11 @@ class File_ASN1
                     $c >>= 8;
                     $v .= chr($c & 0xFF);
                     $c >>= 8;
-                    // no break
+                // no break
                 case 2 == $outsize:
                     $v .= chr($c & 0xFF);
                     $c >>= 8;
-                    // no break
+                // no break
                 case 1 == $outsize:
                     $v .= chr($c & 0xFF);
                     $c >>= 8;
@@ -1290,23 +1290,23 @@ class File_ASN1
                 case $c >= 0x04000000:
                     $v .= chr(0x80 | ($c & 0x3F));
                     $c = ($c >> 6) | 0x04000000;
-                    // no break
+                // no break
                 case $c >= 0x00200000:
                     $v .= chr(0x80 | ($c & 0x3F));
                     $c = ($c >> 6) | 0x00200000;
-                    // no break
+                // no break
                 case $c >= 0x00010000:
                     $v .= chr(0x80 | ($c & 0x3F));
                     $c = ($c >> 6) | 0x00010000;
-                    // no break
+                // no break
                 case $c >= 0x00000800:
                     $v .= chr(0x80 | ($c & 0x3F));
                     $c = ($c >> 6) | 0x00000800;
-                    // no break
+                // no break
                 case $c >= 0x00000080:
                     $v .= chr(0x80 | ($c & 0x3F));
                     $c = ($c >> 6) | 0x000000C0;
-                    // no break
+                // no break
                 default:
                     $v .= chr($c);
                     break;

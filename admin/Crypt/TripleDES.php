@@ -106,7 +106,7 @@ class Crypt_TripleDES extends Crypt_DES
     {
         if (!defined('CRYPT_DES_MODE')) {
             switch (true) {
-                case extension_loaded('mcrypt') && in_array('tripledes', mcrypt_list_algorithms(), true):
+                case extension_loaded('mcrypt') && in_array('tripledes', mcrypt_list_algorithms()):
                     define('CRYPT_DES_MODE', CRYPT_DES_MODE_MCRYPT);
                     break;
                 default:
@@ -209,7 +209,7 @@ class Crypt_TripleDES extends Crypt_DES
         $length = mb_strlen($key);
         if ($length > 8) {
             $key = str_pad($key, 24, chr(0));
-        // if $key is between 64 and 128-bits, use the first 64-bits as the last, per this:
+            // if $key is between 64 and 128-bits, use the first 64-bits as the last, per this:
             // http://php.net/function.mcrypt-encrypt#47973
             //$key = $length <= 16 ? substr_replace($key, substr($key, 0, 8), 16) : substr($key, 0, 24);
         } else {

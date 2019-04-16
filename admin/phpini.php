@@ -37,7 +37,7 @@ function phpini()
     $i = 0;
     $main = [];
     foreach ($allini as $k => $v) {
-        if (!in_array($k, $show_ini, true)) {
+        if (!in_array($k, $show_ini)) {
             continue;
         }
 
