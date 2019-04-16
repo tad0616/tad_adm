@@ -570,7 +570,7 @@ class Crypt_Twofish
     {
         if (!defined('CRYPT_TWOFISH_MODE')) {
             switch (true) {
-                case extension_loaded('mcrypt') && in_array('twofish', mcrypt_list_algorithms(), true):
+                case extension_loaded('mcrypt') && in_array('twofish', mcrypt_list_algorithms()):
                     define('CRYPT_TWOFISH_MODE', CRYPT_TWOFISH_MODE_MCRYPT);
                     break;
                 default:
@@ -1230,7 +1230,7 @@ class Crypt_Twofish
         $lambda_functions = &self::get_lambda_functions();
         $block_size = 16;
         $mode = $this->mode;
-        $code_hash = (string)$mode;
+        $code_hash = (string) $mode;
 
         if (!isset($lambda_functions[$code_hash])) {
             $init_cryptBlock = '

@@ -1,16 +1,13 @@
 <?php
 
 /** Use filter in tables list
- * @link https://www.adminer.org/plugins/#use
- * @author Jakub Vrana, https://www.vrana.cz/
- * @license https://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
- * @license https://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, version 2 (one or other)
- */
-class AdminerTablesFilter
-{
-    public function tablesPrint($tables)
-    {
-        ?>
+* @link https://www.adminer.org/plugins/#use
+* @author Jakub Vrana, https://www.vrana.cz/
+* @license https://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+* @license https://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, version 2 (one or other)
+*/
+class AdminerTablesFilter {
+	function tablesPrint($tables) { ?>
 <script<?php echo nonce(); ?>>
 var tablesFilterTimeout = null;
 var tablesFilterValue = '';
@@ -61,18 +58,19 @@ if (sessionStorage){
 <ul id='tables'>
 <?php
 echo script("mixin(qs('#tables'), {onmouseover: menuOver, onmouseout: menuOut});");
-        foreach ($tables as $table => $status) {
-            echo '<li data-table-name="' . h($table) . '"><a href="' . h(ME) . 'select=' . urlencode($table) . '"' . bold($_GET['select'] == $table || $_GET['edit'] == $table, 'select') . '>' . lang('select') . '</a> ';
-            $name = h($status['Name']);
-            echo(support('table') || support('indexes')
-        ? '<a href="' . h(ME) . 'table=' . urlencode($table) . '"'
-            . bold(in_array($table, [$_GET['table'], $_GET['create'], $_GET['indexes'], $_GET['foreign'], $_GET['trigger']], true), (is_view($status) ? 'view' : 'structure'))
-            . " title='" . lang('Show structure') . "'>$name</a>"
-        : "<span>$name</span>"
-    ) . "\n";
-        } ?>
+foreach ($tables as $table => $status) {
+	echo '<li data-table-name="' . h($table) . '"><a href="' . h(ME) . 'select=' . urlencode($table) . '"' . bold($_GET["select"] == $table || $_GET["edit"] == $table, "select") . ">" . lang('select') . "</a> ";
+	$name = h($status["Name"]);
+	echo (support("table") || support("indexes")
+		? '<a href="' . h(ME) . 'table=' . urlencode($table) . '"'
+			. bold(in_array($table, array($_GET["table"], $_GET["create"], $_GET["indexes"], $_GET["foreign"], $_GET["trigger"])), (is_view($status) ? "view" : "structure"))
+			. " title='" . lang('Show structure') . "'>$name</a>"
+		: "<span>$name</span>"
+	) . "\n";
+}
+?>
 </ul>
 <?php
-        return true;
-    }
+		return true;
+	}
 }

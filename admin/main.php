@@ -27,7 +27,7 @@ $fancybox2->render(false);
 //列出所有模組
 function list_modules($mode = 'tpl')
 {
-    global $xoopsDB, $xoopsModuleConfig, $xoopsTpl, $xoopsConfig,$inSchoolWeb;
+    global $xoopsDB, $xoopsModuleConfig, $xoopsTpl, $xoopsConfig, $inSchoolWeb;
     $xoopsTpl->assign('inSchoolWeb', $inSchoolWeb);
 
     //取得更新訊息
@@ -70,9 +70,9 @@ function list_modules($mode = 'tpl')
             continue;
         }
 
-        $version = (int)$version;
+        $version = (int) $version;
         $new_version = $mod[$dirname]['module']['new_version'] * 100;
-        $new_version = (int)$new_version;
+        $new_version = (int) $new_version;
 
         $last_update = filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php");
         $new_last_update = $mod[$dirname]['module']['new_last_update'];
@@ -136,7 +136,7 @@ function list_modules($mode = 'tpl')
     //後台部份
     $all_admin = $all_un_admin = [];
     foreach ($mod as $dirname => $data) {
-        if (isset($ok['adm_tpl']) and in_array($dirname, $ok['adm_tpl'], true)) {
+        if (isset($ok['adm_tpl']) and in_array($dirname, $ok['adm_tpl'])) {
             continue;
         }
 
@@ -181,8 +181,8 @@ function list_modules($mode = 'tpl')
 
                 $version = $Version * 100;
                 $new_version = $data['adm_tpl']['new_version'] * 100;
-                $version = (int)$version;
-                $new_version = (int)$new_version;
+                $version = (int) $version;
+                $new_version = (int) $new_version;
 
                 $last_update = strtotime($all_admin[$i]['last_update']);
                 $new_last_update = strtotime($all_admin[$i]['new_last_update']);
@@ -251,14 +251,14 @@ function list_modules($mode = 'tpl')
         $bid_last_modified[$dirname] = $last_modified;
     }
     foreach ($mod as $dirname => $data) {
-        if (isset($ok['block']) and in_array($dirname, $ok['block'], true)) {
+        if (isset($ok['block']) and in_array($dirname, $ok['block'])) {
             continue;
         }
 
         //區塊部份
         if (isset($data['block']['kind']) and 'block' === $data['block']['kind']) {
             $ok['block'][] = $dirname;
-            if (in_array($dirname, $bid_array, true)) {
+            if (in_array($dirname, $bid_array)) {
                 $is_visible = $bid_visible[$dirname];
 
                 $all_block[$is_visible][$i]['allowed'] = $is_visible;
@@ -300,7 +300,7 @@ function list_modules($mode = 'tpl')
     //佈景部份
     $all_theme = $all_un_theme = [];
     foreach ($mod as $dirname => $data) {
-        if (isset($ok['theme']) and in_array($dirname, $ok['theme'], true)) {
+        if (isset($ok['theme']) and in_array($dirname, $ok['theme'])) {
             continue;
         }
 
@@ -311,7 +311,7 @@ function list_modules($mode = 'tpl')
             if (is_dir(XOOPS_ROOT_PATH . "/themes/{$dirname}")) {
                 $type = get_theme_type($dirname) ? 'web' : 'spec';
                 $Version = get_theme_version($dirname);
-                $is_allowed = in_array($dirname, $xoopsConfig['theme_set_allowed'], true);
+                $is_allowed = in_array($dirname, $xoopsConfig['theme_set_allowed']);
 
                 $status = ($data['theme']['new_status_version']) ? " {$data['theme']['new_status']}{$data['theme']['new_status_version']}" : '';
 
@@ -341,8 +341,8 @@ function list_modules($mode = 'tpl')
 
                 $version = $Version * 100;
                 $new_version = $data['theme']['new_version'] * 100;
-                $version = (int)$version;
-                $new_version = (int)$new_version;
+                $version = (int) $version;
+                $new_version = (int) $new_version;
 
                 $last_update = strtotime($all_theme[$type][$is_allowed][$i]['last_update']);
                 $new_last_update = strtotime($all_theme[$type][$is_allowed][$i]['new_last_update']);
@@ -398,23 +398,23 @@ function list_modules($mode = 'tpl')
     $all_mods = [];
     foreach ($mod as $dirname => $item) {
         foreach ($item as $kind => $data) {
-            if (in_array($dirname, $ok['module'], true) and 'module' === $kind) {
+            if (in_array($dirname, $ok['module']) and 'module' === $kind) {
                 continue;
             }
 
-            if (in_array($dirname, $ok['adm_tpl'], true) and 'adm_tpl' === $kind) {
+            if (in_array($dirname, $ok['adm_tpl']) and 'adm_tpl' === $kind) {
                 continue;
             }
 
-            if (in_array($dirname, $ok['block'], true) and 'block' === $kind) {
+            if (in_array($dirname, $ok['block']) and 'block' === $kind) {
                 continue;
             }
 
-            if (in_array($dirname, $ok['theme'], true) and 'theme' === $kind) {
+            if (in_array($dirname, $ok['theme']) and 'theme' === $kind) {
                 continue;
             }
 
-            if (isset($ok['fix']) and in_array($dirname, $ok['fix'], true) and 'fix' === $kind) {
+            if (isset($ok['fix']) and in_array($dirname, $ok['fix']) and 'fix' === $kind) {
                 continue;
             }
 

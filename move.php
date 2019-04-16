@@ -62,7 +62,7 @@ switch ($op) {
 
 function move_step()
 {
-    global $isDCS, $isTN,$isSchoolWeb;
+    global $isDCS, $isTN, $isSchoolWeb;
     $id = '帳號';
     if (mb_strpos($_SERVER['SERVER_NAME'], '.tn.edu.tw')) {
         $str = str_replace('.tn.edu.tw', '', $_SERVER['SERVER_NAME']);
@@ -202,10 +202,10 @@ function modules_version()
             continue;
         }
         if ('module' === $source_mod[$dirname]['module']['kind']) {
-            $version = (int)$version;
+            $version = (int) $version;
             $old_version = round($version / 100, 2);
             $new_version = $source_mod[$dirname]['module']['new_version'] * 100;
-            $new_version = (int)$new_version;
+            $new_version = (int) $new_version;
 
             $last_update = filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php");
             $new_last_update = $source_mod[$dirname]['module']['new_last_update'];
@@ -384,11 +384,11 @@ function download_modules()
     while (false !== ($file = readdir($d))) {
         if ('.' !== $file && '..' !== $file) {
             $typepath = $mypath . $file;
-            if (!in_array($file, $db_mod, true)) {
+            if (!in_array($file, $db_mod)) {
                 continue;
             }
             if ('dir' === filetype($typepath)) {
-                if ((!isset($source_mod[$file]) and !in_array($file, $system_mods, true)) or isset($bad_mods[$file])) {
+                if ((!isset($source_mod[$file]) and !in_array($file, $system_mods)) or isset($bad_mods[$file])) {
                     $dir_size = format_size(GetDirectorySize($typepath));
                     if (isset($bad_mods[$file])) {
                         $class = 'danger';
@@ -430,11 +430,11 @@ function upload_modules()
             if ('.' !== $file && '..' !== $file) {
                 $typepath = $mypath . $file;
 
-                if (!in_array($file, $db_mod, true)) {
+                if (!in_array($file, $db_mod)) {
                     continue;
                 }
                 if ('dir' === filetype($typepath)) {
-                    if (!isset($source_mod[$file]) and !in_array($file, $system_mods, true)) {
+                    if (!isset($source_mod[$file]) and !in_array($file, $system_mods)) {
                         $need_up[] = "<span class='danger'>$file</span>";
                     }
                 }
@@ -476,7 +476,7 @@ function download_themes()
             $typepath = $mypath . $file;
 
             if ('dir' === filetype($typepath)) {
-                if (!isset($source_mod[$file]) and in_array($file, $xoopsConfig['theme_set_allowed'], true) and !in_array($file, $system_theme, true)) {
+                if (!isset($source_mod[$file]) and in_array($file, $xoopsConfig['theme_set_allowed']) and !in_array($file, $system_theme)) {
                     $dir_size = format_size(GetDirectorySize($typepath));
                     $need = ($xoopsConfig['theme_set'] == $file) ? '，主佈景，務必下載' : '，非主要佈景，不下載也沒關係';
                     $mod_msg .= "<li class='important'><a href='{$_SERVER['PHP_SELF']}?op=download_zip&dir={$typepath}'>{$down}{$typepath}</a>（約 {$dir_size}{$need}）</li>";
@@ -506,7 +506,7 @@ function upload_themes()
             $typepath = $mypath . $file;
 
             if ('dir' === filetype($typepath)) {
-                if (!isset($source_mod[$file]) and in_array($file, $xoopsConfig['theme_set_allowed'], true) and !in_array($file, $system_theme, true)) {
+                if (!isset($source_mod[$file]) and in_array($file, $xoopsConfig['theme_set_allowed']) and !in_array($file, $system_theme)) {
                     $need_up[] = "<span class='danger'>$file</span>";
                 }
             }
@@ -729,7 +729,7 @@ function del_tmp_zip()
         if ('.' !== $file && '..' !== $file) {
             $typepath = $mypath . $file;
             if ('dir' !== filetype($typepath)) {
-                if (in_array($file, $_SESSION['zip_del'], true)) {
+                if (in_array($file, $_SESSION['zip_del'])) {
                     unlink($typepath);
                 }
             }

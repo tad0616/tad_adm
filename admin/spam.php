@@ -110,9 +110,9 @@ function list_user($op = '', $mode = 'normal')
     $_SESSION['chk_end'] = time();
 
     $time = $_SESSION['chk_end'] - $_SESSION['chk_start'];
-    $days = isset($_REQUEST['days']) ? (int)$_REQUEST['days'] : 0;
+    $days = isset($_REQUEST['days']) ? (int) $_REQUEST['days'] : 0;
     $days = empty($days) ? 100 : $days;
-    $g2p = isset($_GET['g2p']) ? (int)$_GET['g2p'] : 1;
+    $g2p = isset($_GET['g2p']) ? (int) $_GET['g2p'] : 1;
     $byemail = isset($_REQUEST['byemail']) ? $_REQUEST['byemail'] : '';
     $max = $xoopsModuleConfig['list_amount'] * 20;
 
@@ -252,7 +252,7 @@ function del_user($del_uid)
     }
 
     $groups = $user->getGroups();
-    if (in_array(XOOPS_GROUP_ADMIN, $groups, true)) {
+    if (in_array(XOOPS_GROUP_ADMIN, $groups)) {
         redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_DONT_DEL_ROOT);
     } elseif (!$memberHandler->deleteUser($user)) {
         redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_DEL_FAIL);

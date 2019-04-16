@@ -10,13 +10,12 @@
  */
 class AdminerQuickFilterTables
 {
-    public function __construct()
-    {
-    }
-
-    public function head()
-    {
-        ?>
+	public function AdminerQuickFilterTables()
+	{
+	}
+	public function head()
+	{   
+?>
 
 		<style>
 		.quick-filter{
@@ -72,5 +71,6 @@ class AdminerQuickFilterTables
 		</script>
 
 <?php
-    }
+	}
+	
 }

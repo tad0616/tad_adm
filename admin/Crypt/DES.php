@@ -750,7 +750,7 @@ class Crypt_DES
     {
         if (!defined('CRYPT_DES_MODE')) {
             switch (true) {
-                case extension_loaded('mcrypt') && in_array('des', mcrypt_list_algorithms(), true):
+                case extension_loaded('mcrypt') && in_array('des', mcrypt_list_algorithms()):
                     define('CRYPT_DES_MODE', CRYPT_DES_MODE_MCRYPT);
                     break;
                 default:
@@ -1580,7 +1580,7 @@ class Crypt_DES
     public function _prepareKey($key)
     {
         static $shifts = [ // number of key bits shifted per round
-                           1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1,
+            1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1,
         ];
 
         static $pc1map = [

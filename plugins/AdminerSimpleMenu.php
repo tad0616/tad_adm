@@ -46,7 +46,7 @@ class AdminerSimpleMenu
         </style>
 
         <?php
-    }
+}
 
     /**
      * Prints table list in menu.
@@ -56,27 +56,27 @@ class AdminerSimpleMenu
      */
     public function tablesPrint($tables)
     {
-        if (defined('PMTN_ADMINER_THEME')) {
+        if (defined("PMTN_ADMINER_THEME")) {
             echo "<ul id='tables' class='simple'>\n";
         } else {
             echo "<ul id='tables' class='simple'>" . script("mixin(qs('#tables'), {onmouseover: menuOver, onmouseout: menuOut});");
         }
 
         foreach ($tables as $table => $status) {
-            $name = Adminer::tableName($status);
-            $active = in_array($table, [$_GET['select'], $_GET['edit'], $_GET['table'], $_GET['create'], $_GET['indexes'], $_GET['foreign'], $_GET['trigger']], true);
+            $name   = Adminer::tableName($status);
+            $active = in_array($table, array($_GET["select"], $_GET["edit"], $_GET["table"], $_GET["create"], $_GET["indexes"], $_GET["foreign"], $_GET["trigger"]));
 
             if ($this->preferSelect) {
-                $action = 'select';
-                $title = 'Select data';
+                $action = "select";
+                $title  = "Select data";
             } else {
-                $action = 'table';
-                $title = 'Show structure';
+                $action = "table";
+                $title  = "Show structure";
             }
 
-            echo '<li>';
-            if ($this->preferSelect || support('table') || support('indexes')) {
-                echo '<a href="' . h(ME) . $action . '=' . urlencode($table) . '"' . bold($active, (is_view($status) ? 'view' : '')) . " title='" . lang($title) . "'>$name</a>";
+            echo "<li>";
+            if ($this->preferSelect || support("table") || support("indexes")) {
+                echo '<a href="' . h(ME) . $action . '=' . urlencode($table) . '"' . bold($active, (is_view($status) ? "view" : "")) . " title='" . lang($title) . "'>$name</a>";
             } else {
                 echo "<span>$name</span>";
             }
@@ -96,7 +96,7 @@ class AdminerSimpleMenu
      *
      * @return bool|null
      */
-    public function selectLinks($tableStatus, $set = '')
+    public function selectLinks($tableStatus, $set = "")
     {
         if (!$this->reorderLinks) {
             return null; // null has to be returned to force Adminer print original links.
@@ -104,38 +104,37 @@ class AdminerSimpleMenu
 
         echo '<p class="links">';
 
-        $links = [];
+        $links = array();
 
         if ($this->preferSelect) {
-            $links['select'] = lang('Select data');
+            $links["select"] = lang('Select data');
         }
 
-        if (support('table') || support('indexes')) {
-            $links['table'] = lang('Show structure');
+        if (support("table") || support("indexes")) {
+            $links["table"] = lang('Show structure');
         }
 
         if (!$this->preferSelect) {
-            $links['select'] = lang('Select data');
+            $links["select"] = lang('Select data');
         }
 
-        if (support('table')) {
+        if (support("table")) {
             if (is_view($tableStatus)) {
-                $links['view'] = lang('Alter view');
+                $links["view"] = lang('Alter view');
             } else {
-                $links['create'] = lang('Alter table');
+                $links["create"] = lang('Alter table');
             }
         }
 
-        if (null !== $set) {
-            $links['edit'] = lang('New item');
+        if ($set !== null) {
+            $links["edit"] = lang('New item');
         }
 
         foreach ($links as $key => $val) {
-            echo " <a href='" . h(ME) . "$key=" . urlencode($tableStatus['Name']) . ('edit' === $key ? $set : '') . "'" . bold(isset($_GET[$key])) . ">$val</a>";
+            echo " <a href='" . h(ME) . "$key=" . urlencode($tableStatus["Name"]) . ($key == "edit" ? $set : "") . "'" . bold(isset($_GET[$key])) . ">$val</a>";
         }
 
         echo "\n";
-
         return true;
     }
 }

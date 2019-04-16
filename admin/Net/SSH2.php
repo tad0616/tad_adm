@@ -1095,7 +1095,7 @@ class Net_SSH2
         // here ends the second place.
 
         // we need to decide upon the symmetric encryption algorithms before we do the diffie-hellman key exchange
-        for ($i = 0; $i < count($encryption_algorithms) && !in_array($encryption_algorithms[$i], $this->encryption_algorithms_server_to_client, true); $i++);
+        for ($i = 0; $i < count($encryption_algorithms) && !in_array($encryption_algorithms[$i], $this->encryption_algorithms_server_to_client); $i++);
         if ($i == count($encryption_algorithms)) {
             trigger_error('No compatible server to client encryption algorithms found');
 
@@ -1142,7 +1142,7 @@ class Net_SSH2
                 $decryptKeyLength = 0;
         }
 
-        for ($i = 0; $i < count($encryption_algorithms) && !in_array($encryption_algorithms[$i], $this->encryption_algorithms_client_to_server, true); $i++);
+        for ($i = 0; $i < count($encryption_algorithms) && !in_array($encryption_algorithms[$i], $this->encryption_algorithms_client_to_server); $i++);
         if ($i == count($encryption_algorithms)) {
             trigger_error('No compatible client to server encryption algorithms found');
 
@@ -1190,7 +1190,7 @@ class Net_SSH2
         $keyLength = $decryptKeyLength > $encryptKeyLength ? $decryptKeyLength : $encryptKeyLength;
 
         // through diffie-hellman key exchange a symmetric key is obtained
-        for ($i = 0; $i < count($kex_algorithms) && !in_array($kex_algorithms[$i], $this->kex_algorithms, true); $i++);
+        for ($i = 0; $i < count($kex_algorithms) && !in_array($kex_algorithms[$i], $this->kex_algorithms); $i++);
         if ($i == count($kex_algorithms)) {
             trigger_error('No compatible key exchange algorithms found');
 
@@ -1308,7 +1308,7 @@ class Net_SSH2
             $this->session_id = $this->exchange_hash;
         }
 
-        for ($i = 0; $i < count($server_host_key_algorithms) && !in_array($server_host_key_algorithms[$i], $this->server_host_key_algorithms, true); $i++);
+        for ($i = 0; $i < count($server_host_key_algorithms) && !in_array($server_host_key_algorithms[$i], $this->server_host_key_algorithms); $i++);
         if ($i == count($server_host_key_algorithms)) {
             trigger_error('No compatible server host key algorithms found');
 
@@ -1550,7 +1550,7 @@ class Net_SSH2
             $this->decrypt->decrypt(str_repeat("\0", 1536));
         }
 
-        for ($i = 0; $i < count($mac_algorithms) && !in_array($mac_algorithms[$i], $this->mac_algorithms_client_to_server, true); $i++);
+        for ($i = 0; $i < count($mac_algorithms) && !in_array($mac_algorithms[$i], $this->mac_algorithms_client_to_server); $i++);
         if ($i == count($mac_algorithms)) {
             trigger_error('No compatible client to server message authentication algorithms found');
 
@@ -1576,7 +1576,7 @@ class Net_SSH2
                 $createKeyLength = 16;
         }
 
-        for ($i = 0; $i < count($mac_algorithms) && !in_array($mac_algorithms[$i], $this->mac_algorithms_server_to_client, true); $i++);
+        for ($i = 0; $i < count($mac_algorithms) && !in_array($mac_algorithms[$i], $this->mac_algorithms_server_to_client); $i++);
         if ($i == count($mac_algorithms)) {
             trigger_error('No compatible server to client message authentication algorithms found');
 
@@ -1619,7 +1619,7 @@ class Net_SSH2
         }
         $this->hmac_check->setKey(mb_substr($key, 0, $checkKeyLength));
 
-        for ($i = 0; $i < count($compression_algorithms) && !in_array($compression_algorithms[$i], $this->compression_algorithms_server_to_client, true); $i++);
+        for ($i = 0; $i < count($compression_algorithms) && !in_array($compression_algorithms[$i], $this->compression_algorithms_server_to_client); $i++);
         if ($i == count($compression_algorithms)) {
             trigger_error('No compatible server to client compression algorithms found');
 
@@ -1627,7 +1627,7 @@ class Net_SSH2
         }
         $this->decompress = 'zlib' == $compression_algorithms[$i];
 
-        for ($i = 0; $i < count($compression_algorithms) && !in_array($compression_algorithms[$i], $this->compression_algorithms_client_to_server, true); $i++);
+        for ($i = 0; $i < count($compression_algorithms) && !in_array($compression_algorithms[$i], $this->compression_algorithms_client_to_server); $i++);
         if ($i == count($compression_algorithms)) {
             trigger_error('No compatible client to server compression algorithms found');
 
@@ -1826,7 +1826,7 @@ class Net_SSH2
                 extract(unpack('Cpartial_success', $this->_string_shift($response, 1)));
                 $partial_success = 0 != $partial_success;
 
-                if (!$partial_success && in_array('keyboard-interactive', $auth_methods, true)) {
+                if (!$partial_success && in_array('keyboard-interactive', $auth_methods)) {
                     if ($this->_keyboard_interactive_login($username, $password)) {
                         $this->bitmap |= NET_SSH2_MASK_LOGIN;
 
@@ -2843,7 +2843,7 @@ class Net_SSH2
 
                             return $this->_disconnect(NET_SSH2_DISCONNECT_BY_APPLICATION);
                     }
-                    // no break
+                // no break
                 case NET_SSH2_MSG_CHANNEL_CLOSE:
                     return NET_SSH2_MSG_CHANNEL_CLOSE == $type ? true : $this->_get_channel_packet($client_channel, $skip_extended);
             }
@@ -2903,7 +2903,7 @@ class Net_SSH2
                             if ($length) {
                                 $this->errors[count($this->errors)] .= "\r\n" . $this->_string_shift($response, $length);
                             }
-                            // no break
+                        // no break
                         case 'exit-status':
                             extract(unpack('Cfalse/Nexit_status', $this->_string_shift($response, 5)));
                             $this->exit_status = $exit_status;
@@ -2913,7 +2913,7 @@ class Net_SSH2
                             $this->_send_binary_packet(pack('CN', NET_SSH2_MSG_CHANNEL_CLOSE, $this->server_channels[$channel]));
 
                             $this->channel_status[$channel] = NET_SSH2_MSG_CHANNEL_EOF;
-                            // no break
+                        // no break
                         default:
                             // "Some systems may not implement signals, in which case they SHOULD ignore this message."
                             //  -- http://tools.ietf.org/html/rfc4254#section-6.9
