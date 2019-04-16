@@ -9,11 +9,8 @@
  *
  * Modified 201802 - updated for Adminer 4.6.0 compatibility
  */
-class FasterTablesFilter
-{
-    public function tablesPrint($tables)
-    {
-        ?>
+class FasterTablesFilter {
+	function tablesPrint($tables) { ?>
 
   <p class="jsonly"><input id="filter-field">
   <style>
@@ -54,13 +51,11 @@ class FasterTablesFilter
 			}
 			tableList.appendChild(fragment);
 		}
-		var tables = [<?php foreach ($tables as $table => $type) {
-            echo "'" . urlencode($table) . "'" . ',';
-        } ?>];
+		var tables = [<?php foreach($tables as $table => $type) { echo "'".urlencode($table) ."'". ",";}?>];
 		var tempTables = tables;
 		var hMe = "<?php echo h(ME) ?>";
 		hMe = hMe.replace(/&amp;/g, '&');
-		var langSelect = "<?php echo lang('select'); ?>";
+		var langSelect = "<?php echo lang('select');?>";
 		var filterCookie = readCookie('tableFilter');
 		var filter = document.getElementById("filter-field");
 		if(filterCookie!='') {
@@ -89,6 +84,4 @@ class FasterTablesFilter
 	}
 	window.onload=filterf;
 </script>
-<?php return true;
-    }
-} ?>
+<?php return true;}} ?>
