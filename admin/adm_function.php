@@ -94,7 +94,8 @@ function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = '', $dirname = 
 {
     global $xoopsModuleConfig;
     $ssh = '';
-    require XOOPS_ROOT_PATH . '/modules/tad_adm/admin/Net/SSH2.php';
+    set_include_path(XOOPS_ROOT_PATH . '/modules/tadtools/phpseclib');
+    include 'Net/SSH2.php';
     $ssh = new Net_SSH2($ssh_host, $xoopsModuleConfig['ssh_port']);
     if (!$ssh->login($ssh_id, $ssh_passwd)) {
         redirect_header("main.php?op={$act}&dirname=$dirname&file_link=$file_link&tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_SSH_LOGIN_FAIL, $ssh_id, $ssh_host));
@@ -598,7 +599,7 @@ function get_theme_type($dirname)
     require XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
 
     if (isset($theme_set_allowed)) {
-        return $theme_set_allowed;
+    return $theme_set_allowed;
     }
 }
 
