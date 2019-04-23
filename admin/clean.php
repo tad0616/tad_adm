@@ -13,7 +13,7 @@ function view_file()
     $theme_name = $xoopsConfig['theme_set'];
     $all_dir = $all_files = [];
     $dir = XOOPS_ROOT_PATH . "/themes/{$theme_name}/modules/";
-    $i = 0;
+    $i = $total_size  = 0;
     if (is_dir($dir)) {
         if ($dh = opendir($dir)) {
             while (false !== ($file = readdir($dh))) {

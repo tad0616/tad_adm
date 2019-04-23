@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Tad_adm\dunzip2;
+
 class dZip
 {
     public $filename;

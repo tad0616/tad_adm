@@ -258,7 +258,7 @@ function list_modules($mode = 'tpl')
         //區塊部份
         if (isset($data['block']['kind']) and 'block' === $data['block']['kind']) {
             $ok['block'][] = $dirname;
-            if (in_array($dirname, $bid_array)) {
+            if (isset($bid_array) && is_array($bid_array) && in_array($dirname, $bid_array)) {
                 $is_visible = $bid_visible[$dirname];
 
                 $all_block[$is_visible][$i]['allowed'] = $is_visible;

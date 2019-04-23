@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-sm-6 col-md-5 col-lg-4">
                 <div>
-                    <img src="<{$mod.logo}>" alt="<{$mod.name}>" style="width: 100%;" id="<{$mod.dirname}>_tip">
+                    <img src="<{$mod.logo}>" alt="<{$mod.name}>"  id="<{$mod.dirname}>_tip">
                 </div>
                 <div style="padding:6px;">
                     <{if $mod.version}>

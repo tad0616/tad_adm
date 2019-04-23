@@ -4,7 +4,7 @@
     <div class="alert <{if $mod.function=='update_adm_tpl'}>alert-danger<{else}>alert-success<{/if}>">
         <div class="row">
             <div class="col-sm-6 col-md-5 col-lg-4">
-                <img src="../images/tad_adm_tpl.png" alt="<{$mod.name}>" style="width: 100%;" id="<{$mod.dirname}>_tip" title="<{$smarty.const._MA_TADADM_ADMTPL}>">
+                <img src="../images/tad_adm_tpl.png" alt="<{$mod.name}>" style=";" id="<{$mod.dirname}>_tip" title="<{$smarty.const._MA_TADADM_ADMTPL}>">
             </div>
             <div class="col-sm-6 col-md-7 col-lg-8">
                 <div style="font-size: 1.1em;">

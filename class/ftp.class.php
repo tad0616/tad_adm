@@ -1,4 +1,5 @@
-<?php
+<?php namespace XoopsModules\Tad_adm;
+
 // ----------------------------------------------------------------------
 // Copyright (C) 2007 by Abdul-Aziz Al-Oraij.
 // http://aziz.oraij.com/

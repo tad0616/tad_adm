@@ -1,4 +1,4 @@
-<?php
+<?php namespace XoopsModules\Tad_adm;
 
 /**
  * MySQL database dump.

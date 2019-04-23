@@ -47,7 +47,10 @@ function list_xoops($mode = 'tpl')
     // $xoops_patch[1]["file_link"]   = "https://campus-xoops.tn.edu.tw/uploads/tad_modules/file/bs4_upgrade.zip";
 
     //抓出現有XOOPS版本
-    $my_xoops_version = sprintf('%0-4s', str_replace('.', '', trim(str_replace('XOOPS', '', XOOPS_VERSION)))) / 1000;
+    $my_xoops_version = sprintf('%0-4s',
+                                str_replace('.', '',
+                                            trim(str_replace('XOOPS', '', XOOPS_VERSION)))) / 1000;
+    $currentVer = mb_substr(XOOPS_VERSION, 6);
     $my_php_version = (float) phpversion();
 
     //後台部份

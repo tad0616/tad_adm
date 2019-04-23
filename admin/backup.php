@@ -10,7 +10,7 @@ function view_file()
 {
     global $xoopsTpl, $isWin;
     $free_space = disk_free_space('.');
-    $total_size = 0;
+    $total_size = $i = 0;
     $dir = XOOPS_ROOT_PATH . '/uploads/';
     if (is_dir($dir)) {
         if ($dh = opendir($dir)) {
