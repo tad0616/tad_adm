@@ -30,7 +30,7 @@ function list_user($op = '', $mode = 'normal')
     $sql = $PageBar['sql'];
     $total = $PageBar['total'];
 
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     $_SESSION['chk_start'] = time();
     $i = 0;
     $all_data = [];
@@ -145,7 +145,7 @@ function list_spam()
     $sql = $PageBar['sql'];
     $total = $PageBar['total'];
 
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $all_data = [];
     $i = 0;
@@ -217,7 +217,7 @@ function replace_tad_adm($uid = '', $email = '', $result = '')
     $sql = 'replace into `' . $xoopsDB->prefix('tad_adm') . "`
   (`uid` , `email` , `result` , `chk_date`)
   values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
-    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
+    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 }
 
 //以流水號取得某筆tad_adm資料
@@ -229,7 +229,7 @@ function get_tad_adm($uid = '')
     }
 
     $sql = 'select * from `' . $xoopsDB->prefix('tad_adm') . "` where `uid` = '{$uid}'";
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     $data = $xoopsDB->fetchArray($result);
 
     return $data;
@@ -244,7 +244,7 @@ function del_user($del_uid)
     }
 
     $sql = 'delete from `' . $xoopsDB->prefix('tad_adm') . "` where `uid` = '{$del_uid}'";
-    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
+    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $member_handler = xoops_getHandler('member');
     $user = &$member_handler->getUser($del_uid);

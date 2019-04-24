@@ -52,7 +52,7 @@ function list_modules($mode = 'tpl')
 
     //抓出現有模組
     $sql = 'SELECT * FROM ' . $xoopsDB->prefix('modules') . ' ORDER BY hasmain DESC, weight';
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $i = 0;
     //模組部份
@@ -244,7 +244,7 @@ function list_modules($mode = 'tpl')
     $all_block = $all_un_block = [];
     //抓出現有區塊
     $sql = 'SELECT bid,dirname,visible, last_modified FROM ' . $xoopsDB->prefix('newblocks') . " WHERE `mid`=0 AND `dirname`!='' ORDER BY side, weight";
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     while (list($bid, $dirname, $visible, $last_modified) = $xoopsDB->fetchRow($result)) {
         $bid_array[$bid] = $dirname;
         $bid_visible[$dirname] = $visible;
@@ -489,7 +489,7 @@ function active_module($mid)
 {
     global $xoopsDB;
     $sql = 'UPDATE ' . $xoopsDB->prefix('modules') . " SET isactive='1' WHERE `mid`='{$mid}'";
-    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
+    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 }
 
 function get_theme_color($dirname)
