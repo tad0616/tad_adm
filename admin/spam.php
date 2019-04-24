@@ -1,6 +1,7 @@
 <?php
-/*-----------引入檔案區--------------*/
 use XoopsModules\Tadtools\Utility;
+
+/*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_spam.tpl';
 include_once 'header.php';
 include_once '../function.php';

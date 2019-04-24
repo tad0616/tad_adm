@@ -1,4 +1,6 @@
 <?php
+use XoopsModules\Tadtools\Utility;
+
 include_once '../../mainfile.php';
 
 $isTN = false !== mb_strpos(XOOPS_URL, '.tn.edu.tw') ? true : false;

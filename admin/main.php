@@ -1,4 +1,6 @@
 <?php
+use XoopsModules\Tadtools\Utility;
+
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_main.tpl';
 include_once 'header.php';

@@ -1,4 +1,6 @@
 <?php
+use XoopsModules\Tadtools\Utility;
+
 //區塊主函式 (tad_adm_new)
 function tad_adm_new($options)
 {
