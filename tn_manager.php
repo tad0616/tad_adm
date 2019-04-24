@@ -23,7 +23,6 @@ switch ($op) {
     case 'tn_module_update':
         tn_module_update($dirname);
         echo "{$dirname} 更新完成";
-        // redirect_header("index.php", 3, "{$dirname} 更新完成");
 }
 
 include_once XOOPS_ROOT_PATH . '/footer.php';

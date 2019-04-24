@@ -1,13 +1,13 @@
 <?php
 
-use XoopsModules\Tad_adm\Utility;
+use XoopsModules\Tad_adm\Update;
 
-function xoops_module_update_tad_adm(&$module, $old_version)
+function xoops_module_update_tad_adm()
 {
     global $xoopsDB;
 
-    if (Utility::chk_uid()) {
-        Utility::go_update_uid();
+    if (Update::chk_uid()) {
+        Update::go_update_uid();
     }
 
     return true;

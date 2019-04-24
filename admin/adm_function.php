@@ -1,4 +1,6 @@
 <?php
+use XoopsModules\Tadtools\Utility;
+
 global $xoopsModule;
 if ('tad_adm' !== $xoopsModule->dirname()) {
     $modhandler = xoops_getHandler('module');
@@ -168,7 +170,7 @@ function next_to_do($file_link = '', $dirname = '', $work_dir = '', $update_sn =
             redirect_header('main.php?#admTab4', 3, _MA_TADADM_THEME_UPDATE_OK);
         }
     } elseif ('delete_theme' === $act) {
-        if ($inSchoolWeb or delete_directory(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}", $ssh)) {
+        if ($inSchoolWeb or Utility::delete_directory(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}", $ssh)) {
             update_allowed($dirname, 0);
         }
         redirect_header('main.php#admTab4', 3, _MA_TADADM_THEME_DELETE_OK);
@@ -220,7 +222,7 @@ function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
         } else {
             $new_file = str_replace("{$xoopsModuleConfig['source']}/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
         }
-        mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
+        Utility::mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
         copyemz($file_link, $new_file, $update_sn);
 
         if (!is_file($new_file)) {
@@ -228,7 +230,7 @@ function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
         }
 
         if (is_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname")) {
-            delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
+            Utility::delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
         }
 
         require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
@@ -249,7 +251,7 @@ function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
             // echo XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}";
             // exit;
 
-            full_copy(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname", XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}/");
+            Utility::full_copy(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname", XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}/");
             //重設權限
             chmod_R(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}", 0755, 0755);
             unlink($new_file);
@@ -268,7 +270,7 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     $file_link = str_replace('[source]', $xoopsModuleConfig['source'], $file_link);
     $new_file = str_replace("{$xoopsModuleConfig['source']}/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
 
-    mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
+    Utility::mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
     // die("$file_link, $new_file");
     copyemz($file_link, $new_file, 0, $xoops_sn);
 
@@ -277,9 +279,9 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     }
 
     if (is_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname")) {
-        delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
+        Utility::delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
     }
-    mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
+    Utility::mkdir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
 
     require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
     require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
@@ -418,32 +420,6 @@ function update_allowed($theme, $val)
 
         $sql = 'delete from `' . $xoopsDB->prefix('tadtools_setup') . "` where `tt_theme`='$theme'";
         $xoopsDB->queryF($sql) or redirect_header($_SERVER['PHP_SELF'], 3, $xoopsDB->error());
-    }
-}
-
-//拷貝目錄
-function full_copy($source = '', $target = '')
-{
-    if (is_dir($source)) {
-        if (!mkdir($target) && !is_dir($target)) {
-            throw new \RuntimeException(sprintf('Directory "%s" was not created', $target));
-        }
-        $d = dir($source);
-        while (false !== ($entry = $d->read())) {
-            if ('.' === $entry || '..' === $entry) {
-                continue;
-            }
-
-            $Entry = $source . '/' . $entry;
-            if (is_dir($Entry)) {
-                full_copy($Entry, $target . '/' . $entry);
-                continue;
-            }
-            copy($Entry, $target . '/' . $entry);
-        }
-        $d->close();
-    } else {
-        copy($source, $target);
     }
 }
 
@@ -653,36 +629,4 @@ function chmod_R($path, $filemode, $dirmode)
             return;
         }
     }
-}
-
-function delete_directory($dirname, $ssh = '')
-{
-    if (empty($dirname)) {
-        return;
-    }
-    if ($ssh) {
-        $ssh->exec("rm -fr {$dirname}");
-    } else {
-        if (is_dir($dirname)) {
-            $dir_handle = opendir($dirname);
-        }
-
-        if (!$dir_handle) {
-            return false;
-        }
-
-        while ($file = readdir($dir_handle)) {
-            if ('.' !== $file && '..' !== $file) {
-                if (!is_dir($dirname . '/' . $file)) {
-                    unlink($dirname . '/' . $file);
-                } else {
-                    delete_directory($dirname . '/' . $file, $ssh);
-                }
-            }
-        }
-        closedir($dir_handle);
-        rmdir($dirname);
-    }
-
-    return true;
 }

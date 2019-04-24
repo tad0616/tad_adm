@@ -1,4 +1,6 @@
 <?php
+use XoopsModules\Tadtools\Utility;
+
 include_once '../../mainfile.php';
 include_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/main.php";
 include_once 'function.php';
@@ -301,7 +303,7 @@ function clear_cache()
     $dirnames[] = XOOPS_VAR_PATH . '/caches/xoops_cache';
     foreach ($dirnames as $dirname) {
         if (is_dir($dirname)) {
-            delete_directory($dirname);
+            Utility::delete_directory($dirname);
             $fp = fopen("{$dirname}/index.html", 'wb');
             fwrite($fp, '<script>history.go(-1);</script>');
             fclose($fp);
@@ -309,30 +311,6 @@ function clear_cache()
     }
 }
 
-//刪除目錄檔案
-function delete_directory($dirname)
-{
-    if (is_dir($dirname)) {
-        $dir_handle = opendir($dirname);
-    }
-
-    if (!$dir_handle) {
-        return false;
-    }
-
-    while ($file = readdir($dir_handle)) {
-        if ('.' !== $file && '..' !== $file) {
-            if (!is_dir($dirname . '/' . $file)) {
-                unlink($dirname . '/' . $file);
-            } else {
-                delete_directory($dirname . '/' . $file);
-            }
-        }
-    }
-    closedir($dir_handle);
-    //rmdir($dirname);
-    return true;
-}
 
 //session 資料表容量
 function session_size()

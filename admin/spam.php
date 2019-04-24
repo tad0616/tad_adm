@@ -1,5 +1,6 @@
 <?php
 /*-----------引入檔案區--------------*/
+use XoopsModules\Tadtools\Utility;
 $xoopsOption['template_main'] = 'tad_adm_adm_spam.tpl';
 include_once 'header.php';
 include_once '../function.php';
@@ -24,7 +25,7 @@ function list_user($op = '', $mode = 'normal')
     $sql = 'select * from ' . $xoopsDB->prefix('users') . " where 1 $andDayLimit order by uid desc";
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
-    $PageBar = getPageBar($sql, $xoopsModuleConfig['list_amount'], 10);
+    $PageBar = Utility::getPageBar($sql, $xoopsModuleConfig['list_amount'], 10);
     $bar = $PageBar['bar'];
     $sql = $PageBar['sql'];
     $total = $PageBar['total'];
@@ -139,7 +140,7 @@ function list_spam()
         . " AS b ON a.uid=b.uid WHERE a.`result`='1' ORDER BY a.uid DESC";
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
-    $PageBar = getPageBar($sql, 500, 10);
+    $PageBar = Utility::getPageBar($sql, 500, 10);
     $bar = $PageBar['bar'];
     $sql = $PageBar['sql'];
     $total = $PageBar['total'];
