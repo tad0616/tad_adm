@@ -1,16 +1,15 @@
 <?php
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_phpini.tpl';
-include_once 'header.php';
-include_once '../function.php';
+require_once 'header.php';
+require_once '../function.php';
 
 /*-----------function區--------------*/
 
 function phpini()
 {
     global $xoopsDB, $xoopsConfig, $xoopsTpl;
-
-    include_once "../language/{$xoopsConfig['language']}/ini_arr.php";
+    xoops_loadLanguage('ini_arr', 'tad_adm');
 
     $php_ini_path = php_ini_loaded_file();
     $xoopsTpl->assign('php_ini_path', $php_ini_path);
@@ -63,7 +62,7 @@ function phpini()
 }
 
 /*-----------執行動作判斷區----------*/
-include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op = system_CleanVars($_REQUEST, 'op', '', 'string');
 $g2p = system_CleanVars($_REQUEST, 'g2p', 0, 'int');
 
@@ -78,4 +77,4 @@ switch ($op) {
 
 /*-----------秀出結果區--------------*/
 $xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-include_once 'footer.php';
+require_once 'footer.php';

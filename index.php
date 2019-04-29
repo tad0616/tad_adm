@@ -1,9 +1,9 @@
 <?php
 use XoopsModules\Tadtools\Utility;
 
-include_once '../../mainfile.php';
-include_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/main.php";
-include_once 'function.php';
+require_once '../../mainfile.php';
+xoops_loadLanguage('main', 'tadtools');
+require_once 'function.php';
 
 $op = isset($_REQUEST['op']) ? $_REQUEST['op'] : '';
 
@@ -19,6 +19,7 @@ if ($xoopsUser) {
 } elseif ('send_passwd' === $op) {
     send_passwd();
     header("location: {$_SERVER['PHP_SELF']}?op=forgot");
+    exit;
 }
 
 if (!$_SESSION['isAdmin']) {
@@ -89,7 +90,7 @@ if (!$_SESSION['isAdmin']) {
         <div class="col-lg-3"></div>
     </div>
     ';
-    die(html5($content, false, true, 4, true, 'container-fluid'));
+    die(Utility::html5($content, false, true, 4, true, 'container-fluid'));
 }
 
 $logout = ($xoopsUser) ? XOOPS_URL . '/user.php?op=logout' : 'index.php?op=logout';
@@ -100,50 +101,50 @@ switch ($op) {
     case 'unable_blocks':
         unable_blocks();
         header("location: {$_SERVER['PHP_SELF']}");
-        break;
+        exit;
     case 'unable_modules':
         unable_modules();
         header("location: {$_SERVER['PHP_SELF']}");
-        break;
+        exit;
     case 'enable_blocks':
         enable_blocks();
         header("location: {$_SERVER['PHP_SELF']}");
-        break;
+        exit;
     case 'enable_modules':
         enable_modules();
         header("location: {$_SERVER['PHP_SELF']}");
-        break;
+        exit;
     case 'reset_mem':
         reset_mem($_POST['uid'], $_POST['new_pass']);
         header('location: ' . XOOPS_URL . "/userinfo.php?uid={$_POST['uid']}");
-        break;
+        exit;
     case 'debug_mode':
         debug_mode($v);
         header("location: {$_SERVER['PHP_SELF']}");
-        break;
+        exit;
     case 'clear_cache':
         clear_cache();
         header("location: {$_SERVER['PHP_SELF']}");
-        break;
+        exit;
     case 'clear_session':
         clear_session();
         header("location: {$_SERVER['PHP_SELF']}");
-        break;
+        exit;
     case 'theme_default':
         theme_default();
         header("location: {$_SERVER['PHP_SELF']}");
-        break;
+        exit;
     case 'close_site':
         close_site($v);
         header("location: {$_SERVER['PHP_SELF']}");
-        break;
+        exit;
     case 'phpinfo':
         phpinfo();
         break;
     case 'logout':
         $_SESSION['isAdmin'] = false;
         header("location: {$_SERVER['PHP_SELF']}");
-        break;
+        exit;
 }
 
 //關閉所有模組
@@ -304,6 +305,7 @@ function clear_cache()
     foreach ($dirnames as $dirname) {
         if (is_dir($dirname)) {
             Utility::delete_directory($dirname);
+            Utility::mk_dir($dirname);
             $fp = fopen("{$dirname}/index.html", 'wb');
             fwrite($fp, '<script>history.go(-1);</script>');
             fclose($fp);
@@ -740,4 +742,4 @@ $content = '
     <div class="col-lg-4 col-sm-6">' . $main4 . '</div>
 </div>';
 
-echo html5($content, false, true, 4, true, 'container-fluid');
+echo Utility::html5($content, false, true, 4, true, 'container-fluid');

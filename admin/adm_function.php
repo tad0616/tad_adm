@@ -94,7 +94,7 @@ function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = '', $dirname = 
     global $xoopsModuleConfig;
     $ssh = '';
     set_include_path(XOOPS_ROOT_PATH . '/modules/tadtools/phpseclib');
-    include 'Net/SSH2.php';
+    require 'Net/SSH2.php';
     $ssh = new Net_SSH2($ssh_host, $xoopsModuleConfig['ssh_port']);
     if (!$ssh->login($ssh_id, $ssh_passwd)) {
         redirect_header("main.php?op={$act}&dirname=$dirname&file_link=$file_link&tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_SSH_LOGIN_FAIL, $ssh_id, $ssh_host));
@@ -380,18 +380,18 @@ function do_block($act, $update_sn)
     // die(var_export($block));
     $last_modified = time();
     if ('install' === $act) {
-        $sql = 'INSERT INTO `' . $xoopsDB->prefix('newblocks') . "` (`mid`,`func_num`,`options`,`name`,`title`,`content`,`side`,`weight`,`visible`,`block_type`,`c_type`,`isactive`,`dirname`,`func_file`,`show_func`,`edit_func`,`template`,`bcachetime`,`last_modified`) values('0', '0', '', '自訂區塊', '{$block['title']}', '{$block['content']}', '{$block['side']}', '0', '1', 'C', '{$block['c_type']}', '1', '{$block['dirname']}', '', '}', '', '', '0', '{$last_modified}')";
+        $sql = 'INSERT INTO ' . $xoopsDB->prefix('newblocks') . " (`mid`,`func_num`,`options`,`name`,`title`,`content`,`side`,`weight`,`visible`,`block_type`,`c_type`,`isactive`,`dirname`,`func_file`,`show_func`,`edit_func`,`template`,`bcachetime`,`last_modified`) values('0', '0', '', '自訂區塊', '{$block['title']}', '{$block['content']}', '{$block['side']}', '0', '1', 'C', '{$block['c_type']}', '1', '{$block['dirname']}', '', '}', '', '', '0', '{$last_modified}')";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $block_id = $xoopsDB->getInsertId();
 
         $module_id = ($block['side'] <= 1) ? 0 : -1;
-        $sql = 'INSERT INTO `' . $xoopsDB->prefix('block_module_link') . "` (`block_id` , `module_id`) values('{$block_id}', '{$module_id}')";
+        $sql = 'INSERT INTO ' . $xoopsDB->prefix('block_module_link') . " (`block_id` , `module_id`) values('{$block_id}', '{$module_id}')";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
-        $sql = 'INSERT INTO `' . $xoopsDB->prefix('group_permission') . "` (`gperm_groupid` , `gperm_itemid` , `gperm_modid` , `gperm_name`) values('1', '{$block_id}', '1', 'block_read'),('2', '{$block_id}', '1', 'block_read'),('3', '{$block_id}', '1', 'block_read')";
+        $sql = 'INSERT INTO ' . $xoopsDB->prefix('group_permission') . " (`gperm_groupid` , `gperm_itemid` , `gperm_modid` , `gperm_name`) values('1', '{$block_id}', '1', 'block_read'),('2', '{$block_id}', '1', 'block_read'),('3', '{$block_id}', '1', 'block_read')";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     } else {
-        $sql = 'UPDATE  `' . $xoopsDB->prefix('newblocks') . "` SET `content`='{$block['content']}',`last_modified`='{$last_modified}' where dirname='{$block['dirname']}'";
+        $sql = 'UPDATE  ' . $xoopsDB->prefix('newblocks') . " SET `content`='{$block['content']}',`last_modified`='{$last_modified}' where dirname='{$block['dirname']}'";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     }
 }
@@ -408,7 +408,7 @@ function update_allowed($theme, $val)
         $sql = 'update ' . $xoopsDB->prefix('config') . " set conf_value='{$theme_set_allowed}' where conf_name='theme_set_allowed'";
         $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
-        $sql = 'INSERT INTO `' . $xoopsDB->prefix('tadtools_setup') . "` (`tt_theme` , `tt_use_bootstrap`,`tt_bootstrap_color`, `tt_theme_kind`) values('{$theme}', '0', '$bootstrap_color' , '$theme_kind') ON DUPLICATE KEY UPDATE `tt_use_bootstrap` = '0', `tt_bootstrap_color`='$bootstrap_color', `tt_theme_kind`='$theme_kind'";
+        $sql = 'INSERT INTO ' . $xoopsDB->prefix('tadtools_setup') . " (`tt_theme` , `tt_use_bootstrap`,`tt_bootstrap_color`, `tt_theme_kind`) values('{$theme}', '0', '$bootstrap_color' , '$theme_kind') ON DUPLICATE KEY UPDATE `tt_use_bootstrap` = '0', `tt_bootstrap_color`='$bootstrap_color', `tt_theme_kind`='$theme_kind'";
 
         $xoopsDB->queryF($sql) or redirect_header($_SERVER['PHP_SELF'], 3, $xoopsDB->error());
     } else {
@@ -427,9 +427,8 @@ function act_form($dirname, $op, $title)
 {
     global $xoopsConfig;
     require_once XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php";
-    require_once XOOPS_ROOT_PATH . "/modules/{$dirname}/language/{$xoopsConfig['language']}/modinfo.php";
-    // die("$dirname, $op, $title");
-    include_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
+    xoops_loadLanguage('modinfo', 'tad_adm');
+    require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
     $token = new XoopsFormHiddenToken();
     $token_code = $token->render();
 
@@ -543,9 +542,8 @@ function getgrgid($file = '')
 function get_logo($dirname)
 {
     global $xoopsConfig;
-    include XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php";
-    include_once XOOPS_ROOT_PATH . "/modules/{$dirname}/language/{$xoopsConfig['language']}/modinfo.php";
-
+    require XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php";
+    xoops_loadLanguage('modinfo', 'tad_adm');
     return XOOPS_URL . "/modules/{$dirname}/{$modversion['image']}";
 }
 
@@ -569,7 +567,7 @@ function get_theme_version($dirname)
 function get_theme_type($dirname)
 {
     global $xoopsConfig;
-    include XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
+    require XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
 
     return $theme_set_allowed;
 }

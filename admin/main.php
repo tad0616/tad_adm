@@ -1,30 +1,26 @@
 <?php
+use XoopsModules\Tadtools\BubblePopup;
+use XoopsModules\Tadtools\EasyResponsiveTabs;
+use XoopsModules\Tadtools\FancyBox;
+use XoopsModules\Tadtools\FooTable;
+use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\Utility;
-
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_main.tpl';
-include_once 'header.php';
-include_once '../function.php';
+require_once 'header.php';
+require_once '../function.php';
 require 'adm_function.php';
 
 /*-----------function區--------------*/
 
-if (file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/FooTable.php')) {
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/FooTable.php';
+$FooTable = new FooTable();
+$FooTable->render();
 
-    $FooTable = new FooTable();
-    $FooTable->render();
-}
+$FancyBox = new FancyBox('.modulesadmin', '640', '480');
+$FancyBox->render(true);
 
-if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php')) {
-    redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
-}
-include_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
-$fancybox = new fancybox('.modulesadmin', '640', '480');
-$fancybox->render(true);
-
-$fancybox2 = new fancybox('.readme', '640', '480');
-$fancybox2->render(false);
+$FancyBox2 = new FancyBox('.readme', '640', '480');
+$FancyBox2->render(false);
 
 //列出所有模組
 function list_modules($mode = 'tpl')
@@ -46,11 +42,7 @@ function list_modules($mode = 'tpl')
     //         $mod[$dirname]['module'][$kind]['file_link']          = $file_link;
     //         $mod[$dirname]['module'][$kind]['kind']               = $kind;
 
-    if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/bubblepopup.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
-    }
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/bubblepopup.php';
-    $bubblepopup = new bubblepopup();
+    $BubblePopup = new BubblePopup();
 
     //抓出現有模組
     $sql = 'SELECT * FROM ' . $xoopsDB->prefix('modules') . ' ORDER BY hasmain DESC, weight';
@@ -116,7 +108,7 @@ function list_modules($mode = 'tpl')
 
         $all_install_modules[$isactive][$function][$i]['update_sn'] = $mod[$dirname]['module']['update_sn'];
         $all_install_modules[$isactive][$function][$i]['descript'] = $mod[$dirname]['module']['update_descript'];
-        $bubblepopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($mod[$dirname]['module']['update_descript'])));
+        $BubblePopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($mod[$dirname]['module']['update_descript'])));
 
         $all_install_modules[$isactive][$function][$i]['module_sn'] = $mod[$dirname]['module']['module_sn'];
         $all_install_modules[$isactive][$function][$i]['file_link'] = $mod[$dirname]['module']['file_link'];
@@ -192,7 +184,7 @@ function list_modules($mode = 'tpl')
                 $all_admin[$i]['function'] = ($new_version > $version or $new_last_update > $last_update) ? 'update_adm_tpl' : 'last_adm_tpl';
                 $all_admin[$i]['update_sn'] = $data['adm_tpl']['update_sn'];
                 $all_admin[$i]['descript'] = $data['adm_tpl']['module_descript'];
-                $bubblepopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['adm_tpl']['module_descript'])));
+                $BubblePopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['adm_tpl']['module_descript'])));
 
                 $all_admin[$i]['module_sn'] = $data['adm_tpl']['module_sn'];
                 $all_admin[$i]['file_link'] = $data['adm_tpl']['file_link'];
@@ -229,7 +221,7 @@ function list_modules($mode = 'tpl')
                 $all_un_admin[$i]['function'] = ($data['adm_tpl']['new_last_update'] > $last_update) ? 'install_adm_tpl' : 'last_adm_tpl';
                 $all_un_admin[$i]['update_sn'] = $data['adm_tpl']['update_sn'];
                 $all_un_admin[$i]['descript'] = $data['adm_tpl']['module_descript'];
-                $bubblepopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['adm_tpl']['module_descript'])));
+                $BubblePopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['adm_tpl']['module_descript'])));
 
                 $all_un_admin[$i]['module_sn'] = $data['adm_tpl']['module_sn'];
                 $all_un_admin[$i]['file_link'] = $data['adm_tpl']['file_link'];
@@ -274,7 +266,7 @@ function list_modules($mode = 'tpl')
                 $all_block[$is_visible][$i]['function'] = ($new_last_update > $last_update) ? 'update_block' : 'last_block';
                 $all_block[$is_visible][$i]['update_sn'] = $data['block']['update_sn'];
                 $all_block[$is_visible][$i]['descript'] = $data['block']['module_descript'];
-                $bubblepopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['block']['module_descript'])));
+                $BubblePopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['block']['module_descript'])));
                 $all_block[$is_visible][$i]['module_sn'] = $data['block']['module_sn'];
                 $all_block[$is_visible][$i]['kind'] = $data['block']['kind'];
                 $all_block[$is_visible][$i]['logo'] = $data['block']['logo'];
@@ -286,7 +278,7 @@ function list_modules($mode = 'tpl')
                 $all_un_block[$i]['function'] = 'install_block';
                 $all_un_block[$i]['update_sn'] = $data['block']['update_sn'];
                 $all_un_block[$i]['descript'] = $data['block']['module_descript'];
-                $bubblepopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['block']['module_descript'])));
+                $BubblePopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['block']['module_descript'])));
                 $all_un_block[$i]['module_sn'] = $data['block']['module_sn'];
                 $all_un_block[$i]['kind'] = $data['block']['kind'];
                 $all_un_block[$i]['logo'] = $data['block']['logo'];
@@ -352,7 +344,7 @@ function list_modules($mode = 'tpl')
                 $all_theme[$type][$is_allowed][$i]['function'] = (($new_version > $version) or ($new_last_update > $last_update)) ? 'update_theme' : 'last_theme';
                 $all_theme[$type][$is_allowed][$i]['update_sn'] = $data['theme']['update_sn'];
                 $all_theme[$type][$is_allowed][$i]['descript'] = $data['theme']['module_descript'];
-                $bubblepopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['theme']['module_descript'])));
+                $BubblePopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['theme']['module_descript'])));
 
                 $all_theme[$type][$is_allowed][$i]['module_sn'] = $data['theme']['module_sn'];
                 $all_theme[$type][$is_allowed][$i]['file_link'] = $data['theme']['file_link'];
@@ -381,7 +373,7 @@ function list_modules($mode = 'tpl')
                 $all_un_theme[$i]['function'] = ($data['theme']['new_last_update'] > $last_update) ? 'install_theme' : 'last_theme';
                 $all_un_theme[$i]['update_sn'] = $data['theme']['update_sn'];
                 $all_un_theme[$i]['descript'] = $data['theme']['module_descript'];
-                $bubblepopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['theme']['module_descript'])));
+                $BubblePopup->add_tip("#{$dirname}_tip", preg_replace('/\s\s+/', '<br>', trim($data['theme']['module_descript'])));
 
                 $all_un_theme[$i]['module_sn'] = $data['theme']['module_sn'];
                 $all_un_theme[$i]['file_link'] = $data['theme']['file_link'];
@@ -463,28 +455,16 @@ function list_modules($mode = 'tpl')
     $xoopsTpl->assign('all_block', $all_block);
     $xoopsTpl->assign('all_un_block', $all_un_block);
 
-    if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/easy_responsive_tabs.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
-    }
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/easy_responsive_tabs.php';
-    $responsive_tabs = new easy_responsive_tabs('#admTab');
-    $responsive_tabs->rander();
+    $EasyResponsiveTabs = new EasyResponsiveTabs('#admTab');
+    $EasyResponsiveTabs->rander();
 
-    $bubblepopup->render();
+    $BubblePopup->render();
 
-    if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/sweet_alert.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
-    }
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/sweet_alert.php';
-    $sweet_alert = new sweet_alert();
-    $sweet_alert->render('delete_theme', 'main.php?op=delete_theme&dirname=', 'theme');
+    $SweetAlert = new SweetAlert();
+    $SweetAlert->render('delete_theme', 'main.php?op=delete_theme&dirname=', 'theme');
 
-    if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
-    }
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
-    $fancybox = new fancybox('.fancybox');
-    $fancybox->render(false);
+    $FancyBox = new FancyBox('.fancybox');
+    $FancyBox->render(false);
 }
 
 function active_module($mid)
@@ -497,13 +477,13 @@ function active_module($mid)
 function get_theme_color($dirname)
 {
     global $xoopsConfig;
-    include XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
+    require XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
 
     return [$theme_color, $theme_kind];
 }
 
 /*-----------執行動作判斷區----------*/
-include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op = system_CleanVars($_REQUEST, 'op', '', 'string');
 $update_sn = system_CleanVars($_REQUEST, 'update_sn', 0, 'int');
 $xoops_sn = system_CleanVars($_REQUEST, 'xoops_sn', 0, 'int');
@@ -574,4 +554,4 @@ switch ($op) {
 
 /*-----------秀出結果區--------------*/
 $xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-include_once 'footer.php';
+require_once 'footer.php';

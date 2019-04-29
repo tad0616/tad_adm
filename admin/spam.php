@@ -3,8 +3,8 @@ use XoopsModules\Tadtools\Utility;
 
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_spam.tpl';
-include_once 'header.php';
-include_once '../function.php';
+require_once 'header.php';
+require_once '../function.php';
 
 /*-----------function區--------------*/
 //列出所有使用者
@@ -209,7 +209,7 @@ function replace_tad_adm($uid = '', $email = '', $result = '')
 {
     global $xoopsDB, $xoopsUser;
 
-    $myts = MyTextSanitizer::getInstance();
+    $myts = \MyTextSanitizer::getInstance();
     $email = $myts->addSlashes($email);
     $result = $myts->addSlashes($result);
 
@@ -278,7 +278,7 @@ function del_all_user($uid_arr = [])
 }
 
 /*-----------執行動作判斷區----------*/
-include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op = system_CleanVars($_REQUEST, 'op', '', 'string');
 $g2p = system_CleanVars($_REQUEST, 'g2p', 0, 'int');
 $mode = system_CleanVars($_REQUEST, 'mode', '', 'string');
@@ -305,4 +305,4 @@ switch ($op) {
 
 /*-----------秀出結果區--------------*/
 $xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-include_once 'footer.php';
+require_once 'footer.php';

@@ -18,9 +18,9 @@
  * @version::     $Id $
  **/
 require_once '../../../include/cp_header.php';
-include 'header.php';
+require 'header.php';
 
-include_once XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/class/admin.php';
+require_once XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/class/admin.php';
 
 $index_admin = new ModuleAdmin();
 
@@ -31,5 +31,5 @@ $index_admin->addLineConfigLabel(_AM_XDIR_CONFIG_XOOPS, $xoopsModule->getInfo('m
 echo $index_admin->addNavigation('index.php');
 echo $index_admin->renderIndex();
 
-include 'footer.php';
+require 'footer.php';
 xoops_cp_footer();

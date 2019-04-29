@@ -1,9 +1,6 @@
 <?php
-//引入TadTools的函式庫
-if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/tad_function.php')) {
-    redirect_header('https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1', 3, _TAD_NEED_TADTOOLS);
-}
-include_once XOOPS_ROOT_PATH . '/modules/tadtools/tad_function.php';
+xoops_loadLanguage('main', 'tadtools');
+
 $inSchoolWeb = is_dir('/home/matrix/public_html/modules/') ? true : false;
 
 /********************* 自訂函數 *********************/

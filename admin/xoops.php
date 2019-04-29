@@ -1,28 +1,24 @@
 <?php
+use XoopsModules\Tadtools\EasyResponsiveTabs;
+use XoopsModules\Tadtools\FancyBox;
+use XoopsModules\Tadtools\FooTable;
+use XoopsModules\Tadtools\SweetAlert;
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_xoops.tpl';
-include_once 'header.php';
-include_once '../function.php';
+require_once 'header.php';
+require_once '../function.php';
 require 'adm_function.php';
 
 /*-----------function區--------------*/
 
-if (file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/FooTable.php')) {
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/FooTable.php';
+$FooTable = new FooTable();
+$FooTable->render();
 
-    $FooTable = new FooTable();
-    $FooTable->render();
-}
+$FancyBox = new FancyBox('.modulesadmin', '640', '480');
+$FancyBox->render(true);
 
-if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php')) {
-    redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
-}
-include_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
-$fancybox = new fancybox('.modulesadmin', '640', '480');
-$fancybox->render(true);
-
-$fancybox2 = new fancybox('.readme', '640', '480');
-$fancybox2->render(false);
+$FancyBox2 = new FancyBox('.readme', '640', '480');
+$FancyBox2->render(false);
 
 //列出所有XOOPS升級資訊
 function list_xoops($mode = 'tpl')
@@ -85,26 +81,14 @@ function list_xoops($mode = 'tpl')
     $xoopsTpl->assign('xoops_patch', $all_patch);
     $xoopsTpl->assign('xoops_upgrade', $all_upgrade);
 
-    if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/easy_responsive_tabs.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
-    }
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/easy_responsive_tabs.php';
-    $responsive_tabs = new easy_responsive_tabs('#admTab');
-    $responsive_tabs->rander();
+    $EasyResponsiveTabs = new EasyResponsiveTabs('#admTab');
+    $EasyResponsiveTabs->rander();
 
-    if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/sweet_alert.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
-    }
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/sweet_alert.php';
-    $sweet_alert = new sweet_alert();
-    $sweet_alert->render('delete_theme', 'main.php?op=delete_theme&dirname=', 'theme');
+    $SweetAlert = new SweetAlert();
+    $SweetAlert->render('delete_theme', 'main.php?op=delete_theme&dirname=', 'theme');
 
-    if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
-    }
-    include_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
-    $fancybox = new fancybox('.fancybox');
-    $fancybox->render(false);
+    $FancyBox = new FancyBox('.fancybox');
+    $FancyBox->render(false);
 }
 
 //安裝套件
@@ -137,7 +121,7 @@ function to_up($file_link = '', $act = 'patch', $xoops_sn = '')
 }
 
 /*-----------執行動作判斷區----------*/
-include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op = system_CleanVars($_REQUEST, 'op', '', 'string');
 $xoops_sn = system_CleanVars($_REQUEST, 'xoops_sn', 0, 'int');
 $file_link = system_CleanVars($_REQUEST, 'file_link', '', 'string');
@@ -172,4 +156,4 @@ switch ($op) {
 
 /*-----------秀出結果區--------------*/
 $xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-include_once 'footer.php';
+require_once 'footer.php';

@@ -1,16 +1,16 @@
 <?php
 use XoopsModules\Tadtools\Utility;
 
-include_once '../../mainfile.php';
+require_once '../../mainfile.php';
 
 $isTN = false !== mb_strpos(XOOPS_URL, '.tn.edu.tw') ? true : false;
 $isDCS = false !== mb_strpos(XOOPS_ROOT_PATH, 'DWASFiles') ? true : false;
 $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
 $isSchoolWeb = (false !== mb_strpos(XOOPS_URL, 'schoolweb.tn.edu.tw') or false !== mb_strpos(XOOPS_URL, '120.115.2.88')) ? true : false;
+xoops_loadLanguage('main', 'tadtools');
 
-include_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/main.php";
-include_once 'function.php';
-include_once 'admin/adm_function.php';
+require_once 'function.php';
+require_once 'admin/adm_function.php';
 
 $_SESSION['tad_adm_isAdmin'] = ($xoopsUser) ? $xoopsUser->isAdmin(1) : false;
 // $_SESSION['tad_adm_isAdmin'] = 1; //不須密碼模式，危險，沒事勿用。
@@ -37,7 +37,7 @@ $bad_mods = [
 
 $source_mod = get_tad_json_info('all.json');
 
-include_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
+require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op = system_CleanVars($_REQUEST, 'op', '', 'string');
 $new_url = system_CleanVars($_REQUEST, 'new_url', '', 'string');
 $dir = system_CleanVars($_REQUEST, 'dir', '', 'string');
@@ -180,8 +180,7 @@ function move_step()
         $content .= login_form();
     }
 
-    // echo html5($content, false, true, 3, true, 'container-fluid');
-    echo html5($content, false, true, 4);
+    echo Utility::html5($content, false, true, 4);
 }
 
 function modules_version()
@@ -641,7 +640,8 @@ function export_sql($new_url)
 
     $db = new mysqli(XOOPS_DB_HOST, XOOPS_DB_USER, XOOPS_DB_PASS, XOOPS_DB_NAME);
     $dump = new MySQLDump($db);
-    $filename = XOOPS_ROOT_PATH . '/uploads/mysql.sql';
+    $randname = md5(Utility::randStr());
+    $filename = XOOPS_ROOT_PATH . "/uploads/mysql{$randname}.sql";
     if (file_exists($filename)) {
         unlink($filename);
     }
@@ -656,7 +656,7 @@ function export_sql($new_url)
 
     $new_content = str_replace(XOOPS_URL, $new_url, $new_content);
     header('Content-type: text/sql');
-    header('Content-Disposition: attachment; filename=mysql.sql');
+    header("Content-Disposition: attachment; filename=mysql{$randname}.sql");
     echo $new_content;
     exit;
 }
@@ -713,7 +713,7 @@ function download_zip($FromDir)
         return;
     }
 
-    include_once 'class/pclzip.lib.php';
+    require_once 'class/pclzip.lib.php';
     $zipfile = new PclZip($toZip);
     $v_list = $zipfile->create($FromDir, PCLZIP_OPT_REMOVE_PATH, XOOPS_ROOT_PATH . $type);
     if (0 == $v_list) {
