@@ -17,6 +17,7 @@
  * @author     XOOPS Development Team
  */
 require __DIR__ . '/header.php';
+//xoops_cp_header();
 
 $adminObject = \Xmf\Module\Admin::getInstance();
 
