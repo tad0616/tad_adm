@@ -1,5 +1,5 @@
 <?php
-//需加入模組語系
+xoops_loadLanguage('main', 'tadtools');
 define('_TAD_NEED_TADTOOLS', '需要 tadtools 模組，可至<a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS輕鬆架</a>下載。');
 
 define('_MD_TADADM_SET', '設定');

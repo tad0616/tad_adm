@@ -1,8 +1,8 @@
 <?php
+
 use XoopsModules\Tadtools\BubblePopup;
 use XoopsModules\Tadtools\EasyResponsiveTabs;
 use XoopsModules\Tadtools\FancyBox;
-use XoopsModules\Tadtools\FooTable;
 use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\Utility;
 /*-----------引入檔案區--------------*/
@@ -10,24 +10,18 @@ $xoopsOption['template_main'] = 'tad_adm_adm_main.tpl';
 require_once 'header.php';
 require_once '../function.php';
 require 'adm_function.php';
-
 /*-----------function區--------------*/
-
-$FooTable = new FooTable();
-$FooTable->render();
-
-$FancyBox = new FancyBox('.modulesadmin', '640', '480');
-$FancyBox->render(true);
-
-$FancyBox2 = new FancyBox('.readme', '640', '480');
-$FancyBox2->render(false);
 
 //列出所有模組
 function list_modules($mode = 'tpl')
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl, $xoopsConfig, $inSchoolWeb;
     $xoopsTpl->assign('inSchoolWeb', $inSchoolWeb);
+    $FancyBox = new FancyBox('.modulesadmin', '640', '480');
+    $FancyBox->render(true);
 
+    $FancyBox2 = new FancyBox('.readme', '640', '480');
+    $FancyBox2->render(false);
     //取得更新訊息
     $mod = get_tad_json_info('all.json');
     //         $mod[$dirname]['module'][$kind]['module_title']       = $module_title;
