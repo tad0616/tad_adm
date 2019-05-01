@@ -1,7 +1,5 @@
 <?php
 xoops_loadLanguage('admin_common', 'tadtools');
-define('_TAD_NEED_TADTOOLS', 'This module needs TadTools module. You can download TadTools from <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS EasyGO</a>.');
-
 //phpini.php
 define('_MA_TADADM_PHPINI_ITEM', 'Setting item');
 define('_MA_TADADM_PHPINI_ITEM_VAL', 'Settings');
