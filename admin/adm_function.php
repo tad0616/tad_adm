@@ -431,7 +431,7 @@ function act_form($dirname, $op, $title)
     require_once XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php";
     xoops_loadLanguage('modinfo', 'tad_adm');
     require_once XOOPS_ROOT_PATH . '/class/xoopsformloader.php';
-    $token = new XoopsFormHiddenToken();
+    $token = new \XoopsFormHiddenToken();
     $token_code = $token->render();
 
     $mod_name = constant($modversion['name']);
