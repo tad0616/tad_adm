@@ -9,7 +9,7 @@ require_once '../function.php';
 function phpini()
 {
     global $xoopsDB, $xoopsConfig, $xoopsTpl;
-    xoops_loadLanguage('ini_arr', 'tad_adm');
+    require_once XOOPS_ROOT_PATH . "/modules/tad_adm/language/{$xoopsConfig['language']}/ini_arr.php";
 
     $php_ini_path = php_ini_loaded_file();
     $xoopsTpl->assign('php_ini_path', $php_ini_path);

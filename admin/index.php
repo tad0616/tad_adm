@@ -1,6 +1,5 @@
 <?php
 /**
- * TadAdm module
  *
  * You may not change or alter any portion of this comment or credits
  * of supporting developers from this source code or any supporting source code
@@ -9,27 +8,20 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  *
- * @copyright::  XOOPS Project (https://xoops.org)
- * @license::    http://www.fsf.org/copyleft/gpl.html GNU public license
- * @package::    mylinks
- * @subpackage:: TadAdm
- * @since:       2.5.0
- * @author::     Tad
- * @version::     $Id $
+ * @copyright    XOOPS Project (https://xoops.org)
+ * @license      http://www.fsf.org/copyleft/gpl.html GNU public license
+ * @package
+ * @since        2.5.0
+ * @author
+ * @version      $Id $
  **/
-require_once '../../../include/cp_header.php';
-require 'header.php';
 
-require_once XOOPS_ROOT_PATH . '/modules/' . $xoopsModule->getVar('dirname') . '/class/admin.php';
+require __DIR__ . '/header.php';
 
-$index_admin = new ModuleAdmin();
+$adminObject = \Xmf\Module\Admin::getInstance();
 
-$index_admin->addConfigLabel(_AM_XDIR_CONFIG_CHECK);
-$index_admin->addLineConfigLabel(_AM_XDIR_CONFIG_PHP, $xoopsModule->getInfo('min_php'), 'php');
-$index_admin->addLineConfigLabel(_AM_XDIR_CONFIG_XOOPS, $xoopsModule->getInfo('min_xoops'), 'xoops');
+$adminObject->displayNavigation(basename(__FILE__));
+$adminObject->displayIndex();
 
-echo $index_admin->addNavigation('index.php');
-echo $index_admin->renderIndex();
-
-require 'footer.php';
+require __DIR__ . '/footer.php';
 xoops_cp_footer();
