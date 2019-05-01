@@ -1,13 +1,16 @@
 <?php
-
 use XoopsModules\Tadtools\BubblePopup;
 use XoopsModules\Tadtools\EasyResponsiveTabs;
 use XoopsModules\Tadtools\FancyBox;
 use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\Utility;
+
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_main.tpl';
 require_once 'header.php';
+if (!class_exists('XoopsModules\Tadtools\Utility')) {
+    require XOOPS_ROOT_PATH . '/modules/tadtools/preloads/autoloader.php';
+}
 require_once '../function.php';
 require 'adm_function.php';
 /*-----------function區--------------*/

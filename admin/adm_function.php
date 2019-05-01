@@ -1,7 +1,5 @@
 <?php
 use XoopsModules\Tadtools\Utility;
-// 為了給 go.txt 使用
-require_once XOOPS_ROOT_PATH . '/modules/tadtools/tad_function.php';
 
 global $xoopsModule;
 if ('tad_adm' !== $xoopsModule->dirname()) {
