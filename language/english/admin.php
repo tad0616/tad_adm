@@ -135,3 +135,11 @@ define('_MA_TADADM_PATCH_XOOPS', 'Patch to ');
 define('_MA_TADADM_PATCH_OK', 'Patch successed!');
 define('_MA_TADADM_UPGRADE_OK', 'Upgrade successed!');
 define('_MA_TADADM_UPGRADE_FROM_URL', 'Then please manually upgrade the program');
+define('_MA_TADADM_VERSION', 'version');
+define('_MA_TADADM_HIGHER', ' is higher than ');
+define('_MA_TADADM_LOWER', ' is lower than ');
+define('_MA_TADADM_EQUAL', ' is equal to ');
+define('_MA_TADADM_UNABLE_UPGRADE', ', Unable to upgrade');
+define('_MA_TADADM_NONEED_UPGRADE', ', No need to upgrade');
+define('_MA_TADADM_PATCH_INSTALLED', 'This patch has been installed');
+

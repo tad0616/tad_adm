@@ -137,3 +137,11 @@ define('_MA_TADADM_PATCH_XOOPS_ITEMS', '可補丁的項目');
 define('_MA_TADADM_PATCH_OK', '補丁成功！');
 define('_MA_TADADM_UPGRADE_OK', '升級成功！');
 define('_MA_TADADM_UPGRADE_FROM_URL', '接著請手動進行升級程序');
+define('_MA_TADADM_VERSION', '版本');
+define('_MA_TADADM_HIGHER', '高於');
+define('_MA_TADADM_LOWER', '低於');
+define('_MA_TADADM_EQUAL', '已經是');
+define('_MA_TADADM_UNABLE_UPGRADE', '無法升級');
+define('_MA_TADADM_NONEED_UPGRADE', '無需升級');
+define('_MA_TADADM_PATCH_INSTALLED', '此補丁已安裝');
+

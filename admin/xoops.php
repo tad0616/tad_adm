@@ -43,29 +43,34 @@ function list_xoops($mode = 'tpl')
     // $xoops_patch[1]["file_link"]   = "https://campus-xoops.tn.edu.tw/uploads/tad_modules/file/bs4_upgrade.zip";
 
     //抓出現有XOOPS版本
-    $my_xoops_version = sprintf('%0-4s', str_replace('.', '', trim(str_replace('XOOPS', '', XOOPS_VERSION)))) / 1000;
+    // $my_xoops_version = sprintf('%0-4s', str_replace('.', '', trim(str_replace('XOOPS', '', XOOPS_VERSION)))) / 1000;
+    $my_xoops_version = (int) str_replace('.', '', trim(str_replace('XOOPS', '', XOOPS_VERSION)));
     $my_php_version = (float) phpversion();
 
     //後台部份
     $all_patch = $all_upgrade = [];
     foreach ($xoops_patch as $k => $xoops) {
-        $xoops_version = (float) $xoops['xoops_version'];
+        $xoops_version = (int) str_replace('.', '', $xoops['xoops_version']);
         $xoops_min_version = (float) $xoops['xoops_min_version'];
         $php_min_version = (float) $xoops['php_min_version'];
         $php_max_version = (float) $xoops['php_max_version'];
 
         if (!empty($xoops['php_min_version']) and $my_php_version < $php_min_version) {
-            $xoops_patch[$k]['status'] = "PHP版本低於{$xoops_patch[$k]['php_min_version']}無法升級";
+            $xoops_patch[$k]['status'] = "PHP " . _MA_TADADM_VERSION . _MA_TADADM_LOWER . "{$xoops_patch[$k]['php_min_version']}" . _MA_TADADM_UNABLE_UPGRADE;
         } elseif (!empty($xoops['php_max_version']) and $my_php_version > $php_max_version) {
-            $xoops_patch[$k]['status'] = "PHP版本高於{$xoops_patch[$k]['php_max_version']}無法升級";
+            $xoops_patch[$k]['status'] = "PHP " . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . "{$xoops_patch[$k]['php_max_version']}" . _MA_TADADM_UNABLE_UPGRADE;
         } elseif (!empty($xoops['xoops_min_version']) and $my_xoops_version < $xoops_min_version) {
-            $xoops_patch[$k]['status'] = "XOOPS版本低於{$xoops_patch[$k]['xoops_min_version']}無法升級";
-        } elseif (!empty($xoops['xoops_version']) and $my_xoops_version >= $xoops_version) {
-            $xoops_patch[$k]['status'] = "XOOPS版本已經高於{$xoops_patch[$k]['xoops_version']}無需升級";
+            $xoops_patch[$k]['status'] = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_LOWER . "{$xoops_patch[$k]['xoops_min_version']}" . _MA_TADADM_UNABLE_UPGRADE;
+        } elseif (!empty($xoops['xoops_version']) and $my_xoops_version > $xoops_version) {
+            $xoops_patch[$k]['status'] = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . "{$xoops_patch[$k]['xoops_version']}" . _MA_TADADM_NONEED_UPGRADE;
+        } elseif (!empty($xoops['xoops_version']) and $my_xoops_version == $xoops_version) {
+            $xoops_patch[$k]['status'] = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_EQUAL . "{$xoops_patch[$k]['xoops_version']}" . _MA_TADADM_NONEED_UPGRADE;
         } elseif (file_exists(XOOPS_ROOT_PATH . "/uploads/xoops_sn_{$xoops['xoops_sn']}.txt")) {
-            $xoops_patch[$k]['status'] = '此補丁已安裝';
+            $xoops_patch[$k]['status'] = _MA_TADADM_PATCH_INSTALLED;
         } else {
             $xoops_patch[$k]['status'] = 'OK';
+            // $xoops_patch[$k]['status'] = "{$my_xoops_version} = {$xoops_version}";
+
         }
 
         if ('patch' === $xoops['xoops_type']) {
