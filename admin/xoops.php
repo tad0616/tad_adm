@@ -70,7 +70,6 @@ function list_xoops($mode = 'tpl')
         } else {
             $xoops_patch[$k]['status'] = 'OK';
             // $xoops_patch[$k]['status'] = "{$my_xoops_version} = {$xoops_version}";
-
         }
 
         if ('patch' === $xoops['xoops_type']) {

@@ -27,17 +27,21 @@ function list_modules($mode = 'tpl')
     $FancyBox2->render(false);
     //取得更新訊息
     $mod = get_tad_json_info('all.json');
-    //         $mod[$dirname]['module'][$kind]['module_title']       = $module_title;
-    //         $mod[$dirname]['module'][$kind]['update_sn']          = $update_sn;
-    //         $mod[$dirname]['module'][$kind]['new_version']        = $new_version;
-    //         $mod[$dirname]['module'][$kind]['new_status']         = $new_status;
-    //         $mod[$dirname]['module'][$kind]['new_status_version'] = $new_status_version;
-    //         $mod[$dirname]['module'][$kind]['new_last_update']    = $new_last_update;
-    //         $mod[$dirname]['module'][$kind]['update_descript']    = str_replace("\n", "\\n", $update_descript);
-    //         $mod[$dirname]['module'][$kind]['module_sn']          = $module_sn;
-    //         $mod[$dirname]['module'][$kind]['module_descript']    = str_replace("\n", "\\n", $module_descript);
-    //         $mod[$dirname]['module'][$kind]['file_link']          = $file_link;
-    //         $mod[$dirname]['module'][$kind]['kind']               = $kind;
+    // die(var_dump($mod));
+    //$mod[$dirname]['module'][$kind]['module_title']       = $module_title;
+    //$mod[$dirname]['module'][$kind]['update_sn']          = $update_sn;
+    //$mod[$dirname]['module'][$kind]['new_version']        = $new_version;
+    //$mod[$dirname]['module'][$kind]['new_status']         = $new_status;
+    //$mod[$dirname]['module'][$kind]['new_status_version'] = $new_status_version;
+    //$mod[$dirname]['module'][$kind]['new_last_update']    = $new_last_update;
+    //$mod[$dirname]['module'][$kind]['update_descript']    = str_replace("\n", "\\n", $update_descript);
+    //$mod[$dirname]['module'][$kind]['module_sn']          = $module_sn;
+    //$mod[$dirname]['module'][$kind]['module_descript']    = str_replace("\n", "\\n", $module_descript);
+    //$mod[$dirname]['module'][$kind]['file_link']          = $file_link;
+    //$mod[$dirname]['module'][$kind]['kind']               = $kind;
+    //$mod[$dirname]['module'][$kind]["php_min_version"]   = "5.37";
+    //$mod[$dirname]['module'][$kind]["php_max_version"]   = "0";
+    //$mod[$dirname]['module'][$kind]["xoops_min_version"] = "2.59";
 
     $BubblePopup = new BubblePopup();
 
@@ -45,6 +49,8 @@ function list_modules($mode = 'tpl')
     $sql = 'SELECT * FROM ' . $xoopsDB->prefix('modules') . ' ORDER BY hasmain DESC, weight';
     $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
+    $my_xoops_version = (int) str_replace('.', '', trim(str_replace('XOOPS', '', XOOPS_VERSION)));
+    $my_php_version = (float) phpversion();
     $i = 0;
     //模組部份
     $all_install_modules = [];
@@ -68,7 +74,26 @@ function list_modules($mode = 'tpl')
         $last_update = filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php");
         $new_last_update = $mod[$dirname]['module']['new_last_update'];
 
-        $function = (($new_version > $version) or ($new_last_update > $last_update)) ? 'update' : 'last_mod';
+        $xoops_version = (int) str_replace('.', '', $mod[$dirname]['module'][$kind]['xoops_version']);
+        $xoops_min_version = (float) $mod[$dirname]['module'][$kind]['xoops_min_version'];
+        $php_min_version = (float) $mod[$dirname]['module'][$kind]['php_min_version'];
+        $php_max_version = (float) $mod[$dirname]['module'][$kind]['php_max_version'];
+
+        if (!empty($mod[$dirname]['module'][$kind]["php_min_version"]) and $my_php_version < $php_min_version) {
+            $function = "PHP " . _MA_TADADM_VERSION . _MA_TADADM_LOWER . "{$xoops_patch[$k]['php_min_version']}" . _MA_TADADM_UNABLE_UPGRADE;
+        } elseif (!empty($mod[$dirname]['module'][$kind]['php_max_version']) and $my_php_version > $php_max_version) {
+            $function = "PHP " . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . "{$xoops_patch[$k]['php_max_version']}" . _MA_TADADM_UNABLE_UPGRADE;
+        } elseif (!empty($mod[$dirname]['module'][$kind]['xoops_min_version']) and $my_xoops_version < $xoops_min_version) {
+            $function = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_LOWER . "{$xoops_patch[$k]['xoops_min_version']}" . _MA_TADADM_UNABLE_UPGRADE;
+        } elseif (!empty($mod[$dirname]['module'][$kind]['xoops_version']) and $my_xoops_version > $xoops_version) {
+            $function = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . "{$xoops_patch[$k]['xoops_version']}" . _MA_TADADM_NONEED_UPGRADE;
+        } elseif (!empty($mod[$dirname]['module'][$kind]['xoops_version']) and $my_xoops_version == $xoops_version) {
+            $function = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_EQUAL . "{$xoops_patch[$k]['xoops_version']}" . _MA_TADADM_NONEED_UPGRADE;
+        } elseif (file_exists(XOOPS_ROOT_PATH . "/uploads/xoops_sn_{$xoops['xoops_sn']}.txt")) {
+            $function = _MA_TADADM_PATCH_INSTALLED;
+        } else {
+            $function = (($new_version > $version) or ($new_last_update > $last_update)) ? 'update' : 'last_mod';
+        }
 
         $all_install_modules[$isactive][$function][$i]['newversion'] = $new_version;
         $all_install_modules[$isactive][$function][$i]['now_version'] = $version;

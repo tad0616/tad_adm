@@ -1,7 +1,9 @@
 <?php
 use XoopsModules\Tadtools\Utility;
-
 require_once '../../mainfile.php';
+if (!class_exists('XoopsModules\Tadtools\Utility')) {
+    require XOOPS_ROOT_PATH . '/modules/tadtools/preloads/autoloader.php';
+}
 xoops_loadLanguage('main', 'tadtools');
 require_once 'function.php';
 
