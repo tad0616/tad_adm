@@ -1,4 +1,6 @@
 <?php
+use XoopsModules\Tadtools\Utility;
+
 //區塊主函式 (tad_adm_new)
 function tad_adm_new($options)
 {
@@ -15,7 +17,7 @@ function tad_adm_new($options)
     $all_data = '';
 
     $sql = 'select * from ' . $xoopsDB->prefix('users') . " order by uid desc limit 0,{$options[0]}";
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
     while (false !== ($data = $xoopsDB->fetchArray($result))) {
         foreach ($data as $k => $v) {
@@ -111,7 +113,7 @@ if (!function_exists('replace_tad_adm')) {
     {
         global $xoopsDB, $xoopsUser;
 
-        $myts = MyTextSanitizer::getInstance();
+        $myts = \MyTextSanitizer::getInstance();
         $email = $myts->addSlashes($email);
         $result = $myts->addSlashes($result);
 
@@ -120,7 +122,7 @@ if (!function_exists('replace_tad_adm')) {
         $sql = 'replace into `' . $xoopsDB->prefix('tad_adm') . "`
         (`uid` , `email` , `result` , `chk_date`)
         values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
-        $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
+        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     }
 }
 
@@ -134,7 +136,7 @@ if (!function_exists('get_tad_adm')) {
         }
 
         $sql = 'select * from `' . $xoopsDB->prefix('tad_adm') . "` where `uid` = '{$uid}'";
-        $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+        $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data = $xoopsDB->fetchArray($result);
 
         return $data;

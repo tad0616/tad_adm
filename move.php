@@ -1,12 +1,14 @@
 <?php
+use XoopsModules\Tadtools\Utility;
+
 require_once dirname(dirname(__DIR__)) . '/mainfile.php';
 
 $isTN = false !== mb_strpos(XOOPS_URL, '.tn.edu.tw') ? true : false;
 $isDCS = false !== mb_strpos(XOOPS_ROOT_PATH, 'DWASFiles') ? true : false;
 $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
 $isSchoolWeb = (false !== mb_strpos(XOOPS_URL, 'schoolweb.tn.edu.tw') or false !== mb_strpos(XOOPS_URL, '120.115.2.88')) ? true : false;
+xoops_loadLanguage('main', 'tadtools');
 
-require_once XOOPS_ROOT_PATH . "/modules/tadtools/language/{$xoopsConfig['language']}/main.php";
 require_once __DIR__ . '/function.php';
 require_once __DIR__ . '/admin/adm_function.php';
 
@@ -178,8 +180,7 @@ function move_step()
         $content .= login_form();
     }
 
-    // echo html5($content, false, true, 3, true, 'container-fluid');
-    echo html5($content, false, true, 4);
+    echo Utility::html5($content, false, true, 4);
 }
 
 function modules_version()
@@ -188,7 +189,7 @@ function modules_version()
 
     //抓出現有模組
     $sql = 'SELECT * FROM ' . $xoopsDB->prefix('modules') . ' ORDER BY hasmain DESC, weight';
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     $need_update = false;
     $i = 0;
     $mod_msg = '';
@@ -376,7 +377,7 @@ function download_modules()
 
     $db_mod = [];
     $sql = 'SELECT `dirname` FROM `' . $xoopsDB->prefix('modules') . '`';
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     while (list($dirname) = $xoopsDB->fetchRow($result)) {
         $db_mod[] = $dirname;
     }
@@ -422,7 +423,7 @@ function upload_modules()
         $need_up = [];
         $db_mod = [];
         $sql = 'SELECT `dirname` FROM `' . $xoopsDB->prefix('modules') . '`';
-        $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+        $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         while (list($dirname) = $xoopsDB->fetchRow($result)) {
             $db_mod[] = $dirname;
         }
@@ -573,7 +574,7 @@ function download_sql()
     FROM information_schema.TABLES
     WHERE table_schema='" . XOOPS_DB_NAME . "'";
 
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     list($dbsize) = $xoopsDB->fetchRow($result);
 
     if ($isTN) {
@@ -639,7 +640,8 @@ function export_sql($new_url)
 
     $db = new mysqli(XOOPS_DB_HOST, XOOPS_DB_USER, XOOPS_DB_PASS, XOOPS_DB_NAME);
     $dump = new \XoopsModules\Tad_adm\MySQLDump($db);
-    $filename = XOOPS_ROOT_PATH . '/uploads/mysql.sql';
+    $randname = md5(Utility::randStr());
+    $filename = XOOPS_ROOT_PATH . "/uploads/mysql{$randname}.sql";
     if (file_exists($filename)) {
         unlink($filename);
     }
@@ -654,7 +656,7 @@ function export_sql($new_url)
 
     $new_content = str_replace(XOOPS_URL, $new_url, $new_content);
     header('Content-type: text/sql');
-    header('Content-Disposition: attachment; filename=mysql.sql');
+    header("Content-Disposition: attachment; filename=mysql{$randname}.sql");
     echo $new_content;
     exit;
 }

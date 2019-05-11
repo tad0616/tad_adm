@@ -3,7 +3,6 @@ xoops_loadLanguage('admin_common', 'tadtools');
 if (!defined('_TAD_NEED_TADTOOLS')) {
     define('_TAD_NEED_TADTOOLS', 'This module needs TadTools module. You can download TadTools from <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=1" target="_blank">XOOPS EasyGO</a>.');
 }
-
 //phpini.php
 define('_MA_TADADM_PHPINI_ITEM', 'Setting item');
 define('_MA_TADADM_PHPINI_ITEM_VAL', 'Settings');
@@ -141,3 +140,10 @@ define('_MA_TADADM_PATCH_XOOPS_ITEMS', 'Patchable project');
 define('_MA_TADADM_PATCH_OK', 'Patch successed!');
 define('_MA_TADADM_UPGRADE_OK', 'Upgrade successed!');
 define('_MA_TADADM_UPGRADE_FROM_URL', 'Then please manually upgrade the program');
+define('_MA_TADADM_VERSION', 'version');
+define('_MA_TADADM_HIGHER', ' is higher than ');
+define('_MA_TADADM_LOWER', ' is lower than ');
+define('_MA_TADADM_EQUAL', ' is equal to ');
+define('_MA_TADADM_UNABLE_UPGRADE', ', Unable to upgrade');
+define('_MA_TADADM_NONEED_UPGRADE', ', No need to upgrade');
+define('_MA_TADADM_PATCH_INSTALLED', 'This patch has been installed');

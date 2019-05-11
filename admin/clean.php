@@ -1,6 +1,8 @@
 <?php
+use XoopsModules\Tadtools\Utility;
+
 /*-----------引入檔案區--------------*/
-$GLOBALS['xoopsOption']['template_main'] = 'tad_adm_adm_clean.tpl';
+$xoopsOption['template_main'] = 'tad_adm_adm_clean.tpl';
 require_once __DIR__ . '/header.php';
 require_once dirname(__DIR__) . '/function.php';
 $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
@@ -50,7 +52,7 @@ function del_templates($dirs = [], $files = [])
 {
     if (is_array($dirs)) {
         foreach ($dirs as $dir) {
-            delete_directory($dir);
+            Utility::delete_directory($dir);
         }
     }
     if (is_array($files)) {
@@ -58,31 +60,6 @@ function del_templates($dirs = [], $files = [])
             unlink($file);
         }
     }
-}
-
-function delete_directory($dirname)
-{
-    if (is_dir($dirname)) {
-        $dir_handle = opendir($dirname);
-    }
-
-    if (!$dir_handle) {
-        return false;
-    }
-
-    while ($file = readdir($dir_handle)) {
-        if ('.' !== $file && '..' !== $file) {
-            if (!is_dir($dirname . '/' . $file)) {
-                unlink($dirname . '/' . $file);
-            } else {
-                delete_directory($dirname . '/' . $file);
-            }
-        }
-    }
-    closedir($dir_handle);
-    rmdir($dirname);
-
-    return true;
 }
 
 /*-----------執行動作判斷區----------*/

@@ -1,6 +1,8 @@
 <?php
+use XoopsModules\Tadtools\Utility;
+
 /*-----------引入檔案區--------------*/
-$GLOBALS['xoopsOption']['template_main'] = 'tad_adm_adm_spam.tpl';
+$xoopsOption['template_main'] = 'tad_adm_adm_spam.tpl';
 require_once __DIR__ . '/header.php';
 require_once dirname(__DIR__) . '/function.php';
 
@@ -24,12 +26,12 @@ function list_user($op = '', $mode = 'normal')
     $sql = 'select * from ' . $xoopsDB->prefix('users') . " where 1 $andDayLimit order by uid desc";
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
-    $PageBar = getPageBar($sql, $xoopsModuleConfig['list_amount'], 10);
+    $PageBar = Utility::getPageBar($sql, $xoopsModuleConfig['list_amount'], 10);
     $bar = $PageBar['bar'];
     $sql = $PageBar['sql'];
     $total = $PageBar['total'];
 
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     $_SESSION['chk_start'] = time();
     $i = 0;
     $all_data = [];
@@ -139,12 +141,12 @@ function list_spam()
         . " AS b ON a.uid=b.uid WHERE a.`result`='1' ORDER BY a.uid DESC";
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
-    $PageBar = getPageBar($sql, 500, 10);
+    $PageBar = Utility::getPageBar($sql, 500, 10);
     $bar = $PageBar['bar'];
     $sql = $PageBar['sql'];
     $total = $PageBar['total'];
 
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $all_data = [];
     $i = 0;
@@ -207,7 +209,7 @@ function replace_tad_adm($uid = '', $email = '', $result = '')
 {
     global $xoopsDB, $xoopsUser;
 
-    $myts = MyTextSanitizer::getInstance();
+    $myts = \MyTextSanitizer::getInstance();
     $email = $myts->addSlashes($email);
     $result = $myts->addSlashes($result);
 
@@ -216,7 +218,7 @@ function replace_tad_adm($uid = '', $email = '', $result = '')
     $sql = 'replace into `' . $xoopsDB->prefix('tad_adm') . "`
   (`uid` , `email` , `result` , `chk_date`)
   values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
-    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
+    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 }
 
 //以流水號取得某筆tad_adm資料
@@ -228,7 +230,7 @@ function get_tad_adm($uid = '')
     }
 
     $sql = 'select * from `' . $xoopsDB->prefix('tad_adm') . "` where `uid` = '{$uid}'";
-    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     $data = $xoopsDB->fetchArray($result);
 
     return $data;
@@ -243,7 +245,7 @@ function del_user($del_uid)
     }
 
     $sql = 'delete from `' . $xoopsDB->prefix('tad_adm') . "` where `uid` = '{$del_uid}'";
-    $xoopsDB->queryF($sql) or web_error($sql, __FILE__, __LINE__);
+    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $memberHandler = xoops_getHandler('member');
     $user =  $memberHandler->getUser($del_uid);

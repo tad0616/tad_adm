@@ -1,6 +1,6 @@
 <?php
 /*-----------引入檔案區--------------*/
-$GLOBALS['xoopsOption']['template_main'] = 'tad_adm_adm_phpini.tpl';
+$xoopsOption['template_main'] = 'tad_adm_adm_phpini.tpl';
 require_once __DIR__ . '/header.php';
 require_once dirname(__DIR__) . '/function.php';
 
@@ -10,7 +10,7 @@ function phpini()
 {
     global $xoopsDB, $xoopsConfig, $xoopsTpl;
 
-    require_once "../language/{$xoopsConfig['language']}/ini_arr.php";
+    xoops_loadLanguage('ini_arr', 'tad_adm');
 
     $php_ini_path = php_ini_loaded_file();
     $xoopsTpl->assign('php_ini_path', $php_ini_path);

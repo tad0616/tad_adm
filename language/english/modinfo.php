@@ -1,6 +1,5 @@
 <?php
 xoops_loadLanguage('modinfo_common', 'tadtools');
-
 define('_MI_TADADM_NAME', 'Webmaster Tools');
 define('_MI_TADADM_AUTHOR', 'Tad');
 define('_MI_TADADM_CREDITS', 'Michael Beck');
