@@ -15,7 +15,7 @@ if (file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/FooTable.php')) {
 }
 
 if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php')) {
-    redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
+    redirect_header('index.php', 3, _TAD_NEED_TADTOOLS);
 }
 require_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
 $fancybox = new fancybox('.modulesadmin', '640', '480');
@@ -45,7 +45,7 @@ function list_modules($mode = 'tpl')
     //         $mod[$dirname]['module'][$kind]['kind']               = $kind;
 
     if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/bubblepopup.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
+        redirect_header('index.php', 3, _TAD_NEED_TADTOOLS);
     }
     require_once XOOPS_ROOT_PATH . '/modules/tadtools/bubblepopup.php';
     $bubblepopup = new bubblepopup();
@@ -245,7 +245,7 @@ function list_modules($mode = 'tpl')
     //抓出現有區塊
     $sql = 'SELECT bid,dirname,visible, last_modified FROM ' . $xoopsDB->prefix('newblocks') . " WHERE `mid`=0 AND `dirname`!='' ORDER BY side, weight";
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-    while (false !== (list($bid, $dirname, $visible, $last_modified) = $xoopsDB->fetchRow($result))) {
+    while (list($bid, $dirname, $visible, $last_modified) = $xoopsDB->fetchRow($result)) {
         $bid_array[$bid] = $dirname;
         $bid_visible[$dirname] = $visible;
         $bid_last_modified[$dirname] = $last_modified;
@@ -462,7 +462,7 @@ function list_modules($mode = 'tpl')
     $xoopsTpl->assign('all_un_block', $all_un_block);
 
     if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/easy_responsive_tabs.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
+        redirect_header('index.php', 3, _TAD_NEED_TADTOOLS);
     }
     require_once XOOPS_ROOT_PATH . '/modules/tadtools/easy_responsive_tabs.php';
     $responsive_tabs = new easy_responsive_tabs('#admTab');
@@ -471,14 +471,14 @@ function list_modules($mode = 'tpl')
     $bubblepopup->render();
 
     if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/sweet_alert.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
+        redirect_header('index.php', 3, _TAD_NEED_TADTOOLS);
     }
     require_once XOOPS_ROOT_PATH . '/modules/tadtools/sweet_alert.php';
     $sweet_alert = new sweet_alert();
     $sweet_alert->render('delete_theme', 'main.php?op=delete_theme&dirname=', 'theme');
 
     if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
+        redirect_header('index.php', 3, _TAD_NEED_TADTOOLS);
     }
     require_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
     $fancybox = new fancybox('.fancybox');

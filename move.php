@@ -377,7 +377,7 @@ function download_modules()
     $db_mod = [];
     $sql = 'SELECT `dirname` FROM `' . $xoopsDB->prefix('modules') . '`';
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-    while (false !== (list($dirname) = $xoopsDB->fetchRow($result))) {
+    while (list($dirname) = $xoopsDB->fetchRow($result)) {
         $db_mod[] = $dirname;
     }
 
@@ -423,7 +423,7 @@ function upload_modules()
         $db_mod = [];
         $sql = 'SELECT `dirname` FROM `' . $xoopsDB->prefix('modules') . '`';
         $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-        while (false !== (list($dirname) = $xoopsDB->fetchRow($result))) {
+        while (list($dirname) = $xoopsDB->fetchRow($result)) {
             $db_mod[] = $dirname;
         }
         while (false !== ($file = readdir($d))) {

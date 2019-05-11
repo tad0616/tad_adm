@@ -15,7 +15,7 @@ if (file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/FooTable.php')) {
 }
 
 if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php')) {
-    redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
+    redirect_header('index.php', 3, _TAD_NEED_TADTOOLS);
 }
 require_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
 $fancybox = new fancybox('.modulesadmin', '640', '480');
@@ -89,21 +89,21 @@ function list_xoops($mode = 'tpl')
     $xoopsTpl->assign('xoops_upgrade', $all_upgrade);
 
     if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/easy_responsive_tabs.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
+        redirect_header('index.php', 3, _TAD_NEED_TADTOOLS);
     }
     require_once XOOPS_ROOT_PATH . '/modules/tadtools/easy_responsive_tabs.php';
     $responsive_tabs = new easy_responsive_tabs('#admTab');
     $responsive_tabs->rander();
 
     if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/sweet_alert.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
+        redirect_header('index.php', 3, _TAD_NEED_TADTOOLS);
     }
     require_once XOOPS_ROOT_PATH . '/modules/tadtools/sweet_alert.php';
     $sweet_alert = new sweet_alert();
     $sweet_alert->render('delete_theme', 'main.php?op=delete_theme&dirname=', 'theme');
 
     if (!file_exists(XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php')) {
-        redirect_header('index.php', 3, _MA_NEED_TADTOOLS);
+        redirect_header('index.php', 3, _TAD_NEED_TADTOOLS);
     }
     require_once XOOPS_ROOT_PATH . '/modules/tadtools/fancybox.php';
     $fancybox = new fancybox('.fancybox');

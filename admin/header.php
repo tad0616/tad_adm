@@ -30,7 +30,7 @@ xoops_loadLanguage('main', $xoopsModule->getVar('dirname'));
 
 if (!isset($xoopsTpl) || !is_object($xoopsTpl)) {
     require_once XOOPS_ROOT_PATH . '/class/template.php';
-    $xoopsTpl = new XoopsTpl();
+    $xoopsTpl = new \XoopsTpl();
 }
 
 xoops_cp_header();

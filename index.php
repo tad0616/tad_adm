@@ -150,7 +150,7 @@ function unable_modules()
     global $xoopsDB;
     $sql = 'SELECT mid FROM ' . $xoopsDB->prefix('modules') . " WHERE `isactive`=1 AND `dirname`!='system' AND `dirname`!='tad_adm'";
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-    while (false !== (list($mid) = $xoopsDB->fetchRow($result))) {
+    while (list($mid) = $xoopsDB->fetchRow($result)) {
         $mid_array[] = $mid;
     }
 
@@ -179,7 +179,7 @@ function unable_blocks()
     global $xoopsDB;
     $sql = 'SELECT bid FROM ' . $xoopsDB->prefix('newblocks') . ' WHERE `visible`=1';
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-    while (false !== (list($bid) = $xoopsDB->fetchRow($result))) {
+    while (list($bid) = $xoopsDB->fetchRow($result)) {
         $bid_array[] = $bid;
     }
 
@@ -441,7 +441,7 @@ if ($xoopsDB) {
 
     $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
     $groupid_count = $group_name = [];
-    while (false !== (list($groupid, $uid, $name) = $xoopsDB->fetchRow($result))) {
+    while (list($groupid, $uid, $name) = $xoopsDB->fetchRow($result)) {
         if (isset($groupid_count[$groupid])) {
             $groupid_count[$groupid]++;
         } else {
@@ -629,14 +629,14 @@ $close_site = '1' == $xoopsConfig['closesite'] ? "<li class='list-group-item'><a
 $admin_options = '';
 $sql = 'SELECT a.uid,b.uname FROM ' . $xoopsDB->prefix('groups_users_link') . ' AS a LEFT JOIN ' . $xoopsDB->prefix('users') . ' AS b ON a.uid=b.uid WHERE a.groupid=1';
 $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-while (false !== (list($uid, $uname) = $xoopsDB->fetchRow($result))) {
+while (list($uid, $uname) = $xoopsDB->fetchRow($result)) {
     $admin_options .= "<option value='{$uid}'>{$uname}</option>";
 }
 
 $XoopsFormSelectUserOption = '';
 $sql = 'SELECT a.uid,b.uname,b.name FROM ' . $xoopsDB->prefix('groups_users_link') . ' AS a LEFT JOIN ' . $xoopsDB->prefix('users') . ' AS b ON a.uid=b.uid WHERE a.groupid=2 ORDER BY b.uname';
 $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-while (false !== (list($uid, $uname, $name) = $xoopsDB->fetchRow($result))) {
+while (list($uid, $uname, $name) = $xoopsDB->fetchRow($result)) {
     if (empty($uname)) {
         continue;
     }
