@@ -235,7 +235,7 @@ function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
 
 //        require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
 //        require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
-        $zip = new \XoopsModules\Tad_adm\dUnzip2($new_file);
+        $zip = new \XoopsModules\Tad_adm\dunzip2\dUnzip2($new_file);
         $zip->getList();
         $zip->unzipAll(XOOPS_ROOT_PATH . '/uploads/tad_adm/');
         $zip->close($new_file);
@@ -285,7 +285,7 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
 
 //    require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
 //    require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
-    $zip = new dUnzip2($new_file);
+    $zip = new \XoopsModules\Tad_adm\dunzip2\dUnzip2($new_file);
     $zip->getList();
     $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
     $zip->close($new_file);

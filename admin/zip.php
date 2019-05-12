@@ -27,7 +27,7 @@ if (file_exists($bak_filename)) {
     exit;
 }
     require_once dirname(__DIR__) . '/class/pclzip.lib.php';
-    $zipfile = new PclZip($bak_filename);
+    $zipfile = new \XoopsModules\Tad_adm\PclZip($bak_filename);
     $v_list = $zipfile->create($DirFileArr, PCLZIP_OPT_REMOVE_PATH, $dir);
 
     if (0 == $v_list) {

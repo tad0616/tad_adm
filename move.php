@@ -713,8 +713,8 @@ function download_zip($FromDir)
         return;
     }
 
-    require_once __DIR__ . '/class/pclzip.lib.php';
-    $zipfile = new PclZip($toZip);
+//    require_once __DIR__ . '/class/pclzip.lib.php';
+    $zipfile = new \XoopsModules\Tad_adm\PclZip($toZip);
     $v_list = $zipfile->create($FromDir, PCLZIP_OPT_REMOVE_PATH, XOOPS_ROOT_PATH . $type);
     if (0 == $v_list) {
         die('Error : ' . $zipfile->errorInfo(true));
