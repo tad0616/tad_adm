@@ -79,16 +79,16 @@ function list_modules($mode = 'tpl')
         $php_min_version = (float) $mod[$dirname]['module'][$kind]['php_min_version'];
         $php_max_version = (float) $mod[$dirname]['module'][$kind]['php_max_version'];
 
-        if (!empty($mod[$dirname]['module'][$kind]["php_min_version"]) and $my_php_version < $php_min_version) {
-            $function = "PHP " . _MA_TADADM_VERSION . _MA_TADADM_LOWER . "{$xoops_patch[$k]['php_min_version']}" . _MA_TADADM_UNABLE_UPGRADE;
+        if (!empty($mod[$dirname]['module'][$kind]['php_min_version']) and $my_php_version < $php_min_version) {
+            $function = 'PHP ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . "{$xoops_patch[$k]['php_min_version']}" . _MA_TADADM_UNABLE_UPGRADE;
         } elseif (!empty($mod[$dirname]['module'][$kind]['php_max_version']) and $my_php_version > $php_max_version) {
-            $function = "PHP " . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . "{$xoops_patch[$k]['php_max_version']}" . _MA_TADADM_UNABLE_UPGRADE;
+            $function = 'PHP ' . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . "{$xoops_patch[$k]['php_max_version']}" . _MA_TADADM_UNABLE_UPGRADE;
         } elseif (!empty($mod[$dirname]['module'][$kind]['xoops_min_version']) and $my_xoops_version < $xoops_min_version) {
-            $function = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_LOWER . "{$xoops_patch[$k]['xoops_min_version']}" . _MA_TADADM_UNABLE_UPGRADE;
+            $function = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . "{$xoops_patch[$k]['xoops_min_version']}" . _MA_TADADM_UNABLE_UPGRADE;
         } elseif (!empty($mod[$dirname]['module'][$kind]['xoops_version']) and $my_xoops_version > $xoops_version) {
-            $function = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . "{$xoops_patch[$k]['xoops_version']}" . _MA_TADADM_NONEED_UPGRADE;
+            $function = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . "{$xoops_patch[$k]['xoops_version']}" . _MA_TADADM_NONEED_UPGRADE;
         } elseif (!empty($mod[$dirname]['module'][$kind]['xoops_version']) and $my_xoops_version == $xoops_version) {
-            $function = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_EQUAL . "{$xoops_patch[$k]['xoops_version']}" . _MA_TADADM_NONEED_UPGRADE;
+            $function = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_EQUAL . "{$xoops_patch[$k]['xoops_version']}" . _MA_TADADM_NONEED_UPGRADE;
         } elseif (file_exists(XOOPS_ROOT_PATH . "/uploads/xoops_sn_{$xoops['xoops_sn']}.txt")) {
             $function = _MA_TADADM_PATCH_INSTALLED;
         } else {
