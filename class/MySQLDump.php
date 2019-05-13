@@ -1,4 +1,4 @@
-<?php
+<?php namespace XoopsModules\Tad_adm;
 
 /**
  * MySQL database dump.
@@ -32,15 +32,15 @@ class MySQLDump
      * @param  mysqli connection
      * @param mixed $charset
      */
-    public function __construct(mysqli $connection, $charset = 'utf8')
+    public function __construct(\mysqli $connection, $charset = 'utf8')
     {
         $this->connection = $connection;
 
         if ($connection->connect_errno) {
-            throw new Exception($connection->connect_error);
+            throw new \Exception($connection->connect_error);
         } elseif (!$connection->set_charset($charset)) {
             // was added in MySQL 5.0.7 and PHP 5.0.5, fixed in PHP 5.1.5)
-            throw new Exception($connection->error);
+            throw new \Exception($connection->error);
         }
     }
 
@@ -53,7 +53,7 @@ class MySQLDump
     {
         $handle = strcasecmp(mb_substr($file, -3), '.gz') ? fopen($file, 'wb') : gzopen($file, 'wb');
         if (!$handle) {
-            throw new Exception("ERROR: Cannot write file '$file'.");
+            throw new \Exception("ERROR: Cannot write file '$file'.");
         }
         $this->write($handle);
     }
@@ -68,7 +68,7 @@ class MySQLDump
         if (null === $handle) {
             $handle = fopen('php://output', 'wb');
         } elseif (!is_resource($handle) || 'stream' !== get_resource_type($handle)) {
-            throw new Exception('Argument must be stream resource.');
+            throw new \Exception('Argument must be stream resource.');
         }
 
         $tables = $views = [];

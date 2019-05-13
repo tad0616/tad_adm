@@ -1,4 +1,4 @@
-<?php
+<?php namespace XoopsModules\Tad_adm;
 
 /**
  * MySQL database dump loader.
@@ -21,14 +21,14 @@ class MySQLImport
      * @param  mysqli connection
      * @param mixed $charset
      */
-    public function __construct(mysqli $connection, $charset = 'utf8')
+    public function __construct(\mysqli $connection, $charset = 'utf8')
     {
         $this->connection = $connection;
 
         if ($connection->connect_errno) {
-            throw new Exception($connection->connect_error);
+            throw new \Exception($connection->connect_error);
         } elseif (!$connection->set_charset($charset)) { // was added in MySQL 5.0.7 and PHP 5.0.5, fixed in PHP 5.1.5)
-            throw new Exception($connection->error);
+            throw new \Exception($connection->error);
         }
     }
 
@@ -42,7 +42,7 @@ class MySQLImport
     {
         $handle = strcasecmp(mb_substr($file, -3), '.gz') ? fopen($file, 'rb') : gzopen($file, 'rb');
         if (!$handle) {
-            throw new Exception("ERROR: Cannot open file '$file'.");
+            throw new \Exception("ERROR: Cannot open file '$file'.");
         }
 
         return $this->read($handle);
@@ -57,7 +57,7 @@ class MySQLImport
     public function read($handle)
     {
         if (!is_resource($handle) || 'stream' !== get_resource_type($handle)) {
-            throw new Exception('Argument must be stream resource.');
+            throw new \Exception('Argument must be stream resource.');
         }
 
         $stat = fstat($handle);
@@ -74,7 +74,7 @@ class MySQLImport
             } elseif (mb_substr($ts = rtrim($s), -mb_strlen($delimiter)) === $delimiter) {
                 $sql .= mb_substr($ts, 0, -mb_strlen($delimiter));
                 if (!$this->connection->query($sql)) {
-                    throw new Exception($this->connection->error);
+                    throw new \Exception($this->connection->error);
                 }
                 $sql = '';
                 $count++;
@@ -89,7 +89,7 @@ class MySQLImport
         if ('' !== rtrim($sql)) {
             $count++;
             if (!$this->connection->query($sql)) {
-                throw new Exception($this->connection->error);
+                throw new \Exception($this->connection->error);
             }
             if ($this->onProgress) {
                 call_user_func($this->onProgress, $count, isset($stat['size']) ? 100 : null);

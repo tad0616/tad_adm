@@ -22,7 +22,7 @@ class AdminerPlugin extends Adminer {
 	*/
 	function __construct($plugins) {
 		if ($plugins === null) {
-			$plugins = array();
+			$plugins = [];
 			foreach (get_declared_classes() as $class) {
 				if (preg_match('~^Adminer.~i', $class) && strcasecmp($this->_findRootClass($class), 'Adminer')) { //! can use interface
 					$plugins[$class] = new $class;
@@ -34,7 +34,7 @@ class AdminerPlugin extends Adminer {
 	}
 	
 	function _callParent($function, $args) {
-		return call_user_func_array(array('parent', $function), $args);
+		return call_user_func_array(['parent', $function], $args);
 	}
 	
 	function _applyPlugin($function, $args) {
@@ -62,7 +62,7 @@ class AdminerPlugin extends Adminer {
 		$return = $this->_callParent($function, $args);
 		foreach ($this->plugins as $plugin) {
 			if (method_exists($plugin, $function)) {
-				$value = call_user_func_array(array($plugin, $function), $args);
+				$value = call_user_func_array([$plugin, $function], $args);
 				if ($value) {
 					$return += $value;
 				}
@@ -175,7 +175,7 @@ class AdminerPlugin extends Adminer {
 		return $this->_applyPlugin(__FUNCTION__, $args);
 	}
 
-	function selectLinks($tableStatus, $set = "") {
+	function selectLinks($tableStatus, $set = '') {
 		$args = func_get_args();
 		return $this->_applyPlugin(__FUNCTION__, $args);
 	}
@@ -335,7 +335,7 @@ class AdminerPlugin extends Adminer {
 		return $this->_applyPlugin(__FUNCTION__, $args);
 	}
 
-	function processInput($field, $value, $function = "") {
+	function processInput($field, $value, $function = '') {
 		$args = func_get_args();
 		return $this->_applyPlugin(__FUNCTION__, $args);
 	}

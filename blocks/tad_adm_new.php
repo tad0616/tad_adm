@@ -19,7 +19,7 @@ function tad_adm_new($options)
     $sql = 'select * from ' . $xoopsDB->prefix('users') . " order by uid desc limit 0,{$options[0]}";
     $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
-    while ($data = $xoopsDB->fetchArray($result)) {
+    while (false !== ($data = $xoopsDB->fetchArray($result))) {
         foreach ($data as $k => $v) {
             $$k = $v;
         }

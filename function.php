@@ -3,7 +3,10 @@ xoops_loadLanguage('main', 'tadtools');
 
 $inSchoolWeb = is_dir('/home/matrix/public_html/modules/') ? true : false;
 
-/********************* 自訂函數 *********************/
+/********************* 自訂函數 ********************
+ * @param $path
+ * @return bool|false|float|int|string
+ */
 function GetDirectorySize($path)
 {
     $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;

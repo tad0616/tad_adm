@@ -1,7 +1,7 @@
 <?php
 use XoopsModules\Tadtools\Utility;
 
-require_once '../../mainfile.php';
+require_once dirname(dirname(__DIR__)) . '/mainfile.php';
 
 $isTN = false !== mb_strpos(XOOPS_URL, '.tn.edu.tw') ? true : false;
 $isDCS = false !== mb_strpos(XOOPS_ROOT_PATH, 'DWASFiles') ? true : false;
@@ -9,8 +9,8 @@ $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
 $isSchoolWeb = (false !== mb_strpos(XOOPS_URL, 'schoolweb.tn.edu.tw') or false !== mb_strpos(XOOPS_URL, '120.115.2.88')) ? true : false;
 xoops_loadLanguage('main', 'tadtools');
 
-require_once 'function.php';
-require_once 'admin/adm_function.php';
+require_once __DIR__ . '/function.php';
+require_once __DIR__ . '/admin/adm_function.php';
 
 $_SESSION['tad_adm_isAdmin'] = ($xoopsUser) ? $xoopsUser->isAdmin(1) : false;
 // $_SESSION['tad_adm_isAdmin'] = 1; //不須密碼模式，危險，沒事勿用。
@@ -195,7 +195,7 @@ function modules_version()
     $mod_msg = '';
     //模組部份
     $all_install_modules = [];
-    while ($data = $xoopsDB->fetchArray($result)) {
+    while (false !== ($data = $xoopsDB->fetchArray($result))) {
         foreach ($data as $k => $v) {
             $$k = $v;
         }
@@ -636,10 +636,10 @@ function export_sql($new_url)
     }
     set_time_limit(0);
     ignore_user_abort(true);
-    require XOOPS_ROOT_PATH . '/modules/tad_adm/class/MySQLDump.php';
+//    require XOOPS_ROOT_PATH . '/modules/tad_adm/class/MySQLDump.php';
 
     $db = new mysqli(XOOPS_DB_HOST, XOOPS_DB_USER, XOOPS_DB_PASS, XOOPS_DB_NAME);
-    $dump = new MySQLDump($db);
+    $dump = new \XoopsModules\Tad_adm\MySQLDump($db);
     $randname = md5(Utility::randStr());
     $filename = XOOPS_ROOT_PATH . "/uploads/mysql{$randname}.sql";
     if (file_exists($filename)) {
@@ -713,8 +713,8 @@ function download_zip($FromDir)
         return;
     }
 
-    require_once 'class/pclzip.lib.php';
-    $zipfile = new PclZip($toZip);
+//    require_once __DIR__ . '/class/pclzip.lib.php';
+    $zipfile = new \XoopsModules\Tad_adm\PclZip($toZip);
     $v_list = $zipfile->create($FromDir, PCLZIP_OPT_REMOVE_PATH, XOOPS_ROOT_PATH . $type);
     if (0 == $v_list) {
         die('Error : ' . $zipfile->errorInfo(true));
@@ -750,13 +750,13 @@ function login_form()
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label text-md-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
                     <div class="col-sm-9">
-                        <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control" />
+                        <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label text-md-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
                     <div class="col-sm-9">
-                        <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control" />
+                        <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">

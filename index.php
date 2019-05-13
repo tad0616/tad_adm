@@ -1,21 +1,22 @@
 <?php
 use XoopsModules\Tadtools\Utility;
-require_once '../../mainfile.php';
+
+require_once dirname(dirname(__DIR__)) . '/mainfile.php';
 if (!class_exists('XoopsModules\Tadtools\Utility')) {
     require XOOPS_ROOT_PATH . '/modules/tadtools/preloads/autoloader.php';
 }
 xoops_loadLanguage('main', 'tadtools');
-require_once 'function.php';
+require_once __DIR__ . '/function.php';
 
 $op = isset($_REQUEST['op']) ? $_REQUEST['op'] : '';
 
 if ($xoopsUser) {
     $_SESSION['isAdmin'] = $xoopsUser->isAdmin(1);
 } elseif ('helpme' === $op) {
-    $modhandler = xoops_getHandler('module');
-    $xoopsModule = $modhandler->getByDirname('tad_adm');
-    $config_handler = xoops_getHandler('config');
-    $xoopsModuleConfig = &$config_handler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
+    $moduleHandler = xoops_getHandler('module');
+    $xoopsModule = $moduleHandler->getByDirname('tad_adm');
+    $configHandler = xoops_getHandler('config');
+    $xoopsModuleConfig = &$configHandler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
 
     $_SESSION['isAdmin'] = ('' != $xoopsModuleConfig['login'] and '' != $_POST['help_passwd'] and $xoopsModuleConfig['login'] == $_POST['help_passwd']) ? true : false;
 } elseif ('send_passwd' === $op) {
@@ -59,13 +60,13 @@ if (!$_SESSION['isAdmin']) {
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label text-md-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
                         <div class="col-sm-9">
-                            <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control" />
+                            <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label text-md-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
                         <div class="col-sm-9">
-                            <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control" />
+                            <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -337,7 +338,7 @@ function session_size()
 function files_counter()
 {
     $dirname = XOOPS_VAR_PATH . '/caches/smarty_compile/';
-    if (false != glob($dirname . '*.php')) {
+    if (false !== glob($dirname . '*.php')) {
         $filecount = count(glob($dirname . '*.php'));
 
         return sprintf(_MD_TADADM_FILES_COUNT, $filecount);
@@ -393,7 +394,7 @@ $mysql_connect = $xoopsDB ? 'OK' : _MD_TADADM_CANT_CONNECT;
 $sql = 'select version()';
 $result = $xoopsDB->queryF($sql);
 list($mysql_version) = $xoopsDB->fetchRow($result);
-// $mysql_version = function_exists('mysql_get_server_info') ? mysql_get_server_info() : $xoopsDB->getServerVersion();
+// $mysql_version = function_exists('$GLOBALS['xoopsDB']->getServerVersion') ? $GLOBALS['xoopsDB']->getServerVersion() : $xoopsDB->getServerVersion();
 
 $other = '';
 if ($xoopsDB) {

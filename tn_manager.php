@@ -1,7 +1,7 @@
 <?php
 // 此檔案為南市資訊中心用來替所有網站進行模組自動更新用檔案，請勿刪除或變更
 
-require 'header.php';
+require __DIR__ . '/header.php';
 $xoopsOption['template_main'] = 'tad_adm_tn_manager.tpl';
 require_once XOOPS_ROOT_PATH . '/header.php';
 

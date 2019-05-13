@@ -5,14 +5,14 @@ use XoopsModules\Tadtools\FooTable;
 use XoopsModules\Tadtools\SweetAlert;
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_xoops.tpl';
-require_once 'header.php';
-require_once '../function.php';
-require 'adm_function.php';
+require_once __DIR__ . '/header.php';
+require_once dirname(__DIR__) . '/function.php';
+require __DIR__ . '/adm_function.php';
 
 /*-----------function區--------------*/
 
-$FooTable = new FooTable();
-$FooTable->render();
+    $FooTable = new FooTable();
+    $FooTable->render();
 
 $FancyBox = new FancyBox('.modulesadmin', '640', '480');
 $FancyBox->render(true);
@@ -56,15 +56,15 @@ function list_xoops($mode = 'tpl')
         $php_max_version = (float) $xoops['php_max_version'];
 
         if (!empty($xoops['php_min_version']) and $my_php_version < $php_min_version) {
-            $xoops_patch[$k]['status'] = "PHP " . _MA_TADADM_VERSION . _MA_TADADM_LOWER . "{$xoops_patch[$k]['php_min_version']}" . _MA_TADADM_UNABLE_UPGRADE;
+            $xoops_patch[$k]['status'] = 'PHP ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . ($xoops_patch[$k]['php_min_version']) . _MA_TADADM_UNABLE_UPGRADE;
         } elseif (!empty($xoops['php_max_version']) and $my_php_version > $php_max_version) {
-            $xoops_patch[$k]['status'] = "PHP " . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . "{$xoops_patch[$k]['php_max_version']}" . _MA_TADADM_UNABLE_UPGRADE;
+            $xoops_patch[$k]['status'] = 'PHP ' . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . ($xoops_patch[$k]['php_max_version']) . _MA_TADADM_UNABLE_UPGRADE;
         } elseif (!empty($xoops['xoops_min_version']) and $my_xoops_version < $xoops_min_version) {
-            $xoops_patch[$k]['status'] = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_LOWER . "{$xoops_patch[$k]['xoops_min_version']}" . _MA_TADADM_UNABLE_UPGRADE;
+            $xoops_patch[$k]['status'] = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . ($xoops_patch[$k]['xoops_min_version']) . _MA_TADADM_UNABLE_UPGRADE;
         } elseif (!empty($xoops['xoops_version']) and $my_xoops_version > $xoops_version) {
-            $xoops_patch[$k]['status'] = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . "{$xoops_patch[$k]['xoops_version']}" . _MA_TADADM_NONEED_UPGRADE;
+            $xoops_patch[$k]['status'] = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . ($xoops_patch[$k]['xoops_version']) . _MA_TADADM_NONEED_UPGRADE;
         } elseif (!empty($xoops['xoops_version']) and $my_xoops_version == $xoops_version) {
-            $xoops_patch[$k]['status'] = "XOOPS " . _MA_TADADM_VERSION . _MA_TADADM_EQUAL . "{$xoops_patch[$k]['xoops_version']}" . _MA_TADADM_NONEED_UPGRADE;
+            $xoops_patch[$k]['status'] = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_EQUAL . ($xoops_patch[$k]['xoops_version']) . _MA_TADADM_NONEED_UPGRADE;
         } elseif (file_exists(XOOPS_ROOT_PATH . "/uploads/xoops_sn_{$xoops['xoops_sn']}.txt")) {
             $xoops_patch[$k]['status'] = _MA_TADADM_PATCH_INSTALLED;
         } else {
@@ -160,4 +160,4 @@ switch ($op) {
 
 /*-----------秀出結果區--------------*/
 $xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-require_once 'footer.php';
+require_once __DIR__ . '/footer.php';

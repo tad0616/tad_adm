@@ -3,8 +3,8 @@ use XoopsModules\Tadtools\Utility;
 
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_clean.tpl';
-require_once 'header.php';
-require_once '../function.php';
+require_once __DIR__ . '/header.php';
+require_once dirname(__DIR__) . '/function.php';
 $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
 /*-----------function區--------------*/
 
@@ -15,7 +15,7 @@ function view_file()
     $theme_name = $xoopsConfig['theme_set'];
     $all_dir = $all_files = [];
     $dir = XOOPS_ROOT_PATH . "/themes/{$theme_name}/modules/";
-    $i = 0;
+    $i = $total_size  = 0;
     if (is_dir($dir)) {
         if ($dh = opendir($dir)) {
             while (false !== ($file = readdir($dh))) {
@@ -84,4 +84,4 @@ switch ($op) {
 /*-----------秀出結果區--------------*/
 $xoopsTpl->assign('op', $op);
 $xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-require_once 'footer.php';
+require_once __DIR__ . '/footer.php';

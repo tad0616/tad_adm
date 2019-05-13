@@ -56,7 +56,7 @@
     <div class="panel panel-primary"  style="width: auto;">
       <div class="panel-heading">
         <label class="checkbox-inline">
-          <input id="clickAll" type="checkbox" checked="checked">
+          <input id="clickAll" type="checkbox" checked>
           <{$dir}> (<span id="totalSize"><{$total_size}></span>)
         </label>
       </div>
@@ -66,7 +66,7 @@
         <tr>
           <td>
             <label class="checkbox-inline">
-              <input type="checkbox" name="dirs[]" value="<{$dir.dir_path}>" checked="checked" title="<{$dir.size}>" class="dirfile">
+              <input type="checkbox" name="dirs[]" value="<{$dir.dir_path}>" checked title="<{$dir.size}>" class="dirfile">
               <i class="fa fa-folder-open-o" aria-hidden="true"></i> <{$dir.dir_name}>
             </label>
           </td>
@@ -77,7 +77,7 @@
         <tr>
           <td>
             <label class="checkbox-inline text-info">
-              <input type="checkbox" name="files[]" value="<{$file.file_path}>" checked="checked" title="<{$file.size}>" class="dirfile">
+              <input type="checkbox" name="files[]" value="<{$file.file_path}>" checked title="<{$file.size}>" class="dirfile">
               <i class="fa fa-file-text-o" aria-hidden="true"></i> <{$file.file_name}>
             </label>
           </td>

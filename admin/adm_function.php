@@ -3,10 +3,10 @@ use XoopsModules\Tadtools\Utility;
 
 global $xoopsModule;
 if ('tad_adm' !== $xoopsModule->dirname()) {
-    $modhandler = xoops_getHandler('module');
-    $xModule = $modhandler->getByDirname('tad_adm');
-    $config_handler = xoops_getHandler('config');
-    $xoopsModuleConfig = $config_handler->getConfigsByCat(0, $xModule->mid());
+    $moduleHandler = xoops_getHandler('module');
+    $xModule = $moduleHandler->getByDirname('tad_adm');
+    $configHandler = xoops_getHandler('config');
+    $xoopsModuleConfig = $configHandler->getConfigsByCat(0, $xModule->mid());
     // die('aaa' . var_dump($xoopsModuleConfig));
 }
 
@@ -233,9 +233,9 @@ function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
             Utility::delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
         }
 
-        require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
-        require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
-        $zip = new dUnzip2($new_file);
+//        require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
+//        require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
+        $zip = new \XoopsModules\Tad_adm\dunzip2\dUnzip2($new_file);
         $zip->getList();
         $zip->unzipAll(XOOPS_ROOT_PATH . '/uploads/tad_adm/');
         $zip->close($new_file);
@@ -283,9 +283,9 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     }
     Utility::mkdir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
 
-    require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
-    require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
-    $zip = new dUnzip2($new_file);
+//    require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
+//    require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
+    $zip = new \XoopsModules\Tad_adm\dunzip2\dUnzip2($new_file);
     $zip->getList();
     $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
     $zip->close($new_file);
@@ -435,8 +435,8 @@ function act_form($dirname, $op, $title)
     $mod_name = constant($modversion['name']);
 
     $main = "
-        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/bootstrap4/css/bootstrap.css' />
-        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/css/xoops_adm4.css' />
+        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/bootstrap4/css/bootstrap.css'>
+        <link rel='stylesheet' type='text/css' media='screen' href='" . XOOPS_URL . "/modules/tadtools/css/xoops_adm4.css'>
         <div class='well card card-body bg-light'>
             <form action='" . XOOPS_URL . "/modules/system/admin.php' method='post' style='text-align:center'>
             <img src='" . XOOPS_URL . "/modules/{$dirname}/{$modversion['image']}'>
@@ -569,7 +569,9 @@ function get_theme_type($dirname)
     global $xoopsConfig;
     require XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
 
+    if (isset($theme_set_allowed)) {
     return $theme_set_allowed;
+    }
 }
 
 function recurse_chown_chgrp($mypath, $uid, $gid)
