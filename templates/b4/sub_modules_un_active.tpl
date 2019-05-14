@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-sm-6 col-md-5 col-lg-4">
                 <div>
-                    <img src="<{$mod.logo}>" alt="<{$mod.name}>" style="width: 100%;" id="<{$mod.dirname}>_tip">
+                    <img src="<{$mod.logo}>" alt="<{$mod.name}>" style="width: 100%;" id="<{$mod.dirname}>_tip" class="img-fluid">
                 </div>
                 <p style="margin: 4px auto 0px;">
                     <a href="main.php?op=active&mid=<{$mod.mid}>" class="btn btn-sm btn-success"  data-fancybox-type="iframe" title="<{$mod.dirname}> <{$mod.version}> (<{$mod.last_update}>) to <{$mod.new_version}> (<{$mod.new_last_update}>)"><{$smarty.const._MA_TADADM_ENABLE_MOD}></a>

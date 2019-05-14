@@ -3,9 +3,9 @@
         <div class="row">
             <div class="col-xs-6 col-sm-5">
                 <{if $mod.logo}>
-                    <a href="<{$mod.logo}>"><img src="<{$mod.logo_thumb}>" alt="<{$mod.name}>"  id="<{$mod.dirname}>_tip"></a>
+                    <a href="<{$mod.logo}>"><img src="<{$mod.logo_thumb}>" alt="<{$mod.name}>"  id="<{$mod.dirname}>_tip" class="img-responsive"></a>
                 <{else}>
-                    <img src="<{$xoops_url}>/modules/tad_adm/images/special_theme.png" alt="<{$mod.name}>"  id="<{$mod.dirname}>_tip">
+                    <img src="<{$xoops_url}>/modules/tad_adm/images/special_theme.png" alt="<{$mod.name}>"  id="<{$mod.dirname}>_tip" class="img-responsive">
                 <{/if}>
             </div>
             <div class="col-xs-6 col-sm-7">

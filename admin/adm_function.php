@@ -234,7 +234,7 @@ function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
         }
 
 //        require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
-//        require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
+        //        require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
         $zip = new \XoopsModules\Tad_adm\dunzip2\dUnzip2($new_file);
         $zip->getList();
         $zip->unzipAll(XOOPS_ROOT_PATH . '/uploads/tad_adm/');
@@ -281,10 +281,10 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     if (is_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname")) {
         Utility::delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
     }
-    Utility::mkdir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
+    Utility::mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
 
 //    require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
-//    require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
+    //    require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
     $zip = new \XoopsModules\Tad_adm\dunzip2\dUnzip2($new_file);
     $zip->getList();
     $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
@@ -570,7 +570,7 @@ function get_theme_type($dirname)
     require XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
 
     if (isset($theme_set_allowed)) {
-    return $theme_set_allowed;
+        return $theme_set_allowed;
     }
 }
 

@@ -2,7 +2,7 @@
     <div class="alert <{if $mod.function=='update_theme'}>alert-danger<{else}>alert-success<{/if}>">
         <div class="row">
             <div class="col-sm-6 col-md-5">
-                <img src="<{$mod.logo}>" alt="<{$mod.name}>"  id="<{$mod.dirname}>_tip">
+                <img src="<{$mod.logo}>" alt="<{$mod.name}>"  id="<{$mod.dirname}>_tip" class="img-fluid">
             </div>
             <div class="col-sm-6 col-md-7">
                 <div style="font-size: 1.1em;">
