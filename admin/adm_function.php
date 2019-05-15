@@ -1,5 +1,6 @@
 <?php
 use XoopsModules\Tadtools\Utility;
+use XoopsModules\Tad_adm\DunZip2;
 
 global $xoopsModule;
 if ('tad_adm' !== $xoopsModule->dirname()) {
@@ -232,10 +233,7 @@ function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
         if (is_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname")) {
             Utility::delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
         }
-
-//        require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
-        //        require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
-        $zip = new \XoopsModules\Tad_adm\dunzip2\dUnzip2($new_file);
+        $zip = new DunZip2($new_file);
         $zip->getList();
         $zip->unzipAll(XOOPS_ROOT_PATH . '/uploads/tad_adm/');
         $zip->close($new_file);
@@ -283,9 +281,7 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     }
     Utility::mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
 
-//    require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dUnzip2.inc.php';
-    //    require_once XOOPS_ROOT_PATH . '/modules/tad_adm/class/dunzip2/dZip.inc.php';
-    $zip = new \XoopsModules\Tad_adm\dunzip2\dUnzip2($new_file);
+    $zip = new DunZip2($new_file);
     $zip->getList();
     $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
     $zip->close($new_file);

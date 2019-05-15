@@ -1,4 +1,6 @@
 <?php
+namespace XoopsModules\Tad_adm;
+
 // 09/08/2010 (v2.662)
 // - unzipAll parameters fully reviewed and fixed. Thanks Ronny Dreschler and Conor Mac Aoidh.
 // 12/05/2010 (v2.661)
@@ -56,7 +58,7 @@
 #
 ##############################################################
 
-class dUnzip2
+class DunZip2
 {
     public function getVersion()
     {
@@ -502,7 +504,7 @@ class dUnzip2
         fseek($fh, 0);
 
         $return = false;
-        for (; ;) {
+        for (;;) {
             $details = $this->_getFileHeaderInformation($fh);
             if (!$details) {
                 $this->debugMsg(1, 'Invalid signature. Trying to verify if is old style Data Descriptor...');
@@ -594,9 +596,9 @@ class dUnzip2
     public function _decodeFilename($filename)
     {
         $from = "\xb7\xb5\xb6\xc7\x8e\x8f\x92\x80\xd4\x90\xd2\xd3\xde\xd6\xd7\xd8\xd1\xa5\xe3\xe0" .
-        "\xe2\xe5\x99\x9d\xeb\xe9\xea\x9a\xed\xe8\xe1\x85\xa0\x83\xc6\x84\x86\x91\x87\x8a" .
-        "\x82\x88\x89\x8d\xa1\x8c\x8b\xd0\xa4\x95\xa2\x93\xe4\x94\x9b\x97\xa3\x96\xec\xe7" .
-        "\x98ï";
+            "\xe2\xe5\x99\x9d\xeb\xe9\xea\x9a\xed\xe8\xe1\x85\xa0\x83\xc6\x84\x86\x91\x87\x8a" .
+            "\x82\x88\x89\x8d\xa1\x8c\x8b\xd0\xa4\x95\xa2\x93\xe4\x94\x9b\x97\xa3\x96\xec\xe7" .
+            "\x98ï";
         $to = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýþÿ´';
 
         return strtr($filename, $from, $to);
