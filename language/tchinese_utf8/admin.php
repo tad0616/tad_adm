@@ -18,7 +18,7 @@ define('_MA_TADADM_NO_MODS', '沒有任何模組');
 define('_MA_TADADM_MOD_NAME', '模組名稱');
 define('_MA_TADADM_MOD_VERSION', '目前版本');
 define('_MA_TADADM_MOD_NEW_VERSION', '最新版本');
-define('_MA_TADADM_MOD_LAST_UPDATE', '上次更新');
+define('_MA_TADADM_MOD_LAST_UPDATE', '上次升級');
 define('_MA_TADADM_MOD_NEW_LAST_UPDATE', '發布日期');
 define('_MA_TADADM_MOD_DIRNAME', '目錄名稱');
 define('_MA_TADADM_MOD_UNINSTALL', '未安裝');
@@ -42,9 +42,9 @@ define('_MA_TADADM_KIND', '種類');
 define('_MA_TADADM_MODULE', '模組');
 define('_MA_TADADM_THEME', '佈景');
 define('_MA_TADADM_FIX', '補充');
-define('_MA_TADADM_THEME_UPDATE_OK', '佈景更新完畢！');
+define('_MA_TADADM_THEME_UPDATE_OK', '佈景升級完畢！');
 define('_MA_TADADM_THEME_INSTALL_OK', '「%s」佈景安裝完畢！可至「<a href="' . XOOPS_URL . '/modules/system/admin.php?fct=preferences&op=show&confcat_id=1">偏好設定</a>」將之設為預設佈景，或至前台佈景區塊套用之。');
-define('_MA_TADADM_FTP_NOTE', 'FTP僅適用與安裝新模組，因為權限關係，FTP模式無法覆蓋原有資料夾，故不適用於更新模組。');
+define('_MA_TADADM_FTP_NOTE', 'FTP僅適用與安裝新模組，因為權限關係，FTP模式無法覆蓋原有資料夾，故不適用於升級模組。');
 
 //spam.php
 define('_MA_TADADM_NEVERLOGIN', '未登入過');
@@ -78,7 +78,7 @@ define('_MA_TADADM_MOD_FUNCTION', '管理');
 define('_MA_TADADM_MOD_BLOCK', '區塊');
 define('_MA_TADADM_MOD_ADMIN', '模組後台');
 
-define('_MA_TADADM_MODULES_UPDATING', '更新');
+define('_MA_TADADM_MODULES_UPDATING', '升級');
 define('_MA_TADADM_MODULES_INSTALLING', '安裝');
 define('_MA_TADADM_MODULES_PHP_INI_PATH', '重要設定');
 define('_MA_TADADM_FREE_SPACE', '硬碟剩餘空間：');
@@ -89,7 +89,7 @@ define('_MA_TADADM_OWNER', '擁有者:擁有群組');
 define('_MA_TADADM_PERMS', '讀寫權限');
 
 define('_MA_TADADM_ADMTPL', '後台');
-define('_MA_TADADM_MOD_UPDATE_ADMTPL', '更新後台');
+define('_MA_TADADM_MOD_UPDATE_ADMTPL', '升級後台');
 define('_MA_TADADM_MOD_INSTALL_ADMTPL', '安裝後台');
 define('_MA_TADADM_ADM_TPL_LATEST', '已是最新');
 define('_MA_TADADM_ADM_TPL_INSTALL_OK', '後台佈景 %s 安裝成功！並已自動替換之。');
@@ -103,6 +103,8 @@ define('_MA_TADADM_MOD_PREF', '偏好設定');
 define('_MA_TADADM_CAN_UPDATE_TO', '可升級至');
 define('_MA_TADADM_ENABLE_MOD', '啟用模組');
 define('_MA_TADADM_INSTALLED_MODS', '已安裝模組');
+define('_MA_TADADM_UNABLE_INSTALL_MODS', '無法安裝的模組');
+define('_MA_TADADM_UNABLE_UPDATE_MODS', '無法升級的模組');
 define('_MA_TADADM_INSTALLED_UNABLE_MODS', '已安裝但被關閉的模組');
 define('_MA_TADADM_REMOVE', '移除');
 define('_MA_TADADM_DEFAULT_THEME', '目前預設佈景');
@@ -144,4 +146,3 @@ define('_MA_TADADM_EQUAL', '已經是');
 define('_MA_TADADM_UNABLE_UPGRADE', '無法升級');
 define('_MA_TADADM_NONEED_UPGRADE', '無需升級');
 define('_MA_TADADM_PATCH_INSTALLED', '此補丁已安裝');
-

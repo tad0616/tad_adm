@@ -96,7 +96,7 @@ function move_step()
         $description = '<li>您的網站已經是放在台南市教育局集中式網站中，版本永遠是最新的，所以，以下資訊僅供參考，無需使用。</li>';
     }
 
-    $dcs_note = $isDCS ? "<li class='danger'>您的網站目前是放在台南是的DCS飛番雲上，DCS有嚴重的快取延遲問題（例如程式已經更新，但網站卻仍顯示舊的），故若有任何不正常情況發生（尤其在升級更新時），請登入 <a href='https://cloud.dcs.tn.edu.tw' target='_blank'>https://cloud.dcs.tn.edu.tw</a>，並隨時進行「重啟網站」。</li>" : '';
+    $dcs_note = $isDCS ? "<li class='danger'>您的網站目前是放在台南是的DCS飛番雲上，DCS有嚴重的快取延遲問題（例如程式已經升級，但網站卻仍顯示舊的），故若有任何不正常情況發生（尤其在升級升級時），請登入 <a href='https://cloud.dcs.tn.edu.tw' target='_blank'>https://cloud.dcs.tn.edu.tw</a>，並隨時進行「重啟網站」。</li>" : '';
 
     $content = '
     <style>
@@ -224,7 +224,7 @@ function modules_version()
         }
     }
 
-    $msg = ($need_update) ? "{$off}<a href='admin/main.php' target='_blank'>請點此至後台站長工具箱進行以下 {$i} 個模組升級</a><span class='important'>若更新過程中，遇到站長工具箱畫面變空白，<a href='" . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op=update&module=tad_adm' target='_blank'>請點此更新 tad_adm 即可</a>。</span>：<ol>{$mod_msg}</ol>" : "{$on}本站使用的模組均是最新版，模組版本部份沒問題了！";
+    $msg = ($need_update) ? "{$off}<a href='admin/main.php' target='_blank'>請點此至後台站長工具箱進行以下 {$i} 個模組升級</a><span class='important'>若升級過程中，遇到站長工具箱畫面變空白，<a href='" . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op=update&module=tad_adm' target='_blank'>請點此升級 tad_adm 即可</a>。</span>：<ol>{$mod_msg}</ol>" : "{$on}本站使用的模組均是最新版，模組版本部份沒問題了！";
 
     return $msg;
 }

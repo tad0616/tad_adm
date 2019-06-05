@@ -40,7 +40,7 @@ class Update
         return false;
     }
 
-    //執行更新
+    //執行升級
     public static function go_update_uid()
     {
         global $xoopsDB;

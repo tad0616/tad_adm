@@ -3,6 +3,7 @@ use XoopsModules\Tadtools\EasyResponsiveTabs;
 use XoopsModules\Tadtools\FancyBox;
 use XoopsModules\Tadtools\FooTable;
 use XoopsModules\Tadtools\SweetAlert;
+use XoopsModules\Tadtools\Utility;
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_xoops.tpl';
 require_once __DIR__ . '/header.php';
@@ -11,8 +12,8 @@ require __DIR__ . '/adm_function.php';
 
 /*-----------function區--------------*/
 
-    $FooTable = new FooTable();
-    $FooTable->render();
+$FooTable = new FooTable();
+$FooTable->render();
 
 $FancyBox = new FancyBox('.modulesadmin', '640', '480');
 $FancyBox->render(true);
@@ -24,7 +25,7 @@ $FancyBox2->render(false);
 function list_xoops($mode = 'tpl')
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl, $xoopsConfig;
-    //取得更新訊息
+    //取得升級訊息
     $xoops_patch = get_tad_json_info('xoops.json');
 
     // die(var_dump($mod));
@@ -43,17 +44,16 @@ function list_xoops($mode = 'tpl')
     // $xoops_patch[1]["file_link"]   = "https://campus-xoops.tn.edu.tw/uploads/tad_modules/file/bs4_upgrade.zip";
 
     //抓出現有XOOPS版本
-    // $my_xoops_version = sprintf('%0-4s', str_replace('.', '', trim(str_replace('XOOPS', '', XOOPS_VERSION)))) / 1000;
-    $my_xoops_version = (int) str_replace('.', '', trim(str_replace('XOOPS', '', XOOPS_VERSION)));
-    $my_php_version = (float) phpversion();
+    $my_xoops_version = Utility::get_version('xoops');
+    $my_php_version = Utility::get_version('php');
 
     //後台部份
     $all_patch = $all_upgrade = [];
     foreach ($xoops_patch as $k => $xoops) {
-        $xoops_version = (int) str_replace('.', '', $xoops['xoops_version']);
-        $xoops_min_version = (float) $xoops['xoops_min_version'];
-        $php_min_version = (float) $xoops['php_min_version'];
-        $php_max_version = (float) $xoops['php_max_version'];
+        $xoops_version = Utility::get_version('xoops', $xoops['xoops_version']);
+        $xoops_min_version = Utility::get_version('xoops', $xoops['xoops_min_version']);
+        $php_min_version = Utility::get_version('php', $xoops['php_min_version']);
+        $php_max_version = Utility::get_version('php', $xoops['php_max_version']);
 
         if (!empty($xoops['php_min_version']) and $my_php_version < $php_min_version) {
             $xoops_patch[$k]['status'] = 'PHP ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . ($xoops_patch[$k]['php_min_version']) . _MA_TADADM_UNABLE_UPGRADE;

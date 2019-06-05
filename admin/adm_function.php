@@ -11,7 +11,7 @@ if ('tad_adm' !== $xoopsModule->dirname()) {
     // die('aaa' . var_dump($xoopsModuleConfig));
 }
 
-//取得更新訊息
+//取得升級訊息
 function get_tad_json_info($json = 'all.json')
 {
     global $xoopsModuleConfig;
@@ -625,4 +625,61 @@ function chmod_R($path, $filemode, $dirmode)
             return;
         }
     }
+}
+
+
+
+// 判斷目前的版本和網上的版本及各種相依條件
+function version_status($now_version, $mod_data, $type = 'module')
+{
+
+    $my_xoops_version = Utility::get_version('xoops');
+    $my_php_version = Utility::get_version('php');
+    $now_version = Utility::get_version('', $now_version);
+    $new_version = Utility::get_version('', $mod_data['new_version']);
+    $xoops_version = Utility::get_version('xoops', $mod_data['xoops_version']);
+    $xoops_min_version = Utility::get_version('xoops', $mod_data['xoops_min_version']);
+    $php_min_version = Utility::get_version('php', $mod_data["php_min_version"]);
+    $php_max_version = Utility::get_version('php', $mod_data['php_max_version']);
+    $min_tadtools_version = Utility::get_version('', $mod_data['tadtools_version']);
+    $now_tadtools_version = Utility::get_version('tadtools');
+
+    $last_update = filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php");
+    $new_last_update = $mod_data['new_last_update'];
+
+    $status = '';
+    if (!empty($mod_data['php_min_version']) and $my_php_version < $php_min_version) {
+        $status = 'PHP ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . ($mod_data['php_min_version']) . _MA_TADADM_UNABLE_UPGRADE;
+        if($_GET['debug']==1) $status .= "$my_php_version < $php_min_version";
+
+    } elseif (!empty($mod_data['php_max_version']) and $my_php_version > $php_max_version) {
+        $status = 'PHP ' . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . ($mod_data['php_max_version']) . _MA_TADADM_UNABLE_UPGRADE;
+        if($_GET['debug']==1) $status .= "$my_php_version > $php_max_version";
+
+    } elseif (!empty($mod_data['xoops_min_version']) and $my_xoops_version < $xoops_min_version) {
+        $status = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . ($mod_data['xoops_min_version']) . _MA_TADADM_UNABLE_UPGRADE;
+        if($_GET['debug']==1) $status .= "$my_xoops_version < $xoops_min_version";
+
+    } elseif (!empty($mod_data['xoops_version']) and $my_xoops_version > $xoops_version) {
+        $status = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . ($mod_data['xoops_version']) . _MA_TADADM_NONEED_UPGRADE;
+        if($_GET['debug']==1) $status .= "$my_xoops_version > $xoops_version";
+
+    } elseif (!empty($mod_data['xoops_version']) and $my_xoops_version == $xoops_version) {
+        $status = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_EQUAL . ($mod_data['xoops_version']) . _MA_TADADM_NONEED_UPGRADE;
+        if($_GET['debug']==1) $status .= "$my_xoops_version == $xoops_version";
+
+    } elseif (!empty($mod_data['tadtools_version']) and $now_tadtools_version < $min_tadtools_version) {
+        $status = 'Tadtools ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . ($mod_data['tadtools_version']) . _MA_TADADM_UNABLE_UPGRADE;
+        if($_GET['debug']==1) $status .= "$now_tadtools_version < $min_tadtools_version";
+
+        // } elseif (file_exists(XOOPS_ROOT_PATH . "/uploads/xoops_sn_{$xoops['xoops_sn']}.txt")) {
+        //     $function = _MA_TADADM_PATCH_INSTALLED;
+    } else {
+        if($type=="adm_tpl"){
+            $status = (($new_version > $now_version) or ($new_last_update > $last_update)) ? 'update_adm_tpl' : 'last_adm_tpl';
+        }else{
+            $status = (($new_version > $now_version) or ($new_last_update > $last_update)) ? 'update' : 'last_mod';
+        }
+    }
+    return $status;
 }

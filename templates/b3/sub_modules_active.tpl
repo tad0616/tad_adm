@@ -2,7 +2,7 @@
     <div class="alert <{if $mod.function=='update'}>alert-danger<{else}>alert-success<{/if}>">
         <div class="row">
             <div class="col-xs-6 col-sm-5 col-md-4">
-                <div>                    
+                <div>
                     <img src="<{$mod.logo}>" alt="<{$mod.name}>" id="<{$mod.dirname}>_tip" class="img-responsive">
                 </div>
                 <div style="padding:6px;">
@@ -41,7 +41,7 @@
                         <{$mod.fileowner.name}>:<{$mod.filegroup.name}>
                     <{/if}>
                     <{if $mod.fileperms=='0777'}>
-                        可寫入
+                        <{$smarty.const._MA_TADADM_WRITABLE}>
                     <{else}>
                         <{$mod.fileperms}>
                     <{/if}>
