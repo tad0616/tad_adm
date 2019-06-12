@@ -85,8 +85,6 @@ define('_MA_TADADM_FREE_SPACE', '硬碟剩餘空間：');
 define('_MA_TADADM_DOWNLOAD_ZIP', '開始壓縮備份');
 
 define('_MA_TADADM_CHMOD_FAILED', '<ul><li>無法將 %s 的讀寫權限設為 %s，該檔案目錄的擁有者為 %s:%s，屬性為 %s。</li></ul>');
-define('_MA_TADADM_OWNER', '擁有者:擁有群組');
-define('_MA_TADADM_PERMS', '讀寫權限');
 
 define('_MA_TADADM_ADMTPL', '後台');
 define('_MA_TADADM_MOD_UPDATE_ADMTPL', '升級後台');
@@ -102,10 +100,8 @@ define('_MA_TADADM_CLEANED', '目前沒有自訂的舊樣板');
 define('_MA_TADADM_MOD_PREF', '偏好設定');
 define('_MA_TADADM_CAN_UPDATE_TO', '可升級至');
 define('_MA_TADADM_ENABLE_MOD', '啟用模組');
-define('_MA_TADADM_INSTALLED_MODS', '已安裝模組');
 define('_MA_TADADM_UNABLE_INSTALL_MODS', '無法安裝的模組');
 define('_MA_TADADM_UNABLE_UPDATE_MODS', '無法升級的模組');
-define('_MA_TADADM_INSTALLED_UNABLE_MODS', '已安裝但被關閉的模組');
 define('_MA_TADADM_REMOVE', '移除');
 define('_MA_TADADM_DEFAULT_THEME', '目前預設佈景');
 define('_MA_TADADM_UPDATE_TO_ALLOWED', '改為可選');
@@ -124,11 +120,8 @@ define('_MA_TADADM_SPECIAL_THEMES_CANT_DEFAULT', '特殊佈景，不可為預設
 define('_MA_TADADM_SPECIAL_THEMES_CANT_USEABLE', '特殊佈景，不應該可被使用者選用');
 
 define('_MA_TADADM_ENABLE_MODS', '可安裝模組');
-define('_MA_TADADM_INSTALLED_ADM', '已安裝後台');
 define('_MA_TADADM_ENABLE_ADM', '可安裝後台');
-define('_MA_TADADM_INSTALLED_THEME', '已安裝佈景');
 define('_MA_TADADM_ENABLE_THEME', '可安裝佈景');
-define('_MA_TADADM_INSTALLED_BLOCK', '已安裝區塊');
 define('_MA_TADADM_ENABLE_BLOCK', '可安裝區塊');
 define('_MA_TADADM_UNABLE_BLOCKS', '關閉中區塊');
 define('_MA_TADADM_MOD_UPDATE_BLOCK', '立即升級區塊');
@@ -143,6 +136,33 @@ define('_MA_TADADM_VERSION', '版本');
 define('_MA_TADADM_HIGHER', '高於');
 define('_MA_TADADM_LOWER', '低於');
 define('_MA_TADADM_EQUAL', '已經是');
-define('_MA_TADADM_UNABLE_UPGRADE', '無法升級');
+define('_MA_TADADM_UNABLE_UPGRADE', '無法安裝或升級');
 define('_MA_TADADM_NONEED_UPGRADE', '無需升級');
 define('_MA_TADADM_PATCH_INSTALLED', '此補丁已安裝');
+
+define('_MA_TADADM_INSTALLED', '所有已安裝項目');
+define('_MA_TADADM_INSTALLED_BLOCK', '已安裝區塊');
+define('_MA_TADADM_INSTALLED_THEME', '已安裝佈景');
+define('_MA_TADADM_INSTALLED_ADM', '已安裝後台');
+define('_MA_TADADM_INSTALLED_MODS', '已安裝模組');
+define('_MA_TADADM_INSTALLED_UNABLE_MODS', '已安裝但被關閉的模組');
+
+define('_MA_TADADM_NEED_UPGRADE', '需升級項目');
+define('_MA_TADADM_CLOSED', '（關閉中）');
+define('_MA_TADADM_NEED_UPGRADE_MODS', '需升級模組');
+define('_MA_TADADM_NEED_UPGRADE_THEME', '需升級佈景');
+define('_MA_TADADM_NEED_UPGRADE_BLOCK', '需升級區塊');
+define('_MA_TADADM_NEED_UPGRADE_ADM', '需升級後台');
+
+define('_MA_TADADM_ADM_TPL', '後台');
+define('_MA_TADADM_CONFIG', '偏好設定');
+define('_MA_TADADM_UPDATE', '更新');
+define('_MA_TADADM_BLOCK', '區塊');
+define('_MA_TADADM_ID', '編號');
+define('_MA_TADADM_IMG', '圖片');
+define('_MA_TADADM_TITEL', '項目名稱');
+define('_MA_TADADM_DESCRIPTION', '項目說明');
+define('_MA_TADADM_OWNER', '擁有者');
+define('_MA_TADADM_WRITEABLE', '讀寫權限');
+define('_MA_TADADM_INSTALL', '手動安裝方式');
+define('_MA_TADADM_UPGRADE', '手動升級方式');

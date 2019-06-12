@@ -636,7 +636,6 @@ function export_sql($new_url)
     }
     set_time_limit(0);
     ignore_user_abort(true);
-//    require XOOPS_ROOT_PATH . '/modules/tad_adm/class/MySQLDump.php';
 
     $db = new mysqli(XOOPS_DB_HOST, XOOPS_DB_USER, XOOPS_DB_PASS, XOOPS_DB_NAME);
     $dump = new \XoopsModules\Tad_adm\MySQLDump($db);

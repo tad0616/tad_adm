@@ -82,6 +82,8 @@ function get_act_op($act)
         $act_op = 'install';
     } elseif (false !== mb_strpos($act, 'update')) {
         $act_op = 'update';
+    } elseif (strpos($act, 'upgrade') !== false) {
+        $act_op = "update";
     } elseif (false !== mb_strpos($act, 'delete')) {
         $act_op = 'delete';
     }
@@ -163,18 +165,18 @@ function next_to_do($file_link = '', $dirname = '', $work_dir = '', $update_sn =
     if ('install_theme' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             update_allowed($dirname, 1);
-            redirect_header('main.php?#admTab4', 3, sprintf(_MA_TADADM_THEME_INSTALL_OK, $dirname));
+            redirect_header('main.php', 3, sprintf(_MA_TADADM_THEME_INSTALL_OK, $dirname));
         }
     } elseif ('update_theme' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             update_allowed($dirname, 1);
-            redirect_header('main.php?#admTab4', 3, _MA_TADADM_THEME_UPDATE_OK);
+            redirect_header('main.php', 3, _MA_TADADM_THEME_UPDATE_OK);
         }
     } elseif ('delete_theme' === $act) {
         if ($inSchoolWeb or Utility::delete_directory(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}", $ssh)) {
             update_allowed($dirname, 0);
         }
-        redirect_header('main.php#admTab4', 3, _MA_TADADM_THEME_DELETE_OK);
+        redirect_header('main.php', 3, _MA_TADADM_THEME_DELETE_OK);
     } elseif ('install_adm_tpl' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             add_adm_tpl_config($dirname);
@@ -208,7 +210,7 @@ function next_to_up($file_link = '', $xoops_sn = '', $act = '', $ssh = '')
         }
     } elseif ('upgrade' === $act) {
         if (get_upgrade_file($file_link, 'upgrade', $xoops_sn, $ssh)) {
-            redirect_header('xoops.php?#admTab2', 3, _MA_TADADM_UPGRADE_OK);
+            redirect_header('xoops.php', 3, _MA_TADADM_UPGRADE_OK);
         }
     }
 }
@@ -308,6 +310,8 @@ function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
         $handle = fopen(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/go.txt", 'rb');
         if ($handle) {
             while (false !== ($buffer = fgets($handle, 4096))) {
+                $buffer = str_replace('full_copy', '\XoopsModules\Tadtools\Utility::full_copy', $buffer);
+                $buffer = str_replace('delete_directory', '\XoopsModules\Tadtools\Utility::delete_directory', $buffer);
                 eval($buffer);
             }
             fclose($handle);
@@ -331,7 +335,7 @@ function do_block($act, $update_sn)
 {
     global $xoopsModuleConfig, $xoopsDB;
 
-    $ver = Utility::get_version('xoops');
+    $ver = (int) str_replace('.', '', substr(XOOPS_VERSION, 6, 5));
     $add_count_url = "{$xoopsModuleConfig['source']}/modules/tad_modules/api.php?update_sn={$update_sn}&from=" . XOOPS_URL . "&sitename={$xoopsConfig['sitename']}&theme={$xoopsConfig['theme_set']}&version=$ver&language={$xoopsConfig['language']}";
 
     $url = "{$xoopsModuleConfig['source']}/uploads/tad_modules/{$update_sn}.json";
@@ -462,7 +466,7 @@ function add_adm_tpl_config($theme)
 function copyemz($file1, $file2, $update_sn = '', $xoops_sn = '')
 {
     global $xoopsConfig, $xoopsModuleConfig;
-    $ver = Utility::get_version('xoops');
+    $ver = (int) str_replace('.', '', substr(XOOPS_VERSION, 6, 5));
     if ($xoops_sn) {
         $add_count_url = "{$xoopsModuleConfig['source']}/modules/tad_modules/api.php?xoops_sn={$xoops_sn}&from=" . XOOPS_URL . "&sitename={$xoopsConfig['sitename']}&theme={$xoopsConfig['theme_set']}&version=$ver&language={$xoopsConfig['language']}";
     } else {
@@ -563,11 +567,11 @@ function get_theme_version($dirname)
 function get_theme_type($dirname)
 {
     global $xoopsConfig;
-    require XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
-
-    if (isset($theme_set_allowed)) {
-        return $theme_set_allowed;
+    include XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
+    if(!isset($theme_set_allowed)){
+        return true;
     }
+    return $theme_set_allowed;
 }
 
 function recurse_chown_chgrp($mypath, $uid, $gid)
@@ -628,10 +632,13 @@ function chmod_R($path, $filemode, $dirmode)
 }
 
 
-
 // 判斷目前的版本和網上的版本及各種相依條件
-function version_status($now_version, $mod_data, $type = 'module')
+function version_status($now_version, $mod_data, $dirname = '', $type = 'module', $last_update = '')
 {
+
+    if ($_GET['debug'] == 1) {
+        echo "<h5>{$dirname}</h5>";
+    }
 
     $my_xoops_version = Utility::get_version('xoops');
     $my_php_version = Utility::get_version('php');
@@ -644,42 +651,82 @@ function version_status($now_version, $mod_data, $type = 'module')
     $min_tadtools_version = Utility::get_version('', $mod_data['tadtools_version']);
     $now_tadtools_version = Utility::get_version('tadtools');
 
-    $last_update = filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php");
-    $new_last_update = $mod_data['new_last_update'];
+    if ($type == "xoops") {
+        $now_mod_last_update = $last_update ? $last_update : filemtime(XOOPS_ROOT_PATH . "/modules/system/xoops_version.php");
+        $new_mod_last_update = $mod_data['xoops_date'];
+    } elseif ($type == "theme") {
+        $now_mod_last_update = $last_update ? $last_update : filemtime(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini");
+        $new_mod_last_update = $mod_data['new_last_update'];
+    } elseif ($type == "adm_tpl") {
+        $now_mod_last_update = $last_update ? $last_update : filemtime(XOOPS_ROOT_PATH . "/themes/system/themes/tad/version.txt");
+        $new_mod_last_update = $mod_data['new_last_update'];
+    } elseif ($type == "block") {
+        $now_mod_last_update = $last_update;
+        $new_mod_last_update = $mod_data['new_last_update'];
+    } else {
+        $now_mod_last_update = $last_update ? $last_update : filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php");
+        $new_mod_last_update = $mod_data['new_last_update'];
+    }
 
     $status = '';
     if (!empty($mod_data['php_min_version']) and $my_php_version < $php_min_version) {
         $status = 'PHP ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . ($mod_data['php_min_version']) . _MA_TADADM_UNABLE_UPGRADE;
-        if($_GET['debug']==1) $status .= "$my_php_version < $php_min_version";
+        if ($_GET['debug'] == 1) {
+            echo "<div>php_min_version: $my_php_version < $php_min_version</div>";
+        }
 
     } elseif (!empty($mod_data['php_max_version']) and $my_php_version > $php_max_version) {
         $status = 'PHP ' . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . ($mod_data['php_max_version']) . _MA_TADADM_UNABLE_UPGRADE;
-        if($_GET['debug']==1) $status .= "$my_php_version > $php_max_version";
+        if ($_GET['debug'] == 1) {
+            echo "<div>my_php_version: $my_php_version > $php_max_version</div>";
+        }
 
     } elseif (!empty($mod_data['xoops_min_version']) and $my_xoops_version < $xoops_min_version) {
         $status = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . ($mod_data['xoops_min_version']) . _MA_TADADM_UNABLE_UPGRADE;
-        if($_GET['debug']==1) $status .= "$my_xoops_version < $xoops_min_version";
+        if ($_GET['debug'] == 1) {
+            echo "<div>xoops_min_version: $my_xoops_version < $xoops_min_version</div>";
+        }
 
     } elseif (!empty($mod_data['xoops_version']) and $my_xoops_version > $xoops_version) {
         $status = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . ($mod_data['xoops_version']) . _MA_TADADM_NONEED_UPGRADE;
-        if($_GET['debug']==1) $status .= "$my_xoops_version > $xoops_version";
+        if ($_GET['debug'] == 1) {
+            echo "<div>xoops_max_version: $my_xoops_version > $xoops_version</div>";
+        }
 
     } elseif (!empty($mod_data['xoops_version']) and $my_xoops_version == $xoops_version) {
         $status = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_EQUAL . ($mod_data['xoops_version']) . _MA_TADADM_NONEED_UPGRADE;
-        if($_GET['debug']==1) $status .= "$my_xoops_version == $xoops_version";
+        if ($_GET['debug'] == 1) {
+            echo "<div>xoops=version: $my_xoops_version == $xoops_version</div>";
+        }
 
     } elseif (!empty($mod_data['tadtools_version']) and $now_tadtools_version < $min_tadtools_version) {
         $status = 'Tadtools ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . ($mod_data['tadtools_version']) . _MA_TADADM_UNABLE_UPGRADE;
-        if($_GET['debug']==1) $status .= "$now_tadtools_version < $min_tadtools_version";
+        if ($_GET['debug'] == 1) {
+            echo "<div>Tadtools: $now_tadtools_version < $min_tadtools_version</div>";
+        }
 
         // } elseif (file_exists(XOOPS_ROOT_PATH . "/uploads/xoops_sn_{$xoops['xoops_sn']}.txt")) {
         //     $function = _MA_TADADM_PATCH_INSTALLED;
     } else {
-        if($type=="adm_tpl"){
-            $status = (($new_version > $now_version) or ($new_last_update > $last_update)) ? 'update_adm_tpl' : 'last_adm_tpl';
+        if ($_GET['debug'] == 1) {
+            $now_last_update = date("Y-m-d H:i:s", $now_mod_last_update);
+            $new_last_update = date("Y-m-d H:i:s", $new_mod_last_update);
+        }
+
+        if($type=="block"){
+            $status = ($now_mod_last_update < $new_mod_last_update) ? 'ok' : 'latest';
+
+            if ($_GET['debug'] == 1) {
+                echo "<div>date: $status ($now_last_update < $new_last_update)</div>";
+            }
         }else{
-            $status = (($new_version > $now_version) or ($new_last_update > $last_update)) ? 'update' : 'last_mod';
+            $status = (($now_version < $new_version) or ($now_mod_last_update < $new_mod_last_update)) ? 'ok' : 'latest';
+
+            if ($_GET['debug'] == 1) {
+                echo "<div>date: $status ($now_version < $new_version) or ($now_last_update < $new_last_update)</div>";
+            }
         }
     }
     return $status;
 }
+

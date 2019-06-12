@@ -88,8 +88,6 @@ define('_MA_TADADM_FREE_SPACE', 'HD free space:');
 define('_MA_TADADM_DOWNLOAD_ZIP', 'Download backup zip');
 
 define('_MA_TADADM_CHMOD_FAILED', '<ul><li>Could not set read/write permissions for %s to %s, possibly because the file directory owner is not correct.</li></ul>');
-define('_MA_TADADM_OWNER', 'Owner:Group');
-define('_MA_TADADM_PERMS', 'Permissions');
 
 define('_MA_TADADM_ADMTPL', 'Cpanel');
 define('_MA_TADADM_MOD_UPDATE_ADMTPL', 'Update Cpanel');
@@ -146,6 +144,15 @@ define('_MA_TADADM_VERSION', 'version');
 define('_MA_TADADM_HIGHER', ' is higher than ');
 define('_MA_TADADM_LOWER', ' is lower than ');
 define('_MA_TADADM_EQUAL', ' is equal to ');
-define('_MA_TADADM_UNABLE_UPGRADE', ', Unable to upgrade');
+define('_MA_TADADM_UNABLE_UPGRADE', ', Unable to install or upgrade');
 define('_MA_TADADM_NONEED_UPGRADE', ', No need to upgrade');
 define('_MA_TADADM_PATCH_INSTALLED', 'This patch has been installed');
+
+define('_MA_TADADM_ID', 'ID');
+define('_MA_TADADM_IMG', 'Image');
+define('_MA_TADADM_TITEL', 'Title');
+define('_MA_TADADM_DESCRIPTION', 'Description');
+define('_MA_TADADM_INSTALL', 'user:group');
+define('_MA_TADADM_WRITEABLE', 'Permissions');
+define('_MA_TADADM_INSTALL', 'Manual installation');
+define('_MA_TADADM_UPGRADE', 'Manual upgrade');
