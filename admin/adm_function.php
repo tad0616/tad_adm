@@ -78,16 +78,15 @@ function get_work_dir($act)
 
 function get_act_op($act)
 {
-    if (false !== mb_strpos($act, 'install')) {
-        $act_op = 'install';
-    } elseif (false !== mb_strpos($act, 'update')) {
-        $act_op = 'update';
+    if (strpos($act, 'install') !== false) {
+        $act_op = "install";
+    } elseif (strpos($act, 'update') !== false) {
+        $act_op = "update";
     } elseif (strpos($act, 'upgrade') !== false) {
         $act_op = "update";
-    } elseif (false !== mb_strpos($act, 'delete')) {
-        $act_op = 'delete';
+    } elseif (strpos($act, 'delete') !== false) {
+        $act_op = "delete";
     }
-
     return $act_op;
 }
 
@@ -167,7 +166,7 @@ function next_to_do($file_link = '', $dirname = '', $work_dir = '', $update_sn =
             update_allowed($dirname, 1);
             redirect_header('main.php', 3, sprintf(_MA_TADADM_THEME_INSTALL_OK, $dirname));
         }
-    } elseif ('update_theme' === $act) {
+    } elseif ('upgrade_theme' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             update_allowed($dirname, 1);
             redirect_header('main.php', 3, _MA_TADADM_THEME_UPDATE_OK);
@@ -182,7 +181,7 @@ function next_to_do($file_link = '', $dirname = '', $work_dir = '', $update_sn =
             add_adm_tpl_config($dirname);
             redirect_header($_SERVER['PHP_SELF'] . '?op=list_all_modules&tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_ADM_TPL_INSTALL_OK, $dirname));
         }
-    } elseif ('update_adm_tpl' === $act) {
+    } elseif ('upgrade_adm_tpl' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             add_adm_tpl_config($dirname);
             redirect_header($_SERVER['PHP_SELF'] . '?op=list_all_modules&tad_adm_tpl=clean', 3, _MA_TADADM_ADM_TPL_UPDATE_OK);
@@ -192,7 +191,7 @@ function next_to_do($file_link = '', $dirname = '', $work_dir = '', $update_sn =
             header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module={$dirname}&tad_adm_tpl=clean");
             exit;
         }
-    } elseif ('update_module' === $act) {
+    } elseif ('upgrade_module' === $act) {
         if ($inSchoolWeb or get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
             header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module={$dirname}&tad_adm_tpl=clean");
             exit;
