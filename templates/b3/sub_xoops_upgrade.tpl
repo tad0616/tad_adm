@@ -12,7 +12,7 @@
                     <span class="label label-primary"><{$i}></span>
                     <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/xoops.php?xoops_sn=<{$xoops.xoops_sn}>" target="_blank"><{$xoops.xoops_title}></a>
                 </div>
-                
+
                 <{if $xoops.status!="OK"}>
                     <a href="#" class="btn btn-danger modulesadmin disabled" data-fancybox-type="iframe">
                     <i class="fa fa-cloud-download" aria-hidden="true"></i>

@@ -1,3 +1,10 @@
+Tad Adm 2.82 (released from 2019-06-13)
+=========================================================== ================
+1. Modify XOOPS can not upgrade the problem
+2. Add various versions and dependency checks
+3. Significantly improved installation and upgrade of new screens
+
+
 Tad Adm 2.81 (released from 2019-05-09)
 ==================================================================
 1. Upgrade Adminer to 4.7.1
