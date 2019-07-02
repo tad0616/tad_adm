@@ -34,7 +34,7 @@
             <{elseif $mod.kind=="theme"}>
                 <{if $theme_set==$mod.dirname}>
                     <a href="#" class="btn btn-xs btn-primary"><{$smarty.const._MA_TADADM_DEFAULT_THEME}></a>
-                <{elseif !$mod.is_link and $mod.function!="install"}>
+                <{elseif !$mod.is_link and $mod.function!="install" and !$inSchoolWeb}>
                     <a href="javascript:delete_theme('<{$mod.dirname}>')" title="<{$smarty.const._MA_TADADM_REMOVE}> <{$mod.dirname}>" class="btn btn-xs btn-danger">
                         <i class="fa fa-times"></i> <{$smarty.const._MA_TADADM_REMOVE}>
                     </a>

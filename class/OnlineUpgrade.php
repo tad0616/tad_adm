@@ -82,6 +82,10 @@ class OnlineUpgrade
         // var_dump($all_install);
         // var_dump($all_uninstall);
         // exit;
+        if ($mode == 'return') {
+            return [$all_install, $all_uninstall];
+        }
+
         $xoopsTpl->assign('all_install', $all_install);
         $xoopsTpl->assign('all_uninstall', $all_uninstall);
         $xoopsTpl->assign('theme_set', $xoopsConfig['theme_set']);
