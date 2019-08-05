@@ -1,3 +1,7 @@
+Tad Adm 2.83 (released from 2019-07-28)
+=========================================================== ================
+1. Added installation material function
+
 Tad Adm 2.82 (released from 2019-06-13)
 =========================================================== ================
 1. Modify XOOPS can not upgrade the problem

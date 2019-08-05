@@ -52,7 +52,7 @@
                 </a>
             </div>
         <{elseif $mod.function=='upgrade' or $mod.function=='latest'}>
-            <a href="main.php?op=upgrade_<{$mod.kind}>&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin <{if $mod.function=='latest'}>latest_btn<{else}>update_btn<{/if}>"  data-fancybox-type="iframe" title="<{$mod.dirname}> <{$mod.now_version}> (<{$mod.last_update}>) to <{$mod.new_version}> (<{$mod.new_last_update}>)" style="">
+            <a href="main.php?op=upgrade_<{$mod.kind}>&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&module_sn=<{$mod.module_sn}>&tad_adm_tpl=clean" class="modulesadmin <{if $mod.function=='latest'}>latest_btn<{else}>update_btn<{/if}>"  data-fancybox-type="iframe" title="<{$mod.dirname}> <{$mod.now_version}> (<{$mod.last_update}>) to <{$mod.new_version}> (<{$mod.new_last_update}>)" style="">
                 <{if $mod.function=='latest'}>
                     <{$mod.dirname}> <{$mod.now_version}> <{$smarty.const._MA_TADADM_MOD_LATEST}>
                 <{else}>
@@ -61,7 +61,7 @@
             </a>
 
         <{elseif $mod.function=='install'}>
-            <a href="main.php?op=install_<{$mod.kind}>&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&tad_adm_tpl=clean" class="modulesadmin install_btn" title="<{$mod.dirname}> <{$mod.now_version}> (<{$mod.last_update}>) to <{$mod.new_version}> (<{$mod.new_last_update}>)" data-fancybox-type="iframe">
+            <a href="main.php?op=install_<{$mod.kind}>&dirname=<{$mod.dirname}>&file_link=<{$mod.file_link}>&update_sn=<{$mod.update_sn}>&module_sn=<{$mod.module_sn}>&tad_adm_tpl=clean" class="modulesadmin install_btn" title="<{$mod.dirname}> <{$mod.now_version}> (<{$mod.last_update}>) to <{$mod.new_version}> (<{$mod.new_last_update}>)" data-fancybox-type="iframe">
                 <{$smarty.const._MA_TADADM_MOD_INSTALL_MODULE}> <{$mod.name}>
             </a>
         <{/if}>

@@ -1,7 +1,7 @@
 <?php
 xoops_loadLanguage('main', 'tadtools');
 
-$inSchoolWeb = is_dir('/home/matrix/public_html/modules/') ? true : false;
+$inSchoolWeb = is_link(XOOPS_ROOT_PATH . '/mainfile.php') ? true : false;
 
 /********************* 自訂函數 ********************
  * @param $path

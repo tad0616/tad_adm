@@ -1,16 +1,16 @@
 <?php
 use XoopsModules\Tadtools\Utility;
+use XoopsModules\Tad_adm\OnlineUpgrade;
 
 require_once dirname(dirname(__DIR__)) . '/mainfile.php';
 
 $isTN = false !== mb_strpos(XOOPS_URL, '.tn.edu.tw') ? true : false;
 $isDCS = false !== mb_strpos(XOOPS_ROOT_PATH, 'DWASFiles') ? true : false;
 $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
-$isSchoolWeb = (false !== mb_strpos(XOOPS_URL, 'schoolweb.tn.edu.tw') or false !== mb_strpos(XOOPS_URL, '120.115.2.88')) ? true : false;
+$inSchoolWeb = is_link(XOOPS_ROOT_PATH.'/mainfile.php') ? true : false;
 xoops_loadLanguage('main', 'tadtools');
 
 require_once __DIR__ . '/function.php';
-require_once __DIR__ . '/admin/adm_function.php';
 
 $_SESSION['tad_adm_isAdmin'] = ($xoopsUser) ? $xoopsUser->isAdmin(1) : false;
 // $_SESSION['tad_adm_isAdmin'] = 1; //不須密碼模式，危險，沒事勿用。
@@ -35,7 +35,7 @@ $bad_mods = [
     'tad_cbox' => ['tad_discuss', 8],
 ];
 
-$source_mod = get_tad_json_info('all.json');
+$source_mod = OnlineUpgrade::get_tad_json_info('all.json');
 
 require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op = system_CleanVars($_REQUEST, 'op', '', 'string');
@@ -64,7 +64,7 @@ switch ($op) {
 
 function move_step()
 {
-    global $isDCS, $isTN, $isSchoolWeb;
+    global $isDCS, $isTN, $inSchoolWeb;
     $id = '帳號';
     if (mb_strpos($_SERVER['SERVER_NAME'], '.tn.edu.tw')) {
         $str = str_replace('.tn.edu.tw', '', $_SERVER['SERVER_NAME']);
@@ -92,7 +92,7 @@ function move_step()
     ' . $dcs_note . '' : '<li>本程式會自動偵測環境，並提出升級至 XOOPS 2.5.9 的建議及步驟。</li>
     <li>請盡量使用網域名稱，以得到正確建議。</li>';
 
-    if ($isSchoolWeb) {
+    if ($inSchoolWeb) {
         $description = '<li>您的網站已經是放在台南市教育局集中式網站中，版本永遠是最新的，所以，以下資訊僅供參考，無需使用。</li>';
     }
 

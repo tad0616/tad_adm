@@ -8,11 +8,12 @@
                     <{if $all_install.upgrade or $all_install.unable}>
                         <li><a href="#tabs1"><{$smarty.const._MA_TADADM_NEED_UPGRADE}></a></li>
                     <{/if}>
-                    <li><a href="#tabs2"><{$smarty.const._MA_TADADM_INSTALLED}></a></li>
+                    <li><a href="#tabs2"><{$smarty.const._MA_TADADM_INSTALLED_ITEM}></a></li>
                     <{if $all_uninstall.module}><li><a href="#tabs3"><{$smarty.const._MA_TADADM_ENABLE_MODS}></a></li><{/if}>
                     <{if $all_uninstall.adm_tpl}><li><a href="#tabs4"><{$smarty.const._MA_TADADM_ENABLE_ADM}></a></li><{/if}>
                     <{if $all_uninstall.theme}><li><a href="#tabs5"><{$smarty.const._MA_TADADM_ENABLE_THEME}></a></li><{/if}>
                     <{if $all_uninstall.block}><li><a href="#tabs6"><{$smarty.const._MA_TADADM_ENABLE_BLOCK}></a></li><{/if}>
+                    <{if $all_uninstall.other}><li><a href="#tabs7"><{$smarty.const._MA_TADADM_ENABLE_OTHER}></a></li><{/if}>
                 </ul>
 
                 <{if $all_install.upgrade or $all_install.unable}>
@@ -174,7 +175,6 @@
                     </div>
                 <{/if}>
 
-
                 <{if $all_uninstall.block}>
                     <div id="tabs6">
                         <{if $all_uninstall.block.install}>
@@ -192,6 +192,30 @@
                             <table class="footable">
                                 <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                 <{foreach from=$all_uninstall.block.unable item=mod}>
+                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                <{/foreach}>
+                            </table>
+                        <{/if}>
+                    </div>
+                <{/if}>
+
+                <{if $all_uninstall.other}>
+                    <div id="tabs7">
+                        <{if $all_uninstall.other.install}>
+                            <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_OTHER}></h2>
+                            <table class="footable">
+                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{foreach from=$all_uninstall.other.install item=mod}>
+                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                <{/foreach}>
+                            </table>
+                        <{/if}>
+
+                        <{if $all_uninstall.other.unable}>
+                            <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_OTHER}></h2>
+                            <table class="footable">
+                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{foreach from=$all_uninstall.other.unable item=mod}>
                                     <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                 <{/foreach}>
                             </table>

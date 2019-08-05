@@ -139,8 +139,9 @@ define('_MA_TADADM_EQUAL', '已經是');
 define('_MA_TADADM_UNABLE_UPGRADE', '無法安裝或升級');
 define('_MA_TADADM_NONEED_UPGRADE', '無需升級');
 define('_MA_TADADM_PATCH_INSTALLED', '此補丁已安裝');
+define('_MA_TADADM_INSTALLED', '已安裝');
 
-define('_MA_TADADM_INSTALLED', '所有已安裝項目');
+define('_MA_TADADM_INSTALLED_ITEM', '所有已安裝項目');
 define('_MA_TADADM_INSTALLED_BLOCK', '已安裝區塊');
 define('_MA_TADADM_INSTALLED_THEME', '已安裝佈景');
 define('_MA_TADADM_INSTALLED_ADM', '已安裝後台');
@@ -166,3 +167,4 @@ define('_MA_TADADM_OWNER', '擁有者');
 define('_MA_TADADM_WRITEABLE', '讀寫權限');
 define('_MA_TADADM_INSTALL', '手動安裝方式');
 define('_MA_TADADM_UPGRADE', '手動升級方式');
+define('_MA_TADADM_ENABLE_OTHER', '可安裝素材');
