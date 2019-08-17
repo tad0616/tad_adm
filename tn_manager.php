@@ -13,10 +13,10 @@ function tn_module_update($dirname)
 }
 
 require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
-$op = system_CleanVars($_REQUEST, 'op', '', 'string');
-$tx_sn = system_CleanVars($_REQUEST, 'tx_sn', '', 'int');
+$op      = system_CleanVars($_REQUEST, 'op', '', 'string');
+$tx_sn   = system_CleanVars($_REQUEST, 'tx_sn', '', 'int');
 $dirname = system_CleanVars($_REQUEST, 'dirname', '', 'string');
-$mode = system_CleanVars($_REQUEST, 'mode', '', 'string');
+$mode    = system_CleanVars($_REQUEST, 'mode', '', 'string');
 
 switch ($op) {
     //升級模組

@@ -1,3 +1,8 @@
+Tad Adm 2.84 (2019-08-17 released)
+=========================================================== ================
+1. Upgrade Adminer to 4.7.2
+2. Fixed an issue where ssh could not be used
+
 Tad Adm 2.83 (released from 2019-07-28)
 =========================================================== ================
 1. Added installation material function
