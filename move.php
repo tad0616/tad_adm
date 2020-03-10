@@ -7,7 +7,7 @@ require_once dirname(dirname(__DIR__)) . '/mainfile.php';
 $isTN = false !== mb_strpos(XOOPS_URL, '.tn.edu.tw') ? true : false;
 $isDCS = false !== mb_strpos(XOOPS_ROOT_PATH, 'DWASFiles') ? true : false;
 $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
-$inSchoolWeb = is_link(XOOPS_ROOT_PATH.'/mainfile.php') ? true : false;
+$inSchoolWeb = is_link(XOOPS_ROOT_PATH . '/mainfile.php') ? true : false;
 xoops_loadLanguage('main', 'tadtools');
 
 require_once __DIR__ . '/function.php';
@@ -102,7 +102,7 @@ function move_step()
     <style>
 
     li{
-        font-size:14pt;
+        font-size: 1.17em;
         padding:6px;
         font-family: 微軟正黑體;
     }

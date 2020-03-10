@@ -152,7 +152,7 @@ fieldset p { margin-bottom: .5em;}
 /* align */
 
 /* label */
-.label{font-size: 16px; color: #2F5376; font-weight: bold;}
+.label{font-size: 1em; color: #2F5376; font-weight: bold;}
 
 /* label */
 
@@ -165,9 +165,9 @@ div.rmmenuicon{
 div.rmmenuicon a {
     display: block; float: left;
     height: 75px !important;
-    height: 75px; 
+    height: 75px;
     width: 75px !important;
-    width: 75px; 
+    width: 75px;
     vertical-align: middle;
     text-decoration : none;
     border: 1px solid #CCCCCC;
@@ -185,7 +185,7 @@ div.rmmenuicon a {
 }
 div.rmmenuicon img { margin-top: 8px; margin-bottom: 8px; }
 div.rmmenuicon a span {
-    font-size: 11px;
+    font-size: 0.6875em;
     font-weight: bold;
     display: block;
 }
@@ -199,7 +199,7 @@ div.rmmenuicon a:hover span{
 }
 
 div.CPbigTitle{
-    font-size: 12px;
+    font-size: 0.75em;
     color: #606060;
     background: no-repeat left top;
     font-weight: bold;

@@ -39,7 +39,7 @@ h1 {
 	background: none;
 	border: none;
 	color: #666;
-	font-size: 18px;
+	font-size: 1.125em;
 	font-weight: bold;
 	height: 40px;
 	padding: 0 0 8px;
@@ -55,7 +55,7 @@ h2 {
 }
 
 h3 {
-	font-size: 18px;
+	font-size: 1.125em;
 	font-weight: bold;
 	margin: 0;
 	padding: 4px 0;
@@ -121,7 +121,7 @@ option {
 }
 
 optgroup {
-	font-size: 11px;
+	font-size: 0.6875em;
 }
 
 code {
@@ -185,7 +185,7 @@ td[align=right] {
 }
 
 table code {
-	font-size: 13px;
+	font-size: 0.8125em;
 	line-height: 18px;
 }
 
@@ -227,7 +227,7 @@ table code {
 	display: block;
 	content: "";
 	color: #FF9;
-	font-size: 13px;
+	font-size: 0.8125em;
 	background: #333;
 	line-height: 40px;
 	margin: 0;

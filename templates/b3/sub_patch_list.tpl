@@ -1,21 +1,21 @@
 <tr style="background: <{$mod.background}>;">
     <td>
-        <div style="margin:4px 0px; font-size: 20pt; font-weight: bolder;">
+        <div style="margin:4px 0px; font-size: 1.67em; font-weight: bolder;">
             <{$mod.xoops_sn}>
         </div>
-        <div style="margin:4px 0px; font-size: 12pt; font-weight: bolder;">
+        <div style="margin:4px 0px; font-size: 1em; font-weight: bolder;">
             <{$mod.xoops_type}>
         </div>
     </td>
     <td>
-        <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/xoops.php?xoops_sn=<{$mod.xoops_sn}>" title="<{$mod.xoops_title}>" target="_blank" style="font-weight: bold; font-size: 12pt;"><{$mod.xoops_title}></a>
+        <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/xoops.php?xoops_sn=<{$mod.xoops_sn}>" title="<{$mod.xoops_title}>" target="_blank" style="font-weight: bold; font-size: 1em;"><{$mod.xoops_title}></a>
 
 
-        <div style="margin:4px 0px; font-size: 11px; font-weight: normal;">
+        <div style="margin:4px 0px; font-size: 0.6875em; font-weight: normal;">
             <{$mod.xoops_date}>
         </div>
 
-        <div style="margin:4px 0px; font-size: 12px; font-weight: normal;">
+        <div style="margin:4px 0px; font-size: 0.75em; font-weight: normal;">
             <{if $mod.xoops_type=="module" and $mod.function!="install"}>
 
 
@@ -27,7 +27,7 @@
     <td>
         <!-- <div><{$mod.status}>-<{$mod.function}></div> -->
         <{if $mod.function=='unable'}>
-            <div style="font-size:11pt;line-height: 1.5;">
+            <div style="font-size: 0.92em;line-height: 1.5;">
                 <span style="color:rgb(156, 13, 13)"><{$mod.status}></span>
                 <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?xoops_sn=<{$mod.xoops_sn}>" title="<{$mod.xoops_title}>">
                     <{$mod.xoops_title}>
@@ -43,7 +43,7 @@
             </a>
         <{/if}>
 
-        <div style="margin:4px 0px; font-size: 11px; font-weight: normal;">
+        <div style="margin:4px 0px; font-size: 0.6875em; font-weight: normal;">
             <{$mod.new_version}> <{$mod.new_xoops_date}>
         </div>
     </td>

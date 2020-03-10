@@ -18,7 +18,6 @@ function adminer_object()
         new AdminerDumpJson,
         new AdminerJsonColumn,
         new AdminerTablesHistory,
-        //new AdminerTheme("default-blue"),
     );
 
     /* It is possible to combine customization and plugins:
