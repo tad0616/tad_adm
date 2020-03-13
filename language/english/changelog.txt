@@ -1,3 +1,11 @@
+Tad Adm 2.85 (released 2020-03-14)
+======================================================= =================
+1.Upgrade Adminer to 4.7.6
+2.Fixed the problem that ordinary users will not jump to the homepage when logging in with this module
+3. Remove unnecessary files
+4. Amendment for Accessibility 2.0 AA Standard
+
+
 Tad Adm 2.84 (2019-08-17 released)
 =========================================================== ================
 1. Upgrade Adminer to 4.7.2
