@@ -4,37 +4,43 @@ use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\Utility;
 
 require_once dirname(dirname(__DIR__)) . '/mainfile.php';
+
 if (!class_exists('XoopsModules\Tadtools\Utility')) {
     require XOOPS_ROOT_PATH . '/modules/tadtools/preloads/autoloader.php';
 }
+
 xoops_loadLanguage('main', 'tadtools');
 require_once __DIR__ . '/function.php';
 
 $op = Request::getString('op');
 $help_passwd = Request::getString('help_passwd');
 $uid = Request::getInt('uid');
-
+$show = Request::getBool('show');
+$msg_box = '';
 if ($xoopsUser) {
     $_SESSION['isAdmin'] = $xoopsUser->isAdmin(1);
 } elseif ('helpme' === $op) {
     $moduleHandler = xoops_getHandler('module');
     $xoopsModule = $moduleHandler->getByDirname('tad_adm');
     $configHandler = xoops_getHandler('config');
-    $xoopsModuleConfig = &$configHandler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
+    $xoopsModuleConfig = $configHandler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
 
     $_SESSION['isAdmin'] = ('' != $xoopsModuleConfig['login'] and '' != $help_passwd and $xoopsModuleConfig['login'] == $help_passwd) ? true : false;
 } elseif ('send_passwd' === $op) {
-    $msg = send_passwd();
-    redirect_header($_SERVER['PHP_SELF'], 3, $msg);
-    // header("location: {$_SERVER['PHP_SELF']}?op=forgot");
-    // exit;
+    $result = send_passwd();
+    header("location: {$_SERVER['PHP_SELF']}?op=msg&show={$result}");
+    exit;
+} elseif ('msg' === $op) {
+    if ($show) {
+        $msg = sprintf(_MD_TADADM_MAIL_PASSWD_OK, $xoopsConfig['adminmail']);
+    } else {
+        $msg = sprintf(_MD_TADADM_MAIL_PASSWD_FAIL, $xoopsConfig['adminmail']);
+    }
+    $msg_box = "<div class='alert alert-info'>$msg</div>";
 }
 
 if (!$_SESSION['isAdmin']) {
-    $sql = 'update ' . $xoopsDB->prefix('config') . " set `conf_value`='' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
-
     if ('forgot' === $op) {
-
         $SweetAlert = new SweetAlert();
         $SweetAlertCode = $SweetAlert->render("forget_mail", "index.php?op=send_passwd&go=", 'go', _MD_TADADM_CHANGE_CONFIRM_TITLE, _MD_TADADM_CHANGE_CONFIRM_TEXT, _MD_TADADM_CHANGE_CONFIRM_BTN, 'warning', true);
 
@@ -90,6 +96,7 @@ if (!$_SESSION['isAdmin']) {
             </div>
         </form>';
     }
+
     $content = '
     <div class="row">
         <div class="col-lg-3"></div>
@@ -97,6 +104,7 @@ if (!$_SESSION['isAdmin']) {
                 <div class="page-header">
                     <h1>' . _MD_TADADM_NAME . '</h1>
                 </div>
+                ' . $msg_box . '
                 ' . $form . '
             </div>
         <div class="col-lg-3"></div>
@@ -253,11 +261,7 @@ function send_passwd()
     }
 
     $content = sprintf(_MD_TADADM_MAIL_CONTENT, $passwd, $myip);
-    if (send_now($xoopsConfig['adminmail'], _MD_TADADM_PASSWD, $content)) {
-        return sprintf(_MD_TADADM_MAIL_PASSWD_OK, $xoopsConfig['adminmail']);
-    }
-
-    return sprintf(_MD_TADADM_MAIL_PASSWD_FAIL, $xoopsConfig['adminmail']);
+    return send_now($xoopsConfig['adminmail'], _MD_TADADM_PASSWD, $content);
 }
 
 //立即寄出

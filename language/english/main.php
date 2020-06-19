@@ -65,3 +65,6 @@ define('_MD_TADADM_XOOPS_ROOT_PATH', 'install path');
 define('_MD_TADADM_XOOPS_VAR_PATH', 'xoops_data path');
 define('_MD_TADADM_XOOPS_TRUST_PATH', 'xoops_lib path');
 define('_MD_TADADM_MOVE288', 'Website Upgrade or Migration Guide');
+define('_MD_TADADM_CHANGE_CONFIRM_TITLE', ' Make sure to proceed with the password change procedure?');
+define('_MD_TADADM_CHANGE_CONFIRM_TEXT', ' After confirming, please go to admin mailbox to receive and operate according to the mail content');
+define('_MD_TADADM_CHANGE_CONFIRM_BTN', 'OK');
