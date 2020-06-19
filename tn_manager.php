@@ -1,4 +1,5 @@
 <?php
+use Xmf\Request;
 // 此檔案為南市資訊中心用來替所有網站進行模組自動升級用檔案，請勿刪除或變更
 
 require __DIR__ . '/header.php';
@@ -12,11 +13,10 @@ function tn_module_update($dirname)
     xoops_module_update($dirname);
 }
 
-require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
-$op      = system_CleanVars($_REQUEST, 'op', '', 'string');
-$tx_sn   = system_CleanVars($_REQUEST, 'tx_sn', '', 'int');
-$dirname = system_CleanVars($_REQUEST, 'dirname', '', 'string');
-$mode    = system_CleanVars($_REQUEST, 'mode', '', 'string');
+$op = Request::getString('op');
+$tx_sn = Request::getInt('tx_sn');
+$dirname = Request::getString('dirname');
+$mode = Request::getString('mode');
 
 switch ($op) {
     //升級模組

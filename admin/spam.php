@@ -1,4 +1,5 @@
 <?php
+use Xmf\Request;
 use XoopsModules\Tadtools\Utility;
 
 /*-----------引入檔案區--------------*/
@@ -112,7 +113,7 @@ function list_user($op = '', $mode = 'normal')
     $_SESSION['chk_end'] = time();
 
     $time = $_SESSION['chk_end'] - $_SESSION['chk_start'];
-    $days = isset($_REQUEST['days']) ? (int) $_REQUEST['days'] : 0;
+    $days = (int) $_REQUEST['days'];
     $days = empty($days) ? 100 : $days;
     $g2p = isset($_GET['g2p']) ? (int) $_GET['g2p'] : 1;
     $byemail = isset($_REQUEST['byemail']) ? $_REQUEST['byemail'] : '';
@@ -248,7 +249,7 @@ function del_user($del_uid)
     $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $memberHandler = xoops_getHandler('member');
-    $user =  $memberHandler->getUser($del_uid);
+    $user = $memberHandler->getUser($del_uid);
     if (empty($user)) {
         return;
     }
@@ -278,10 +279,9 @@ function del_all_user($uid_arr = [])
 }
 
 /*-----------執行動作判斷區----------*/
-require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
-$op = system_CleanVars($_REQUEST, 'op', '', 'string');
-$g2p = system_CleanVars($_REQUEST, 'g2p', 0, 'int');
-$mode = system_CleanVars($_REQUEST, 'mode', '', 'string');
+$op = Request::getString('op');
+$g2p = Request::getInt('g2p');
+$mode = Request::getString('mode');
 
 switch ($op) {
     /*---判斷動作請貼在下方---*/
@@ -289,10 +289,12 @@ switch ($op) {
         del_all_user($_POST['uid']);
         redirect_header($_SERVER['PHP_SELF'] . "?g2p=$g2p", 3, _MA_TADADM_DEL_OK);
         break;
+
     case 'spam':
         list_spam();
         $xoopsTpl->assign('op', spam);
         break;
+
     default:
         list_user($op, $mode);
         if ('all' === $op) {

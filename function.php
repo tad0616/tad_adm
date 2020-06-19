@@ -1,6 +1,5 @@
 <?php
 xoops_loadLanguage('main', 'tadtools');
-
 $inSchoolWeb = is_link(XOOPS_ROOT_PATH . '/mainfile.php') ? true : false;
 
 /********************* 自訂函數 ********************
@@ -10,21 +9,9 @@ $inSchoolWeb = is_link(XOOPS_ROOT_PATH . '/mainfile.php') ? true : false;
 function GetDirectorySize($path)
 {
     $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
-    $isDCS = false !== mb_strpos(XOOPS_ROOT_PATH, 'DWASFiles') ? true : false;
 
-    if ($isDCS) {
+    if ($isWin) {
         return folderSize($path);
-    } elseif ($isWin) {
-        $bytestotal = 0;
-        $obj = new COM('scripting.filesystemobject');
-        if (is_object($obj)) {
-            $ref = $obj->getfolder($path);
-
-            return $ref->size;
-            $obj = null;
-        } else {
-            die('can not create object');
-        }
     } else {
         $io = popen('/usr/bin/du -sk ' . $path, 'r');
         $size = fgets($io, 4096);

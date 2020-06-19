@@ -1,4 +1,5 @@
 <?php
+use Xmf\Request;
 use XoopsModules\Tadtools\Utility;
 
 require_once dirname(dirname(__DIR__)) . '/mainfile.php';
@@ -8,7 +9,7 @@ if (!class_exists('XoopsModules\Tadtools\Utility')) {
 xoops_loadLanguage('main', 'tadtools');
 require_once __DIR__ . '/function.php';
 
-$op = isset($_REQUEST['op']) ? $_REQUEST['op'] : '';
+$op = Request::getString('op');
 
 if ($xoopsUser) {
     $_SESSION['isAdmin'] = $xoopsUser->isAdmin(1);
@@ -98,7 +99,7 @@ if (!$_SESSION['isAdmin']) {
 
 $logout = ($xoopsUser) ? XOOPS_URL . '/user.php?op=logout' : 'index.php?op=logout';
 
-$v = isset($_REQUEST['v']) ? $_REQUEST['v'] : '0';
+$v = Request::getInt('v');
 
 switch ($op) {
     case 'unable_blocks':

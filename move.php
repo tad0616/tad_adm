@@ -1,11 +1,13 @@
 <?php
+use Xmf\Request;
+use XoopsModules\Tadtools\SyntaxHighlighter;
 use XoopsModules\Tadtools\Utility;
+use XoopsModules\Tad_adm\Mysqldump as IMysqldump;
 use XoopsModules\Tad_adm\OnlineUpgrade;
 
 require_once dirname(dirname(__DIR__)) . '/mainfile.php';
+// require_once XOOPS_ROOT_PATH . '/header.php';
 
-$isTN = false !== mb_strpos(XOOPS_URL, '.tn.edu.tw') ? true : false;
-$isDCS = false !== mb_strpos(XOOPS_ROOT_PATH, 'DWASFiles') ? true : false;
 $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
 $inSchoolWeb = is_link(XOOPS_ROOT_PATH . '/mainfile.php') ? true : false;
 xoops_loadLanguage('main', 'tadtools');
@@ -37,19 +39,33 @@ $bad_mods = [
 
 $source_mod = OnlineUpgrade::get_tad_json_info('all.json');
 
-require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
-$op = system_CleanVars($_REQUEST, 'op', '', 'string');
-$new_url = system_CleanVars($_REQUEST, 'new_url', '', 'string');
-$dir = system_CleanVars($_REQUEST, 'dir', '', 'string');
-$schoolweb_id = system_CleanVars($_REQUEST, 'schoolweb_id', '', 'string');
+$xoops_patch = OnlineUpgrade::get_tad_json_info('xoops.json');
+// Utility::dd($xoops_patch);
+$max_xoops_version = 0;
+$latest_xoops_version = '';
+foreach ($xoops_patch as $x) {
+    if ($x['xoops_type'] == 'upgrade') {
+        $xoops_version = OnlineUpgrade::get_version('xoops', $x['xoops_version']);
+        if ($xoops_version > $max_xoops_version) {
+            $max_xoops_version = $xoops_version;
+            $latest_xoops_version = $x['xoops_version'];
+        }
+    }
+}
+
+$op = Request::getString('op');
+$new_url = Request::getString('new_url');
+if (!empty($new_url)) {
+    $_SESSION['new_url'] = $new_url;
+}
+$dir = Request::getString('dir');
+$schoolweb_id = Request::getString('schoolweb_id');
 
 switch ($op) {
     case 'export_sql':
         export_sql($new_url);
         break;
-    case 'download_zip':
-        download_zip($dir);
-        break;
+
     case 'save_schoolweb_id':
         if ($schoolweb_id) {
             $_SESSION['schoolweb_id'] = $schoolweb_id;
@@ -64,7 +80,7 @@ switch ($op) {
 
 function move_step()
 {
-    global $isDCS, $isTN, $inSchoolWeb;
+    global $latest_xoops_version, $max_xoops_version, $inSchoolWeb;
     $id = '帳號';
     if (mb_strpos($_SERVER['SERVER_NAME'], '.tn.edu.tw')) {
         $str = str_replace('.tn.edu.tw', '', $_SERVER['SERVER_NAME']);
@@ -75,36 +91,47 @@ function move_step()
         }
     }
 
-    $description = $isTN ? '<li>此工具是針對<a href="https://schoolweb.tn.edu.tw/index.php" target="_blank">台南市政府教育局校園集中式網站</a>而製作的，協助台南市學校從原本的網站搬移至該主機。</li>
-    <li>由於集中式網站的XOOPS及所有模組都是最新版，因此，要搬過去之前，必須先將自身網站也升級到最新版，始能無痛搬移。</li>
-    <li>請先到<a href="https://schoolweb.tn.edu.tw/index.php" target="_blank">台南市政府教育局校園集中式網站</a>申請一個網站（已申請過就直接填即可），並填入該新網站的帳號名稱（~符號後面的名字，如：<span class="important">' . $id . '</span>）：<form action="' . $_SERVER['PHP_SELF'] . '" method="post">
-    <div class="input-group">
-        <div class="input-group-prepend">
-            <span class="input-group-text" id="sizing-addon1">http://schoolweb.tn.edu.tw/~</span>
-        </div>
-        <input type="text" name="schoolweb_id" class="form-control" placeholder="如：' . $id . '" value="' . $_SESSION['schoolweb_id'] . '">
-        <span class="input-group-btn">
-        <input type="hidden" name="op" value="save_schoolweb_id">
-        <button class="btn btn-primary" type="submit">儲存</button>
-        </span>
-    </div>
-    </form></li>
-    ' . $dcs_note . '' : '<li>本程式會自動偵測環境，並提出升級至 XOOPS 2.5.9 的建議及步驟。</li>
-    <li>請盡量使用網域名稱，以得到正確建議。</li>';
+    $description = "<li>本程式會自動偵測環境，並提出升級至 XOOPS $latest_xoops_version 的建議及步驟。</li>
+    <li>請盡量使用網域名稱，以得到正確建議。</li>";
 
     if ($inSchoolWeb) {
         $description = '<li>您的網站已經是放在台南市教育局集中式網站中，版本永遠是最新的，所以，以下資訊僅供參考，無需使用。</li>';
     }
 
-    $dcs_note = $isDCS ? "<li class='danger'>您的網站目前是放在台南是的DCS飛番雲上，DCS有嚴重的快取延遲問題（例如程式已經升級，但網站卻仍顯示舊的），故若有任何不正常情況發生（尤其在升級升級時），請登入 <a href='https://cloud.dcs.tn.edu.tw' target='_blank'>https://cloud.dcs.tn.edu.tw</a>，並隨時進行「重啟網站」。</li>" : '';
-
     $content = '
+    <link href="https://schoolweb.tn.edu.tw/uploads/fonts/woff2.css" rel="stylesheet">
     <style>
+    h1{
+        padding:6px 0px;
+        text-align:left;
+        font-family: HanWangMingBlack, jf-openhuninn, Mamelon;
+        background: -webkit-linear-gradient(#346cdb, #000000);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    h2{
+        padding:6px 0px;
+        text-align:left;
+        font-family: HanWangMingBlack, jf-openhuninn, Mamelon;
+        background: -webkit-linear-gradient(#5F951F, #007FA0);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    h3{
+        padding:6px 18px;
+        font-family: jf-openhuninn, Mamelon;
+    }
 
     li{
-        font-size: 1.17em;
+        font-size: 1.1em;
         padding:6px;
         font-family: 微軟正黑體;
+    }
+
+    code{
+        font-size: 1.1em;
     }
 
     .important{
@@ -118,13 +145,13 @@ function move_step()
     }
     </style>
     <div class="page-header">
-        <h1>網站升級、搬移指南</h1>
+        <h1>XOOPS 網站升級、搬移指南</h1>
     </div>
     <ol>
     ' . $description . '
     </ol>
     <div class="page-header">
-        <h2>升級網站至最新版本</h2>
+        <h2>升級本站的 XOOPS 至最新版本</h2>
     </div>';
 
     if ($_SESSION['tad_adm_isAdmin']) {
@@ -134,58 +161,63 @@ function move_step()
             <li>' . xoops_version() . '</li>
         </ol>';
 
-        if ($isTN) {
-            $content .= '
+        $content .= '
             <div class="page-header">
-                <h2>下載必要的檔案</h2>
+                <h2>備份</h2>
             </div>
-            <ol>
-                <li>若暫存目錄 <code>C:\\move</code> 不存在，請先建立之，並在底下建立 <code>modules</code> 及 <code>themes</code> 兩個資料夾。</li>
-                <li>請先到<a href="' . XOOPS_URL . '/modules/system/admin.php?fct=modulesadmin" target="_blank">後台模組管理頁面</a>，將不需要的模組移除掉。</li>
-                <li>' . download_modules() . '</li>
-                <li>' . download_themes() . '</li>
-                <li>' . download_uploads() . '</li>
-                <li>' . download_sql() . '</li>
-            </ol>
-            <div class="page-header">
-                <h2>開始搬移網站</h2>
-            </div>
-            <ol>
-                <li>' . upload_modules() . '</li>
-                <li>' . upload_themes() . '</li>
-                <li>' . upload_uploads() . '</li>
-                <li>' . upload_sql() . '</li>
-                <li>至此，就大功告成囉！</li>
-            </ol>';
-        } else {
-            $content .= '
-            <div class="page-header">
-                <h2>備份網站資料</h2>
-            </div>
+
+            <h3 id="backup_sql">一、備份本站的資料庫資料</h3>
             <ol>
                 <li>請先到<a href="' . XOOPS_URL . '/modules/system/admin.php?fct=modulesadmin" target="_blank">後台模組管理頁面</a>，將不需要的模組移除掉。</li>
-                <li>' . download_sql() . '</li>
+                <li>建議在 <code>C:</code> 底下建立 <code>move</code> 資料夾，用來放置一些備份檔案</li>
+                ' . download_sql() . '
             </ol>
-            <div class="page-header">
-                <h2>開始搬移網站</h2>
-            </div>
+
+            <h3 id="backup_files">二、備份本站的實體檔案</h3>
             <ol>
-                <li>' . upload_modules() . '</li>
-                <li>' . upload_sql() . '</li>
+                <li>' . download_files() . '</li>
+            </ol>
+
+            <div class="page-header">
+                <h2>還原</h2>
+            </div>
+
+            <h3>一、還原本站的資料庫資料</h3>
+            <ol>
+                ' . import_sql() . '
+            </ol>
+
+            <h3>二、還原本站的實體檔案</h3>
+            <ol>
+                ' . upload_files() . '
+            </ol>
+
+            <div class="page-header">
+                <h2>搬移</h2>
+            </div>
+
+            <h3>一、上傳檔案到新主機</h3>
+            <ol>
+                ' . upload_modules() . '
+            </ol>
+            <h3>二、匯入資料庫到新主機</h3>
+            <ol>
+                ' . upload_sql() . '
                 <li>至此，就大功告成囉！</li>
             </ol>';
-        }
     } else {
         $content .= '<div class="alert alert-danger">登入後始可使用自動檢測功能</div>';
         $content .= login_form();
     }
 
-    echo Utility::html5($content, false, true, 4);
+    $SyntaxHighlighter = new SyntaxHighlighter();
+    $SyntaxHighlighterCode = $SyntaxHighlighter->render();
+    echo Utility::html5($content, false, true, 4, true, 'container', 'XOOPS升級、備份、搬移指南', $SyntaxHighlighterCode);
 }
 
 function modules_version()
 {
-    global $xoopsDB, $source_mod, $on, $off, $add, $up, $down;
+    global $latest_xoops_version, $max_xoops_version, $xoopsDB, $source_mod, $on, $off, $add, $up, $down;
 
     //抓出現有模組
     $sql = 'SELECT * FROM ' . $xoopsDB->prefix('modules') . ' ORDER BY hasmain DESC, weight';
@@ -229,64 +261,50 @@ function modules_version()
     return $msg;
 }
 
-function get_ftp_path($path)
-{
-    global $isDCS;
-    if ($isDCS) {
-        $d = explode('/site/', $path);
-        $new_path = "/site/{$d[1]}";
-    } else {
-        $new_path = $path;
-    }
-
-    return $new_path;
-}
-
 function xoops_version()
 {
-    global $on, $off, $add, $up, $down, $isWin, $isDCS;
+    global $latest_xoops_version, $max_xoops_version, $on, $off, $add, $up, $down, $isWin;
 
-    $XOOPS_ROOT_PATH = get_ftp_path(XOOPS_ROOT_PATH);
-    $XOOPS_VAR_PATH = get_ftp_path(XOOPS_VAR_PATH);
-    $XOOPS_PATH = get_ftp_path(XOOPS_PATH);
+    $XOOPS_ROOT_PATH = XOOPS_ROOT_PATH;
+    $XOOPS_VAR_PATH = XOOPS_VAR_PATH;
+    $XOOPS_PATH = XOOPS_PATH;
 
-    if (XOOPS_VERSION !== 'XOOPS 2.5.9') {
+    $now_xoops_version = OnlineUpgrade::get_version('xoops', XOOPS_VERSION);
+
+    if ($now_xoops_version < $max_xoops_version) {
         $pic = $off;
-        $msg2 = '新主機的 XOOPS 版本為 2.5.9，故請將本站也升級到 2.5.9';
+        $msg2 = "新主機的 XOOPS 版本為 {$latest_xoops_version}，故請將本站也升級到 {$latest_xoops_version}";
 
-        if ($isDCS) {
-            $ftp = "<li>安裝<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>，並啟動之，連線至本網站 <code>ftp.dcs.tn.edu.tw</code>，FileZilla 左邊切換至<code>C:\\move\\XoopsCore25-2.5.9_for_upgrade</code>，右邊按照以下指示切換。</li>";
-            $ftp2 = "依序將底下目錄上傳<span class='important'>（左、右邊是指 FileZilla 的左右視窗）</span>：";
-        } elseif ($isWin) {
+        if ($isWin) {
             $ftp = '';
             $ftp2 = '覆蓋新檔案：';
         } else {
-            $ftp = "<li>安裝<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>，並啟動之，連線至本網站 <code>" . $_SERVER['SERVER_NAME'] . '</code>，FileZilla 左邊切換至<code>C:\\move\\XoopsCore25-2.5.9_for_upgrade</code>，右邊按照以下指示切換。</li>';
+            $ftp = "<li>安裝<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>，並啟動之，連線至本網站 <code>{$_SERVER['SERVER_NAME']}</code>，FileZilla 左邊切換至<code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade</code>，右邊按照以下指示切換。</li>";
             $ftp2 = "依序將底下目錄上傳<span class='important'>（左、右邊是指 FileZilla 的左右視窗）</span>：";
         }
 
         $htdocs_path = pathinfo(XOOPS_ROOT_PATH);
-        $htdocs_dcspath = get_ftp_path($htdocs_path['dirname']);
+        $htdocs_dcspath = $htdocs_path['dirname'];
         if ('htdocs' !== $htdocs_path['basename']) {
-            $htdocs = ($isWin and !$isDCS) ? "先將 <code>C:\\move\\XoopsCore25-2.5.9_for_upgrade\\</code> 下的 <code>htdocs</code> 改名為 <code>{$htdocs_path['basename']}</code>，然後複製並覆蓋 <code>" . $XOOPS_ROOT_PATH . '</code> 即可。' : "先將左邊的 <code>htdocs</code> 改名為 <code>{$htdocs_path['basename']}</code>，右邊切換到 <code>{$htdocs_dcspath}</code>，然後上傳 <code>{$htdocs_path['basename']}</code> 覆蓋 <code>" . $XOOPS_ROOT_PATH . '</code>。';
+            $htdocs = $isWin ? "先將 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade\\</code> 下的 <code>htdocs</code> 改名為 <code>{$htdocs_path['basename']}</code>，然後複製並覆蓋 <code>" . $XOOPS_ROOT_PATH . '</code> 即可。' : "先將左邊的 <code>htdocs</code> 改名為 <code>{$htdocs_path['basename']}</code>，右邊切換到 <code>{$htdocs_dcspath}</code>，然後上傳 <code>{$htdocs_path['basename']}</code> 覆蓋 <code>" . $XOOPS_ROOT_PATH . '</code>。';
         } else {
-            $htdocs = ($isWin and !$isDCS) ? "複製 <code>C:\\move\\XoopsCore25-2.5.9_for_upgrade\\{$htdocs_path['dirname']}</code> 並覆蓋 <code>" . $XOOPS_ROOT_PATH . '</code> 即可。' : "右邊切換到 <code>{$htdocs_dcspath}</code>，然後將左邊的 <code>htdocs</code> 上傳覆蓋<code>" . $XOOPS_ROOT_PATH . '</code> 即可。';
+            $htdocs = $isWin ? "複製 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade\\{$htdocs_path['dirname']}</code> 並覆蓋 <code>" . $XOOPS_ROOT_PATH . '</code> 即可。' : "右邊切換到 <code>{$htdocs_dcspath}</code>，然後將左邊的 <code>htdocs</code> 上傳覆蓋<code>" . $XOOPS_ROOT_PATH . '</code> 即可。';
         }
 
         $xoops_data_path = pathinfo(XOOPS_VAR_PATH);
-        $xoops_data_dcspath = get_ftp_path($xoops_data_path['dirname']);
+        $xoops_data_dcspath = $xoops_data_path['dirname'];
         if ('xoops_data' === $xoops_data_path['basename']) {
-            $xoops_data = ($isWin and !$isDCS) ? '複製 <code>C:\\move\\XoopsCore25-2.5.9_for_upgrade\\xoops_data</code> 並覆蓋 <code>' . $XOOPS_VAR_PATH . '</code> 即可。' : "右邊切換到 <code>{$xoops_data_dcspath}</code>，然後將左邊的 <code>xoops_data</code> 上傳覆蓋 <code>" . $XOOPS_VAR_PATH . '</code> 即可。';
+            $xoops_data = $isWin ? '複製 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade\\xoops_data</code> 並覆蓋 <code>' . $XOOPS_VAR_PATH . '</code> 即可。' : "右邊切換到 <code>{$xoops_data_dcspath}</code>，然後將左邊的 <code>xoops_data</code> 上傳覆蓋 <code>" . $XOOPS_VAR_PATH . '</code> 即可。';
         } else {
-            $xoops_data = ($isWin and !$isDCS) ? "先將 <code>C:\\move\\XoopsCore25-2.5.9_for_upgrade\\</code> 下的 <code>xoops_data</code> 改名為 <code>{$xoops_data_path['basename']}</code>，然後複製並覆蓋 <code>" . $XOOPS_VAR_PATH . '</code>即可。' : "先將左邊的 <code>xoops_data</code> 改名為 <code>{$xoops_data_path['basename']}</code>，右邊切換到 <code>{$xoops_data_dcspath}</code>，然後上傳 <code>{$xoops_data_path['basename']}</code> 覆蓋 <code>" . $XOOPS_VAR_PATH . '</code>。';
+            $xoops_data = $isWin ? "先將 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade\\</code> 下的 <code>xoops_data</code> 改名為 <code>{$xoops_data_path['basename']}</code>，然後複製並覆蓋 <code>" . $XOOPS_VAR_PATH . '</code>即可。' : "先將左邊的 <code>xoops_data</code> 改名為 <code>{$xoops_data_path['basename']}</code>，右邊切換到 <code>{$xoops_data_dcspath}</code>，然後上傳 <code>{$xoops_data_path['basename']}</code> 覆蓋 <code>" . $XOOPS_VAR_PATH . '</code>。';
         }
 
         $xoops_lib_path = pathinfo(XOOPS_PATH);
-        $xoops_lib_dcspath = get_ftp_path($xoops_lib_path['dirname']);
+        $xoops_lib_dcspath = $xoops_lib_path['dirname'];
         if ('xoops_lib' === $xoops_lib_path['basename']) {
-            $xoops_lib = ($isWin and !$isDCS) ? '複製 <code>C:\\move\\XoopsCore25-2.5.9_for_upgrade\\xoops_lib</code> 並覆蓋 <code>' . $XOOPS_PATH . '</code> 即可。' : "右邊切換到 <code>{$xoops_lib_dcspath}</code>，然後將左邊的 <code>xoops_lib</code> 上傳覆蓋 <code>" . $XOOPS_PATH . '</code> 即可。';
+            $xoops_lib = $isWin ? '複製 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade\\xoops_lib</code> 並覆蓋 <code>' . $XOOPS_PATH . '</code> 即可。' : "右邊切換到 <code>{$xoops_lib_dcspath}</code>，然後將左邊的 <code>xoops_lib</code> 上傳覆蓋 <code>" . $XOOPS_PATH . '</code> 即可。';
         } else {
-            $xoops_lib = ($isWin and !$isDCS) ? "先將 <code>C:\\move\\XoopsCore25-2.5.9_for_upgrade\\</code> 下的 <code>xoops_lib</code> 改名為 <code>{$xoops_data_path['basename']}</code>，然後複製並覆蓋 <code>" . $XOOPS_PATH . '</code>即可。' : "先將左邊的 <code>xoops_lib</code> 改名為 <code>{$xoops_lib_path['basename']}</code>，右邊切換到 <code>{$xoops_lib_dcspath}</code>，然後上傳 <code>{$xoops_lib_path['basename']}</code> 覆蓋 <code>" . $XOOPS_PATH . '</code>。';
+            $xoops_lib = $isWin ? "先將 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade\\</code> 下的 <code>xoops_lib</code> 改名為 <code>{$xoops_data_path['basename']}</code>，然後複製並覆蓋 <code>" . $XOOPS_PATH . '</code>即可。' : "先將左邊的 <code>xoops_lib</code> 改名為 <code>{$xoops_lib_path['basename']}</code>，右邊切換到 <code>{$xoops_lib_dcspath}</code>，然後上傳 <code>{$xoops_lib_path['basename']}</code> 覆蓋 <code>" . $XOOPS_PATH . '</code>。';
         }
 
         $www = str_replace('xoops_lib', '', XOOPS_PATH);
@@ -297,33 +315,24 @@ function xoops_version()
         }
 
         $mainfile_mode = get_mod(XOOPS_ROOT_PATH . '/mainfile.php');
-        if ($isDCS) {
-            $mainfile_mode_txt = '取消唯讀（若無法取消唯讀，可先將 mainfile.php 下載，然後把 DCS 上的 mainfile.php 改名為 mainfile.bak.php，接著再把剛下載的 mainfile.php 上傳即可）';
-        } else {
-            $mainfile_mode_txt = ($isWin and !$isDCS) ? '請取消唯讀' : "權限設為 777 可寫入狀態（目前為 {$mainfile_mode}）。";
-        }
+
+        $mainfile_mode_txt = $isWin ? '請取消唯讀' : "權限設為 777 可寫入狀態（目前為 {$mainfile_mode}）。";
 
         $mainfile_w = '777' == $mainfile_mode ? '' : '<li>將 <code>' . $XOOPS_ROOT_PATH . "/mainfile.php</code> {$mainfile_mode_txt}</li>";
 
         $secure_mode = get_mod(XOOPS_VAR_PATH . '/data/secure.php');
-        $secure_mode_txt = ($isWin and !$isDCS) ? '請取消唯讀' : "權限設為 777 可寫入狀態（目前為 {$secure_mode}）。";
-        if ($isDCS) {
-            $secure_w = '';
-        } else {
-            $secure_w = '777' == $secure_mode ? '' : '<li>將 <code>' . $XOOPS_VAR_PATH . "/data/secure.php</code> {$secure_mode_txt}</li>";
-        }
+        $secure_mode_txt = $isWin ? '請取消唯讀' : "權限設為 777 可寫入狀態（目前為 {$secure_mode}）。";
+
+        $secure_w = '777' == $secure_mode ? '' : '<li>將 <code>' . $XOOPS_VAR_PATH . "/data/secure.php</code> {$secure_mode_txt}</li>";
 
         $xoops_data_mode = get_mod(XOOPS_VAR_PATH);
-        if ($isDCS) {
-            $xoops_data_w = '';
-        } else {
-            $xoops_data_w = '777' == $xoops_data_mode ? '' : '<li>將 <code>' . $XOOPS_VAR_PATH . "</code>（含底下所有目錄及檔案）權限均設為 777 可寫入狀態（目前為 {$xoops_data_mode}）。</li>";
-        }
+
+        $xoops_data_w = '777' == $xoops_data_mode ? '' : '<li>將 <code>' . $XOOPS_VAR_PATH . "</code>（含底下所有目錄及檔案）權限均設為 777 可寫入狀態（目前為 {$xoops_data_mode}）。</li>";
 
         if (version_compare(phpversion(), '5.3.7', '<')) {
-            $php_version = "{$off}本主機的 PHP 版本為 " . phpversion() . '，低於 5.3.7，所以，升級為 XOOPS 2.5.9 後部份功能會有問題（例如：選單會消失、密碼會變空白）。<ul><li>如果您的目的是升級而非搬移，建議您就別升級了，升級完是無法正常使用的。</li><li>如果您是要搬到新主機的，那可以繼續進行，因為升級的目的只在於產生正確的資料表結構，所以，即使升級後，本站運作不正常也沒關係（盡量別登出又登入），只要本頁面能正常運作即可，到時搬到新主機便會一切正常。</li></ul>';
+            $php_version = "{$off}本主機的 PHP 版本為 " . phpversion() . "，低於 5.3.7，所以，升級為 XOOPS $latest_xoops_version 後部份功能會有問題（例如：選單會消失、密碼會變空白）。<ul><li>如果您的目的是升級而非搬移，建議您就別升級了，升級完是無法正常使用的。</li><li>如果您是要搬到新主機的，那可以繼續進行，因為升級的目的只在於產生正確的資料表結構，所以，即使升級後，本站運作不正常也沒關係（盡量別登出又登入），只要本頁面能正常運作即可，到時搬到新主機便會一切正常。</li></ul>";
         } else {
-            $php_version = "{$on}本主機的 PHP 版本為 " . phpversion() . '，高於 5.3.7，所以可以升級為 XOOPS 2.5.9 沒問題。';
+            $php_version = "{$on}本主機的 PHP 版本為 " . phpversion() . "，高於 5.3.7，所以可以升級為 XOOPS $latest_xoops_version 沒問題。";
         }
 
         $msg3 = "
@@ -333,9 +342,9 @@ function xoops_version()
 
             <li>{$add}請建立 <code>C:\\move\\</code>，作為備份檔案暫存區。</li>
 
-            <li>{$down}下載 <a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=146&cat_sn=16'>XOOPS 2.5.9 正體中文版 2017-08-03（升級用） </a>，並儲存到 <code>C:\\move\\</code></li>
+            <li>{$down}下載 <a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=146&cat_sn=16'>XOOPS $latest_xoops_version 正體中文版 2017-08-03（升級用） </a>，並儲存到 <code>C:\\move\\</code></li>
 
-            <li>{$add}滑鼠移到 <code>C:\\move\\XoopsCore25-2.5.9_tw_for_upgrade_20170803.zip</code> 上方按右鍵，點擊「解壓縮至此」（以7-zip為例，總之，可以解壓縮即可）</li>
+            <li>{$add}滑鼠移到 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_tw_for_upgrade_20170803.zip</code> 上方按右鍵，點擊「解壓縮至此」（以7-zip為例，總之，可以解壓縮即可）</li>
 
             $ftp
             $legacy
@@ -365,209 +374,95 @@ function xoops_version()
     return $msg;
 }
 
-function download_modules()
-{
-    global $source_mod, $on, $off, $add, $up, $down, $xoopsDB, $system_mods, $bad_mods, $isTN;
-
-    $mypath = XOOPS_ROOT_PATH . '/modules/';
-    $d = opendir($mypath);
-    $mod_msg = '';
-    $need_down = [];
-    $download = false;
-
-    $db_mod = [];
-    $sql = 'SELECT `dirname` FROM `' . $xoopsDB->prefix('modules') . '`';
-    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
-    while (list($dirname) = $xoopsDB->fetchRow($result)) {
-        $db_mod[] = $dirname;
-    }
-
-    while (false !== ($file = readdir($d))) {
-        if ('.' !== $file && '..' !== $file) {
-            $typepath = $mypath . $file;
-            if (!in_array($file, $db_mod)) {
-                continue;
-            }
-            if ('dir' === filetype($typepath)) {
-                if ((!isset($source_mod[$file]) and !in_array($file, $system_mods)) or isset($bad_mods[$file])) {
-                    $dir_size = format_size(GetDirectorySize($typepath));
-                    if (isset($bad_mods[$file])) {
-                        $class = 'danger';
-                        $pic = $off;
-                        $note = "有資安問題或 PHP7 不支援的模組，建議<a href='" . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin' target='_blank'>移除</a>，並改用 <a href='https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn={$bad_mods[$file][1]}' target='_blank'>{$bad_mods[$file][0]}</a> 取代之";
-                    } else {
-                        $class = 'important';
-                        $pic = $down;
-                        $note = '下載完成後，按右鍵「解壓縮至此」解壓之';
-                    }
-                    $mod_msg .= "<li class='$class'><a href='{$_SERVER['PHP_SELF']}?op=download_zip&dir={$typepath}'>{$pic}{$typepath}</a>（約 {$dir_size}）{$note}</li>";
-                    $download = true;
-                    $_SESSION['zip_del']["{$file}.zip"] = "{$file}.zip";
-                }
-            }
-        }
-    }
-
-    $msg .= ($download) ? "底下是貴站有用到的模組，但在集中式主機並不提供，故需自行下載到 <code>C:\\move\\modules\\</code> ：<ul>{$mod_msg}</ul>" : "{$on}貴站所需模組，集中式主機上均有，故無須自行下載。";
-
-    return $msg;
-}
-
 function upload_modules()
 {
-    global $source_mod, $on, $off, $add, $up, $down, $xoopsDB, $system_mods, $isTN;
-    if ($isTN) {
-        $mypath = XOOPS_ROOT_PATH . '/modules/';
-        $d = opendir($mypath);
-        $mod_msg = '';
-        $need_up = [];
-        $db_mod = [];
-        $sql = 'SELECT `dirname` FROM `' . $xoopsDB->prefix('modules') . '`';
-        $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
-        while (list($dirname) = $xoopsDB->fetchRow($result)) {
-            $db_mod[] = $dirname;
-        }
-        while (false !== ($file = readdir($d))) {
-            if ('.' !== $file && '..' !== $file) {
-                $typepath = $mypath . $file;
+    global $latest_xoops_version, $max_xoops_version, $source_mod, $on, $off, $add, $up, $down, $xoopsDB, $system_mods;
 
-                if (!in_array($file, $db_mod)) {
-                    continue;
-                }
-                if ('dir' === filetype($typepath)) {
-                    if (!isset($source_mod[$file]) and !in_array($file, $system_mods)) {
-                        $need_up[] = "<span class='danger'>$file</span>";
-                    }
-                }
-            }
-        }
+    $new_url = $_SESSION['new_url'] ? $_SESSION['new_url'] : 'http://新主機的網址';
 
-        $need_up_mods = implode('、', $need_up);
+    $msg = "<li>確定已經完成「<a href='#backup_files'>備份本站的實體檔案</a>」</li>
+    <li>開啟 <code>C:\\move\\" . basename(XOOPS_ROOT_PATH) . "\\mainfile.php</code>，我們必須修改其網址及路徑設定才行。
+        <ol>
+            <li>若是有看到「//自動取得網址」，表示是用輕鬆架版的 <code>mainfile.php</code>，如此會自動偵測，無須修改。</li>
+            <li>若無該字樣，請修改底下幾個設定<span class='danger'>（目錄最後不要有 /）</span>，修改後存檔：
+                <div class='alert alert-warning'>
+                    define('XOOPS_ROOT_PATH', '新主機的網頁目錄'); <br>
+                    define('XOOPS_PATH', '新主機的 <code>xoops_lib</code> 目錄'); <br>
+                    define('XOOPS_VAR_PATH', '新主機的 <code>xoops_data</code> 目錄');<br>
+                    define('XOOPS_URL', '{$new_url}');
+                </div>
+                以下假設新主機的網頁目錄位置在「<code>/var/www/html</code>」請自行依照實際狀況修改。如：
+                <pre class='brush:php;gutter:false;'>
+                    define('XOOPS_ROOT_PATH', '/var/www/html');
+                    define('XOOPS_PATH', '/var/www/xoops_lib');
+                    define('XOOPS_VAR_PATH', '/var/www/xoops_data');
+                    define('XOOPS_URL', '{$new_url}');
+                </pre>
+            </li>
+        </ol>
+    </li>
 
-        $msg = ($need_up_mods) ? "{$up}請將 <code>C:\\move\\modules\\</code> 裡面的 {$need_up_mods} 模組資料夾上傳到新主機的 <code>/public_html/modules/</code> 底下即可。" : "{$on}貴站所需模組，集中式主機上均有，故無須自行下載。";
-    } else {
-        $msg = '將 <code>' . XOOPS_ROOT_PATH . '</code> 下的所有檔案及目錄均上傳至新網站的網頁目錄</li>
-        <li>將 <code>' . XOOPS_VAR_PATH . '</code> 下的所有檔案及目錄均上傳至新網站的 <code>xoops_data</code> 目錄下</li>
-        <li>將 <code>' . XOOPS_PATH . "</code> 下的所有檔案及目錄均上傳至新網站的 <code>xoops_lib</code> 目錄下</li>
-        <li>開啟新主機的 mainfile.php，修改其網址及路徑。</li>
-        <li>若是有看到「//自動取得網址」，表示是用輕鬆架版的mainfile.php，如此便無須修改。</li>
-        <li>若無該字樣，請修改底下幾個設定，修改後存檔：<div class='well'>
-        define('XOOPS_ROOT_PATH', '新網站的網頁目錄'); <br>
-        define('XOOPS_PATH', '新網站的 <code>xoops_lib</code> 目錄'); <br>
-        define('XOOPS_VAR_PATH', '新網站的 <code>xoops_data</code> 目錄');
-        define('XOOPS_URL', 'http://新網站網址');
-        </div>";
-    }
+    <li>開啟 <code>C:\\move\\xoops_data\\data\\secure.php</code>，這是資料庫設定檔，要修改成新主機的資料庫資料，修改後請存檔：
+        <pre class='brush:php;gutter:false;'>
+            define('XOOPS_DB_USER', '新主機的資料庫帳號');
+            define('XOOPS_DB_PASS', '新主機的資料庫密碼');
+            define('XOOPS_DB_NAME', '新主機的資料庫名稱');
+        </pre>
+    </li>
 
-    return $msg;
-}
-
-function download_themes()
-{
-    global $source_mod, $xoopsConfig, $on, $off, $add, $up, $down, $system_theme;
-
-    $mypath = XOOPS_ROOT_PATH . '/themes/';
-
-    $d = opendir($mypath);
-    $mod_msg = '';
-    $need_down = [];
-    $download = false;
-    while (false !== ($file = readdir($d))) {
-        if ('.' !== $file && '..' !== $file) {
-            $typepath = $mypath . $file;
-
-            if ('dir' === filetype($typepath)) {
-                if (!isset($source_mod[$file]) and in_array($file, $xoopsConfig['theme_set_allowed']) and !in_array($file, $system_theme)) {
-                    $dir_size = format_size(GetDirectorySize($typepath));
-                    $need = ($xoopsConfig['theme_set'] == $file) ? '，主佈景，務必下載' : '，非主要佈景，不下載也沒關係';
-                    $mod_msg .= "<li class='important'><a href='{$_SERVER['PHP_SELF']}?op=download_zip&dir={$typepath}'>{$down}{$typepath}</a>（約 {$dir_size}{$need}）</li>";
-                    $download = true;
-                    $_SESSION['zip_del']["{$file}.zip"] = "{$file}.zip";
-                }
-            }
-        }
-    }
-
-    $msg = ($download) ? "底下是貴站有用到的佈景，但在集中式主機並不提供，故請自行下載到 <code>C:\\move\\themes\\</code> 並解壓：<ul>{$mod_msg}</ul>" : "{$on}貴站所需的佈景，集中式主機上均有，故無須自行下載。";
+    <li>接著用FTP軟體（如：<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入到新主機，將 FileZilla 左邊切換至 <code>C:\\move\\</code>，右邊切換至新主機的網頁目錄下，例如：/var/www/ 下。</li>
+    <li>{$up}將左邊的 <span class='danger'>C:\\move\\" . basename(XOOPS_ROOT_PATH) . "</span>下的所有目錄檔案，上傳到新主機的網頁目錄下</li>
+    <li>{$up}將左邊的 <span class='danger'>C:\\move\\</span> 中的 <span class='danger'>" . basename(XOOPS_VAR_PATH) . "</span> 及 <span class='danger'>" . basename(XOOPS_PATH) . "</span>，上傳到新主機，和網頁目錄放在同一層。</li>
+    <li>若新主機是 Linux、FreeBSD 環境，記得進行權限設定，將 <code>xoops_data</code>、<code>網頁目錄/uploads</code> 設為 777
+        <div class='alert alert-success'>
+            chmod -R 777 xoops_data<br>
+            chmod -R 777 網頁目錄/uploads<br>
+        </div>
+        如：
+        <pre class='brush:bash;gutter:false;'>
+            chmod -R 777 /var/www/html/uploads
+            chmod -R 777 /var/www/xoops_data
+        </pre>
+    </li>";
 
     return $msg;
 }
 
-function upload_themes()
+function download_files()
 {
-    global $source_mod, $xoopsConfig, $on, $off, $add, $up, $down, $isWin, $system_theme, $isDCS;
+    global $latest_xoops_version, $max_xoops_version, $source_mod, $on, $off, $add, $up, $down, $isWin;
 
-    $mypath = XOOPS_ROOT_PATH . '/themes/';
+    $XOOPS_ROOT_PATH = XOOPS_ROOT_PATH;
 
-    $d = opendir($mypath);
-    $mod_msg = '';
-    $need_up = [];
-    while (false !== ($file = readdir($d))) {
-        if ('.' !== $file && '..' !== $file) {
-            $typepath = $mypath . $file;
+    $public_html_size = format_size(GetDirectorySize(XOOPS_ROOT_PATH));
+    $xoops_data_size = format_size(GetDirectorySize(XOOPS_VAR_PATH));
+    $xoops_lib_size = format_size(GetDirectorySize(XOOPS_PATH));
 
-            if ('dir' === filetype($typepath)) {
-                if (!isset($source_mod[$file]) and in_array($file, $xoopsConfig['theme_set_allowed']) and !in_array($file, $system_theme)) {
-                    $need_up[] = "<span class='danger'>$file</span>";
-                }
-            }
-        }
-    }
+    $filezilla = '';
+    $filezilla = $isWin ? '' : "<div class='alert alert-info'>請先用FTP軟體（如：<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入本網站 <code>" . $_SERVER['SERVER_NAME'] . '</code>，左邊切換至<code>C:\\move\\</code>，右邊切換到 <code>' . dirname(XOOPS_ROOT_PATH) . "/</code>，將 <span class='danger'>" . basename(XOOPS_ROOT_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_VAR_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_PATH) . "</span> 三個資料夾下載到左邊的 <code>C:\\move\\</code> 底下即可。</div>";
 
-    $need_up_mods = implode('、', $need_up);
+    $mod_msg = "<li class='important'>{$down}" . XOOPS_ROOT_PATH . "（約 {$public_html_size}）</li>
+    <li class='important'>{$down}" . XOOPS_VAR_PATH . "（約 {$xoops_data_size}）</li>
+    <li class='important'>{$down}" . XOOPS_PATH . "（約 {$xoops_lib_size}）</li>";
 
-    $msg = ($need_up_mods) ? "{$up} <code>C:\\move\\modules\\</code> 裡面的 {$need_up_mods} 這幾個佈景資料夾上傳到新主機的 <code>/public_html/themes/</code> 底下即可。" : "{$on}貴站所需的佈景，集中式主機上均有，故無須自行上傳。";
+    $msg = "底下是XOOPS實體檔案，請自行用FTP軟體下載到 <code>C:\\move\\</code> 底下：<ul>{$mod_msg}{$filezilla}</ul>";
 
     return $msg;
 }
 
-function download_uploads()
+function upload_files()
 {
-    global $source_mod, $on, $off, $add, $up, $down, $isWin, $isDCS;
+    global $latest_xoops_version, $max_xoops_version, $source_mod, $on, $off, $add, $up, $down;
 
-    del_tmp_zip();
-
-    $XOOPS_ROOT_PATH = get_ftp_path(XOOPS_ROOT_PATH);
-
-    $mypath = XOOPS_ROOT_PATH . '/uploads/';
-    $size = GetDirectorySize($mypath);
-    $dir_size = format_size($size);
-    $filezilla = $over100 = '';
-    if ($size > 104857600) {
-        if ($isDCS) {
-            $over100 = "，檔案超過 100M，建議用<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FTP軟體</a>下載";
-
-            $filezilla = "<div class='alert alert-info'>請先用FTP軟體（如：<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入本網站 <code>ftp.dcs.tn.edu.tw</code>，左邊切換至<code>C:\\move\\</code>，右邊切換到 <code>" . $XOOPS_ROOT_PATH . "/</code>，並只要將 <span class='danger'>uploads</span> 整個資料夾下載到 <code>C:\\move\\</code> 底下即可。</div>";
-            $path = "{$down}{$mypath}";
-        } else {
-            $over100 = $isWin ? '，檔案超過 100M，如果您可以在本機上操作，那先不用下載' : "，檔案超過 100M，建議用<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FTP軟體</a>下載";
-
-            $filezilla = $isWin ? '' : "<div class='alert alert-info'>請先用FTP軟體（如：<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入本網站 <code>" . $_SERVER['SERVER_NAME'] . '</code>，左邊切換至<code>C:\\move\\</code>，右邊切換到 <code>' . $XOOPS_ROOT_PATH . "/</code>，並只要將 <span class='danger'>uploads</span> 整個資料夾下載到 <code>C:\\move\\</code> 底下即可。</div>";
-            $path = "{$down}{$mypath}";
-        }
-    } else {
-        $path = "<a href='{$_SERVER['PHP_SELF']}?op=download_zip&dir={$mypath}'>{$down}{$mypath}</a>";
-    }
-    $mod_msg = "<li class='important'>{$path}（約 {$dir_size}{$over100}）</li>";
-    $msg = "底下是貴站使用者所上傳的各式實體檔案、圖片、資料，故也需要搬到新主機，請自行下載到 <code>C:\\move\\</code> 並解壓：<ul>{$mod_msg}{$filezilla}</ul>";
-
-    return $msg;
-}
-
-function upload_uploads()
-{
-    global $source_mod, $on, $off, $add, $up, $down;
-    del_tmp_zip();
-    $mypath = XOOPS_ROOT_PATH . '/uploads/';
-    $dir_size = format_size(GetDirectorySize($mypath));
-    $msg = "{$up}將 FileZilla 左邊切換至 <code>C:\\move\\</code>，右邊切換至 <code>/public_html/</code>，將左邊的 <code>uploads</code> （共約 {$dir_size}）上傳到 <code>/public_html/</code> 下覆寫原本的 <code>uploads</code> 即可。<div class='alert alert-danger'>請記得將 uploads（含底下所有目錄及檔案）的寫入權限都設為 777</div>";
+    $msg = "<li>請先用FTP軟體（如：<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入本網站 <code>" . $_SERVER['SERVER_NAME'] . "</code>，將 FileZilla 左邊切換至 <code>C:\\move\\</code>，右邊切換至 <code>" . dirname(XOOPS_ROOT_PATH) . "/</code></li>
+    <li>{$up}將左邊的 <span class='danger'>" . basename(XOOPS_ROOT_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_VAR_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_PATH) . "</span> 三個資料夾上傳到 <code>" . dirname(XOOPS_ROOT_PATH) . "/</code> 下覆寫原本目錄、檔案即可。</li>";
 
     return $msg;
 }
 
 function download_sql()
 {
-    global $xoopsDB, $source_mod, $on, $off, $add, $up, $down, $isTN;
+    global $latest_xoops_version, $max_xoops_version, $xoopsDB, $source_mod, $on, $off, $add, $up, $down;
 
     $sql = "SELECT
     ROUND(SUM(data_length + index_length) / 1024 / 1024, 2)
@@ -577,31 +472,17 @@ function download_sql()
     $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     list($dbsize) = $xoopsDB->fetchRow($result);
 
-    if ($isTN) {
-        $id = $_SESSION['schoolweb_id'];
-        if (!isset($_SESSION['schoolweb_id']) and mb_strpos($_SERVER['SERVER_NAME'], '.tn.edu.tw')) {
-            $str = str_replace('.tn.edu.tw', '', $_SERVER['SERVER_NAME']);
-            $s = explode('.', $str);
-            $id = $s[1] ? "{$s[1]}_{$s[0]}" : $s[0];
-        } else {
-            list($schooldomain, $subdomain) = explode('_', $_SESSION['schoolweb_id']);
-        }
+    $tn_note = '';
+    $new_url = $_SESSION['new_url'] ? $_SESSION['new_url'] : ' http://新主機的網址 ';
+    $value = $_SESSION['new_url'] ? $_SESSION['new_url'] : '';
 
-        $replace = XOOPS_DB_PREFIX === 'xx' ? '' : '<li>搜尋 <code>`' . XOOPS_DB_PREFIX . '_</code>，取代成 <code>`xx_</code></li>';
-
-        $tn_note = '<ul><li>若新站和舊站網址一樣，或者新站和舊站網址不一樣，但已經有去設定 Web DNS 設定新站網址，那麼請填：「<span class="important">http://' . $subdomain . '.' . $schooldomain . '.tn.edu.tw</span>」。</li><li>若新舊站網只不同，且還未去 Web DNS 設定新站網址，那麼請填「<span class="important">http://schoolweb.tn.edu.tw/~' . $id . '</span>」）。</li></ul>下載後請將 mysql.sql 存到 <code>C:\\move\\</code> 底下即可。';
-        $value = 'http://schoolweb.tn.edu.tw/~' . $id;
-        $new_url = '<code>http://schoolweb.tn.edu.tw/~' . $id . '</code> 或 <code>http://' . $subdomain . '.' . $schooldomain . '.tn.edu.tw</code>';
-    } else {
-        $tn_note = $value = '';
-        $new_url = '<span class="important">http://新主機的網址</span>';
-    }
-
-    $msg = '接下來，我們必須匯出本站在資料庫中的所有內容，並且幫您把裡面的一些網址替換掉，故請在下方填入您在集中式主機的完整網址<span class="danger">（網址最後不要有 /）</span>。' . $tn_note . '<p>
+    $msg = '
+    <li>若只是單純要做本站的資料庫備份，請按 <a href="' . $_SERVER['PHP_SELF'] . '?op=export_sql" class="btn btn-success"><img src="images/icons/down.png" alt="down" style="width:16px; margin-right: 4px;">下載 SQL 檔（約 ' . $dbsize . ' MB）</a> 即可。</li>
+    <li>若是要搬移到新主機的，我們必須將資料庫中的本站網址替換成<span class="important">' . $new_url . '</span>（如此一些連結或圖片才能正常顯示），故請在下方填入新主機的網址<span class="danger">（網址最後不要有 /）</span>。' . $tn_note . '<p>
     <form action="' . $_SERVER['PHP_SELF'] . '" method="post">
         <div class="input-group">
             <div class="input-group-prepend">
-                <span class="input-group-text" id="sizing-addon1">請輸入您在新網站（集中式網站）的網址：</span>
+                <span class="input-group-text" id="sizing-addon1">請輸入新主機的網址：</span>
             </div>
             <input type="text" name="new_url" class="form-control" value="' . $value . '">
             <span class="input-group-btn">
@@ -615,127 +496,79 @@ function download_sql()
         若是無法成功下載 mysql.sql，那麼，只能手動處理（底下就是上述程式自動處理的部份）：
         <ol>
             <li>請手動連至<a href="' . XOOPS_URL . '/modules/tad_adm/pma.php?username=' . XOOPS_DB_USER . '&db=' . XOOPS_DB_NAME . '&dump=" target="_blank">資料庫的匯出程式</a>，選擇「儲存」，並按「匯出」即可，存成 <code>C:\\move\\mysql.sql</code></li>
-            <li>開啟文字編輯器，開啟 <code>C:\\move\\mysql.sql</code>，並執行取代功能（一般是 Ctrl+H）。</li>
-            <li>搜尋 <code>' . XOOPS_URL . '</code>，取代成 ' . $new_url . '</li>
+            <li>開啟文字編輯器，開啟 <code>C:\\move\\mysql.sql</code>，並執行取代功能（一般是 <kbd>Ctrl</kbd>+<kbd>H</kbd>）。</li>
+            <li>搜尋 <code>' . XOOPS_URL . '</code>，取代成<span class="important">' . $new_url . '</span></li>
             ' . $replace . '
             <li>儲存</li>
-    </div>';
+    </div></li>';
 
     return $msg;
 }
 
-function export_sql($new_url)
+function export_sql($new_url = '')
 {
-    global $isTN;
     if (!$_SESSION['tad_adm_isAdmin']) {
         redirect_header($_SERVER['PHP_SELF'], 3, '不具備管理身份');
     }
 
-    if ('/' === mb_substr($new_url, -1)) {
-        $new_url = mb_substr($new_url, 0, -1);
+    if ($new_url) {
+        if ('/' === mb_substr($new_url, -1)) {
+            $new_url = mb_substr($new_url, 0, -1);
+        }
     }
+
     set_time_limit(0);
     ignore_user_abort(true);
 
-    $db = new mysqli(XOOPS_DB_HOST, XOOPS_DB_USER, XOOPS_DB_PASS, XOOPS_DB_NAME);
-    $dump = new \XoopsModules\Tad_adm\MySQLDump($db);
-    $randname = md5(Utility::randStr());
-    $filename = XOOPS_ROOT_PATH . "/uploads/mysql{$randname}.sql";
+    $randname = date('YmdHis') . '-' . md5(Utility::randStr(8));
+    $filename = XOOPS_ROOT_PATH . "/uploads/tad_adm/mysql-{$randname}.sql";
+    $filename_url = XOOPS_URL . "/uploads/tad_adm/mysql-{$randname}.sql";
     if (file_exists($filename)) {
         unlink($filename);
     }
-    $dump->save($filename);
 
-    if (XOOPS_DB_PREFIX !== 'xx' and $isTN) {
-        $sql_content = file_get_contents($filename);
-        $new_content = str_replace('`' . XOOPS_DB_PREFIX . '_', '`xx_', $sql_content);
-    } else {
-        $new_content = file_get_contents($filename);
+    try {
+        $dump = new IMysqldump('mysql:host=' . XOOPS_DB_HOST . ';dbname=' . XOOPS_DB_NAME, XOOPS_DB_USER, XOOPS_DB_PASS, ['add-drop-table' => true, 'skip-triggers' => true, 'skip-comments' => true]);
+        $dump->start($filename);
+    } catch (\Exception $e) {
+        echo 'mysqldump-php error: ' . $e->getMessage();
     }
 
-    $new_content = str_replace(XOOPS_URL, $new_url, $new_content);
+    $new_content = file_get_contents($filename_url);
+
+    if ($new_url) {
+        $new_content = str_replace(XOOPS_URL, $new_url, $new_content);
+    }
+
     header('Content-type: text/sql');
-    header("Content-Disposition: attachment; filename=mysql{$randname}.sql");
+    header("Content-Disposition: attachment; filename=mysql-{$randname}.sql");
     echo $new_content;
+    unlink($filename);
     exit;
+}
+
+function import_sql()
+{
+    global $latest_xoops_version, $max_xoops_version, $source_mod, $on, $off, $add, $up, $down;
+
+    $msg = "<li>請登入本站的資料庫管理（<a href='" . XOOPS_URL . "/modules/tad_adm/pma.php' target='_blank'>" . XOOPS_URL . "/modules/tad_adm/pma.php</a>），執行「匯入」。</li>
+    <li>{$up}點擊 <kbd>瀏覽</kbd> 按鈕，並選取<code>C:\\move\\mysql.sql</code>，再按 <kbd>執行</kbd> 以匯入資料庫內容即可。</li>";
+    return $msg;
 }
 
 function upload_sql()
 {
-    global $source_mod, $on, $off, $add, $up, $down, $isTN;
-    if ($isTN) {
-        $id = $_SESSION['schoolweb_id'];
-        if (!isset($_SESSION['schoolweb_id']) and mb_strpos($_SERVER['SERVER_NAME'], '.tn.edu.tw')) {
-            $str = str_replace('.tn.edu.tw', '', $_SERVER['SERVER_NAME']);
-            $s = explode('.', $str);
-            $id = $s[1] ? "{$s[1]}_{$s[0]}" : $s[0];
-        } else {
-            list($schooldomain, $subdomain) = explode('_', $_SESSION['schoolweb_id']);
-        }
-        $msg = "{$up}最後，請登入<a href='https://schoolweb.tn.edu.tw/~{$id}/modules/tad_adm/pma.php?server=schooldb.tn.edu.tw&username={$id}&db={$id}&import=' target='_blank'>新主機的資料庫匯入程式</a>，點擊瀏覽按鈕，並選取<code>C:\\move\\mysql.sql</code>，再按「執行」以匯入資料庫內容即可。";
-    } else {
-        $msg = "{$up}最後，請登入新主機的資料庫管理（如：http://新主機網址/modules/tad_adm/pma.php），執行匯入，點擊瀏覽按鈕，並選取<code>C:\\move\\mysql.sql</code>，再按「執行」以匯入資料庫內容即可。</li>
-        <li>修改 新主機上/xoops_data/data/secure.php，主要是修改底下這幾個資料庫帳密設定，修改後存檔：
-        <div class='well card card-body bg-light'>
-        define('XOOPS_DB_USER', '新主機的資料庫帳號');<br>
-        define('XOOPS_DB_PASS', '新主機的資料庫密碼');<br>
-        define('XOOPS_DB_NAME', '新主機的資料庫名稱');
-        </div>";
-    }
+    global $latest_xoops_version, $max_xoops_version, $source_mod, $on, $off, $add, $up, $down;
+
+    $new_url = $_SESSION['new_url'] ? $_SESSION['new_url'] : 'http://新主機的網址';
+    $pma_url = $_SESSION['new_url'] ? "<a href='{$new_url}/modules/tad_adm/pma.php' target='_blank'>{$new_url}/modules/tad_adm/pma.php</a>" : 'http://新主機的網址/modules/tad_adm/pma.php';
+
+    $msg = "
+    <li>確定已經完成「<a href='#backup_sql'>備份本站的資料庫資料</a>」的第 4 點，取得修改過網址後的 <code>mysql-xxxx.sql</code> 檔</li>
+    <li>最後，請登入新主機的資料庫管理（如：{$pma_url}），執行「匯入」</li>
+    <li>{$up}點擊 <kbd>瀏覽</kbd> 按鈕，並選取 <code>C:\\move\\mysql-xxxx.sql</code>，再按 <kbd>執行</kbd> 以匯入到資料庫中即可。</li>";
 
     return $msg;
-}
-
-function download_zip($FromDir)
-{
-    if (!$_SESSION['tad_adm_isAdmin'] or empty($FromDir) or !is_dir($FromDir)) {
-        redirect_header($_SERVER['PHP_SELF'], 3, "查無 {$FromDir} 或不具備管理身份");
-    }
-
-    $dirname = basename($FromDir);
-
-    $toZip = XOOPS_ROOT_PATH . "/uploads/{$dirname}.zip";
-    if (file_exists($toZip)) {
-        unlink($toZip);
-    }
-
-    if (false !== mb_strpos($FromDir, '/modules/')) {
-        $type = '/modules';
-    } elseif (false !== mb_strpos($FromDir, '/themes/')) {
-        $type = '/themes';
-    } elseif (false !== mb_strpos($FromDir, '/uploads/')) {
-        del_tmp_zip();
-        $type = '/';
-    } else {
-        redirect_header($_SERVER['PHP_SELF'], 3, "{$FromDir} 是不合法的路徑。");
-
-        return;
-    }
-
-//    require_once __DIR__ . '/class/pclzip.lib.php';
-    $zipfile = new \XoopsModules\Tad_adm\PclZip($toZip);
-    $v_list = $zipfile->create($FromDir, PCLZIP_OPT_REMOVE_PATH, XOOPS_ROOT_PATH . $type);
-    if (0 == $v_list) {
-        die('Error : ' . $zipfile->errorInfo(true));
-    }
-    header('location:' . XOOPS_URL . "/uploads/{$dirname}.zip");
-
-    exit;
-}
-
-function del_tmp_zip()
-{
-    $d = opendir(XOOPS_ROOT_PATH . '/uploads/');
-    while (false !== ($file = readdir($d))) {
-        if ('.' !== $file && '..' !== $file) {
-            $typepath = $mypath . $file;
-            if ('dir' !== filetype($typepath)) {
-                if (in_array($file, $_SESSION['zip_del'])) {
-                    unlink($typepath);
-                }
-            }
-        }
-    }
 }
 
 function login_form()

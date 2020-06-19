@@ -1,4 +1,5 @@
 <?php
+use Xmf\Request;
 use XoopsModules\Tadtools\Utility;
 
 /*-----------引入檔案區--------------*/
@@ -15,7 +16,7 @@ function view_file()
     $theme_name = $xoopsConfig['theme_set'];
     $all_dir = $all_files = [];
     $dir = XOOPS_ROOT_PATH . "/themes/{$theme_name}/modules/";
-    $i = $total_size  = 0;
+    $i = $total_size = 0;
     if (is_dir($dir)) {
         if ($dh = opendir($dir)) {
             while (false !== ($file = readdir($dh))) {
@@ -63,11 +64,10 @@ function del_templates($dirs = [], $files = [])
 }
 
 /*-----------執行動作判斷區----------*/
-require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
-$op = system_CleanVars($_REQUEST, 'op', '', 'string');
-$g2p = system_CleanVars($_REQUEST, 'g2p', 0, 'int');
-$dirs = system_CleanVars($_REQUEST, 'dirs', '', 'array');
-$files = system_CleanVars($_REQUEST, 'files', '', 'array');
+$op = Request::getString('op');
+$g2p = Request::getInt('g2p');
+$dirs = Request::getArray('dirs');
+$files = Request::getArray('files');
 
 switch ($op) {
     case 'del_templates':

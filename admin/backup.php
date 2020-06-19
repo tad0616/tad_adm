@@ -1,4 +1,5 @@
 <?php
+use Xmf\Request;
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_backup.tpl';
 require_once __DIR__ . '/header.php';
@@ -52,9 +53,8 @@ function view_file()
 }
 
 /*-----------執行動作判斷區----------*/
-require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
-$op = system_CleanVars($_REQUEST, 'op', '', 'string');
-$g2p = system_CleanVars($_REQUEST, 'g2p', 0, 'int');
+$op = Request::getString('op');
+$g2p = Request::getInt('g2p');
 
 switch ($op) {
     default:
