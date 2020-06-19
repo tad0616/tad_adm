@@ -10,6 +10,8 @@ xoops_loadLanguage('main', 'tadtools');
 require_once __DIR__ . '/function.php';
 
 $op = Request::getString('op');
+$help_passwd = Request::getString('help_passwd');
+$uid = Request::getInt('uid');
 
 if ($xoopsUser) {
     $_SESSION['isAdmin'] = $xoopsUser->isAdmin(1);
@@ -19,7 +21,7 @@ if ($xoopsUser) {
     $configHandler = xoops_getHandler('config');
     $xoopsModuleConfig = &$configHandler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
 
-    $_SESSION['isAdmin'] = ('' != $xoopsModuleConfig['login'] and '' != $_POST['help_passwd'] and $xoopsModuleConfig['login'] == $_POST['help_passwd']) ? true : false;
+    $_SESSION['isAdmin'] = ('' != $xoopsModuleConfig['login'] and '' != $help_passwd and $xoopsModuleConfig['login'] == $help_passwd) ? true : false;
 } elseif ('send_passwd' === $op) {
     send_passwd();
     header("location: {$_SERVER['PHP_SELF']}?op=forgot");
@@ -106,45 +108,56 @@ switch ($op) {
         unable_blocks();
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
+
     case 'unable_modules':
         unable_modules();
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
+
     case 'enable_blocks':
         enable_blocks();
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
+
     case 'enable_modules':
         enable_modules();
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
+
     case 'reset_mem':
-        reset_mem($_POST['uid'], $_POST['new_pass']);
-        header('location: ' . XOOPS_URL . "/userinfo.php?uid={$_POST['uid']}");
+        reset_mem($uid, $_POST['new_pass']);
+        header('location: ' . XOOPS_URL . "/userinfo.php?uid={$uid}");
         exit;
+
     case 'debug_mode':
         debug_mode($v);
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
+
     case 'clear_cache':
         clear_cache();
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
+
     case 'clear_session':
         clear_session();
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
+
     case 'theme_default':
         theme_default();
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
+
     case 'close_site':
         close_site($v);
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
+
     case 'phpinfo':
         phpinfo();
         break;
+
     case 'logout':
         $_SESSION['isAdmin'] = false;
         header("location: {$_SERVER['PHP_SELF']}");

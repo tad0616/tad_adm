@@ -76,11 +76,11 @@ function tad_adm_new($options)
     if (empty($all_data)) {
         return;
     }
-
+    $g2p = (int) $_GET['g2p'];
     $block = "
     <form action='" . XOOPS_URL . "/modules/tad_adm/admin/spam.php' method='post'>
         $all_data
-        <input type='hidden' name='g2p' value='{$_GET['g2p']}'>
+        <input type='hidden' name='g2p' value='{$g2p}'>
         <input type='hidden' name='op' value='del_user'>
         <input type='submit' value='" . _MB_TADADM_DEL_CHK . "'>
     </form>

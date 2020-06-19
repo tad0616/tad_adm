@@ -9,18 +9,18 @@ require_once dirname(__DIR__) . '/function.php';
 
 /*-----------function區--------------*/
 //列出所有使用者
-function list_user($op = '', $mode = 'normal')
+function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p = 1)
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
 
     if ('byNeverLoginDays' === $op) {
-        $dayLimit = time() - $_GET['days'] * 86400;
+        $dayLimit = time() - $days * 86400;
         $andDayLimit = " and last_login=0 and user_regdate <= $dayLimit";
     } elseif ('byNeverStartDays' === $op) {
-        $dayLimit = time() - $_GET['days'] * 86400;
+        $dayLimit = time() - $days * 86400;
         $andDayLimit = " and level=0 and user_regdate <= $dayLimit";
     } elseif ('byEmail' === $op) {
-        $andDayLimit = " and email like '%{$_GET['byemail']}'";
+        $andDayLimit = " and email like '%{$byemail}'";
     } else {
         $andDayLimit = '';
     }
@@ -115,7 +115,6 @@ function list_user($op = '', $mode = 'normal')
     $time = $_SESSION['chk_end'] - $_SESSION['chk_start'];
     $days = (int) $_REQUEST['days'];
     $days = empty($days) ? 100 : $days;
-    $g2p = isset($_GET['g2p']) ? (int) $_GET['g2p'] : 1;
     $byemail = isset($_REQUEST['byemail']) ? $_REQUEST['byemail'] : '';
     $max = $xoopsModuleConfig['list_amount'] * 20;
 
@@ -131,7 +130,7 @@ function list_user($op = '', $mode = 'normal')
 }
 
 //列出所有垃圾郵件
-function list_spam()
+function list_spam($g2p = 1)
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
 
@@ -200,7 +199,7 @@ function list_spam()
     }
 
     $xoopsTpl->assign('_MA_TADADM_TOTAL', sprintf(_MA_TADADM_TOTAL, $total));
-    $xoopsTpl->assign('g2p', $_GET['g2p']);
+    $xoopsTpl->assign('g2p', $g2p);
     $xoopsTpl->assign('bar', $bar);
     $xoopsTpl->assign('all_data', $all_data);
 }
@@ -280,23 +279,26 @@ function del_all_user($uid_arr = [])
 
 /*-----------執行動作判斷區----------*/
 $op = Request::getString('op');
-$g2p = Request::getInt('g2p');
 $mode = Request::getString('mode');
+$byemail = Request::getString('byemail');
+$g2p = Request::getInt('g2p', 1);
+$uid = Request::getInt('uid');
+$days = Request::getInt('days');
 
 switch ($op) {
     /*---判斷動作請貼在下方---*/
     case 'del_user':
-        del_all_user($_POST['uid']);
+        del_all_user($uid);
         redirect_header($_SERVER['PHP_SELF'] . "?g2p=$g2p", 3, _MA_TADADM_DEL_OK);
         break;
 
     case 'spam':
-        list_spam();
+        list_spam($g2p);
         $xoopsTpl->assign('op', spam);
         break;
 
     default:
-        list_user($op, $mode);
+        list_user($op, $mode, $days, $byemail, $g2p);
         if ('all' === $op) {
             $g2p++;
             redirect_header($_SERVER['PHP_SELF'] . "?op=all&mode=$mode&g2p=$g2p", 3, _MA_TADADM_NEXT_PAGE);
