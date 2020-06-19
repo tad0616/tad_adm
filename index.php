@@ -1,5 +1,6 @@
 <?php
 use Xmf\Request;
+use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\Utility;
 
 require_once dirname(dirname(__DIR__)) . '/mainfile.php';
@@ -23,16 +24,21 @@ if ($xoopsUser) {
 
     $_SESSION['isAdmin'] = ('' != $xoopsModuleConfig['login'] and '' != $help_passwd and $xoopsModuleConfig['login'] == $help_passwd) ? true : false;
 } elseif ('send_passwd' === $op) {
-    send_passwd();
-    header("location: {$_SERVER['PHP_SELF']}?op=forgot");
-    exit;
+    $msg = send_passwd();
+    redirect_header($_SERVER['PHP_SELF'], 3, $msg);
+    // header("location: {$_SERVER['PHP_SELF']}?op=forgot");
+    // exit;
 }
 
 if (!$_SESSION['isAdmin']) {
     $sql = 'update ' . $xoopsDB->prefix('config') . " set `conf_value`='' where `conf_name`='login' and `conf_title`='_MI_TADADM_LOGIN'";
 
     if ('forgot' === $op) {
-        $form = '
+
+        $SweetAlert = new SweetAlert();
+        $SweetAlertCode = $SweetAlert->render("forget_mail", "index.php?op=send_passwd&go=", 'go', _MD_TADADM_CHANGE_CONFIRM_TITLE, _MD_TADADM_CHANGE_CONFIRM_TEXT, _MD_TADADM_CHANGE_CONFIRM_BTN, 'warning', true);
+
+        $form = $SweetAlertCode . '
         <div class="card">
             <div class="card-header text-white bg-primary">' . _MD_TADADM_FORGOT . '</div>
             <div class="card-body">
@@ -54,7 +60,7 @@ if (!$_SESSION['isAdmin']) {
             </div>
         </div>';
     } else {
-        $form = '
+        $form = $SweetAlertCode . '
         <form action="' . XOOPS_URL . '/user.php" method="post" role="form">
             <div class="card">
                 <div class="card-header text-white bg-primary">' . _MD_TADADM_LOGIN . '</div>
@@ -259,11 +265,12 @@ function send_now($email = '', $title = '', $content = '')
 {
     global $xoopsConfig, $xoopsDB, $xoopsModuleConfig, $xoopsModule;
 
-    $xoopsMailer = &getMailer();
+    $xoopsMailer = getMailer();
     $xoopsMailer->multimailer->ContentType = 'text/html';
     $xoopsMailer->addHeaders('MIME-Version: 1.0');
+    $headers = [];
 
-    $msg .= ($xoopsMailer->sendMail($email, $title, $content, $headers)) ? true : false;
+    $msg = ($xoopsMailer->sendMail($email, $title, $content, $headers)) ? true : false;
 
     return $msg;
 }

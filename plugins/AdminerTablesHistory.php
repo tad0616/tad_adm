@@ -1,27 +1,33 @@
 <?php
 
 /**
-* Show the history of the latest selected tables. Cookies based.
-* Set the js variable history_length to define the history length.
-* Works only with current browsers.
-* @link http://www.adminer.org/plugins/#use
-* @author Ale Rimoldi, http://www.ideale.ch/
-* @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
-* @license http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, version 2 (one or other)
-*/
-class AdminerTablesHistory {
+ * Show the history of the latest selected tables. Cookies based.
+ * Set the js variable history_length to define the history length.
+ * Works only with current browsers.
+ * @link http://www.adminer.org/plugins/#use
+ * @author Ale Rimoldi, http://www.ideale.ch/
+ * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
+ * @license http://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, version 2 (one or other)
+ */
+class AdminerTablesHistory
+{
+    public function __construct()
+    {
+    }
 
-	function tablesPrint($tables) {
-		?>
-<script type="text/javascript">
+    public function tablesPrint($tables)
+    {
+        ?>
+ <script <?php echo nonce(); ?>>
 
 	history_length = 5;
 
     function setCookie(c_name, value, exdays) {
       var exdate = new Date();
       exdate.setDate(exdate.getDate() + exdays);
-      var c_value = escape(value) + ((exdays === null) ? "" : "; expires=" + exdate.toUTCString());
+      var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
       document.cookie = c_name + "=" + c_value;
+      console.log(document.cookie);
     }
 
     function getCookie(c_name) {
@@ -66,17 +72,18 @@ class AdminerTablesHistory {
 		}
 	})
 </script>
-<?php if (array_key_exists('adminer_tables_history', $_COOKIE)) : ?>
+<?php if (array_key_exists('adminer_tables_history', $_COOKIE)): ?>
 <p onmouseover="menuOver(this, event);" onmouseout="menuOut(this);" style="white-space:nowrap;overflow:auto;text-overflow:ellipsis;"><?php
-  // print_r($_COOKIE['adminer_tables_history']);
-	foreach (array_reverse(json_decode($_COOKIE['adminer_tables_history'])) as $table) {
-		echo '<a href="' . h(ME) . 'select=' . urlencode($table) . '"' . bold($_GET["select"] == $table) . ">" . lang('select') . "</a>&nbsp;";
-		echo '<a href="' . h(ME) . 'table=' . urlencode($table) . '"' . bold($_GET["table"] == $table) . ">" . h($table) . "</a><br>\n";
-	}
-?></p>
-<?php endif; ?>
+// print_r($_COOKIE['adminer_tables_history']);
+        foreach (array_reverse(json_decode($_COOKIE['adminer_tables_history'])) as $table) {
+            echo '<a href="' . h(ME) . 'select=' . urlencode($table) . '"' . bold($_GET["select"] == $table) . ">" . lang('select') . "</a>&nbsp;";
+            echo '<a href="' . h(ME) . 'table=' . urlencode($table) . '"' . bold($_GET["table"] == $table) . ">" . h($table) . "</a><br>\n";
+        }
+        ?></p>
+<?php endif;?>
+
 <?php
-		return null;
-	}
+return null;
+    }
 
 }

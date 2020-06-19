@@ -11,13 +11,13 @@ function adminer_object()
 
     $plugins = array(
         // specify enabled plugins here
+        new AdminerTablesHistory,
         new FasterTablesFilter,
-        new AdminerRestoreMenuScroll,
         new AdminerJsonPreview,
         new AdminerSimpleMenu,
         new AdminerDumpJson,
         new AdminerJsonColumn,
-        new AdminerTablesHistory,
+        new AdminerDumpArray,
     );
 
     /* It is possible to combine customization and plugins:
