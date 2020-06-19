@@ -18,14 +18,14 @@ $uid = Request::getInt('uid');
 $show = Request::getBool('show');
 $msg_box = '';
 if ($xoopsUser) {
-    $_SESSION['isAdmin'] = $xoopsUser->isAdmin(1);
+    $_SESSION['sys_adm'] = $xoopsUser->isAdmin(1);
 } elseif ('helpme' === $op) {
     $moduleHandler = xoops_getHandler('module');
     $xoopsModule = $moduleHandler->getByDirname('tad_adm');
     $configHandler = xoops_getHandler('config');
     $xoopsModuleConfig = $configHandler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
 
-    $_SESSION['isAdmin'] = ('' != $xoopsModuleConfig['login'] and '' != $help_passwd and $xoopsModuleConfig['login'] == $help_passwd) ? true : false;
+    $_SESSION['sys_adm'] = ('' != $xoopsModuleConfig['login'] and '' != $help_passwd and $xoopsModuleConfig['login'] == $help_passwd) ? true : false;
 } elseif ('send_passwd' === $op) {
     $result = send_passwd();
     header("location: {$_SERVER['PHP_SELF']}?op=msg&show={$result}");
@@ -39,7 +39,7 @@ if ($xoopsUser) {
     $msg_box = "<div class='alert alert-info'>$msg</div>";
 }
 
-if (!$_SESSION['isAdmin']) {
+if (!$_SESSION['sys_adm']) {
     if ('forgot' === $op) {
         $SweetAlert = new SweetAlert();
         $SweetAlertCode = $SweetAlert->render("forget_mail", "index.php?op=send_passwd&go=", 'go', _MD_TADADM_CHANGE_CONFIRM_TITLE, _MD_TADADM_CHANGE_CONFIRM_TEXT, _MD_TADADM_CHANGE_CONFIRM_BTN, 'warning', true);
@@ -173,7 +173,7 @@ switch ($op) {
         break;
 
     case 'logout':
-        $_SESSION['isAdmin'] = false;
+        $_SESSION['sys_adm'] = false;
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
 }

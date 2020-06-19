@@ -1,9 +1,16 @@
+Tad Adm 2.87 (Released on 2020-06-19)
+==================================================================
+1. Support XOOPS 2.5.11.
+2. Upgrade Adminer to 4.7.7.
+3. Prevent "Rescue Password" function from being triggered by search engine
+
+
 Tad Adm 2.86 (released on 2020-04-18)
-======================================================= =================
+==================================================================
 1. Optimize the XOOPS Upgrade Migration Guide
 
 Tad Adm 2.85 (released 2020-03-14)
-======================================================= =================
+==================================================================
 1.Upgrade Adminer to 4.7.6
 2.Fixed the problem that ordinary users will not jump to the homepage when logging in with this module
 3. Remove unnecessary files
@@ -11,16 +18,16 @@ Tad Adm 2.85 (released 2020-03-14)
 
 
 Tad Adm 2.84 (2019-08-17 released)
-=========================================================== ================
+==================================================================
 1. Upgrade Adminer to 4.7.2
 2. Fixed an issue where ssh could not be used
 
 Tad Adm 2.83 (released from 2019-07-28)
-=========================================================== ================
+==================================================================
 1. Added installation material function
 
 Tad Adm 2.82 (released from 2019-06-13)
-=========================================================== ================
+==================================================================
 1. Modify XOOPS can not upgrade the problem
 2. Add various versions and dependency checks
 3. Significantly improved installation and upgrade of new screens

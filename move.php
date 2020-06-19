@@ -14,8 +14,8 @@ xoops_loadLanguage('main', 'tadtools');
 
 require_once __DIR__ . '/function.php';
 
-$_SESSION['tad_adm_isAdmin'] = ($xoopsUser) ? $xoopsUser->isAdmin(1) : false;
-// $_SESSION['tad_adm_isAdmin'] = 1; //不須密碼模式，危險，沒事勿用。
+$_SESSION['sys_adm'] = ($xoopsUser) ? $xoopsUser->isAdmin(1) : false;
+// $_SESSION['sys_adm'] = 1; //不須密碼模式，危險，沒事勿用。
 
 $on = '<img src="images/icons/yes.png" alt="on" style="margin-right: 4px;">';
 $off = '<img src="images/icons/no.png" alt="off" style="margin-right: 4px;">';
@@ -154,7 +154,7 @@ function move_step()
         <h2>升級本站的 XOOPS 至最新版本</h2>
     </div>';
 
-    if ($_SESSION['tad_adm_isAdmin']) {
+    if ($_SESSION['sys_adm']) {
         $content .= '
         <ol>
             <li>' . modules_version() . '</li>
@@ -507,7 +507,7 @@ function download_sql()
 
 function export_sql($new_url = '')
 {
-    if (!$_SESSION['tad_adm_isAdmin']) {
+    if (!$_SESSION['sys_adm']) {
         redirect_header($_SERVER['PHP_SELF'], 3, '不具備管理身份');
     }
 
