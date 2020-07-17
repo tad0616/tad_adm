@@ -19,9 +19,9 @@ class OnlineUpgrade
         global $xoopsModule, $xoopsModuleConfig;
 
         if ('tad_adm' !== $xoopsModule->dirname()) {
-            $moduleHandler     = xoops_getHandler('module');
-            $xModule           = $moduleHandler->getByDirname('tad_adm');
-            $configHandler     = xoops_getHandler('config');
+            $moduleHandler = xoops_getHandler('module');
+            $xModule = $moduleHandler->getByDirname('tad_adm');
+            $configHandler = xoops_getHandler('config');
             $TadAmModuleConfig = $configHandler->getConfigsByCat(0, $xModule->mid());
         } else {
             $TadAmModuleConfig = $xoopsModuleConfig;
@@ -38,20 +38,20 @@ class OnlineUpgrade
         $all_mods = self::get_tad_json_info('all2.json');
 
         // 已安裝模組
-        $mods   = $blocks   = [];
-        $sql    = 'SELECT * FROM ' . $xoopsDB->prefix('modules') . '';
+        $mods = $blocks = [];
+        $sql = 'SELECT * FROM ' . $xoopsDB->prefix('modules') . '';
         $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
         while ($mod = $xoopsDB->fetchArray($result)) {
-            $dirname        = $mod['dirname'];
+            $dirname = $mod['dirname'];
             $mods[$dirname] = $mod;
         }
         $installed_modules = array_keys($mods);
 
         // 已安裝區塊
-        $sql    = 'SELECT * FROM ' . $xoopsDB->prefix('newblocks') . " WHERE `mid`=0 AND `dirname`!='' ORDER BY side, weight";
+        $sql = 'SELECT * FROM ' . $xoopsDB->prefix('newblocks') . " WHERE `mid`=0 AND `dirname`!='' ORDER BY side, weight";
         $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
         while ($block = $xoopsDB->fetchArray($result)) {
-            $dirname          = $block['dirname'];
+            $dirname = $block['dirname'];
             $blocks[$dirname] = $block;
         }
         $installed_blocks = array_keys($blocks);
@@ -61,36 +61,36 @@ class OnlineUpgrade
                 switch ($kind) {
                     case "module":
                         $is_installed = in_array($dirname, $installed_modules) ? true : false;
-                        $item         = isset($mods[$dirname]) ? $mods[$dirname] : [];
+                        $item = isset($mods[$dirname]) ? $mods[$dirname] : [];
                         break;
 
                     case "theme":
                         $is_installed = is_dir(XOOPS_ROOT_PATH . "/themes/{$dirname}") ? true : false;
-                        $item         = '';
+                        $item = '';
                         break;
 
                     case "block":
                         $is_installed = in_array($dirname, $installed_blocks) ? true : false;
-                        $item         = isset($blocks[$dirname]) ? $blocks[$dirname] : [];
+                        $item = isset($blocks[$dirname]) ? $blocks[$dirname] : [];
                         break;
 
                     case "adm_tpl":
                         $is_installed = is_dir(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}") ? true : false;
-                        $item         = '';
+                        $item = '';
                         break;
 
                     case "other":
                         $is_installed = file_exists(XOOPS_ROOT_PATH . "/uploads/module_sn_{$data['module_sn']}.txt") ? true : false;
                         // die(var_dump($is_installed));
-                        $item         = '';
+                        $item = '';
                         break;
                 }
 
                 if ($is_installed) {
-                    list($function, $enable, $mod_data)               = self::get_installed($kind, $data, $item);
+                    list($function, $enable, $mod_data) = self::get_installed($kind, $data, $item);
                     $all_install[$function][$kind][$enable][$dirname] = $mod_data;
                 } else {
-                    list($function, $mod_data)                 = self::get_uninstall($kind, $data);
+                    list($function, $mod_data) = self::get_uninstall($kind, $data);
                     $all_uninstall[$kind][$function][$dirname] = $mod_data;
                 }
             }
@@ -146,8 +146,8 @@ class OnlineUpgrade
         //後台部份
         $all_patch = $all_upgrade = array();
         foreach ($xoops_patch as $k => $xoops) {
-            $type                          = $xoops['xoops_type'];
-            list($function, $mod_data)     = self::get_patch($type, $xoops);
+            $type = $xoops['xoops_type'];
+            list($function, $mod_data) = self::get_patch($type, $xoops);
             $all_patch[$type][$function][] = $mod_data;
         }
         // die(var_dump($all_patch));
@@ -170,13 +170,13 @@ class OnlineUpgrade
 
         $item = [];
 
-        $status                      = self::version_status('', $data, '', $type);
+        $status = self::version_status('', $data, '', $type);
         list($background, $function) = self::get_patch_status($status);
 
         $item = $data;
 
-        $item['status']     = $status;
-        $item['function']   = $function;
+        $item['status'] = $status;
+        $item['function'] = $function;
         $item['background'] = $background;
         $item['xoops_date'] = date('Y-m-d H:i:s', $data['xoops_date']);
 
@@ -190,11 +190,11 @@ class OnlineUpgrade
     public static function get_tad_json_info($json = 'all.json')
     {
         $TadAmModuleConfig = self::get_adm_config();
-        $source            = empty($TadAmModuleConfig['source']) ? 'http://120.115.2.90' : $TadAmModuleConfig['source'];
-        $url               = "{$source}/uploads/tad_modules/{$json}";
+        $source = empty($TadAmModuleConfig['source']) ? 'http://120.115.2.90' : $TadAmModuleConfig['source'];
+        $url = "{$source}/uploads/tad_modules/{$json}";
 
         if (function_exists('curl_init')) {
-            $ch      = curl_init();
+            $ch = curl_init();
             $timeout = 5;
 
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -209,7 +209,7 @@ class OnlineUpgrade
             $data = file_get_contents($url);
         } else {
             $handle = fopen($url, "rb");
-            $data   = stream_get_contents($handle);
+            $data = stream_get_contents($handle);
             fclose($handle);
         }
 
@@ -268,8 +268,8 @@ class OnlineUpgrade
     {
         global $xoopsDB, $xoopsConfig;
         $dirname = $data['dirname'];
-        $item    = [];
-        $path    = '';
+        $item = [];
+        $path = '';
 
         switch ($kind) {
             case "module":
@@ -278,70 +278,70 @@ class OnlineUpgrade
                     $$k = $v;
                 }
                 $Version = round($version / 100, 2);
-                $path    = XOOPS_ROOT_PATH . "/modules/{$dirname}";
-                $enable  = $isactive;
+                $path = XOOPS_ROOT_PATH . "/modules/{$dirname}";
+                $enable = $isactive;
                 $is_link = is_link($path);
 
-                $item['mid']             = $mid;
-                $item['hasmain']         = $hasmain ? _MA_TADADM_1 : _MA_TADADM_0;
-                $item['hasadmin']        = $hasadmin ? _MA_TADADM_1 : _MA_TADADM_0;
-                $item['hassearch']       = $hassearch ? _MA_TADADM_1 : _MA_TADADM_0;
-                $item['hasconfig']       = $hasconfig ? _MA_TADADM_1 : _MA_TADADM_0;
-                $item['hascomments']     = $hascomments ? _MA_TADADM_1 : _MA_TADADM_0;
+                $item['mid'] = $mid;
+                $item['hasmain'] = $hasmain ? _MA_TADADM_1 : _MA_TADADM_0;
+                $item['hasadmin'] = $hasadmin ? _MA_TADADM_1 : _MA_TADADM_0;
+                $item['hassearch'] = $hassearch ? _MA_TADADM_1 : _MA_TADADM_0;
+                $item['hasconfig'] = $hasconfig ? _MA_TADADM_1 : _MA_TADADM_0;
+                $item['hascomments'] = $hascomments ? _MA_TADADM_1 : _MA_TADADM_0;
                 $item['hasnotification'] = $hasnotification ? _MA_TADADM_1 : _MA_TADADM_0;
 
                 break;
 
             case "theme":
-                $path        = XOOPS_ROOT_PATH . "/themes/{$dirname}";
-                $Version     = self::get_theme_version($dirname);
+                $path = XOOPS_ROOT_PATH . "/themes/{$dirname}";
+                $Version = self::get_theme_version($dirname);
                 $last_update = file_exists("{$path}/theme.ini") ? filemtime("{$path}/theme.ini") : '';
-                $enable      = in_array($dirname, $xoopsConfig['theme_set_allowed']) ? 1 : 0;
-                $is_link     = is_link($path);
+                $enable = in_array($dirname, $xoopsConfig['theme_set_allowed']) ? 1 : 0;
+                $is_link = is_link($path);
                 break;
 
             case "block":
-                $Version     = '';
+                $Version = '';
                 $last_update = $db_data['last_modified'];
-                $enable      = $db_data['visible'];
-                $is_link     = false;
+                $enable = $db_data['visible'];
+                $is_link = false;
                 break;
 
             case "adm_tpl":
-                $path        = XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}";
-                $Version     = file_get_contents("{$path}/version.txt");
+                $path = XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}";
+                $Version = file_get_contents("{$path}/version.txt");
                 $last_update = file_exists("{$path}/version.txt") ? filemtime("{$path}/version.txt") : '';
-                $enable      = $dirname == $xoopsConfig['cpanel'] ? 1 : 0;
-                $is_link     = is_link($path);
+                $enable = $dirname == $xoopsConfig['cpanel'] ? 1 : 0;
+                $is_link = is_link($path);
                 break;
 
             case "other":
-                $Version     = '';
+                $Version = '';
                 $last_update = file_get_contents(XOOPS_ROOT_PATH . "/uploads/module_sn_{$module_sn}.txt");
-                $enable      = 1;
-                $is_link     = false;
+                $enable = 1;
+                $is_link = false;
                 break;
         }
 
-        $status                      = self::version_status($Version, $data, $dirname, $data['kind'], $last_update);
+        $status = self::version_status($Version, $data, $dirname, $data['kind'], $last_update);
         list($background, $function) = self::get_installed_status($status);
 
         $rc = ($data['new_status_version']) ? " {$data['new_status']}{$data['new_status_version']}" : '';
 
-        $item['name']            = $data['module_title'];
-        $item['dirname']         = $dirname;
-        $item['descript']        = preg_replace('/\s\s+/', '<br>', trim($data['update_descript']));
-        $item['update_sn']       = $data['update_sn'];
-        $item['module_sn']       = $data['module_sn'];
-        $item['file_link']       = $data['file_link'];
-        $item['kind']            = $data['kind'];
-        $item['status']          = $status;
-        $item['function']        = $function;
-        $item['background']      = $background;
-        $item['new_version']     = ($data['new_version']) ? $data['new_version'] . $rc : '';
+        $item['name'] = $data['module_title'];
+        $item['dirname'] = $dirname;
+        $item['descript'] = preg_replace('/\s\s+/', '<br>', trim($data['update_descript']));
+        $item['update_sn'] = $data['update_sn'];
+        $item['module_sn'] = $data['module_sn'];
+        $item['file_link'] = $data['file_link'];
+        $item['kind'] = $data['kind'];
+        $item['status'] = $status;
+        $item['function'] = $function;
+        $item['background'] = $background;
+        $item['new_version'] = ($data['new_version']) ? $data['new_version'] . $rc : '';
         $item['new_last_update'] = ($data['new_last_update']) ? date('Y-m-d H:i', $data['new_last_update']) : '';
-        $item['logo']            = $data['logo'];
-        $item['logo_thumb']      = $data['logo_thumb'];
+        $item['logo'] = $data['logo'];
+        $item['logo_thumb'] = $data['logo_thumb'];
 
         $item['now_version'] = $Version;
         $item['last_update'] = date('Y-m-d H:i', $last_update);
@@ -354,7 +354,7 @@ class OnlineUpgrade
             $item['fileowner'] = $item['filegroup'] = $item['fileperms'] = '';
         }
         $item['is_link'] = $is_link;
-        $item['enable']  = $enable;
+        $item['enable'] = $enable;
 
         $item_data[] = $function;
         $item_data[] = $enable;
@@ -366,23 +366,23 @@ class OnlineUpgrade
     //未安裝模組
     public static function get_uninstall($kind, $data)
     {
-        $status                      = self::version_status('', $data, $data['dirname'], $data['kind']);
+        $status = self::version_status('', $data, $data['dirname'], $data['kind']);
         list($background, $function) = self::get_uninstall_status($status);
-        $rc                          = ($data['new_status_version']) ? " {$data['new_status']}{$data['new_status_version']}" : '';
+        $rc = ($data['new_status_version']) ? " {$data['new_status']}{$data['new_status_version']}" : '';
 
-        $item['name']            = $data['module_title'];
-        $item['dirname']         = $data['dirname'];
-        $item['descript']        = nl2br(trim($data['module_descript']));
-        $item['update_sn']       = $data['update_sn'];
-        $item['module_sn']       = $data['module_sn'];
-        $item['file_link']       = $data['file_link'];
-        $item['kind']            = $kind            = $data['kind'];
-        $item['status']          = $status;
-        $item['function']        = $function;
-        $item['background']      = $background;
-        $item['logo']            = $data['logo'];
-        $item['logo_thumb']      = $data['logo_thumb'];
-        $item['new_version']     = ($data['new_version']) ? $data['new_version'] . $rc : '';
+        $item['name'] = $data['module_title'];
+        $item['dirname'] = $data['dirname'];
+        $item['descript'] = nl2br(trim($data['module_descript']));
+        $item['update_sn'] = $data['update_sn'];
+        $item['module_sn'] = $data['module_sn'];
+        $item['file_link'] = $data['file_link'];
+        $item['kind'] = $kind = $data['kind'];
+        $item['status'] = $status;
+        $item['function'] = $function;
+        $item['background'] = $background;
+        $item['logo'] = $data['logo'];
+        $item['logo_thumb'] = $data['logo_thumb'];
+        $item['new_version'] = ($data['new_version']) ? $data['new_version'] . $rc : '';
         $item['new_last_update'] = ($data['new_last_update']) ? date('Y-m-d H:i', $data['new_last_update']) : '';
 
         $item_data[] = $function;
@@ -400,39 +400,39 @@ class OnlineUpgrade
             echo "<h5>{$type}-{$dirname}</h5>";
         }
 
-        $mod_data['new_version']       = isset($mod_data['new_version']) ? $mod_data['new_version'] : '';
-        $mod_data['xoops_version']     = isset($mod_data['xoops_version']) ? $mod_data['xoops_version'] : '';
+        $mod_data['new_version'] = isset($mod_data['new_version']) ? $mod_data['new_version'] : '';
+        $mod_data['xoops_version'] = isset($mod_data['xoops_version']) ? $mod_data['xoops_version'] : '';
         $mod_data['xoops_min_version'] = isset($mod_data['xoops_min_version']) ? $mod_data['xoops_min_version'] : '';
-        $mod_data['php_min_version']   = isset($mod_data['php_min_version']) ? $mod_data['php_min_version'] : '';
-        $mod_data['php_max_version']   = isset($mod_data['php_max_version']) ? $mod_data['php_max_version'] : '';
-        $mod_data['tadtools_version']  = isset($mod_data['tadtools_version']) ? $mod_data['tadtools_version'] : '';
-        $my_xoops_version              = self::get_version('xoops');
-        $my_php_version                = self::get_version('php');
-        $now_version                   = self::get_version('', $now_version);
-        $new_version                   = self::get_version('', $mod_data['new_version']);
-        $xoops_version                 = self::get_version('xoops', $mod_data['xoops_version']);
-        $xoops_min_version             = self::get_version('xoops', $mod_data['xoops_min_version']);
-        $php_min_version               = self::get_version('php', $mod_data["php_min_version"]);
-        $php_max_version               = self::get_version('php', $mod_data['php_max_version']);
-        $min_tadtools_version          = self::get_version('', $mod_data['tadtools_version']);
-        $now_tadtools_version          = self::get_version('tadtools');
+        $mod_data['php_min_version'] = isset($mod_data['php_min_version']) ? $mod_data['php_min_version'] : '';
+        $mod_data['php_max_version'] = isset($mod_data['php_max_version']) ? $mod_data['php_max_version'] : '';
+        $mod_data['tadtools_version'] = isset($mod_data['tadtools_version']) ? $mod_data['tadtools_version'] : '';
+        $my_xoops_version = self::get_version('xoops');
+        $my_php_version = self::get_version('php');
+        $now_version = self::get_version('', $now_version);
+        $new_version = self::get_version('', $mod_data['new_version']);
+        $xoops_version = self::get_version('xoops', $mod_data['xoops_version']);
+        $xoops_min_version = self::get_version('xoops', $mod_data['xoops_min_version']);
+        $php_min_version = self::get_version('php', $mod_data["php_min_version"]);
+        $php_max_version = self::get_version('php', $mod_data['php_max_version']);
+        $min_tadtools_version = self::get_version('', $mod_data['tadtools_version']);
+        $now_tadtools_version = self::get_version('tadtools');
 
         $chk_file = '';
         if ($type == "upgrade") {
-            $filemtime           = file_exists(XOOPS_ROOT_PATH . "/mainfile.php") ? filemtime(XOOPS_ROOT_PATH . "/mainfile.php") : 0;
+            $filemtime = file_exists(XOOPS_ROOT_PATH . "/mainfile.php") ? filemtime(XOOPS_ROOT_PATH . "/mainfile.php") : 0;
             $now_mod_last_update = $last_update ? $last_update : $filemtime;
             $new_mod_last_update = $mod_data['xoops_date'];
-            $chk_file            = XOOPS_ROOT_PATH . "/uploads/xoops_sn_{$mod_data['xoops_sn']}.txt";
+            $chk_file = XOOPS_ROOT_PATH . "/uploads/xoops_sn_{$mod_data['xoops_sn']}.txt";
         } elseif ($type == "patch") {
             $now_mod_last_update = 0;
             $new_mod_last_update = $mod_data['xoops_date'];
-            $chk_file            = XOOPS_ROOT_PATH . "/uploads/xoops_sn_{$mod_data['xoops_sn']}.txt";
+            $chk_file = XOOPS_ROOT_PATH . "/uploads/xoops_sn_{$mod_data['xoops_sn']}.txt";
         } elseif ($type == "theme") {
-            $filemtime           = file_exists(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini") ? filemtime(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini") : 0;
+            $filemtime = file_exists(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini") ? filemtime(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini") : 0;
             $now_mod_last_update = $last_update ? $last_update : $filemtime;
             $new_mod_last_update = $mod_data['new_last_update'];
         } elseif ($type == "adm_tpl") {
-            $filemtime           = file_exists(XOOPS_ROOT_PATH . "/themes/system/themes/tad/version.txt") ? filemtime(XOOPS_ROOT_PATH . "/themes/system/themes/tad/version.txt") : 0;
+            $filemtime = file_exists(XOOPS_ROOT_PATH . "/themes/system/themes/tad/version.txt") ? filemtime(XOOPS_ROOT_PATH . "/themes/system/themes/tad/version.txt") : 0;
             $now_mod_last_update = $last_update ? $last_update : $filemtime;
             $new_mod_last_update = $mod_data['new_last_update'];
         } elseif ($type == "block") {
@@ -444,7 +444,7 @@ class OnlineUpgrade
             // die("{$now_mod_last_update}={$new_mod_last_update}");
             // $chk_file            = XOOPS_ROOT_PATH . "/uploads/module_sn_{$mod_data['module_sn']}.txt";
         } else {
-            $filemtime           = file_exists(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php") ? filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php") : 0;
+            $filemtime = file_exists(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php") ? filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php") : 0;
             $now_mod_last_update = $last_update ? $last_update : $filemtime;
             $new_mod_last_update = $mod_data['new_last_update'];
         }
@@ -539,8 +539,8 @@ class OnlineUpgrade
 
             default:
                 if (empty($ver)) {
-                    $sql       = "select version from `" . $xoopsDB->prefix("modules") . "` where dirname='{$type}'";
-                    $result    = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+                    $sql = "select version from `" . $xoopsDB->prefix("modules") . "` where dirname='{$type}'";
+                    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
                     list($ver) = $xoopsDB->fetchRow($result);
                     for ($i = 0; $i < strlen($ver); $i++) {
                         $version[] = substr($ver, $i, 1);
@@ -550,7 +550,7 @@ class OnlineUpgrade
                         echo "$ver<br>";
                     }
 
-                    $v         = explode('.', $ver);
+                    $v = explode('.', $ver);
                     $version[] = $v[0];
                     if (isset($v[1])) {
                         for ($i = 0; $i < strlen($v[1]); $i++) {
@@ -562,7 +562,7 @@ class OnlineUpgrade
                 break;
         }
 
-        $v1     = $v2     = $v3     = 0;
+        $v1 = $v2 = $v3 = 0;
         $sizeof = sizeof($version);
         if ($sizeof == 1) {
             list($v1) = $version;
@@ -620,7 +620,7 @@ class OnlineUpgrade
         }
 
         // 偵測工作目錄是否可寫入
-        $work_dir    = self::get_work_dir($act);
+        $work_dir = self::get_work_dir($act);
         $is_writable = is_writable(XOOPS_ROOT_PATH . "/{$work_dir}/");
 
         //若是可以寫入
@@ -647,7 +647,7 @@ class OnlineUpgrade
         if ($val) {
             list($bootstrap_color, $theme_kind) = get_theme_color($theme);
             $xoopsConfig['theme_set_allowed'][] = $theme;
-            $theme_set_allowed                  = serialize($xoopsConfig['theme_set_allowed']);
+            $theme_set_allowed = serialize($xoopsConfig['theme_set_allowed']);
 
             $sql = 'update ' . $xoopsDB->prefix('config') . " set conf_value='{$theme_set_allowed}' where conf_name='theme_set_allowed'";
             $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -656,7 +656,7 @@ class OnlineUpgrade
 
             $xoopsDB->queryF($sql) or redirect_header($_SERVER['PHP_SELF'], 3, $xoopsDB->error());
         } else {
-            $array             = array_diff($xoopsConfig['theme_set_allowed'], $theme);
+            $array = array_diff($xoopsConfig['theme_set_allowed'], $theme);
             $theme_set_allowed = serialize($array);
 
             $sql = 'update ' . $xoopsDB->prefix('config') . " set conf_value='{$theme_set_allowed}' where conf_name='theme_set_allowed'";
@@ -760,7 +760,6 @@ class OnlineUpgrade
         }
     }
 
-
     public static function next_to_up($file_link = '', $xoops_sn = '', $act = '', $ssh = '')
     {
         if ('patch' === $act) {
@@ -774,15 +773,14 @@ class OnlineUpgrade
         }
     }
 
-    
     //取得XOOPS升級或補釘
     public static function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     {
         global $xoopsConfig, $xoopsDB;
 
         $TadAmModuleConfig = self::get_adm_config();
-        $file_link         = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
-        $new_file          = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
+        $file_link = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
+        $new_file = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
 
         Utility::mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
         // die("$file_link, $new_file");
@@ -802,7 +800,7 @@ class OnlineUpgrade
         $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
         $zip->close($new_file);
         if ('' != $ssh) {
-            $sh     = "#!/bin/sh\n";
+            $sh = "#!/bin/sh\n";
             $handle = fopen(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/ssh.txt", 'rb');
             if ($handle) {
                 while (false !== ($buffer = fgets($handle, 4096))) {
@@ -844,11 +842,10 @@ class OnlineUpgrade
         // }
     }
 
-
     //登入SSH
     public static function ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link = '', $dirname = '', $act = '', $update_sn = '', $xoops_sn = '')
     {
-        
+
         $TadAmModuleConfig = self::get_adm_config();
 
         $ssh = '';
@@ -901,7 +898,7 @@ class OnlineUpgrade
         global $xoopsConfig;
 
         $TadAmModuleConfig = self::get_adm_config();
-        $ver               = (int) str_replace('.', '', substr(XOOPS_VERSION, 6, 5));
+        $ver = (int) str_replace('.', '', substr(XOOPS_VERSION, 6, 5));
         if ($xoops_sn) {
             $add_count_url = $TadAmModuleConfig['source'] . "/modules/tad_modules/api.php?xoops_sn={$xoops_sn}&from=" . XOOPS_URL . "&sitename={$xoopsConfig['sitename']}&theme={$xoopsConfig['theme_set']}&version=$ver&language={$xoopsConfig['language']}";
         } else {
@@ -911,7 +908,7 @@ class OnlineUpgrade
         $url = $file1;
         // die($url);
         if (function_exists('curl_init')) {
-            $ch      = curl_init();
+            $ch = curl_init();
             $timeout = 5;
 
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -922,7 +919,7 @@ class OnlineUpgrade
             $contentx = curl_exec($ch);
             curl_close($ch);
 
-            $ch      = curl_init();
+            $ch = curl_init();
             $timeout = 5;
 
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -935,15 +932,15 @@ class OnlineUpgrade
             // die('curl');
         } elseif (function_exists('file_get_contents')) {
             $contentx = file_get_contents($url);
-            $count    = file_get_contents($add_count_url);
+            $count = file_get_contents($add_count_url);
             // die('file_get_contents');
         } else {
-            $handle   = fopen($url, 'rb');
+            $handle = fopen($url, 'rb');
             $contentx = stream_get_contents($handle);
             fclose($handle);
 
             $handle = fopen($add_count_url, 'rb');
-            $count  = stream_get_contents($handle);
+            $count = stream_get_contents($handle);
             fclose($handle);
         }
         // die('fopen');
@@ -1005,9 +1002,9 @@ class OnlineUpgrade
                 return;
             }
             if (!chmod($path, $filemode)) {
-                $fileowner    = self::getpwuid($path);
-                $filegroup    = getgrgid($path);
-                $fileperms    = mb_substr(sprintf('%o', fileperms($path)), -4);
+                $fileowner = self::getpwuid($path);
+                $filegroup = self::getgrgid($path);
+                $fileperms = mb_substr(sprintf('%o', fileperms($path)), -4);
                 $filemode_str = decoct($filemode);
                 print sprintf(_MA_TADADM_CHMOD_FAILED, $path, $filemode_str, $fileowner['name'], $filegroup['name'], $fileperms);
 
@@ -1076,14 +1073,14 @@ class OnlineUpgrade
         global $xoopsDB;
 
         $TadAmModuleConfig = self::get_adm_config();
-        $ver               = (int) str_replace('.', '', substr(XOOPS_VERSION, 6, 5));
-        $add_count_url     = $TadAmModuleConfig['source'] . "/modules/tad_modules/api.php?update_sn={$update_sn}&from=" . XOOPS_URL . "&sitename={$xoopsConfig['sitename']}&theme={$xoopsConfig['theme_set']}&version=$ver&language={$xoopsConfig['language']}";
+        $ver = (int) str_replace('.', '', substr(XOOPS_VERSION, 6, 5));
+        $add_count_url = $TadAmModuleConfig['source'] . "/modules/tad_modules/api.php?update_sn={$update_sn}&from=" . XOOPS_URL . "&sitename={$xoopsConfig['sitename']}&theme={$xoopsConfig['theme_set']}&version=$ver&language={$xoopsConfig['language']}";
 
         $url = $TadAmModuleConfig['source'] . "/uploads/tad_modules/{$update_sn}.json";
         // die(var_export($url));
 
         if (function_exists('curl_init')) {
-            $ch      = curl_init();
+            $ch = curl_init();
             $timeout = 5;
 
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -1094,7 +1091,7 @@ class OnlineUpgrade
             $data = curl_exec($ch);
             curl_close($ch);
 
-            $ch      = curl_init();
+            $ch = curl_init();
             $timeout = 5;
 
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
@@ -1105,15 +1102,15 @@ class OnlineUpgrade
             $count = curl_exec($ch);
             curl_close($ch);
         } elseif (function_exists('file_get_contents')) {
-            $data  = file_get_contents($url);
+            $data = file_get_contents($url);
             $count = file_get_contents($add_count_url);
         } else {
             $handle = fopen($url, 'rb');
-            $data   = stream_get_contents($handle);
+            $data = stream_get_contents($handle);
             fclose($handle);
 
             $handle = fopen($add_count_url, 'rb');
-            $count  = stream_get_contents($handle);
+            $count = stream_get_contents($handle);
             fclose($handle);
         }
         // die(var_export($data));
@@ -1126,7 +1123,7 @@ class OnlineUpgrade
             $block_id = $xoopsDB->getInsertId();
 
             $module_id = ($block['side'] <= 1) ? 0 : -1;
-            $sql       = 'INSERT INTO ' . $xoopsDB->prefix('block_module_link') . " (`block_id` , `module_id`) values('{$block_id}', '{$module_id}')";
+            $sql = 'INSERT INTO ' . $xoopsDB->prefix('block_module_link') . " (`block_id` , `module_id`) values('{$block_id}', '{$module_id}')";
             $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
             $sql = 'INSERT INTO ' . $xoopsDB->prefix('group_permission') . " (`gperm_groupid` , `gperm_itemid` , `gperm_modid` , `gperm_name`) values('1', '{$block_id}', '1', 'block_read'),('2', '{$block_id}', '1', 'block_read'),('3', '{$block_id}', '1', 'block_read')";
@@ -1145,7 +1142,7 @@ class OnlineUpgrade
         $TadAmModuleConfig = self::get_adm_config();
 
         $file_link = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
-        $new_file  = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
+        $new_file = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
 
         Utility::mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
         self::copyemz($file_link, $new_file, $update_sn);
@@ -1164,7 +1161,7 @@ class OnlineUpgrade
         $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$module_sn}/");
         $zip->close($new_file);
         if (!is_writable(XOOPS_ROOT_PATH)) {
-            $sh     = "#!/bin/sh\n";
+            $sh = "#!/bin/sh\n";
             $handle = fopen(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$module_sn}/ssh.txt", 'rb');
             if ($handle) {
                 while (false !== ($buffer = fgets($handle, 4096))) {
