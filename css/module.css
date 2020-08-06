@@ -6,7 +6,7 @@
 
 .my-input {
 	padding: 2px 4px;
-	font-size: 0.875em;
+	font-size: 0.875rem;
 	color: #555;
 	background-color: #fff;
 	background-image: none;
@@ -31,7 +31,7 @@ a.update_btn {
 	background-color: rgb(233, 67, 67);
 	border-radius: 5px;
 	color: white;
-	font-size: 0.92em;
+	font-size: 0.92rem;
 	padding: 4px 8px;
 	margin: 8px auto;
 	text-decoration: none;
@@ -44,7 +44,7 @@ a.latest_btn {
 	background-color: rgb(238, 241, 236);
 	border-radius: 5px;
 	color: rgb(62, 112, 87);
-	font-size: 0.92em;
+	font-size: 0.92rem;
 	padding: 4px 8px;
 	margin: 8px auto;
 	text-decoration: none;
@@ -57,7 +57,7 @@ a.install_btn {
 	background-color: rgb(36, 125, 207);
 	border-radius: 5px;
 	color: rgb(255, 255, 255);
-	font-size: 0.92em;
+	font-size: 0.92rem;
 	padding: 4px 8px;
 	margin: 8px auto;
 	text-decoration: none;
@@ -67,7 +67,7 @@ a.install_btn {
 
 .mod_head {
 	text-align: left;
-	font-size: 1.33em;
+	font-size: 1.33rem;
 	background: white;
 	color: rgb(46, 72, 160);
 	margin: 10px 0px 4px;

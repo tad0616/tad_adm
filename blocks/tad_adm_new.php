@@ -66,10 +66,10 @@ function tad_adm_new($options)
         $all_data .= "
         <fieldset style='color:{$color};background-color:{$bgcolor};'>
         <legend><input type='checkbox' name='uid[]' value='$uid' $checked id='uid_{$uid}'>{$uname}<label for='uid_{$uid}'> ({$uid}){$name}</label></legend>
-        <div style='word-wrap:break-word;word-break:break-all;font-size: 0.625em;'><label for='uid_{$uid}'>$email</label></div>
-        <div style='word-wrap:break-word;word-break:break-all;font-size: 0.625em;'><label for='uid_{$uid}'>$url</label></div>
-        <div style='word-wrap:break-word;word-break:break-all;font-size: 0.625em;'>$user_regdate ~ $last_login</div>
-        <div style='word-wrap:break-word;word-break:break-all;font-size: 0.625em;'>$user_sig</div>
+        <div style='word-wrap:break-word;word-break:break-all;font-size: 0.625rem;'><label for='uid_{$uid}'>$email</label></div>
+        <div style='word-wrap:break-word;word-break:break-all;font-size: 0.625rem;'><label for='uid_{$uid}'>$url</label></div>
+        <div style='word-wrap:break-word;word-break:break-all;font-size: 0.625rem;'>$user_regdate ~ $last_login</div>
+        <div style='word-wrap:break-word;word-break:break-all;font-size: 0.625rem;'>$user_sig</div>
         </fieldset>";
     }
 

@@ -11,7 +11,6 @@
                 <{if $all_patch.patch}>
                     <div>
                         <{foreach from=$all_patch.patch key=fun item=items}>
-                                <h2 class="mod_head"><{$fun}></h2>
                                 <table class="footable">
                                 <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_patch_thead.tpl"}>
                                 <{foreach from=$items item=mod}>
@@ -25,7 +24,6 @@
                 <{if $all_patch.upgrade}>
                     <div>
                         <{foreach from=$all_patch.upgrade key=fun item=items}>
-                                <h2 class="mod_head"><{$fun}></h2>
                                 <table class="footable">
                                 <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_patch_thead.tpl"}>
                                 <{foreach from=$items item=mod}>

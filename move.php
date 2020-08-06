@@ -263,7 +263,7 @@ function modules_version()
 
 function xoops_version()
 {
-    global $latest_xoops_version, $max_xoops_version, $on, $off, $add, $up, $down, $isWin;
+    global $latest_xoops_version, $max_xoops_version, $on, $off, $add, $up, $down, $isWin, $xoopsModuleConfig;
 
     $XOOPS_ROOT_PATH = XOOPS_ROOT_PATH;
     $XOOPS_VAR_PATH = XOOPS_VAR_PATH;
@@ -279,7 +279,7 @@ function xoops_version()
             $ftp = '';
             $ftp2 = '覆蓋新檔案：';
         } else {
-            $ftp = "<li>安裝<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>，並啟動之，連線至本網站 <code>{$_SERVER['SERVER_NAME']}</code>，FileZilla 左邊切換至<code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade</code>，右邊按照以下指示切換。</li>";
+            $ftp = "<li>安裝<a href='{$xoopsModuleConfig['source']}/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>，並啟動之，連線至本網站 <code>{$_SERVER['SERVER_NAME']}</code>，FileZilla 左邊切換至<code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade</code>，右邊按照以下指示切換。</li>";
             $ftp2 = "依序將底下目錄上傳<span class='important'>（左、右邊是指 FileZilla 的左右視窗）</span>：";
         }
 
@@ -342,7 +342,7 @@ function xoops_version()
 
             <li>{$add}請建立 <code>C:\\move\\</code>，作為備份檔案暫存區。</li>
 
-            <li>{$down}下載 <a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=146&cat_sn=16'>XOOPS $latest_xoops_version 正體中文版 2017-08-03（升級用） </a>，並儲存到 <code>C:\\move\\</code></li>
+            <li>{$down}下載 <a href='{$xoopsModuleConfig['source']}/modules/tad_uploader/index.php?op=dlfile&cfsn=146&cat_sn=16'>XOOPS $latest_xoops_version 正體中文版 2017-08-03（升級用） </a>，並儲存到 <code>C:\\move\\</code></li>
 
             <li>{$add}滑鼠移到 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_tw_for_upgrade_20170803.zip</code> 上方按右鍵，點擊「解壓縮至此」（以7-zip為例，總之，可以解壓縮即可）</li>
 
@@ -376,7 +376,7 @@ function xoops_version()
 
 function upload_modules()
 {
-    global $latest_xoops_version, $max_xoops_version, $source_mod, $on, $off, $add, $up, $down, $xoopsDB, $system_mods;
+    global $latest_xoops_version, $max_xoops_version, $source_mod, $on, $off, $add, $up, $down, $xoopsDB, $system_mods, $xoopsModuleConfig;
 
     $new_url = $_SESSION['new_url'] ? $_SESSION['new_url'] : 'http://新主機的網址';
 
@@ -410,7 +410,7 @@ function upload_modules()
         </pre>
     </li>
 
-    <li>接著用FTP軟體（如：<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入到新主機，將 FileZilla 左邊切換至 <code>C:\\move\\</code>，右邊切換至新主機的網頁目錄下，例如：/var/www/ 下。</li>
+    <li>接著用FTP軟體（如：<a href='{$xoopsModuleConfig['source']}/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入到新主機，將 FileZilla 左邊切換至 <code>C:\\move\\</code>，右邊切換至新主機的網頁目錄下，例如：/var/www/ 下。</li>
     <li>{$up}將左邊的 <span class='danger'>C:\\move\\" . basename(XOOPS_ROOT_PATH) . "</span>下的所有目錄檔案，上傳到新主機的網頁目錄下</li>
     <li>{$up}將左邊的 <span class='danger'>C:\\move\\</span> 中的 <span class='danger'>" . basename(XOOPS_VAR_PATH) . "</span> 及 <span class='danger'>" . basename(XOOPS_PATH) . "</span>，上傳到新主機，和網頁目錄放在同一層。</li>
     <li>若新主機是 Linux、FreeBSD 環境，記得進行權限設定，將 <code>xoops_data</code>、<code>網頁目錄/uploads</code> 設為 777
@@ -430,7 +430,7 @@ function upload_modules()
 
 function download_files()
 {
-    global $latest_xoops_version, $max_xoops_version, $source_mod, $on, $off, $add, $up, $down, $isWin;
+    global $latest_xoops_version, $max_xoops_version, $source_mod, $on, $off, $add, $up, $down, $isWin, $xoopsModuleConfig;
 
     $XOOPS_ROOT_PATH = XOOPS_ROOT_PATH;
 
@@ -439,7 +439,7 @@ function download_files()
     $xoops_lib_size = format_size(GetDirectorySize(XOOPS_PATH));
 
     $filezilla = '';
-    $filezilla = $isWin ? '' : "<div class='alert alert-info'>請先用FTP軟體（如：<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入本網站 <code>" . $_SERVER['SERVER_NAME'] . '</code>，左邊切換至<code>C:\\move\\</code>，右邊切換到 <code>' . dirname(XOOPS_ROOT_PATH) . "/</code>，將 <span class='danger'>" . basename(XOOPS_ROOT_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_VAR_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_PATH) . "</span> 三個資料夾下載到左邊的 <code>C:\\move\\</code> 底下即可。</div>";
+    $filezilla = $isWin ? '' : "<div class='alert alert-info'>請先用FTP軟體（如：<a href='{$xoopsModuleConfig['source']}/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入本網站 <code>" . $_SERVER['SERVER_NAME'] . '</code>，左邊切換至<code>C:\\move\\</code>，右邊切換到 <code>' . dirname(XOOPS_ROOT_PATH) . "/</code>，將 <span class='danger'>" . basename(XOOPS_ROOT_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_VAR_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_PATH) . "</span> 三個資料夾下載到左邊的 <code>C:\\move\\</code> 底下即可。</div>";
 
     $mod_msg = "<li class='important'>{$down}" . XOOPS_ROOT_PATH . "（約 {$public_html_size}）</li>
     <li class='important'>{$down}" . XOOPS_VAR_PATH . "（約 {$xoops_data_size}）</li>
@@ -452,9 +452,9 @@ function download_files()
 
 function upload_files()
 {
-    global $latest_xoops_version, $max_xoops_version, $source_mod, $on, $off, $add, $up, $down;
+    global $latest_xoops_version, $max_xoops_version, $source_mod, $on, $off, $add, $up, $down, $xoopsModuleConfig;
 
-    $msg = "<li>請先用FTP軟體（如：<a href='https://campus-xoops.tn.edu.tw/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入本網站 <code>" . $_SERVER['SERVER_NAME'] . "</code>，將 FileZilla 左邊切換至 <code>C:\\move\\</code>，右邊切換至 <code>" . dirname(XOOPS_ROOT_PATH) . "/</code></li>
+    $msg = "<li>請先用FTP軟體（如：<a href='{$xoopsModuleConfig['source']}/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入本網站 <code>" . $_SERVER['SERVER_NAME'] . "</code>，將 FileZilla 左邊切換至 <code>C:\\move\\</code>，右邊切換至 <code>" . dirname(XOOPS_ROOT_PATH) . "/</code></li>
     <li>{$up}將左邊的 <span class='danger'>" . basename(XOOPS_ROOT_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_VAR_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_PATH) . "</span> 三個資料夾上傳到 <code>" . dirname(XOOPS_ROOT_PATH) . "/</code> 下覆寫原本目錄、檔案即可。</li>";
 
     return $msg;

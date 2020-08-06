@@ -153,7 +153,7 @@ class OnlineUpgrade
             list($function, $mod_data) = self::get_patch($type, $xoops);
             $all_patch[$type][$function][] = $mod_data;
         }
-        // die(var_dump($all_patch));
+        // Utility::dd($all_patch);
         $xoopsTpl->assign('all_patch', $all_patch);
 
         $FooTable = new FooTable();

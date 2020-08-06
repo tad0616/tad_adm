@@ -104,4 +104,5 @@ switch ($op) {
 
 /*-----------秀出結果區--------------*/
 $xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
+$xoopsTpl->assign('source', $xoopsModuleConfig['source']);
 require_once __DIR__ . '/footer.php';

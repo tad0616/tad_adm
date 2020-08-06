@@ -85,7 +85,7 @@ if (!$_SESSION['sys_adm']) {
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label class="col-sm-3 col-form-label text-md-right"><a href="index.php?op=forgot" style="font-size: 0.75em;color:gray;">' . _MD_TADADM_FORGOT . '</a></label>
+                        <label class="col-sm-3 col-form-label text-md-right"><a href="index.php?op=forgot" style="font-size: 0.75rem;color:gray;">' . _MD_TADADM_FORGOT . '</a></label>
                         <div class="col-sm-9">
                             <input type="hidden" name="op" value="login">
                             <input type="hidden" name="xoops_redirect" value="/index.php">

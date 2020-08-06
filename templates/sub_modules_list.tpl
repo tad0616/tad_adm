@@ -1,9 +1,9 @@
 <tr style="background: <{$mod.background}>;">
     <td>
-        <div style="margin:4px 0px; font-size: 1.67em; font-weight: bolder;">
+        <div style="margin:4px 0px; font-size: 1.67rem; font-weight: bolder;">
             <{$mod.module_sn}>
         </div>
-        <div style="margin:4px 0px; font-size: 1em; font-weight: bolder;">
+        <div style="margin:4px 0px; font-size: 1rem; font-weight: bolder;">
             <{$mod.kind}>
         </div>
     </td>
@@ -11,13 +11,13 @@
         <img src="<{$mod.logo_thumb}>" alt="<{$mod.name}>" id="<{$mod.dirname}>_tip" style="width: 92px";>
     </td>
     <td>
-        <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" title="<{$mod.dirname}><{$smarty.const._MA_TADADM_MOD_ADMIN}>" target="_blank" style="font-weight: bold; font-size: 1em;"><{$mod.name}></a>
+        <a href="<{$source}>/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" title="<{$mod.dirname}><{$smarty.const._MA_TADADM_MOD_ADMIN}>" target="_blank" style="font-weight: bold; font-size: 1rem;"><{$mod.name}></a>
 
-        <div style="margin:4px 0px; font-size: 0.75em; font-weight: normal;">
+        <div style="margin:4px 0px; font-size: 0.75rem; font-weight: normal;">
             <a href="<{$xoops_url}>/modules/<{$mod.dirname}>" target="_blank"><{$mod.dirname}> <{$mod.now_version}></a> <{$mod.last_update}>
         </div>
 
-        <div style="margin:4px 0px; font-size: 0.75em; font-weight: normal;">
+        <div style="margin:4px 0px; font-size: 0.75rem; font-weight: normal;">
             <{if $mod.kind=="module" and $mod.function!="install"}>
                 <a href="<{$xoops_url}>/modules/<{$mod.dirname}>/admin/index.php" target="_blank" title="<{$mod.dirname}><{$smarty.const._MA_TADADM_MOD_ADMIN}>"><i class="fa fa-wrench"></i>
                     <{$smarty.const._MA_TADADM_ADM_TPL}></a>
@@ -45,9 +45,9 @@
     <td>
         <!-- <div><{$mod.status}>-<{$mod.function}></div> -->
         <{if $mod.function=='unable'}>
-            <div style="font-size: 0.92em;line-height: 1.5;">
+            <div style="font-size: 0.92rem;line-height: 1.5;">
                 <span style="color:rgb(156, 13, 13)"><{$mod.status}></span>
-                <a href="https://campus-xoops.tn.edu.tw/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" title="<{$mod.dirname}>">
+                <a href="<{$source}>/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" title="<{$mod.dirname}>">
                     <{$mod.name}>
                 </a>
             </div>
@@ -66,7 +66,7 @@
             </a>
         <{/if}>
 
-        <div style="margin:4px 0px; font-size: 0.6875em; font-weight: normal;">
+        <div style="margin:4px 0px; font-size: 0.6875rem; font-weight: normal;">
             <{$mod.dirname}> <{$mod.new_version}> <{$mod.new_last_update}>
         </div>
     </td>
