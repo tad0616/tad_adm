@@ -1,2 +1,11 @@
-<{assign var=this_file value=$smarty.template|basename|replace:'db:':''}>
-<{includeq file="$xoops_rootpath/modules/$xoops_dirname/templates/b4.tpl"}>
+<thead>
+    <tr style="background:black;color:white;">
+        <th style="background:black;color:white; width:90px;" data-hide="phone,tablet" ><{$smarty.const._MA_TADADM_ID}></th>
+        <th style="background:black;color:white; width:110px;" data-hide="phone,tablet"><{$smarty.const._MA_TADADM_IMG}></th>
+        <th style="background:black;color:white; width:350px;"data-hide="phone"><{$smarty.const._MA_TADADM_TITEL}></th>
+        <th style="background:black;color:white; width:350px;" data-class="expand"><{$smarty.const._TAD_FUNCTION}></th>
+        <th style="background:black;color:white; width:400px;" data-hide="phone"><{$smarty.const._MA_TADADM_DESCRIPTION}></th>
+        <th style="background:black;color:white;" data-hide="phone,tablet" nowrap><{$smarty.const._MA_TADADM_OWNER}></th>
+        <th style="background:black;color:white;" data-hide="phone,tablet" nowrap><{$smarty.const._MA_TADADM_WRITEABLE}></th>
+    </tr>
+</thead>

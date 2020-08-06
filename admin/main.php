@@ -2,7 +2,6 @@
 use Xmf\Request;
 use XoopsModules\Tadtools\Utility;
 use XoopsModules\Tad_adm\OnlineUpgrade;
-
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_main.tpl';
 require_once __DIR__ . '/header.php';
@@ -28,7 +27,6 @@ function get_theme_color($dirname)
 }
 
 /*-----------執行動作判斷區----------*/
-require_once $GLOBALS['xoops']->path('/modules/system/include/functions.php');
 $op = Request::getString('op');
 $update_sn = Request::getInt('update_sn');
 $module_sn = Request::getInt('module_sn');

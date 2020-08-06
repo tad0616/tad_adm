@@ -1,6 +1,7 @@
 <?php
 namespace XoopsModules\Tad_adm;
 
+use XoopsModules\Tadtools\EasyResponsiveTabs;
 use XoopsModules\Tadtools\FancyBox;
 use XoopsModules\Tadtools\FooTable;
 use XoopsModules\Tadtools\SweetAlert;
@@ -119,6 +120,8 @@ class OnlineUpgrade
 
         $xoopsTpl->assign('jquery', Utility::get_jquery(true));
 
+        $EasyResponsiveTabs = new EasyResponsiveTabs('#modTab');
+        $EasyResponsiveTabs->rander();
     }
 
 //列出所有XOOPS升級資訊
@@ -161,6 +164,8 @@ class OnlineUpgrade
 
         $xoopsTpl->assign('jquery', Utility::get_jquery(true));
 
+        $EasyResponsiveTabs = new EasyResponsiveTabs('#xoopsTab');
+        $EasyResponsiveTabs->rander();
     }
 
     //取得系統的升級或修補檔
