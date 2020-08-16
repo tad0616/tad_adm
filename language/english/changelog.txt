@@ -1,3 +1,12 @@
+Tad Adm 2.88 (Released on 2020-08-06)
+==================================================================
+1. Fix getgrgid() error.
+2. Merge Template
+3. Screen fine tuning
+4. Make the pinned items downloadable again.
+5. Completing the English Language System
+
+
 Tad Adm 2.87 (Released on 2020-06-19)
 ==================================================================
 1. Support XOOPS 2.5.11.

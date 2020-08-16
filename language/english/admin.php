@@ -101,3 +101,71 @@ define('_MA_TADADM_MOD_PREF', 'Preferences');
 define('_MA_TADADM_CAN_UPDATE_TO', 'Upgrade to');
 define('_MA_TADADM_ENABLE_MOD', 'Enable Module');
 define('_MA_TADADM_UNABLE_INSTALL_MODS', 'Unable to install module');
+define('_MA_TADADM_UNABLE_UPDATE_MODS', 'Un-upgradeable modules');
+define('_MA_TADADM_REMOVE', 'Remove');
+define('_MA_TADADM_DEFAULT_THEME', 'Current default themes');
+define('_MA_TADADM_UPDATE_TO_ALLOWED', 'make it optional');
+define('_MA_TADADM_UPDATE_TO_NOT_ALLOWED', 'Change to \'Not Optional');
+define('_MA_TADADM_WRITABLE', 'writable');
+
+define('_MA_TADADM_ALLOWED_THEMES', "Optional Site Themes");
+define('_MA_TADADM_NOT_ALLOWED_THEMES', "Don't open the selected site themes");
+define('_MA_TADADM_SPECIAL_THEMES', "Special Themes");
+define('_MA_TADADM_THEME_DELETE_OK', "Removal of the theme was successful!");
+
+define('_MA_TADADM_FAILED_TO_GET_JSON', "Unable to get file list");
+
+define('_MA_TADADM_ALLOWED_ENABLE_THEMES', "Installable Site Layout");
+define('_MA_TADADM_SPECIAL_ENABLE_THEMES', "Installable Special Themes");
+define('_MA_TADADM_SPECIAL_THEMES_CANT_DEFAULT', "Special Themes, not default");
+define('_MA_TADADM_SPECIAL_THEMES_CANT_USEABLE', "Special themes, should not be optional for the user");
+
+define('_MA_TADADM_ENABLE_MODS', 'Installable modules');
+define('_MA_TADADM_ENABLE_ADM', 'Installable backstage');
+define('_MA_TADADM_ENABLE_THEME', 'Installable Themes');
+define('_MA_TADADM_ENABLE_BLOCK', 'Installable Blocks');
+define('_MA_TADADM_UNABLE_BLOCKS', 'Closed blocks');
+define('_MA_TADADM_MOD_UPDATE_BLOCK', 'Upgrade Blocks Now');
+define('_MA_TADADM_UPGRADE_XOOPS', 'Upgrade now to');
+define('_MA_TADADM_PATCH_XOOPS', 'add');
+define('_MA_TADADM_UPGRADE_XOOPS_ITEMS', 'Upgradeable items');
+define('_MA_TADADM_PATCH_XOOPS_ITEMS', 'Supplementary items');
+define('_MA_TADADM_PATCH_OK', 'We did it!');
+define('_MA_TADADM_UPGRADE_OK', 'We got promoted!');
+define('_MA_TADADM_UPGRADE_FROM_URL', 'Then please proceed with the upgrade process manually.');
+define('_MA_TADADM_VERSION', 'editions');
+define('_MA_TADADM_HIGHER', 'higher than');
+define('_MA_TADADM_LOWER', 'lower than');
+define('_MA_TADADM_EQUAL', 'Already.');
+define('_MA_TADADM_UNABLE_UPGRADE', 'Cannot install or upgrade');
+define('_MA_TADADM_NONEED_UPGRADE', 'No upgrade required');
+define('_MA_TADADM_PATCH_INSTALLED', 'This patch is installed');
+define('_MA_TADADM_INSTALLED', 'Installed');
+
+define('_MA_TADADM_INSTALLED_ITEM', 'All Installed Items');
+define('_MA_TADADM_INSTALLED_BLOCK', 'Installed Blocks');
+define('_MA_TADADM_INSTALLED_THEME', 'Installed Themes');
+define('_MA_TADADM_INSTALLED_ADM', 'Backstage installed');
+define('_MA_TADADM_INSTALLED_MODS', 'Installed Modules');
+define('_MA_TADADM_INSTALLED_UNABLE_MODS', 'Installed but disabled modules');
+
+define('_MA_TADADM_NEED_UPGRADE', 'Items to be upgraded');
+define('_MA_TADADM_CLOSED', '(CLOSED)');
+define('_MA_TADADM_NEED_UPGRADE_MODS', 'Upgrade module required');
+define('_MA_TADADM_NEED_UPGRADE_THEME', 'Need to upgrade themes');
+define('_MA_TADADM_NEED_UPGRADE_BLOCK', 'Need to upgrade the block');
+define('_MA_TADADM_NEED_UPGRADE_ADM', 'Backstage upgrade required');
+
+define('_MA_TADADM_ADM_TPL', 'backstage');
+define('_MA_TADADM_CONFIG', 'Preferences');
+define('_MA_TADADM_UPDATE', 'update');
+define('_MA_TADADM_BLOCK', 'Block');
+define('_MA_TADADM_ID', 'Number');
+define('_MA_TADADM_IMG', 'Image');
+define('_MA_TADADM_TITEL', 'Project Name');
+define('_MA_TADADM_DESCRIPTION', 'Project Description');
+define('_MA_TADADM_OWNER', 'Owners');
+define('_MA_TADADM_WRITEABLE', 'Reading and Writing Privileges');
+define('_MA_TADADM_INSTALL', 'Manual Installation');
+define('_MA_TADADM_UPGRADE', 'Manual upgrade method');
+define('_MA_TADADM_ENABLE_OTHER', 'Installable Material');

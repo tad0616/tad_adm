@@ -1,7 +1,7 @@
 <?php
 xoops_loadLanguage('modinfo_common', 'tadtools');
 define('_MI_TADADM_NAME', '站長工具箱');
-define('_MI_TADADM_AUTHOR', '站長工具箱');
+define('_MI_TADADM_AUTHOR', 'Tad (tad0616@gmail.com)');
 define('_MI_TADADM_CREDITS', 'Michael Beck');
 define('_MI_TADADM_DESC', '此模組提供一些站長用的工具');
 define('_MI_TADADM_ADMENU1', '模組隨選');
