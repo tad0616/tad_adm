@@ -282,7 +282,7 @@ $op = Request::getString('op');
 $mode = Request::getString('mode');
 $byemail = Request::getString('byemail');
 $g2p = Request::getInt('g2p', 1);
-$uid = Request::getInt('uid');
+$uid = Request::getVar('uid', [], null, 'array', 4);
 $days = Request::getInt('days');
 
 switch ($op) {

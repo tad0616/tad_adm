@@ -197,7 +197,7 @@ class OnlineUpgrade
         $TadAmModuleConfig = self::get_adm_config();
         $source = empty($TadAmModuleConfig['source']) ? 'http://120.115.2.90' : $TadAmModuleConfig['source'];
         $url = "{$source}/uploads/tad_modules/{$json}";
-
+        $error = '';
         if (function_exists('curl_init')) {
             $ch = curl_init();
             $timeout = 5;
@@ -208,8 +208,10 @@ class OnlineUpgrade
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
             $data = curl_exec($ch);
+            if ($data === false) {
+                $error = "<br>Curl error ($url):" . curl_errno($ch) . curl_error($ch);
+            }
             curl_close($ch);
-
         } elseif (function_exists('file_get_contents')) {
             $data = file_get_contents($url);
         } else {
@@ -219,11 +221,10 @@ class OnlineUpgrade
         }
 
         if (empty($data)) {
-            redirect_header("index.php", 3, _MA_TADADM_FAILED_TO_GET_JSON);
+            redirect_header("index.php", 3, _MA_TADADM_FAILED_TO_GET_JSON . $error);
         }
 
         $mod = json_decode($data, true);
-
         return $mod;
     }
     public static function get_installed_status($status)

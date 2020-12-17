@@ -1,4 +1,4 @@
-<tr style="background: <{$mod.background}>;">
+<tr id="<{$mod.dirname}>" style="background: <{$mod.background}>;">
     <td>
         <div style="margin:4px 0px; font-size: 1.67rem; font-weight: bolder;">
             <{$mod.module_sn}>

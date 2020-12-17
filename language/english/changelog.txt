@@ -1,3 +1,9 @@
+Tad Adm 2.89 (Released 2020-12-17)
+==================================================================
+1.Fix the problem of not being able to delete spam accounts in batch
+2.Upgrade Adminer to 4.7.8
+3.Merge BootStrap3 and BootStrap4 templates
+
 Tad Adm 2.88 (Released on 2020-08-06)
 ==================================================================
 1. Fix getgrgid() error.
