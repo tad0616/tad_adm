@@ -579,19 +579,19 @@ function login_form()
         <div class="card-body">
 
             <form action="' . XOOPS_URL . '/user.php" method="post" role="form">
-                <div class="form-group row">
+                <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label text-md-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
                     <div class="col-sm-9">
                         <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control">
                     </div>
                 </div>
-                <div class="form-group row">
+                <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label text-md-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
                     <div class="col-sm-9">
                         <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control">
                     </div>
                 </div>
-                <div class="form-group row">
+                <div class="form-group row mb-3">
                     <label class="col-sm-3 col-form-label text-md-right">
                     </label>
                     <div class="col-sm-9">

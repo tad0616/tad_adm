@@ -1897,10 +1897,13 @@ class TypeAdapterMysql extends TypeAdapterFactory
             $createTable = preg_replace($match, $replace, $createTable);
         }
 
-        $ret = "/*!40101 SET @saved_cs_client     = @@character_set_client */;" . PHP_EOL .
-        "/*!40101 SET character_set_client = " . $this->dumpSettings['default-character-set'] . " */;" . PHP_EOL .
-            $createTable . ";" . PHP_EOL .
-            "/*!40101 SET character_set_client = @saved_cs_client */;" . PHP_EOL .
+        // $ret = "/*!40101 SET @saved_cs_client     = @@character_set_client */;" . PHP_EOL .
+        // "/*!40101 SET character_set_client = " . $this->dumpSettings['default-character-set'] . " */;" . PHP_EOL .
+        //     $createTable . ";" . PHP_EOL .
+        //     "/*!40101 SET character_set_client = @saved_cs_client */;" . PHP_EOL .
+        //     PHP_EOL;
+
+        $ret = $createTable . ";" . PHP_EOL .
             PHP_EOL;
         return $ret;
     }
@@ -2295,7 +2298,7 @@ class TypeAdapterMysql extends TypeAdapterFactory
             "/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;" . PHP_EOL .
             "/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;" . PHP_EOL . PHP_EOL;
 
-        return $ret;
+        // return $ret;
     }
 
     public function restore_parameters()
@@ -2314,7 +2317,7 @@ class TypeAdapterMysql extends TypeAdapterFactory
             "/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;" . PHP_EOL .
             "/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;" . PHP_EOL . PHP_EOL;
 
-        return $ret;
+        // return $ret;
     }
 
     /**

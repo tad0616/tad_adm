@@ -49,10 +49,10 @@ if (!$_SESSION['sys_adm']) {
             <div class="card-header text-white bg-primary">' . _MD_TADADM_FORGOT . '</div>
             <div class="card-body">
                 <form action="' . $_SERVER['PHP_SELF'] . '" method="post" role="form">
-                    <div class="form-group row">
+                    <div class="form-group row mb-3">
                         <label class="col-sm-12">' . _MD_TADADM_INPUT_PASSWD_DESC . '</label>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row mb-3">
                         <label class="col-sm-3" for="help_passwd">' . _MD_TADADM_INPUT_PASSWD . '</label>
                         <div class="col-sm-7">
                             <input type="text" name="help_passwd" id="help_passwd" class="form-control" placeholder="">
@@ -72,19 +72,19 @@ if (!$_SESSION['sys_adm']) {
                 <div class="card-header text-white bg-primary">' . _MD_TADADM_LOGIN . '</div>
                 <div class="card-body">
 
-                    <div class="form-group row">
+                    <div class="form-group row mb-3">
                         <label class="col-sm-3 col-form-label text-md-right" for="uname">' . _MD_TADADM_USER_S_ID . '</label>
                         <div class="col-sm-9">
                             <input type="text" name="uname"  id="uname" placeholder="' . _MD_TADADM_USER_ID . '"  class="form-control">
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row mb-3">
                         <label class="col-sm-3 col-form-label text-md-right" for="pass">' . _MD_TADADM_USER_S_PASS . '</label>
                         <div class="col-sm-9">
                             <input type="password" name="pass"  id="pass" placeholder="' . _MD_TADADM_USER_S_PASS . '"  class="form-control">
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group row mb-3">
                         <label class="col-sm-3 col-form-label text-md-right"><a href="index.php?op=forgot" style="font-size: 0.75rem;color:gray;">' . _MD_TADADM_FORGOT . '</a></label>
                         <div class="col-sm-9">
                             <input type="hidden" name="op" value="login">
@@ -683,8 +683,8 @@ $main3 = "
         $close_site
         <li class='list-group-item'>
             <form  action='{$_SERVER['PHP_SELF']}' method='post' role='form'>
-                <div class='form-group row'>
-                    <label class='sr-only'>" . _MD_TADADM_RESET_ADMIN_PASSWD . "</label>
+                <div class='form-group row mb-3'>
+                    <label class='sr-only visually-hidden'>" . _MD_TADADM_RESET_ADMIN_PASSWD . "</label>
                     <div class='col-sm-4'>
                         <select name='uid' class='form-control'>
                             {$admin_options}
@@ -693,7 +693,7 @@ $main3 = "
                     <div class='col-sm-4'>
                         <input type='text' name='new_pass' class='form-control' placeholder='" . _MD_TADADM_RESET_ADMIN_PASSWD . "'>
                     </div>
-                    <div class='col-sm-4'>
+                    <div class='col-sm-4 d-grid gap-2'>
                         <input type='hidden' name='op' value='reset_mem'>
                         <button type='submit' class='btn btn-danger btn-block'>" . _MD_TADADM_RESET_ADMIN_PASSWD . "</button>
                     </div>
@@ -702,8 +702,8 @@ $main3 = "
         </li>
         <li class='list-group-item'>
             <form action='{$_SERVER['PHP_SELF']}' method='post' role='form'>
-                <div class='form-group row'>
-                    <label class='sr-only'>" . _MD_TADADM_RESET_MEM_PASSWD . "</label>
+                <div class='form-group row mb-3'>
+                    <label class='sr-only visually-hidden'>" . _MD_TADADM_RESET_MEM_PASSWD . "</label>
                     <div class='col-sm-4'>
                         <select name='uid' class='form-control'>
                         {$XoopsFormSelectUserOption}
@@ -712,7 +712,7 @@ $main3 = "
                     <div class='col-sm-4'>
                         <input type='text' name='new_pass' class='form-control' placeholder='" . _MD_TADADM_RESET_MEM_PASSWD . "'>
                     </div>
-                    <div class='col-sm-4'>
+                    <div class='col-sm-4 d-grid gap-2'>
                         <input type='hidden' name='op' value='reset_mem'>
                         <button type='submit' class='btn btn-warning btn-block'>" . _MD_TADADM_RESET_MEM_PASSWD . "</button>
                     </div>

@@ -1,7 +1,7 @@
 <h2><{$smarty.const._MA_TADADM_SSH_ID}></h2>
 <div class="well card card-body bg-light m-1 d-flex align-items-stretch">
     <form action="<{$action}>" method="post" class="form-horizontal" role="form">
-        <div class="form-group row">
+        <div class="form-group row mb-3">
             <label class="col-md-2 col-form-label text-md-right control-label">
             <{$smarty.const._MA_TADADM_SSH_ID}><{$smarty.const._TAD_FOR}>
             </label>
@@ -9,7 +9,7 @@
             <input type="text" name="ssh_id" placeholder="<{$smarty.const._MA_TADADM_SSH_ID}>" class="form-control" value="<{$tad_adm_ssh_id}>">
             </div>
         </div>
-        <div class="form-group row">
+        <div class="form-group row mb-3">
             <label class="col-md-2 col-form-label text-md-right control-label">
             <{$smarty.const._MA_TADADM_SSH_PASS}><{$smarty.const._TAD_FOR}>
             </label>
