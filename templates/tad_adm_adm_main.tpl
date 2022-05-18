@@ -9,7 +9,7 @@
                 <{/if}>
                 <li><{$smarty.const._MA_TADADM_INSTALLED_ITEM}></li>
                 <{if $all_uninstall.module}><li><{$smarty.const._MA_TADADM_ENABLE_MODS}></li><{/if}>
-                <{if $all_uninstall.adm_tpl}><li>><{$smarty.const._MA_TADADM_ENABLE_ADM}></li><{/if}>
+                <{if $all_uninstall.adm_tpl}><li><{$smarty.const._MA_TADADM_ENABLE_ADM}></li><{/if}>
                 <{if $all_uninstall.theme}><li><{$smarty.const._MA_TADADM_ENABLE_THEME}></li><{/if}>
                 <{if $all_uninstall.block}><li><{$smarty.const._MA_TADADM_ENABLE_BLOCK}></li><{/if}>
                 <{if $all_uninstall.other}><li><{$smarty.const._MA_TADADM_ENABLE_OTHER}></li><{/if}>

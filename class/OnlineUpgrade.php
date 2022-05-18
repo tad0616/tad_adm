@@ -700,10 +700,13 @@ class OnlineUpgrade
                 redirect_header('main.php', 3, _MA_TADADM_THEME_UPDATE_OK);
             }
         } elseif ('delete_theme' === $act) {
-            if ($inSchoolWeb or Utility::delete_directory(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}", $ssh)) {
+            if ($inSchoolWeb or self::delete_theme($dirname, $ssh)) {
                 self::update_allowed($dirname, 0);
+                redirect_header('main.php', 3, XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}" . _MA_TADADM_THEME_DELETE_OK);
+            } else {
+                redirect_header('main.php', 3, XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}" . _MA_TADADM_THEME_DELETE_FAIL);
+
             }
-            redirect_header('main.php', 3, _MA_TADADM_THEME_DELETE_OK);
         } elseif ('install_adm_tpl' === $act) {
             if ($inSchoolWeb or self::get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
                 self::add_adm_tpl_config($dirname);
@@ -780,9 +783,19 @@ class OnlineUpgrade
     }
 
     //取得XOOPS升級或補釘
+    public static function delete_theme($theme, $ssh = '')
+    {
+        if ('' != $ssh) {
+            $ssh->exec("rm -Rf " . XOOPS_ROOT_PATH . "/themes/$theme");
+            return true;
+        }
+
+        return false;
+    }
+
+    //取得XOOPS升級或補釘
     public static function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     {
-        global $xoopsConfig, $xoopsDB;
 
         $TadAmModuleConfig = self::get_adm_config();
         $file_link = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
@@ -1022,7 +1035,7 @@ class OnlineUpgrade
     //下載檔案
     public static function get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)
     {
-        global $xoopsConfig, $xoopsDB, $inSchoolWeb;
+        global $inSchoolWeb;
 
         $TadAmModuleConfig = self::get_adm_config();
 

@@ -112,6 +112,7 @@ define('_MA_TADADM_ALLOWED_THEMES', "Optional Site Themes");
 define('_MA_TADADM_NOT_ALLOWED_THEMES', "Don't open the selected site themes");
 define('_MA_TADADM_SPECIAL_THEMES', "Special Themes");
 define('_MA_TADADM_THEME_DELETE_OK', "Removal of the theme was successful!");
+define('_MA_TADADM_THEME_DELETE_FAIL', 'theme removal failed!');
 
 define('_MA_TADADM_FAILED_TO_GET_JSON', "Unable to get file list");
 

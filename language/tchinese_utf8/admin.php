@@ -111,6 +111,7 @@ define('_MA_TADADM_ALLOWED_THEMES', '可選用網站佈景');
 define('_MA_TADADM_NOT_ALLOWED_THEMES', '不開放選用的網站佈景');
 define('_MA_TADADM_SPECIAL_THEMES', '特殊佈景');
 define('_MA_TADADM_THEME_DELETE_OK', '佈景移除成功！');
+define('_MA_TADADM_THEME_DELETE_FAIL', '佈景移除失敗！');
 
 define('_MA_TADADM_FAILED_TO_GET_JSON', '無法取得檔案清單');
 
