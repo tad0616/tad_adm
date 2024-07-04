@@ -37,7 +37,7 @@ class OnlineUpgrade
 
         //取得升級訊息
         $all_mods = self::get_tad_json_info('all2.json');
-
+        // Utility::dd($all_mods);
         // 已安裝模組
         $mods = $blocks = [];
         $sql = 'SELECT * FROM ' . $xoopsDB->prefix('modules') . '';
@@ -125,7 +125,7 @@ class OnlineUpgrade
     }
 
 //列出所有XOOPS升級資訊
-    public function list_xoops($mode = "tpl")
+    public static function list_xoops($mode = "tpl")
     {
         global $xoopsDB, $xoopsTpl, $xoopsConfig;
         //取得升級訊息
@@ -272,18 +272,18 @@ class OnlineUpgrade
     //已安裝模組部份
     public static function get_installed($kind, $data, $db_data)
     {
-        global $xoopsDB, $xoopsConfig;
+        global $xoopsConfig;
         $dirname = $data['dirname'];
         $item = [];
         $path = '';
 
         switch ($kind) {
             case "module":
-
                 foreach ($db_data as $k => $v) {
                     $$k = $v;
                 }
-                $Version = round($version / 100, 2);
+                $int_new_version = Utility::get_version('module', $data['new_version'], $dirname);
+                $int_version = Utility::get_version('module', $version, $dirname);
                 $path = XOOPS_ROOT_PATH . "/modules/{$dirname}";
                 $enable = $isactive;
                 $is_link = is_link($path);
@@ -300,14 +300,18 @@ class OnlineUpgrade
 
             case "theme":
                 $path = XOOPS_ROOT_PATH . "/themes/{$dirname}";
-                $Version = self::get_theme_version($dirname);
+
+                $int_new_version = Utility::get_version('theme', $data['new_version'], $dirname);
+                $int_version = Utility::get_version('theme', null, $dirname);
+                // $int_version = Utility::get_theme_version($dirname);
                 $last_update = file_exists("{$path}/theme.ini") ? filemtime("{$path}/theme.ini") : '';
                 $enable = in_array($dirname, $xoopsConfig['theme_set_allowed']) ? 1 : 0;
                 $is_link = is_link($path);
                 break;
 
             case "block":
-                $Version = '';
+                $int_new_version = Utility::get_version('block', $data['new_version']);
+                $int_version = '';
                 $last_update = $db_data['last_modified'];
                 $enable = $db_data['visible'];
                 $is_link = false;
@@ -315,21 +319,24 @@ class OnlineUpgrade
 
             case "adm_tpl":
                 $path = XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}";
-                $Version = file_get_contents("{$path}/version.txt");
+
+                $int_new_version = Utility::get_version('adm_tpl', $data['new_version']);
+                $int_version = Utility::get_version('adm_tpl', file_get_contents("{$path}/version.txt"));
                 $last_update = file_exists("{$path}/version.txt") ? filemtime("{$path}/version.txt") : '';
                 $enable = $dirname == $xoopsConfig['cpanel'] ? 1 : 0;
                 $is_link = is_link($path);
                 break;
 
             case "other":
-                $Version = '';
+                $int_new_version = Utility::get_version('other', $data['new_version']);
+                $int_version = '';
                 $last_update = file_get_contents(XOOPS_ROOT_PATH . "/uploads/module_sn_{$module_sn}.txt");
                 $enable = 1;
                 $is_link = false;
                 break;
         }
 
-        $status = self::version_status($Version, $data, $dirname, $data['kind'], $last_update);
+        $status = self::version_status($int_version, $data, $dirname, $data['kind'], $last_update);
         list($background, $function) = self::get_installed_status($status);
 
         $rc = ($data['new_status_version']) ? " {$data['new_status']}{$data['new_status_version']}" : '';
@@ -344,12 +351,14 @@ class OnlineUpgrade
         $item['status'] = $status;
         $item['function'] = $function;
         $item['background'] = $background;
-        $item['new_version'] = ($data['new_version']) ? $data['new_version'] . $rc : '';
+        // $item['new_version'] = ($data['new_version']) ? $data['new_version'] . $rc : '';
+        $item['new_version'] = ($data['new_version']) ? Utility::version_format($data['kind'], $int_new_version) . $rc : '';
         $item['new_last_update'] = ($data['new_last_update']) ? date('Y-m-d H:i', $data['new_last_update']) : '';
         $item['logo'] = $data['logo'];
         $item['logo_thumb'] = $data['logo_thumb'];
 
-        $item['now_version'] = $Version;
+        $item['now_version'] = Utility::version_format($data['kind'], $int_version);
+        // $item['now_version'] = $int_version;
         $item['last_update'] = date('Y-m-d H:i', $last_update);
 
         if (file_exists($path)) {
@@ -412,16 +421,17 @@ class OnlineUpgrade
         $mod_data['php_min_version'] = isset($mod_data['php_min_version']) ? $mod_data['php_min_version'] : '';
         $mod_data['php_max_version'] = isset($mod_data['php_max_version']) ? $mod_data['php_max_version'] : '';
         $mod_data['tadtools_version'] = isset($mod_data['tadtools_version']) ? $mod_data['tadtools_version'] : '';
-        $my_xoops_version = self::get_version('xoops');
-        $my_php_version = self::get_version('php');
-        $now_version = self::get_version('', $now_version);
-        $new_version = self::get_version('', $mod_data['new_version']);
-        $xoops_version = self::get_version('xoops', $mod_data['xoops_version']);
-        $xoops_min_version = self::get_version('xoops', $mod_data['xoops_min_version']);
-        $php_min_version = self::get_version('php', $mod_data["php_min_version"]);
-        $php_max_version = self::get_version('php', $mod_data['php_max_version']);
-        $min_tadtools_version = self::get_version('', $mod_data['tadtools_version']);
-        $now_tadtools_version = self::get_version('tadtools');
+        // 20511
+        $my_xoops_version = Utility::get_version('xoops');
+        $my_php_version = Utility::get_version('php');
+        $now_version = Utility::get_version($type, $now_version, $dirname);
+        $new_version = Utility::get_version($type, $mod_data['new_version'], $dirname);
+        $xoops_version = Utility::get_version('xoops', $mod_data['xoops_version']);
+        $xoops_min_version = Utility::get_version('xoops', $mod_data['xoops_min_version']);
+        $php_min_version = Utility::get_version('php', $mod_data["php_min_version"]);
+        $php_max_version = Utility::get_version('php', $mod_data['php_max_version']);
+        $min_tadtools_version = Utility::get_version('module', $mod_data['tadtools_version'], 'tadtools');
+        $now_tadtools_version = Utility::get_version('module', '', 'tadtools');
 
         $chk_file = '';
         if ($type == "upgrade") {
@@ -518,86 +528,6 @@ class OnlineUpgrade
             }
         }
         return $status;
-    }
-
-    //版本判斷
-    public static function get_version($type = 'xoops', $ver = '')
-    {
-        global $xoopsDB;
-        if (empty($ver) and empty($type)) {
-            return;
-        }
-        switch ($type) {
-            case 'xoops':
-                if (empty($ver)) {
-                    $ver = XOOPS_VERSION;
-                }
-                $version = explode('.', str_replace('XOOPS ', '', $ver));
-                break;
-
-            case 'php':
-                if (empty($ver)) {
-                    $ver = PHP_VERSION;
-                }
-
-                $version = explode('.', $ver);
-                break;
-
-            default:
-                if (empty($ver)) {
-                    $sql = "select version from `" . $xoopsDB->prefix("modules") . "` where dirname='{$type}'";
-                    $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
-                    list($ver) = $xoopsDB->fetchRow($result);
-                    for ($i = 0; $i < strlen($ver); $i++) {
-                        $version[] = substr($ver, $i, 1);
-                    }
-                } else {
-                    if (isset($_GET['debug']) && $_GET['debug'] == 1) {
-                        echo "$ver<br>";
-                    }
-
-                    $v = explode('.', $ver);
-                    $version[] = $v[0];
-                    if (isset($v[1])) {
-                        for ($i = 0; $i < strlen($v[1]); $i++) {
-                            $version[] = substr($v[1], $i, 1);
-                        }
-                    }
-                    // die(var_dump($version));
-                }
-                break;
-        }
-
-        $v1 = $v2 = $v3 = 0;
-        $sizeof = sizeof($version);
-        if ($sizeof == 1) {
-            list($v1) = $version;
-        } elseif ($sizeof == 2) {
-            list($v1, $v2) = $version;
-        } else {
-            list($v1, $v2, $v3) = $version;
-        }
-
-        $Version = intval($v1 * 10000 + $v2 * 100 + $v3);
-        return $Version;
-    }
-
-    public static function get_theme_version($dirname)
-    {
-        $handle = @fopen(XOOPS_ROOT_PATH . "/themes/{$dirname}/theme.ini", "r");
-        if ($handle) {
-            while (($buffer = fgets($handle, 4096)) !== false) {
-                $ini = explode("=", $buffer);
-                if (trim($ini[0]) == "Version") {
-                    $Version = str_replace("\"", "", trim($ini[1]));
-                    break;
-                }
-            }
-            fclose($handle);
-        }
-
-        return $Version;
-
     }
 
     public static function get_act_op($act)
@@ -978,11 +908,46 @@ class OnlineUpgrade
 
     public static function getpwuid($file = "")
     {
+        return self::GetUsernameFromUid(fileowner($file));
+    }
+
+    public static function GetUsernameFromUid($uid)
+    {
+
         if (function_exists('posix_getpwuid')) {
-            return posix_getpwuid(fileowner($file));
-        } else {
-            return "";
+
+            $a = posix_getpwuid($uid);
+
+            return $a['name'];
+
         }
+
+        # This works on BSD but not with GNU
+
+        elseif (strstr(php_uname('s'), 'BSD')) {
+
+            exec('id -u ' . (int) $uid, $o, $r);
+
+            if ($r == 0) {
+                return trim($o['0']);
+            } else {
+                return $uid;
+            }
+
+        } elseif (is_readable('/etc/passwd')) {
+
+            exec(sprintf('grep :%s: /etc/passwd | cut -d: -f1', (int) $uid), $o, $r);
+
+            if ($r == 0) {
+                return trim($o['0']);
+            } else {
+                return $uid;
+            }
+
+        } else {
+            return $uid;
+        }
+
     }
 
     public static function getgrgid($file = "")
@@ -990,7 +955,7 @@ class OnlineUpgrade
         if (function_exists('posix_getgrgid')) {
             return posix_getgrgid(filegroup($file));
         } else {
-            return "";
+            return [];
         }
     }
     public static function chmod_R($path, $filemode, $dirmode)

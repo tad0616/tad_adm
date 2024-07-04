@@ -7,6 +7,28 @@ $xoopsOption['template_main'] = 'tad_adm_adm_clean.tpl';
 require_once __DIR__ . '/header.php';
 require_once dirname(__DIR__) . '/function.php';
 $isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
+/*-----------執行動作判斷區----------*/
+$op = Request::getString('op');
+$g2p = Request::getInt('g2p');
+$dirs = Request::getArray('dirs');
+$files = Request::getArray('files');
+
+switch ($op) {
+    case 'del_templates':
+        del_templates($dirs, $files);
+        header('location:clean.php');
+        exit;
+
+    default:
+        view_file();
+        $op = 'view_file';
+        break;
+}
+
+/*-----------秀出結果區--------------*/
+$xoopsTpl->assign('op', $op);
+require_once __DIR__ . '/footer.php';
+
 /*-----------function區--------------*/
 
 function view_file()
@@ -62,26 +84,3 @@ function del_templates($dirs = [], $files = [])
         }
     }
 }
-
-/*-----------執行動作判斷區----------*/
-$op = Request::getString('op');
-$g2p = Request::getInt('g2p');
-$dirs = Request::getArray('dirs');
-$files = Request::getArray('files');
-
-switch ($op) {
-    case 'del_templates':
-        del_templates($dirs, $files);
-        header('location:clean.php');
-        exit;
-
-    default:
-        view_file();
-        $op = 'view_file';
-        break;
-}
-
-/*-----------秀出結果區--------------*/
-$xoopsTpl->assign('op', $op);
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-require_once __DIR__ . '/footer.php';

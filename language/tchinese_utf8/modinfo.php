@@ -4,7 +4,7 @@ define('_MI_TADADM_NAME', '站長工具箱');
 define('_MI_TADADM_AUTHOR', 'Tad (tad0616@gmail.com)');
 define('_MI_TADADM_CREDITS', 'Michael Beck');
 define('_MI_TADADM_DESC', '此模組提供一些站長用的工具');
-define('_MI_TADADM_ADMENU1', '模組隨選');
+define('_MI_TADADM_ADMENU1', '線上安裝升級');
 define('_MI_TADADM_ADMENU3', '清理垃圾帳戶');
 define('_MI_TADADM_ADMENU2', '主機環境');
 define('_MI_TADADM_ADMENU4', '備份');

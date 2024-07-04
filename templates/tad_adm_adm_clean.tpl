@@ -1,4 +1,3 @@
-<link href="<{$xoops_url}>/modules/tadtools/css/font-awesome/css/font-awesome.css" rel="stylesheet">
 <script language="JavaScript">
   $().ready(function(){
     $("#clickAll").change(function () {

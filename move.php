@@ -45,7 +45,7 @@ $max_xoops_version = 0;
 $latest_xoops_version = '';
 foreach ($xoops_patch as $x) {
     if ($x['xoops_type'] == 'upgrade') {
-        $xoops_version = OnlineUpgrade::get_version('xoops', $x['xoops_version']);
+        $xoops_version = Utility::get_version('xoops', $x['xoops_version']);
         if ($xoops_version > $max_xoops_version) {
             $max_xoops_version = $xoops_version;
             $latest_xoops_version = $x['xoops_version'];
@@ -269,7 +269,7 @@ function xoops_version()
     $XOOPS_VAR_PATH = XOOPS_VAR_PATH;
     $XOOPS_PATH = XOOPS_PATH;
 
-    $now_xoops_version = OnlineUpgrade::get_version('xoops', XOOPS_VERSION);
+    $now_xoops_version = Utility::get_version('xoops', XOOPS_VERSION);
 
     if ($now_xoops_version < $max_xoops_version) {
         $pic = $off;

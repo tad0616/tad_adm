@@ -4,4 +4,4 @@ CREATE TABLE `tad_adm` (
   `result` varchar(255) NOT NULL COMMENT '檢查結果',
   `chk_date` datetime NOT NULL COMMENT '檢查日',
 PRIMARY KEY (`uid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM ;

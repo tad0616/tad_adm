@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <{if $now_op=="login_form"}>
-        <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
+        <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
     <{else}>
         <div id="modTab">
             <ul class="resp-tabs-list vert">
@@ -25,9 +25,9 @@
                                 <{if $items.1}>
                                     <h2 class="mod_head"><{$kind}></h2>
                                     <table class="footable">
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                     <{foreach from=$items.1 key=dirname item=mod}>
-                                        <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                        <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                     <{/foreach}>
                                     </table>
                                 <{/if}>
@@ -36,9 +36,9 @@
                                 <{if $items.0}>
                                     <h2 class="mod_head"><{$kind}><{$smarty.const._MA_TADADM_CLOSED}></h2>
                                     <table class="footable">
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                     <{foreach from=$items.0 key=dirname item=mod}>
-                                        <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                        <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                     <{/foreach}>
                                     </table>
                                 <{/if}>
@@ -52,9 +52,9 @@
                                 <{if $items.1}>
                                     <h2 class="mod_head"><{$kind}></h2>
                                     <table class="footable">
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                     <{foreach from=$items.1 item=mod}>
-                                        <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                        <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                     <{/foreach}>
                                     </table>
                                 <{/if}>
@@ -63,9 +63,9 @@
                                 <{if $items.0}>
                                     <h2 class="mod_head"><{$kind}><{$smarty.const._MA_TADADM_CLOSED}></h2>
                                     <table class="footable">
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                     <{foreach from=$items.0 item=mod}>
-                                        <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                        <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                     <{/foreach}>
                                     </table>
                                 <{/if}>
@@ -80,9 +80,9 @@
                         <{if $items.1}>
                             <h2 class="mod_head"><{$kind}></h2>
                             <table class="footable">
-                            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                            <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                             <{foreach from=$items.1 item=mod}>
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                             <{/foreach}>
                             </table>
                         <{/if}>
@@ -91,9 +91,9 @@
                         <{if $items.0}>
                             <h2 class="mod_head"><{$kind}><{$smarty.const._MA_TADADM_CLOSED}></h2>
                             <table class="footable">
-                            <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                            <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                             <{foreach from=$items.0 item=mod}>
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                             <{/foreach}>
                             </table>
                         <{/if}>
@@ -106,9 +106,9 @@
                         <{if $all_uninstall.module.install}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_MODS}></h2>
                             <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                 <{foreach from=$all_uninstall.module.install item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                 <{/foreach}>
                             </table>
                         <{/if}>
@@ -116,9 +116,9 @@
                         <{if $all_uninstall.module.unable}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_MODS}></h2>
                             <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                 <{foreach from=$all_uninstall.module.unable item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                 <{/foreach}>
                             </table>
                         <{/if}>
@@ -131,9 +131,9 @@
                         <{if $all_uninstall.adm_tpl.install}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_ADM}></h2>
                             <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                 <{foreach from=$all_uninstall.adm_tpl.install item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                 <{/foreach}>
                             </table>
                         <{/if}>
@@ -141,9 +141,9 @@
                         <{if $all_uninstall.adm_tpl.unable}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_ADM}></h2>
                             <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                 <{foreach from=$all_uninstall.adm_tpl.unable item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                 <{/foreach}>
                             </table>
                         <{/if}>
@@ -155,9 +155,9 @@
                         <{if $all_uninstall.theme.install}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_THEME}></h2>
                             <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                 <{foreach from=$all_uninstall.theme.install item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                 <{/foreach}>
                             </table>
                         <{/if}>
@@ -165,9 +165,9 @@
                         <{if $all_uninstall.theme.unable}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_THEME}></h2>
                             <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                 <{foreach from=$all_uninstall.theme.unable item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                 <{/foreach}>
                             </table>
                         <{/if}>
@@ -179,9 +179,9 @@
                         <{if $all_uninstall.block.install}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_BLOCK}></h2>
                             <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                 <{foreach from=$all_uninstall.block.install item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                 <{/foreach}>
                             </table>
                         <{/if}>
@@ -189,9 +189,9 @@
                         <{if $all_uninstall.block.unable}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_BLOCK}></h2>
                             <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                 <{foreach from=$all_uninstall.block.unable item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                 <{/foreach}>
                             </table>
                         <{/if}>
@@ -203,9 +203,9 @@
                         <{if $all_uninstall.other.install}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_OTHER}></h2>
                             <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                 <{foreach from=$all_uninstall.other.install item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                 <{/foreach}>
                             </table>
                         <{/if}>
@@ -213,9 +213,9 @@
                         <{if $all_uninstall.other.unable}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_OTHER}></h2>
                             <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                 <{foreach from=$all_uninstall.other.unable item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_modules_list.tpl"}>
                                 <{/foreach}>
                             </table>
                         <{/if}>

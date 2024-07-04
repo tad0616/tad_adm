@@ -9,22 +9,6 @@ if (!class_exists('XoopsModules\Tadtools\Utility')) {
     require XOOPS_ROOT_PATH . '/modules/tadtools/preloads/autoloader.php';
 }
 require_once dirname(__DIR__) . '/function.php';
-/*-----------function區--------------*/
-
-function active_module($mid)
-{
-    global $xoopsDB;
-    $sql = 'UPDATE ' . $xoopsDB->prefix('modules') . " SET isactive='1' WHERE `mid`='{$mid}'";
-    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
-}
-
-function get_theme_color($dirname)
-{
-    global $xoopsConfig;
-    require XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
-
-    return [$theme_color, $theme_kind];
-}
 
 /*-----------執行動作判斷區----------*/
 $op = Request::getString('op');
@@ -103,6 +87,21 @@ switch ($op) {
 }
 
 /*-----------秀出結果區--------------*/
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
 $xoopsTpl->assign('source', $xoopsModuleConfig['source']);
 require_once __DIR__ . '/footer.php';
+
+/*-----------function區--------------*/
+
+function active_module($mid)
+{
+    global $xoopsDB;
+    $sql = 'UPDATE ' . $xoopsDB->prefix('modules') . " SET isactive='1' WHERE `mid`='{$mid}'";
+    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+}
+
+function get_theme_color($dirname)
+{
+    require XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
+
+    return [$theme_color, $theme_kind];
+}

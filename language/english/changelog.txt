@@ -1,3 +1,8 @@
+Tad Adm 2.9.3 (Released on 2022-09-01)
+==================================================================
+1. Re-enforce zip.php security.
+2. Add owner and permission information to the backup page.
+
 Tad Adm 2.9.2 (Released on 2022-05-18)
 ==================================================================
 1. Enhance the security of zip.php.

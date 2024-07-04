@@ -4,7 +4,7 @@
     }
 </script>
 <div class="row">
-    <{assign var=i value=1}>
+    <{assign var="i" value=1}>
     <{foreach from=$xoops_upgrade item=xoops}>
         <div class="col-sm-6 col-md-4 col-lg-3">
             <div class="well">
@@ -26,6 +26,6 @@
 
             </div>
         </div>
-        <{assign var=i value=$i+1}>
+        <{assign var="i" value=$i+1}>
     <{/foreach}>
 </div>

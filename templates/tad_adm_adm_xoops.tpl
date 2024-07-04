@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <{if $now_op=="login_form"}>
-        <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
+        <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
     <{else}>
         <div id="xoopsTab">
             <ul class="resp-tabs-list vert">
@@ -12,9 +12,9 @@
                     <div>
                         <{foreach from=$all_patch.patch key=fun item=items}>
                                 <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_patch_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_patch_thead.tpl"}>
                                 <{foreach from=$items item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_patch_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_patch_list.tpl"}>
                                 <{/foreach}>
                                 </table>
                         <{/foreach}>
@@ -25,9 +25,9 @@
                     <div>
                         <{foreach from=$all_patch.upgrade key=fun item=items}>
                                 <table class="footable">
-                                <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_patch_thead.tpl"}>
+                                <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_patch_thead.tpl"}>
                                 <{foreach from=$items item=mod}>
-                                    <{includeq file="$xoops_rootpath/modules/tad_adm/templates/sub_patch_list.tpl"}>
+                                    <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_patch_list.tpl"}>
                                 <{/foreach}>
                                 </table>
                         <{/foreach}>

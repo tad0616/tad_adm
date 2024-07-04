@@ -7,6 +7,37 @@ $xoopsOption['template_main'] = 'tad_adm_adm_spam.tpl';
 require_once __DIR__ . '/header.php';
 require_once dirname(__DIR__) . '/function.php';
 
+/*-----------執行動作判斷區----------*/
+$op = Request::getString('op');
+$mode = Request::getString('mode');
+$byemail = Request::getString('byemail');
+$g2p = Request::getInt('g2p', 1);
+$uid = Request::getArray('uid');
+$days = Request::getInt('days');
+
+switch ($op) {
+    case 'del_user':
+        del_all_user($uid);
+        redirect_header($_SERVER['PHP_SELF'] . "?g2p=$g2p", 3, _MA_TADADM_DEL_OK);
+        break;
+
+    case 'spam':
+        list_spam($g2p);
+        $xoopsTpl->assign('op', spam);
+        break;
+
+    default:
+        list_user($op, $mode, $days, $byemail, $g2p);
+        if ('all' === $op) {
+            $g2p++;
+            redirect_header($_SERVER['PHP_SELF'] . "?op=all&mode=$mode&g2p=$g2p", 3, _MA_TADADM_NEXT_PAGE);
+        }
+        break;
+}
+
+/*-----------秀出結果區--------------*/
+require_once __DIR__ . '/footer.php';
+
 /*-----------function區--------------*/
 //列出所有使用者
 function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p = 1)
@@ -276,37 +307,3 @@ function del_all_user($uid_arr = [])
         del_user($del_uid);
     }
 }
-
-/*-----------執行動作判斷區----------*/
-$op = Request::getString('op');
-$mode = Request::getString('mode');
-$byemail = Request::getString('byemail');
-$g2p = Request::getInt('g2p', 1);
-$uid = Request::getArray('uid');
-$days = Request::getInt('days');
-
-switch ($op) {
-    /*---判斷動作請貼在下方---*/
-    case 'del_user':
-        del_all_user($uid);
-        redirect_header($_SERVER['PHP_SELF'] . "?g2p=$g2p", 3, _MA_TADADM_DEL_OK);
-        break;
-
-    case 'spam':
-        list_spam($g2p);
-        $xoopsTpl->assign('op', spam);
-        break;
-
-    default:
-        list_user($op, $mode, $days, $byemail, $g2p);
-        if ('all' === $op) {
-            $g2p++;
-            redirect_header($_SERVER['PHP_SELF'] . "?op=all&mode=$mode&g2p=$g2p", 3, _MA_TADADM_NEXT_PAGE);
-        }
-        break;
-        /*---判斷動作請貼在上方---*/
-}
-
-/*-----------秀出結果區--------------*/
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-require_once __DIR__ . '/footer.php';

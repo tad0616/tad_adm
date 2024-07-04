@@ -1,5 +1,6 @@
 <?php
 use Xmf\Request;
+use XoopsModules\Tadtools\Utility;
 require_once __DIR__ . '/header.php';
 
 require_once dirname(dirname(dirname(__DIR__))) . '/mainfile.php';
@@ -17,10 +18,16 @@ $dirs = Request::getArray('dirs');
 $files = Request::getArray('files');
 
 foreach ($dirs as $dirname) {
-    $DirFileArr[] = $isWin ? iconv('UTF-8', 'Big5', $dirname) : $dirname;
+    $dirname = htmlspecialchars($dirname);
+    if (is_dir($dirname)) {
+        $DirFileArr[] = $isWin ? iconv('UTF-8', 'Big5', $dirname) : $dirname;
+    }
 }
-foreach ($files as $firename) {
-    $DirFileArr[] = $isWin ? iconv('UTF-8', 'Big5', $firename) : $firename;
+foreach ($files as $filename) {
+    $filename = htmlspecialchars($filename);
+    if (file_exists($filename)) {
+        $DirFileArr[] = $isWin ? iconv('UTF-8', 'Big5', $filename) : $filename;
+    }
 }
 
 $AllDirFile = implode(' ', $DirFileArr);

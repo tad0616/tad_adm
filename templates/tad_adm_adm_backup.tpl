@@ -1,4 +1,3 @@
-<link href="<{$xoops_url}>/modules/tadtools/css/font-awesome/css/font-awesome.css" rel="stylesheet">
 <script language="JavaScript">
     $().ready(function(){
         $("#clickAll").change(function () {
@@ -66,26 +65,30 @@
                 <tr>
                     <td>
                         <div class="form-check form-check-inline">
-                        <input class="form-check-input dirfile" name="dirs[]" type="checkbox" id="clickAll" value="<{$dir.dir_path}>" checked title="<{$dir.size}>" >
-                        <label class="form-check-label" for="clickAll">
-                            <i class="fa fa-folder-open-o" aria-hidden="true"></i> <{$dir.dir_name}>
-                        </label>
+                            <input class="form-check-input dirfile" name="dirs[]" type="checkbox" id="clickAll" value="<{$dir.dir_path}>" checked title="<{$dir.size}>" >
+                            <label class="form-check-label" for="clickAll">
+                                <i class="fa fa-folder-open-o" aria-hidden="true"></i> <{$dir.dir_name}>
+                            </label>
                         </div>
                     </td>
                     <td style="text-align: right;"><{$dir.dir_size}></td>
+                    <td style="text-align: right;"><{if $dir.fileowner.name}><{$dir.fileowner.name}><{$dir.fileowner.name}>:<{$dir.filegroup.name}><{/if}></td>
+                    <td style="text-align: right;"><{$dir.fileperms}></td>
                 </tr>
             <{/foreach}>
             <{foreach from=$all_files item=file}>
                 <tr>
                     <td>
                         <div class="form-check form-check-inline text-info">
-                        <input class="form-check-input dirfile" name="files[]" type="checkbox" id="clickAll" value="<{$file.file_path}>" checked title="<{$file.size}>" >
-                        <label class="form-check-label" for="clickAll">
-                            <i class="fa fa-file-text-o" aria-hidden="true"></i> <{$file.file_name}>
-                        </label>
+                            <input class="form-check-input dirfile" name="files[]" type="checkbox" id="clickAll" value="<{$file.file_path}>" checked title="<{$file.size}>" >
+                            <label class="form-check-label" for="clickAll">
+                                <i class="fa fa-file-text-o" aria-hidden="true"></i> <{$file.file_name}>
+                            </label>
                         </div>
                     </td>
                     <td style="text-align: right;"><{$file.file_size}></td>
+                    <td style="text-align: right;"><{if $file.fileowner.name}><{$file.fileowner.name}>:<{$file.filegroup.name}><{/if}></td>
+                    <td style="text-align: right;"><{$file.fileperms}></td>
                 </tr>
             <{/foreach}>
             </table>

@@ -5,11 +5,27 @@ $xoopsOption['template_main'] = 'tad_adm_adm_phpini.tpl';
 require_once __DIR__ . '/header.php';
 require_once dirname(__DIR__) . '/function.php';
 
+/*-----------執行動作判斷區----------*/
+$op = Request::getString('op');
+$g2p = Request::getInt('g2p');
+
+switch ($op) {
+    /*---判斷動作請貼在下方---*/
+
+    default:
+        phpini($op);
+        break;
+        /*---判斷動作請貼在上方---*/
+}
+
+/*-----------秀出結果區--------------*/
+require_once __DIR__ . '/footer.php';
+
 /*-----------function區--------------*/
 
 function phpini()
 {
-    global $xoopsDB, $xoopsConfig, $xoopsTpl;
+    global $xoopsConfig, $xoopsTpl;
 
     include_once "../language/{$xoopsConfig['language']}/ini_arr.php";
 
@@ -62,20 +78,3 @@ function phpini()
 
     $xoopsTpl->assign('main', $main);
 }
-
-/*-----------執行動作判斷區----------*/
-$op = Request::getString('op');
-$g2p = Request::getInt('g2p');
-
-switch ($op) {
-    /*---判斷動作請貼在下方---*/
-
-    default:
-        phpini($op);
-        break;
-        /*---判斷動作請貼在上方---*/
-}
-
-/*-----------秀出結果區--------------*/
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
-require_once __DIR__ . '/footer.php';

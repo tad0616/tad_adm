@@ -1,12 +1,11 @@
 <?php
 use Xmf\Request;
 use XoopsModules\Tad_adm\OnlineUpgrade;
+
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_xoops.tpl';
 require_once __DIR__ . '/header.php';
 require_once dirname(__DIR__) . '/function.php';
-
-/*-----------function區--------------*/
 
 /*-----------執行動作判斷區----------*/
 $op = Request::getString('op');
@@ -45,5 +44,6 @@ switch ($op) {
 }
 
 /*-----------秀出結果區--------------*/
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tad_adm/css/module.css');
 require_once __DIR__ . '/footer.php';
+
+/*-----------function區--------------*/
