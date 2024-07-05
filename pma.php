@@ -14,20 +14,20 @@ function adminer_object()
 
     $plugins = array(
         // specify enabled plugins here
-        new AdminerTablesHistory,
-        new FasterTablesFilter,
-        new AdminerJsonPreview,
-        new AdminerSimpleMenu,
-        new AdminerDumpJson,
-        new AdminerDumpZip,
-        new AdminerDumpDate,
-        new AdminerJsonColumn,
-        new AdminerDumpArray,
-        new AdminerColorfields,
+        new AdminerTablesHistory(),
+        new FasterTablesFilter(),
+        new AdminerJsonPreview(),
+        new AdminerSimpleMenu(),
+        new AdminerDumpJson(),
+        new AdminerDumpZip(),
+        new AdminerDumpDate(),
+        new AdminerJsonColumn(),
+        new AdminerDumpArray(),
+        new AdminerColorfields(),
         new AdminerEnumOption(),
+        new AdminerRestoreMenuScroll(),
+        new AdminerTablesHide(),
         // new AdminerFileUpload("data/"),
-        // new AdminerTranslation(),
-        // new AdminerForeignSystem(),
     );
 
     /* It is possible to combine customization and plugins:
