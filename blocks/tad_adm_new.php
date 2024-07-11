@@ -114,8 +114,8 @@ if (!function_exists('replace_tad_adm')) {
         global $xoopsDB, $xoopsUser;
 
         $myts = \MyTextSanitizer::getInstance();
-        $email = $myts->addSlashes($email);
-        $result = $myts->addSlashes($result);
+        $email = $xoopsDB->escape($email);
+        $result = $xoopsDB->escape($result);
 
         $chk_date = date('Y-m-d H:i:s', xoops_getUserTimestamp(time()));
 
