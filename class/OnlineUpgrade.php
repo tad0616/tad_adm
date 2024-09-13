@@ -798,9 +798,13 @@ class OnlineUpgrade
         $TadAmModuleConfig = self::get_adm_config();
 
         $ssh = '';
+        // require XOOPS_ROOT_PATH . '/modules/tadtools/vendor/autoload.php';
+        // $ssh = new SSH2($ssh_host, $TadAmModuleConfig['ssh_port']);
+
         set_include_path(XOOPS_ROOT_PATH . '/modules/tadtools/phpseclib');
         require 'Net/SSH2.php';
         $ssh = new \Net_SSH2($ssh_host, $TadAmModuleConfig['ssh_port']);
+
         if (!$ssh->login($ssh_id, $ssh_passwd)) {
             redirect_header("main.php?op={$act}&dirname=$dirname&file_link=$file_link&tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_SSH_LOGIN_FAIL, $ssh_id, $ssh_host));
         } else {
