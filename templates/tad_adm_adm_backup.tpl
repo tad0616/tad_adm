@@ -72,7 +72,7 @@
                         </div>
                     </td>
                     <td style="text-align: right;"><{$dir.dir_size}></td>
-                    <td style="text-align: right;"><{if $dir.fileowner.name}><{$dir.fileowner.name}><{$dir.fileowner.name}>:<{$dir.filegroup.name}><{/if}></td>
+                    <td style="text-align: right;"><{if $dir.fileowner.name|default:false}><{$dir.fileowner.name}><{$dir.fileowner.name}>:<{$dir.filegroup.name}><{/if}></td>
                     <td style="text-align: right;"><{$dir.fileperms}></td>
                 </tr>
             <{/foreach}>
@@ -87,7 +87,7 @@
                         </div>
                     </td>
                     <td style="text-align: right;"><{$file.file_size}></td>
-                    <td style="text-align: right;"><{if $file.fileowner.name}><{$file.fileowner.name}>:<{$file.filegroup.name}><{/if}></td>
+                    <td style="text-align: right;"><{if $file.fileowner.name|default:false}><{$file.fileowner.name}>:<{$file.filegroup.name}><{/if}></td>
                     <td style="text-align: right;"><{$file.fileperms}></td>
                 </tr>
             <{/foreach}>

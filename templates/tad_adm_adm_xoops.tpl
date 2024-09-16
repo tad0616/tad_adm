@@ -4,11 +4,11 @@
     <{else}>
         <div id="xoopsTab">
             <ul class="resp-tabs-list vert">
-                <{if $all_patch.patch}><li><{$smarty.const._MA_TADADM_PATCH_XOOPS_ITEMS}></li><{/if}>
-                <{if $all_patch.upgrade}><li><{$smarty.const._MA_TADADM_UPGRADE_XOOPS_ITEMS}></li><{/if}>
+                <{if $all_patch.patch|default:false}><li><{$smarty.const._MA_TADADM_PATCH_XOOPS_ITEMS}></li><{/if}>
+                <{if $all_patch.upgrade|default:false}><li><{$smarty.const._MA_TADADM_UPGRADE_XOOPS_ITEMS}></li><{/if}>
             </ul>
             <div class="resp-tabs-container vert">
-                <{if $all_patch.patch}>
+                <{if $all_patch.patch|default:false}>
                     <div>
                         <{foreach from=$all_patch.patch key=fun item=items}>
                                 <table class="footable">
@@ -21,7 +21,7 @@
                     </div>
                 <{/if}>
 
-                <{if $all_patch.upgrade}>
+                <{if $all_patch.upgrade|default:false}>
                     <div>
                         <{foreach from=$all_patch.upgrade key=fun item=items}>
                                 <table class="footable">

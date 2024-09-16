@@ -8,18 +8,18 @@
                     <li><{$smarty.const._MA_TADADM_NEED_UPGRADE}></li>
                 <{/if}>
                 <li><{$smarty.const._MA_TADADM_INSTALLED_ITEM}></li>
-                <{if $all_uninstall.module}><li><{$smarty.const._MA_TADADM_ENABLE_MODS}></li><{/if}>
-                <{if $all_uninstall.adm_tpl}><li><{$smarty.const._MA_TADADM_ENABLE_ADM}></li><{/if}>
-                <{if $all_uninstall.theme}><li><{$smarty.const._MA_TADADM_ENABLE_THEME}></li><{/if}>
-                <{if $all_uninstall.block}><li><{$smarty.const._MA_TADADM_ENABLE_BLOCK}></li><{/if}>
-                <{if $all_uninstall.other}><li><{$smarty.const._MA_TADADM_ENABLE_OTHER}></li><{/if}>
+                <{if $all_uninstall.module|default:false}><li><{$smarty.const._MA_TADADM_ENABLE_MODS}></li><{/if}>
+                <{if $all_uninstall.adm_tpl|default:false}><li><{$smarty.const._MA_TADADM_ENABLE_ADM}></li><{/if}>
+                <{if $all_uninstall.theme|default:false}><li><{$smarty.const._MA_TADADM_ENABLE_THEME}></li><{/if}>
+                <{if $all_uninstall.block|default:false}><li><{$smarty.const._MA_TADADM_ENABLE_BLOCK}></li><{/if}>
+                <{if $all_uninstall.other|default:false}><li><{$smarty.const._MA_TADADM_ENABLE_OTHER}></li><{/if}>
             </ul>
 
             <div class="resp-tabs-container vert">
                 <{if $all_install.upgrade or $all_install.unable}>
                     <div>
                         <!-- 需升級 -->
-                        <{if $all_install.upgrade}>
+                        <{if $all_install.upgrade|default:false}>
                             <{foreach from=$all_install.upgrade key=kind item=items}>
                                 <!-- 使用中 -->
                                 <{if $items.1}>
@@ -46,7 +46,7 @@
                         <{/if}>
 
                         <!-- 無法升級 -->
-                        <{if $all_install.unable}>
+                        <{if $all_install.unable|default:false}>
                             <{foreach from=$all_install.unable key=kind item=items}>
                                 <!-- 使用中 -->
                                 <{if $items.1}>
@@ -101,9 +101,9 @@
                 </div>
 
                 <!-- 可安裝模組 -->
-                <{if $all_uninstall.module}>
+                <{if $all_uninstall.module|default:false}>
                     <div>
-                        <{if $all_uninstall.module.install}>
+                        <{if $all_uninstall.module.install|default:false}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_MODS}></h2>
                             <table class="footable">
                                 <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -113,7 +113,7 @@
                             </table>
                         <{/if}>
 
-                        <{if $all_uninstall.module.unable}>
+                        <{if $all_uninstall.module.unable|default:false}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_MODS}></h2>
                             <table class="footable">
                                 <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -126,9 +126,9 @@
                 <{/if}>
 
                 <!-- 可安裝後台 -->
-                <{if $all_uninstall.adm_tpl}>
+                <{if $all_uninstall.adm_tpl|default:false}>
                     <div>
-                        <{if $all_uninstall.adm_tpl.install}>
+                        <{if $all_uninstall.adm_tpl.install|default:false}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_ADM}></h2>
                             <table class="footable">
                                 <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -138,7 +138,7 @@
                             </table>
                         <{/if}>
 
-                        <{if $all_uninstall.adm_tpl.unable}>
+                        <{if $all_uninstall.adm_tpl.unable|default:false}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_ADM}></h2>
                             <table class="footable">
                                 <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -150,9 +150,9 @@
                     </div>
                 <{/if}>
 
-                <{if $all_uninstall.theme}>
+                <{if $all_uninstall.theme|default:false}>
                     <div>
-                        <{if $all_uninstall.theme.install}>
+                        <{if $all_uninstall.theme.install|default:false}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_THEME}></h2>
                             <table class="footable">
                                 <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -162,7 +162,7 @@
                             </table>
                         <{/if}>
 
-                        <{if $all_uninstall.theme.unable}>
+                        <{if $all_uninstall.theme.unable|default:false}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_THEME}></h2>
                             <table class="footable">
                                 <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -174,9 +174,9 @@
                     </div>
                 <{/if}>
 
-                <{if $all_uninstall.block}>
+                <{if $all_uninstall.block|default:false}>
                     <div>
-                        <{if $all_uninstall.block.install}>
+                        <{if $all_uninstall.block.install|default:false}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_BLOCK}></h2>
                             <table class="footable">
                                 <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -186,7 +186,7 @@
                             </table>
                         <{/if}>
 
-                        <{if $all_uninstall.block.unable}>
+                        <{if $all_uninstall.block.unable|default:false}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_BLOCK}></h2>
                             <table class="footable">
                                 <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -198,9 +198,9 @@
                     </div>
                 <{/if}>
 
-                <{if $all_uninstall.other}>
+                <{if $all_uninstall.other|default:false}>
                     <div>
-                        <{if $all_uninstall.other.install}>
+                        <{if $all_uninstall.other.install|default:false}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_OTHER}></h2>
                             <table class="footable">
                                 <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -210,7 +210,7 @@
                             </table>
                         <{/if}>
 
-                        <{if $all_uninstall.other.unable}>
+                        <{if $all_uninstall.other.unable|default:false}>
                             <h2 class="mod_head"><{$smarty.const._MA_TADADM_ENABLE_OTHER}></h2>
                             <table class="footable">
                                 <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>

@@ -50,7 +50,7 @@
 
 <div class="container-fluid">
   <h2><{$dir}></h2>
-  <{if $all_dir}>
+  <{if $all_dir|default:false}>
   <form action="clean.php" method="post" class="form-horizontal" role="form">
     <div class="card panel panel-primary" style="width: 640px;">
       <div class="card-header text-white bg-primary panel-heading">
