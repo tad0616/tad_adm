@@ -49,14 +49,14 @@
 
 
 <div class="container-fluid">
-  <h2><{$dir}></h2>
+  <h2><{$dir|default:''}></h2>
   <{if $all_dir|default:false}>
   <form action="clean.php" method="post" class="form-horizontal" role="form">
     <div class="card panel panel-primary" style="width: 640px;">
       <div class="card-header text-white bg-primary panel-heading">
         <div class="form-check form-check-inline">
           <input class="form-check-input" type="checkbox" id="clickAll" value="" checked>
-          <label class="form-check-label" for="clickAll"><{$dir}> (<span id="totalSize"><{$total_size}></span>)</label>
+          <label class="form-check-label" for="clickAll"><{$dir|default:''}> (<span id="totalSize"><{$total_size|default:''}></span>)</label>
         </div>
       </div>
       <!-- Table -->

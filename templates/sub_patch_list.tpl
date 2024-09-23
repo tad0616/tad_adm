@@ -8,7 +8,7 @@
         </div>
     </td>
     <td>
-        <a href="<{$source}>/modules/tad_modules/xoops.php?xoops_sn=<{$mod.xoops_sn}>" title="<{$mod.xoops_title}>" target="_blank" style="font-weight: bold; font-size: 1rem;"><{$mod.xoops_title}></a>
+        <a href="<{$source|default:''}>/modules/tad_modules/xoops.php?xoops_sn=<{$mod.xoops_sn}>" title="<{$mod.xoops_title}>" target="_blank" style="font-weight: bold; font-size: 1rem;"><{$mod.xoops_title}></a>
 
 
         <div style="margin:4px 0px; font-size: 0.6875rem; font-weight: normal;">

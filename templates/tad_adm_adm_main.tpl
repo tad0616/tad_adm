@@ -23,7 +23,7 @@
                             <{foreach from=$all_install.upgrade key=kind item=items}>
                                 <!-- 使用中 -->
                                 <{if $items.1}>
-                                    <h2 class="mod_head"><{$kind}></h2>
+                                    <h2 class="mod_head"><{$kind|default:''}></h2>
                                     <table class="footable">
                                     <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                     <{foreach from=$items.1 key=dirname item=mod}>
@@ -34,7 +34,7 @@
 
                                 <!-- 關閉中 -->
                                 <{if $items.0}>
-                                    <h2 class="mod_head"><{$kind}><{$smarty.const._MA_TADADM_CLOSED}></h2>
+                                    <h2 class="mod_head"><{$kind|default:''}><{$smarty.const._MA_TADADM_CLOSED}></h2>
                                     <table class="footable">
                                     <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                     <{foreach from=$items.0 key=dirname item=mod}>
@@ -50,7 +50,7 @@
                             <{foreach from=$all_install.unable key=kind item=items}>
                                 <!-- 使用中 -->
                                 <{if $items.1}>
-                                    <h2 class="mod_head"><{$kind}></h2>
+                                    <h2 class="mod_head"><{$kind|default:''}></h2>
                                     <table class="footable">
                                     <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                     <{foreach from=$items.1 item=mod}>
@@ -61,7 +61,7 @@
 
                                 <!-- 關閉中 -->
                                 <{if $items.0}>
-                                    <h2 class="mod_head"><{$kind}><{$smarty.const._MA_TADADM_CLOSED}></h2>
+                                    <h2 class="mod_head"><{$kind|default:''}><{$smarty.const._MA_TADADM_CLOSED}></h2>
                                     <table class="footable">
                                     <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                                     <{foreach from=$items.0 item=mod}>
@@ -78,7 +78,7 @@
                     <{foreach from=$all_install.latest key=kind item=items}>
                         <!-- 使用中 -->
                         <{if $items.1}>
-                            <h2 class="mod_head"><{$kind}></h2>
+                            <h2 class="mod_head"><{$kind|default:''}></h2>
                             <table class="footable">
                             <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                             <{foreach from=$items.1 item=mod}>
@@ -89,7 +89,7 @@
 
                         <!-- 關閉中 -->
                         <{if $items.0}>
-                            <h2 class="mod_head"><{$kind}><{$smarty.const._MA_TADADM_CLOSED}></h2>
+                            <h2 class="mod_head"><{$kind|default:''}><{$smarty.const._MA_TADADM_CLOSED}></h2>
                             <table class="footable">
                             <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
                             <{foreach from=$items.0 item=mod}>

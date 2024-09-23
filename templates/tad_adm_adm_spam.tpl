@@ -1,20 +1,20 @@
 <div class="container-fluid">
     <div class="alert alert-info">
         <ol style="padding:20px;">
-            <li style="line-height:180%;list-style: decimal outside none;"><a href="spam.php?op=all"><{$smarty.const._MA_TADADM_AUTO_CHECK}></a><{$_MA_TADADM_AUTO_CHECK_DESC}></li>
+            <li style="line-height:180%;list-style: decimal outside none;"><a href="spam.php?op=all"><{$smarty.const._MA_TADADM_AUTO_CHECK}></a><{$_MA_TADADM_AUTO_CHECK_DESC|default:''}></li>
             <li style="line-height:180%;list-style: decimal outside none;"><{$smarty.const._MA_TADADM_AUTO_CHECK_DESC1}></li>
             <li style="line-height:180%;list-style: decimal outside none;"><{$smarty.const._MA_TADADM_AUTO_CHECK_DESC2}></li>
             <li style="line-height:180%;list-style: decimal outside none;"><{$smarty.const._MA_TADADM_AUTO_CHECK_DESC3}></li>
             <li style="line-height:180%;list-style: decimal outside none;"><{$smarty.const._MA_TADADM_AUTO_CHECK_DESC4}></li>
             <li style="line-height:180%;list-style: decimal outside none;"><{$smarty.const._MA_TADADM_AUTO_CHECK_DESC5}></li>
-            <li style="line-height:180%;list-style: decimal outside none;"><{$_MA_TADADM_WORKTIME}></li>
+            <li style="line-height:180%;list-style: decimal outside none;"><{$_MA_TADADM_WORKTIME|default:''}></li>
         </ol>
     </div>
 
     <{if $op=="spam"}>
 
         <form action="spam.php" method="post">
-            <{$bar}>
+            <{$bar|default:''}>
             <table class="table table-striped table-bordered table-hover">
                 <tr>
                     <th>uid</th>
@@ -44,10 +44,10 @@
                     </tr>
                 <{/foreach}>
             </table>
-            <{$bar}>
+            <{$bar|default:''}>
 
-            <{$_MA_TADADM_TOTAL}>
-            <input type="hidden" name="g2p" value="<{$g2p}>">
+            <{$_MA_TADADM_TOTAL|default:''}>
+            <input type="hidden" name="g2p" value="<{$g2p|default:''}>">
             <input type="hidden" name="op" value="del_user">
             <button type="submit" class="btn btn-sm btn-xs btn-danger"><{$smarty.const._TAD_DEL_CONFIRM}></button>
         </form>
@@ -70,21 +70,21 @@
         </script>
 
         <form action="spam.php" method="get">
-            <{$_MA_TADADM_NEVERSTART_DAY}>
+            <{$_MA_TADADM_NEVERSTART_DAY|default:''}>
             <input type="hidden" name="op" value="byNeverStartDays">
             <button type="submit" class="btn btn-sm btn-xs btn-primary"><{$smarty.const._TAD_GO}></button>
         </form>
         <form action="spam.php" method="get">
-            <{$_MA_TADADM_NEVERLOGIN_DAY}>
+            <{$_MA_TADADM_NEVERLOGIN_DAY|default:''}>
             <input type="hidden" name="op" value="byNeverLoginDays">
             <button type="submit" class="btn btn-sm btn-xs btn-primary"><{$smarty.const._TAD_GO}></button>
         </form>
         <form action="spam.php" method="get">
-            <{$_MA_TADADM_BY_EMAIL}>
+            <{$_MA_TADADM_BY_EMAIL|default:''}>
             <input type="hidden" name="op" value="byEmail">
             <button type="submit" class="btn btn-sm btn-xs btn-primary"><{$smarty.const._TAD_GO}></button>
         </form>
-        <{$bar}>
+        <{$bar|default:''}>
         <form action="spam.php" method="post">
             <table class="table table-striped table-bordered table-hover">
             <tr><td colspan=10>
@@ -121,9 +121,9 @@
             </tr>
             <{/foreach}>
             </table>
-            <{$bar}>
-            <{$_MA_TADADM_TOTAL}>
-            <input type="hidden" name="g2p" value="<{$g2p}>">
+            <{$bar|default:''}>
+            <{$_MA_TADADM_TOTAL|default:''}>
+            <input type="hidden" name="g2p" value="<{$g2p|default:''}>">
             <input type="hidden" name="op" value="del_user">
             <button type="submit" class="btn btn-sm btn-xs btn-danger"><{$smarty.const._TAD_DEL_CONFIRM}></button>
         </form>

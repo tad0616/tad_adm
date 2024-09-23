@@ -11,7 +11,7 @@
         <img src="<{$mod.logo_thumb}>" alt="<{$mod.name}>" id="<{$mod.dirname}>_tip" style="width: 92px";>
     </td>
     <td>
-        <a href="<{$source}>/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" title="<{$mod.dirname}><{$smarty.const._MA_TADADM_MOD_ADMIN}>" target="_blank" style="font-weight: bold; font-size: 1rem;"><{$mod.name}></a>
+        <a href="<{$source|default:''}>/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" title="<{$mod.dirname}><{$smarty.const._MA_TADADM_MOD_ADMIN}>" target="_blank" style="font-weight: bold; font-size: 1rem;"><{$mod.name}></a>
 
         <div style="margin:4px 0px; font-size: 0.75rem; font-weight: normal;">
             <a href="<{$xoops_url}>/modules/<{$mod.dirname}>" target="_blank"><{$mod.dirname}> <{$mod.now_version}></a> <{$mod.last_update}>
@@ -47,7 +47,7 @@
         <{if $mod.function=='unable'}>
             <div style="font-size: 0.92rem;line-height: 1.5;">
                 <span style="color:rgb(156, 13, 13)"><{$mod.status}></span>
-                <a href="<{$source}>/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" title="<{$mod.dirname}>">
+                <a href="<{$source|default:''}>/modules/tad_modules/index.php?module_sn=<{$mod.module_sn}>" title="<{$mod.dirname}>">
                     <{$mod.name}>
                 </a>
             </div>

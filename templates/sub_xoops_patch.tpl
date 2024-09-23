@@ -9,8 +9,8 @@
         <div class="col-sm-6 col-md-4 col-lg-3">
             <div class="well">
                 <div style="font-size: 1.1rem; font-weight: bold; padding-bottom: 10px;">
-                    <span class="label label-primary"><{$i}></span>
-                    <a href="<{$source}>/modules/tad_modules/xoops.php?xoops_sn=<{$xoops.xoops_sn}>" target="_blank"><{$xoops.xoops_title}></a>
+                    <span class="label label-primary"><{$i|default:''}></span>
+                    <a href="<{$source|default:''}>/modules/tad_modules/xoops.php?xoops_sn=<{$xoops.xoops_sn}>" target="_blank"><{$xoops.xoops_title}></a>
                 </div>
 
                 <{if $xoops.status!="OK"}>
