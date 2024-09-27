@@ -40,8 +40,10 @@ class OnlineUpgrade
         // Utility::dd($all_mods);
         // 已安裝模組
         $mods = $blocks = [];
-        $sql = 'SELECT * FROM ' . $xoopsDB->prefix('modules') . '';
-        $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+        $sql = 'SELECT *
+        FROM `' . $xoopsDB->prefix('modules') . '`';
+        $result = Utility::query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+
         while ($mod = $xoopsDB->fetchArray($result)) {
             $dirname = $mod['dirname'];
             $mods[$dirname] = $mod;
@@ -49,8 +51,12 @@ class OnlineUpgrade
         $installed_modules = array_keys($mods);
 
         // 已安裝區塊
-        $sql = 'SELECT * FROM ' . $xoopsDB->prefix('newblocks') . " WHERE `mid`=0 AND `dirname`!='' ORDER BY side, weight";
-        $result = $xoopsDB->query($sql) or web_error($sql, __FILE__, __LINE__);
+        $sql = 'SELECT *
+        FROM `' . $xoopsDB->prefix('newblocks') . '`
+        WHERE `mid`=0 AND `dirname`!=?
+        ORDER BY `side`, `weight`';
+        $result = Utility::query($sql, 's', ['']) or Utility::web_error($sql, __FILE__, __LINE__);
+
         while ($block = $xoopsDB->fetchArray($result)) {
             $dirname = $block['dirname'];
             $blocks[$dirname] = $block;
@@ -585,21 +591,33 @@ class OnlineUpgrade
             $xoopsConfig['theme_set_allowed'][] = $theme;
             $theme_set_allowed = serialize($xoopsConfig['theme_set_allowed']);
 
-            $sql = 'update ' . $xoopsDB->prefix('config') . " set conf_value='{$theme_set_allowed}' where conf_name='theme_set_allowed'";
-            $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+            $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '`
+            SET `conf_value` = ?
+            WHERE `conf_name` = ?';
+            Utility::query($sql, 'ss', [$theme_set_allowed, 'theme_set_allowed']) or Utility::web_error($sql, __FILE__, __LINE__);
 
-            $sql = 'INSERT INTO ' . $xoopsDB->prefix('tadtools_setup') . " (`tt_theme` , `tt_use_bootstrap`,`tt_bootstrap_color`, `tt_theme_kind`) values('{$theme}', '0', '$bootstrap_color' , '$theme_kind') ON DUPLICATE KEY UPDATE `tt_use_bootstrap` = '0', `tt_bootstrap_color`='$bootstrap_color', `tt_theme_kind`='$theme_kind'";
-
-            $xoopsDB->queryF($sql) or redirect_header($_SERVER['PHP_SELF'], 3, $xoopsDB->error());
+            $sql = 'INSERT INTO `' . $xoopsDB->prefix('tadtools_setup') . '`
+            (`tt_theme`, `tt_use_bootstrap`, `tt_bootstrap_color`, `tt_theme_kind`)
+            VALUES (?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+            `tt_use_bootstrap` = ?,
+            `tt_bootstrap_color` = ?,
+            `tt_theme_kind` = ?';
+            Utility::query($sql, 'sssssss', [$theme, '0', $bootstrap_color, $theme_kind, '0', $bootstrap_color, $theme_kind])
+            or redirect_header($_SERVER['PHP_SELF'], 3, $xoopsDB->error());
         } else {
             $array = array_diff($xoopsConfig['theme_set_allowed'], $theme);
             $theme_set_allowed = serialize($array);
 
-            $sql = 'update ' . $xoopsDB->prefix('config') . " set conf_value='{$theme_set_allowed}' where conf_name='theme_set_allowed'";
-            $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+            $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '`
+            SET `conf_value` = ?
+            WHERE `conf_name` = ?';
+            Utility::query($sql, 'ss', [$theme_set_allowed, 'theme_set_allowed']) or Utility::web_error($sql, __FILE__, __LINE__);
 
-            $sql = 'delete from `' . $xoopsDB->prefix('tadtools_setup') . "` where `tt_theme`='$theme'";
-            $xoopsDB->queryF($sql) or redirect_header($_SERVER['PHP_SELF'], 3, $xoopsDB->error());
+            $sql = 'DELETE FROM `' . $xoopsDB->prefix('tadtools_setup') . '`
+            WHERE `tt_theme` = ?';
+            Utility::query($sql, 's', [$theme]) or redirect_header($_SERVER['PHP_SELF'], 3, $xoopsDB->error());
+
         }
     }
 
@@ -607,9 +625,11 @@ class OnlineUpgrade
     {
         global $xoopsConfig, $xoopsDB;
         if ($xoopsConfig['cpanel'] != $theme) {
-            $sql = 'update ' . $xoopsDB->prefix('config') . " set conf_value='{$theme}' where conf_name='cpanel'";
+            $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '`
+            SET `conf_value` = ?
+            WHERE `conf_name` = ?';
+            Utility::query($sql, 'ss', [$theme, 'cpanel']) or Utility::web_error($sql, __FILE__, __LINE__);
 
-            $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         }
     }
 
@@ -1106,19 +1126,38 @@ class OnlineUpgrade
         // die(var_export($block));
         $last_modified = time();
         if ('install' === $act) {
-            $sql = 'INSERT INTO ' . $xoopsDB->prefix('newblocks') . " (`mid`,`func_num`,`options`,`name`,`title`,`content`,`side`,`weight`,`visible`,`block_type`,`c_type`,`isactive`,`dirname`,`func_file`,`show_func`,`edit_func`,`template`,`bcachetime`,`last_modified`) values('0', '0', '', '自訂區塊', '{$block['title']}', '{$block['content']}', '{$block['side']}', '0', '1', 'C', '{$block['c_type']}', '1', '{$block['dirname']}', '', '}', '', '', '0', '{$last_modified}')";
-            $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+            $sql = 'INSERT INTO `' . $xoopsDB->prefix('newblocks') . '`
+            (`mid`, `func_num`, `options`, `name`, `title`, `content`, `side`, `weight`, `visible`, `block_type`, `c_type`, `isactive`, `dirname`, `func_file`, `show_func`, `edit_func`, `template`, `bcachetime`, `last_modified`)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+            Utility::query($sql, 'iissssiiississsssii',
+                [0, 0, '', '自訂區塊', $block['title'], $block['content'], $block['side'], 0, 1, 'C', $block['c_type'], 1, $block['dirname'], '', '', '', '', 0, $last_modified])
+            or Utility::web_error($sql, __FILE__, __LINE__);
+
             $block_id = $xoopsDB->getInsertId();
 
             $module_id = ($block['side'] <= 1) ? 0 : -1;
-            $sql = 'INSERT INTO ' . $xoopsDB->prefix('block_module_link') . " (`block_id` , `module_id`) values('{$block_id}', '{$module_id}')";
-            $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
-            $sql = 'INSERT INTO ' . $xoopsDB->prefix('group_permission') . " (`gperm_groupid` , `gperm_itemid` , `gperm_modid` , `gperm_name`) values('1', '{$block_id}', '1', 'block_read'),('2', '{$block_id}', '1', 'block_read'),('3', '{$block_id}', '1', 'block_read')";
-            $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+            $sql = 'INSERT INTO `' . $xoopsDB->prefix('group_permission') . '`
+            (`gperm_groupid`, `gperm_itemid`, `gperm_modid`, `gperm_name`)
+            VALUES (?, ?, ?, ?), (?, ?, ?, ?), (?, ?, ?, ?)';
+            Utility::query($sql, 'iiisiiisiiis', [1, $block_id, 1, 'block_read', 2, $block_id, 1, 'block_read', 3, $block_id, 1, 'block_read']) or Utility::web_error($sql, __FILE__, __LINE__);
+
+            $sql = 'INSERT INTO `' . $xoopsDB->prefix('block_module_link') . '`
+            (`block_id`, `module_id`)
+            VALUES (?, ?)';
+            Utility::query($sql, 'ii', [$block_id, $module_id]) or Utility::web_error($sql, __FILE__, __LINE__);
+
+            $sql = 'INSERT INTO `' . $xoopsDB->prefix('group_permission') . '`
+            (`gperm_groupid`, `gperm_itemid`, `gperm_modid`, `gperm_name`)
+            VALUES (?, ?, ?, ?), (?, ?, ?, ?), (?, ?, ?, ?)';
+            Utility::query($sql, 'iiisiiisiiis', [1, $block_id, 1, 'block_read', 2, $block_id, 1, 'block_read', 3, $block_id, 1, 'block_read']) or Utility::web_error($sql, __FILE__, __LINE__);
+
         } else {
-            $sql = 'UPDATE  ' . $xoopsDB->prefix('newblocks') . " SET `content`='{$block['content']}',`last_modified`='{$last_modified}' where dirname='{$block['dirname']}'";
-            $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+            $sql = 'UPDATE `' . $xoopsDB->prefix('newblocks') . '`
+            SET `content` = ?, `last_modified` = ?
+            WHERE `dirname` = ?';
+            Utility::query($sql, 'sss', [$block['content'], $last_modified, $block['dirname']]) or Utility::web_error($sql, __FILE__, __LINE__);
+
         }
     }
 

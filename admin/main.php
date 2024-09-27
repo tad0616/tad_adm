@@ -95,8 +95,10 @@ require_once __DIR__ . '/footer.php';
 function active_module($mid)
 {
     global $xoopsDB;
-    $sql = 'UPDATE ' . $xoopsDB->prefix('modules') . " SET isactive='1' WHERE `mid`='{$mid}'";
-    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+
+    $sql = 'UPDATE `' . $xoopsDB->prefix('modules') . '` SET `isactive`=? WHERE `mid`=?';
+    Utility::query($sql, 'si', [1, $mid]) or Utility::web_error($sql, __FILE__, __LINE__);
+
 }
 
 function get_theme_color($dirname)

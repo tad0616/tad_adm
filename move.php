@@ -80,7 +80,7 @@ switch ($op) {
 
 function move_step()
 {
-    global $latest_xoops_version, $max_xoops_version, $inSchoolWeb;
+    global $latest_xoops_version, $inSchoolWeb;
     $id = '帳號';
     if (mb_strpos($_SERVER['SERVER_NAME'], '.tn.edu.tw')) {
         $str = str_replace('.tn.edu.tw', '', $_SERVER['SERVER_NAME']);
@@ -217,11 +217,13 @@ function move_step()
 
 function modules_version()
 {
-    global $latest_xoops_version, $max_xoops_version, $xoopsDB, $source_mod, $on, $off, $add, $up, $down;
+    global $xoopsDB, $source_mod, $on, $off;
 
     //抓出現有模組
-    $sql = 'SELECT * FROM ' . $xoopsDB->prefix('modules') . ' ORDER BY hasmain DESC, weight';
-    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+    $sql = 'SELECT *
+        FROM `' . $xoopsDB->prefix('modules') . '`
+        ORDER BY `hasmain` DESC, `weight`';
+    $result = Utility::query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     $need_update = false;
     $i = 0;
     $mod_msg = '';
@@ -462,14 +464,14 @@ function upload_files()
 
 function download_sql()
 {
-    global $latest_xoops_version, $max_xoops_version, $xoopsDB, $source_mod, $on, $off, $add, $up, $down;
+    global $xoopsDB;
 
     $sql = "SELECT
-    ROUND(SUM(data_length + index_length) / 1024 / 1024, 2)
-    FROM information_schema.TABLES
-    WHERE table_schema='" . XOOPS_DB_NAME . "'";
+            ROUND(SUM(data_length + index_length) / 1024 / 1024, 2)
+        FROM information_schema.TABLES
+        WHERE table_schema=?";
+    $result = Utility::query($sql, 's', [XOOPS_DB_NAME]) or Utility::web_error($sql, __FILE__, __LINE__);
 
-    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     list($dbsize) = $xoopsDB->fetchRow($result);
 
     $tn_note = '';

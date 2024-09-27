@@ -15,9 +15,11 @@ function tad_adm_new($options)
     }
 
     $all_data = '';
-
-    $sql = 'select * from ' . $xoopsDB->prefix('users') . " order by uid desc limit 0,{$options[0]}";
-    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+    $sql = 'SELECT *
+        FROM `' . $xoopsDB->prefix('users') . '`
+        ORDER BY `uid` DESC
+        LIMIT ?, ?';
+    $result = Utility::query($sql, 'ii', [0, $options[0]]) or Utility::web_error($sql, __FILE__, __LINE__);
 
     while (false !== ($data = $xoopsDB->fetchArray($result))) {
         foreach ($data as $k => $v) {
@@ -111,18 +113,13 @@ function tad_adm_new_edit($options)
 if (!function_exists('replace_tad_adm')) {
     function replace_tad_adm($uid = '', $email = '', $result = '')
     {
-        global $xoopsDB, $xoopsUser;
-
-        $myts = \MyTextSanitizer::getInstance();
-        $email = $xoopsDB->escape($email);
-        $result = $xoopsDB->escape($result);
+        global $xoopsDB;
 
         $chk_date = date('Y-m-d H:i:s', xoops_getUserTimestamp(time()));
-
-        $sql = 'replace into `' . $xoopsDB->prefix('tad_adm') . "`
-        (`uid` , `email` , `result` , `chk_date`)
-        values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
-        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+        $sql = 'REPLACE INTO `' . $xoopsDB->prefix('tad_adm') . '`
+        (`uid`, `email`, `result`, `chk_date`)
+        VALUES (?, ?, ?, ?)';
+        $result = Utility::query($sql, 'isss', [$uid, $email, $result, $chk_date]) or Utility::web_error($sql, __FILE__, __LINE__);
     }
 }
 
@@ -134,9 +131,11 @@ if (!function_exists('get_tad_adm')) {
         if (empty($uid)) {
             return;
         }
+        $sql = 'SELECT *
+        FROM `' . $xoopsDB->prefix('tad_adm') . '`
+        WHERE `uid` = ?';
+        $result = Utility::query($sql, 'i', [$uid]) or Utility::web_error($sql, __FILE__, __LINE__);
 
-        $sql = 'select * from `' . $xoopsDB->prefix('tad_adm') . "` where `uid` = '{$uid}'";
-        $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
         $data = $xoopsDB->fetchArray($result);
 
         return $data;

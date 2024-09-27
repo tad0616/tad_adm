@@ -240,16 +240,12 @@ function replace_tad_adm($uid = '', $email = '', $result = '')
 {
     global $xoopsDB, $xoopsUser;
 
-    $myts = \MyTextSanitizer::getInstance();
-    $email = $xoopsDB->escape($email);
-    $result = $xoopsDB->escape($result);
-
     $chk_date = date('Y-m-d H:i:s', xoops_getUserTimestamp(time()));
+    $sql = 'REPLACE INTO `' . $xoopsDB->prefix('tad_adm') . '`
+    (`uid`, `email`, `result`, `chk_date`)
+    VALUES (?, ?, ?, ?)';
+    Utility::query($sql, 'isss', [$uid, $email, $result, $chk_date]) or Utility::web_error($sql, __FILE__, __LINE__);
 
-    $sql = 'replace into `' . $xoopsDB->prefix('tad_adm') . "`
-  (`uid` , `email` , `result` , `chk_date`)
-  values('{$uid}' , '{$email}' , '{$result}' , '{$chk_date}')";
-    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 }
 
 //以流水號取得某筆tad_adm資料
@@ -260,8 +256,11 @@ function get_tad_adm($uid = '')
         return;
     }
 
-    $sql = 'select * from `' . $xoopsDB->prefix('tad_adm') . "` where `uid` = '{$uid}'";
-    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+    $sql = 'SELECT *
+    FROM `' . $xoopsDB->prefix('tad_adm') . '`
+    WHERE `uid` = ?';
+    $result = Utility::query($sql, 'i', [$uid]) or Utility::web_error($sql, __FILE__, __LINE__);
+
     $data = $xoopsDB->fetchArray($result);
 
     return $data;
@@ -275,8 +274,9 @@ function del_user($del_uid)
         return;
     }
 
-    $sql = 'delete from `' . $xoopsDB->prefix('tad_adm') . "` where `uid` = '{$del_uid}'";
-    $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+    $sql = 'DELETE FROM `' . $xoopsDB->prefix('tad_adm') . '`
+    WHERE `uid` = ?';
+    Utility::query($sql, 'i', [$del_uid]) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $memberHandler = xoops_getHandler('member');
     $user = $memberHandler->getUser($del_uid);

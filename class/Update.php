@@ -30,8 +30,12 @@ class Update
     public static function chk_uid()
     {
         global $xoopsDB;
-        $sql = "SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '" . $xoopsDB->prefix('tad_adm') . "' AND COLUMN_NAME = 'uid'";
-        $result = $xoopsDB->query($sql);
+        $sql = "SELECT `DATA_TYPE`
+        FROM `INFORMATION_SCHEMA`.`COLUMNS`
+        WHERE `table_name` = ?
+        AND `COLUMN_NAME` = ?";
+        $result = Utility::query($sql, 'ss', [$xoopsDB->prefix('tad_adm'), 'uid']);
+
         list($type) = $xoopsDB->fetchRow($result);
         if ('smallint' === $type) {
             return true;
@@ -44,8 +48,9 @@ class Update
     public static function go_update_uid()
     {
         global $xoopsDB;
-        $sql = 'ALTER TABLE `' . $xoopsDB->prefix('tad_adm') . '` CHANGE `uid` `uid` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT 0';
-        $xoopsDB->queryF($sql) or redirect_header(XOOPS_URL, 3, $xoopsDB->error());
+        $sql = 'ALTER TABLE `' . $xoopsDB->prefix('tad_adm') . '`
+        CHANGE `uid` `uid` MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT 0';
+        Utility::query($sql) or redirect_header(XOOPS_URL, 3, $xoopsDB->error());
 
         return true;
     }
