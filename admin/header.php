@@ -28,10 +28,10 @@ if (!isset($xoopsTpl) || !is_object($xoopsTpl)) {
 xoops_cp_header();
 
 // Define Stylesheet and JScript
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/css/iconize.css');
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/tadtools/css/font-awesome/css/font-awesome.css');
+$xoTheme->addStylesheet('modules/tadtools/css/iconize.css');
+$xoTheme->addStylesheet('modules/tadtools/css/font-awesome/css/font-awesome.css');
 $xoTheme->addStylesheet(XOOPS_URL . "/modules/tadtools/css/xoops_adm{$_SESSION['bootstrap']}.css");
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/' . $xoopsModule->getVar('dirname') . '/css/module.css');
-$xoTheme->addStylesheet(XOOPS_URL . '/modules/' . $xoopsModule->getVar('dirname') . '/css/admin.css');
+$xoTheme->addStylesheet('modules/' . $xoopsModule->getVar('dirname') . '/css/module.css');
+$xoTheme->addStylesheet('modules/' . $xoopsModule->getVar('dirname') . '/css/admin.css');
 //$xoTheme->addScript("browse.php?Frameworks/jquery/jquery.js");
 //$xoTheme->addScript("browse.php?modules/" . $xoopsModule->getVar("dirname") . "/js/admin.js");

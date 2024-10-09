@@ -9,6 +9,4 @@ if (!isset($_SESSION['sys_adm'])) {
 }
 
 $interface_menu[_TAD_TO_MOD] = 'index.php';
-if ($_SESSION['sys_adm']) {
-    $interface_menu[_TAD_TO_ADMIN] = 'admin/main.php';
-}
+$interface_icon[_TAD_TO_MOD] = "fa-chevron-right";

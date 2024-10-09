@@ -1,6 +1,5 @@
 <?php
 use Xmf\Request;
-use XoopsModules\Tadtools\SyntaxHighlighter;
 use XoopsModules\Tadtools\Utility;
 use XoopsModules\Tad_adm\Mysqldump as IMysqldump;
 use XoopsModules\Tad_adm\OnlineUpgrade;
@@ -210,9 +209,8 @@ function move_step()
         $content .= login_form();
     }
 
-    $SyntaxHighlighter = new SyntaxHighlighter();
-    $SyntaxHighlighterCode = $SyntaxHighlighter->render();
-    echo Utility::html5($content, false, true, 4, true, 'container', 'XOOPS升級、備份、搬移指南', $SyntaxHighlighterCode);
+    $prism = Utility::prism('return');
+    echo Utility::html5($content, false, true, 4, true, 'container', 'XOOPS升級、備份、搬移指南', $prism);
 }
 
 function modules_version()
@@ -228,7 +226,6 @@ function modules_version()
     $i = 0;
     $mod_msg = '';
     //模組部份
-    $all_install_modules = [];
     while (false !== ($data = $xoopsDB->fetchArray($result))) {
         foreach ($data as $k => $v) {
             $$k = $v;

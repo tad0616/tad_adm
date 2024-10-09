@@ -163,13 +163,13 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
 //列出所有垃圾郵件
 function list_spam($g2p = 1)
 {
-    global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
+    global $xoopsDB, $xoopsTpl;
 
-    $sql = 'SELECT a.uid,a.email,a.chk_date,b.`name`, b.`uname`, b.`email`, b.`url`, b.`user_avatar`, b.`user_regdate`, b.`user_icq`, b.`user_from`, b.`user_sig`, b.`user_viewemail`, b.`actkey`, b.`user_aim`, b.`user_yim`, b.`user_msnm`, b.`pass`, b.`posts`, b.`attachsig`, b.`rank`, b.`level`, b.`theme`, b.`timezone_offset`, b.`last_login`, b.`umode`, b.`uorder`, b.`notify_method`, b.`notify_mode`, b.`user_occ`, b.`bio`, b.`user_intrest`, b.`user_mailok` FROM '
+    $sql = 'SELECT a.`uid`, a.`email`, a.`chk_date`, b.`name`, b.`uname`, b.`email`, b.`url`, b.`user_avatar`, b.`user_regdate`, b.`user_icq`, b.`user_from`, b.`user_sig`, b.`user_viewemail`, b.`actkey`, b.`user_aim`, b.`user_yim`, b.`user_msnm`, b.`pass`, b.`posts`, b.`attachsig`, b.`rank`, b.`level`, b.`theme`, b.`timezone_offset`, b.`last_login`, b.`umode`, b.`uorder`, b.`notify_method`, b.`notify_mode`, b.`user_occ`, b.`bio`, b.`user_intrest`, b.`user_mailok` FROM `'
     . $xoopsDB->prefix('tad_adm')
-    . ' AS a LEFT JOIN '
+    . '` AS a LEFT JOIN `'
     . $xoopsDB->prefix('users')
-        . " AS b ON a.uid=b.uid WHERE a.`result`='1' ORDER BY a.uid DESC";
+        . '` AS b ON a.`uid`=b.`uid` WHERE a.`result`=1 ORDER BY a.`uid` DESC';
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
     $PageBar = Utility::getPageBar($sql, 500, 10);
