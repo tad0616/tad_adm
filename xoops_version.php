@@ -34,7 +34,7 @@ $modversion['paypal']['currency_code'] = 'USD';
 
 //---模組資料表架構---//
 $modversion['sqlfile']['mysql'] = 'sql/mysql.sql';
-$modversion['tables'][1] = 'tad_adm';
+$modversion['tables'] = ['tad_adm'];
 
 //---後台使用系統選單---//
 $modversion['system_menu'] = 1;
@@ -55,96 +55,82 @@ $modversion['onUpdate'] = 'include/onUpdate.php';
 $modversion['onUninstall'] = 'include/onUninstall.php';
 
 //---偏好設定---//
-$modversion['config'] = [];
-$i = 0;
-$modversion['config'][$i]['name'] = 'list_amount';
-$modversion['config'][$i]['title'] = '_MI_TADADM_LIST_AMOUNT';
-$modversion['config'][$i]['description'] = '_MI_TADADM_LIST_AMOUNT_DESC';
-$modversion['config'][$i]['formtype'] = 'textbox';
-$modversion['config'][$i]['valuetype'] = 'int';
-$modversion['config'][$i]['default'] = '10';
-
-$i++;
-$modversion['config'][$i]['name'] = 'login';
-$modversion['config'][$i]['title'] = '_MI_TADADM_LOGIN';
-$modversion['config'][$i]['description'] = '_MI_TADADM_LOGIN_DESC';
-$modversion['config'][$i]['formtype'] = 'textbox';
-$modversion['config'][$i]['valuetype'] = 'text';
-$modversion['config'][$i]['default'] = '';
-
-$i++;
-$modversion['config'][$i]['name'] = 'module_id_temp';
-$modversion['config'][$i]['title'] = '_MI_TADADM_MODULE_ID_TEMP';
-$modversion['config'][$i]['description'] = '_MI_TADADM_MODULE_ID_TEMP_DESC';
-$modversion['config'][$i]['formtype'] = 'textarea';
-$modversion['config'][$i]['valuetype'] = 'text';
-$modversion['config'][$i]['default'] = '';
-
-$i++;
-$modversion['config'][$i]['name'] = 'block_id_temp';
-$modversion['config'][$i]['title'] = '_MI_TADADM_BLOCK_ID_TEMP';
-$modversion['config'][$i]['description'] = '_MI_TADADM_BLOCK_ID_TEMP_DESC';
-$modversion['config'][$i]['formtype'] = 'textarea';
-$modversion['config'][$i]['valuetype'] = 'text';
-$modversion['config'][$i]['default'] = '';
-
-$i++;
-$modversion['config'][$i]['name'] = 'ssh_port';
-$modversion['config'][$i]['title'] = '_MI_TADADM_SSH_PORT';
-$modversion['config'][$i]['description'] = '_MI_TADADM_SSH_PORT_DESC';
-$modversion['config'][$i]['formtype'] = 'textbox';
-$modversion['config'][$i]['valuetype'] = 'int';
-$modversion['config'][$i]['default'] = '22';
-
-$i++;
-$modversion['config'][$i]['name'] = 'source';
-$modversion['config'][$i]['title'] = '_MI_TADADM_SOURCE';
-$modversion['config'][$i]['description'] = '_MI_TADADM_SOURCE_DESC';
-$modversion['config'][$i]['formtype'] = 'textbox';
-$modversion['config'][$i]['valuetype'] = 'text';
-$modversion['config'][$i]['default'] = 'https://campus-xoops.tn.edu.tw';
+$modversion['config'] = [
+    [
+        'name' => 'list_amount',
+        'title' => '_MI_TADADM_LIST_AMOUNT',
+        'description' => '_MI_TADADM_LIST_AMOUNT_DESC',
+        'formtype' => 'textbox',
+        'valuetype' => 'int',
+        'default' => '10',
+    ],
+    [
+        'name' => 'login',
+        'title' => '_MI_TADADM_LOGIN',
+        'description' => '_MI_TADADM_LOGIN_DESC',
+        'formtype' => 'textbox',
+        'valuetype' => 'text',
+        'default' => '',
+    ],
+    [
+        'name' => 'module_id_temp',
+        'title' => '_MI_TADADM_MODULE_ID_TEMP',
+        'description' => '_MI_TADADM_MODULE_ID_TEMP_DESC',
+        'formtype' => 'textarea',
+        'valuetype' => 'text',
+        'default' => '',
+    ],
+    [
+        'name' => 'block_id_temp',
+        'title' => '_MI_TADADM_BLOCK_ID_TEMP',
+        'description' => '_MI_TADADM_BLOCK_ID_TEMP_DESC',
+        'formtype' => 'textarea',
+        'valuetype' => 'text',
+        'default' => '',
+    ],
+    [
+        'name' => 'ssh_port',
+        'title' => '_MI_TADADM_SSH_PORT',
+        'description' => '_MI_TADADM_SSH_PORT_DESC',
+        'formtype' => 'textbox',
+        'valuetype' => 'int',
+        'default' => '22',
+    ],
+    [
+        'name' => 'source',
+        'title' => '_MI_TADADM_SOURCE',
+        'description' => '_MI_TADADM_SOURCE_DESC',
+        'formtype' => 'textbox',
+        'valuetype' => 'text',
+        'default' => 'https://campus-xoops.tn.edu.tw',
+    ],
+];
 
 //---搜尋---//
-//$modversion['hasSearch'] = 1;
+$modversion['hasSearch'] = 0;
 //$modversion['search']['file'] = "include/search.php";
 //$modversion['search']['func'] = "搜尋函數名稱";
 
 //---區塊設定---//
-$modversion['blocks'] = [];
-$i = 1;
-$modversion['blocks'][$i]['file'] = 'tad_adm_new.php';
-$modversion['blocks'][$i]['name'] = _MI_TADADM_BNAME1;
-$modversion['blocks'][$i]['description'] = _MI_TADADM_BDESC1;
-$modversion['blocks'][$i]['show_func'] = 'tad_adm_new';
-$modversion['blocks'][$i]['template'] = 'tad_adm_new.tpl';
-$modversion['blocks'][$i]['edit_func'] = 'tad_adm_new_edit';
-$modversion['blocks'][$i]['options'] = '10';
+$modversion['blocks'] = [
+    [
+        'file' => 'tad_adm_new.php',
+        'name' => _MI_TADADM_BNAME1,
+        'description' => _MI_TADADM_BDESC1,
+        'show_func' => 'tad_adm_new',
+        'template' => 'tad_adm_new.tpl',
+        'edit_func' => 'tad_adm_new_edit',
+        'options' => '10',
+    ],
+];
 
 //---樣板設定---//
-$modversion['templates'] = [];
-$i = 1;
-$modversion['templates'][$i]['file'] = 'tad_adm_adm_main.tpl';
-$modversion['templates'][$i]['description'] = 'tad_adm_adm_main.tpl';
-
-$i++;
-$modversion['templates'][$i]['file'] = 'tad_adm_adm_spam.tpl';
-$modversion['templates'][$i]['description'] = 'tad_adm_adm_spam.tpl';
-
-$i++;
-$modversion['templates'][$i]['file'] = 'tad_adm_adm_phpini.tpl';
-$modversion['templates'][$i]['description'] = 'tad_adm_adm_phpini.tpl';
-
-$i++;
-$modversion['templates'][$i]['file'] = 'tad_adm_adm_backup.tpl';
-$modversion['templates'][$i]['description'] = 'tad_adm_adm_backup.tpl';
-
-$i++;
-$modversion['templates'][$i]['file'] = 'tad_adm_adm_clean.tpl';
-$modversion['templates'][$i]['description'] = 'tad_adm_adm_clean.tpl';
-
-$i++;
-$modversion['templates'][$i]['file'] = 'tad_adm_tn_manager.tpl';
-$modversion['templates'][$i]['description'] = 'tad_adm_tn_manager.tpl';
-$i++;
-$modversion['templates'][$i]['file'] = 'tad_adm_adm_xoops.tpl';
-$modversion['templates'][$i]['description'] = 'tad_adm_adm_xoops.tpl';
+$modversion['templates'] = [
+    ['file' => 'tad_adm_adm_main.tpl', 'description' => 'tad_adm_adm_main.tpl'],
+    ['file' => 'tad_adm_adm_spam.tpl', 'description' => 'tad_adm_adm_spam.tpl'],
+    ['file' => 'tad_adm_adm_phpini.tpl', 'description' => 'tad_adm_adm_phpini.tpl'],
+    ['file' => 'tad_adm_adm_backup.tpl', 'description' => 'tad_adm_adm_backup.tpl'],
+    ['file' => 'tad_adm_adm_clean.tpl', 'description' => 'tad_adm_adm_clean.tpl'],
+    ['file' => 'tad_adm_tn_manager.tpl', 'description' => 'tad_adm_tn_manager.tpl'],
+    ['file' => 'tad_adm_adm_xoops.tpl', 'description' => 'tad_adm_adm_xoops.tpl'],
+];
