@@ -23,7 +23,6 @@ $val = Request::getInt('val');
 $theme = Request::getString('theme');
 
 switch ($op) {
-    /*---判斷動作請貼在下方---*/
 
     case 'ssh_login':
         OnlineUpgrade::ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link, $dirname, $act, $update_sn, $xoops_sn);
@@ -40,7 +39,7 @@ switch ($op) {
     default:
         OnlineUpgrade::list_xoops();
         break;
-        /*---判斷動作請貼在上方---*/
+
 }
 
 /*-----------秀出結果區--------------*/

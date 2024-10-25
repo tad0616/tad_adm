@@ -440,6 +440,7 @@ class OnlineUpgrade
         $now_tadtools_version = Utility::get_version('module', '', 'tadtools');
 
         $chk_file = '';
+        $now_mod_last_update = 0;
         if ($type == "upgrade") {
             $filemtime = file_exists(XOOPS_ROOT_PATH . "/mainfile.php") ? filemtime(XOOPS_ROOT_PATH . "/mainfile.php") : 0;
             $now_mod_last_update = $last_update ? $last_update : $filemtime;
@@ -461,10 +462,11 @@ class OnlineUpgrade
             $now_mod_last_update = $last_update;
             $new_mod_last_update = $mod_data['new_last_update'];
         } elseif ($type == "other") {
-            $now_mod_last_update = strtotime(file_get_contents(XOOPS_ROOT_PATH . "/uploads/module_sn_{$mod_data['module_sn']}.txt"));
+            if (\file_exists(XOOPS_ROOT_PATH . "/uploads/module_sn_{$mod_data['module_sn']}.txt")) {
+                $now_mod_last_update = strtotime(file_get_contents(XOOPS_ROOT_PATH . "/uploads/module_sn_{$mod_data['module_sn']}.txt"));
+            }
             $new_mod_last_update = $mod_data['new_last_update'];
-            // die("{$now_mod_last_update}={$new_mod_last_update}");
-            // $chk_file            = XOOPS_ROOT_PATH . "/uploads/module_sn_{$mod_data['module_sn']}.txt";
+
         } else {
             $filemtime = file_exists(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php") ? filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php") : 0;
             $now_mod_last_update = $last_update ? $last_update : $filemtime;

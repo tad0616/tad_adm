@@ -10,12 +10,11 @@ $op = Request::getString('op');
 $g2p = Request::getInt('g2p');
 
 switch ($op) {
-    /*---判斷動作請貼在下方---*/
 
     default:
         phpini($op);
         break;
-        /*---判斷動作請貼在上方---*/
+
 }
 
 /*-----------秀出結果區--------------*/
