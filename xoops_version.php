@@ -47,8 +47,7 @@ $modversion['adminmenu'] = 'admin/menu.php';
 
 //---前台主選單設定---//
 $modversion['hasMain'] = 1;
-//$modversion['sub'][1]['name'] = '';
-//$modversion['sub'][1]['url'] = '';
+// $modversion['sub'] = [['name' => '申請狀態', 'url' => 'status.php']];
 
 //---模組自動功能---//
 $modversion['onInstall'] = 'include/onInstall.php';

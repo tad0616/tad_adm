@@ -65,3 +65,5 @@ define('_MD_TADADM_MOVE288', '網站升級或搬移指南');
 define('_MD_TADADM_CHANGE_CONFIRM_TITLE', '確定要進行密碼變更程序？');
 define('_MD_TADADM_CHANGE_CONFIRM_TEXT', '確定後，請至管理信箱收信，並根據信件內容進行操作');
 define('_MD_TADADM_CHANGE_CONFIRM_BTN', '確定繼續');
+
+define('_MD_TADADM_INDEX', '站長工具箱前台');
