@@ -20,10 +20,7 @@ class OnlineUpgrade
         global $xoopsModule, $xoopsModuleConfig;
 
         if ('tad_adm' !== $xoopsModule->dirname()) {
-            $moduleHandler = xoops_getHandler('module');
-            $xModule = $moduleHandler->getByDirname('tad_adm');
-            $configHandler = xoops_getHandler('config');
-            $TadAmModuleConfig = $configHandler->getConfigsByCat(0, $xModule->mid());
+            $TadAmModuleConfig = Utility::getXoopsModuleConfig('tad_adm');
         } else {
             $TadAmModuleConfig = $xoopsModuleConfig;
         }
@@ -127,13 +124,13 @@ class OnlineUpgrade
         $xoopsTpl->assign('jquery', Utility::get_jquery(true));
 
         $EasyResponsiveTabs = new EasyResponsiveTabs('#modTab');
-        $EasyResponsiveTabs->rander();
+        $EasyResponsiveTabs->render();
     }
 
 //列出所有XOOPS升級資訊
     public static function list_xoops($mode = "tpl")
     {
-        global $xoopsDB, $xoopsTpl, $xoopsConfig;
+        global $xoopsTpl;
         //取得升級訊息
         $xoops_patch = self::get_tad_json_info('xoops.json');
 
@@ -171,7 +168,7 @@ class OnlineUpgrade
         $xoopsTpl->assign('jquery', Utility::get_jquery(true));
 
         $EasyResponsiveTabs = new EasyResponsiveTabs('#xoopsTab');
-        $EasyResponsiveTabs->rander();
+        $EasyResponsiveTabs->render();
     }
 
     //取得系統的升級或修補檔

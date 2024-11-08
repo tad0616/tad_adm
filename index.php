@@ -20,12 +20,8 @@ $msg_box = '';
 if ($xoopsUser) {
     $_SESSION['sys_adm'] = $xoopsUser->isAdmin(1);
 } elseif ('helpme' === $op) {
-    $moduleHandler = xoops_getHandler('module');
-    $xoopsModule = $moduleHandler->getByDirname('tad_adm');
-    $configHandler = xoops_getHandler('config');
-    $xoopsModuleConfig = $configHandler->getConfigsByCat(0, $xoopsModule->getVar('mid'));
-
-    $_SESSION['sys_adm'] = ('' != $xoopsModuleConfig['login'] and '' != $help_passwd and $xoopsModuleConfig['login'] == $help_passwd) ? true : false;
+    $TadAmModuleConfig = Utility::getXoopsModuleConfig('tad_adm');
+    $_SESSION['sys_adm'] = ('' != $TadAmModuleConfig['login'] and '' != $help_passwd and $TadAmModuleConfig['login'] == $help_passwd) ? true : false;
 } elseif ('send_passwd' === $op) {
     $result = send_passwd();
     header("location: {$_SERVER['PHP_SELF']}?op=msg&show={$result}");
@@ -200,9 +196,9 @@ function unable_modules()
 //還原所有模組
 function enable_modules()
 {
-    global $xoopsDB, $xoopsModuleConfig;
+    global $xoopsDB, $TadAmModuleConfig;
     $sql = 'UPDATE `' . $xoopsDB->prefix('modules') . '` SET `isactive`=? WHERE `mid` IN (?)';
-    Utility::query($sql, 'ss', ['1', $xoopsModuleConfig['module_id_temp']]) or Utility::web_error($sql, __FILE__, __LINE__);
+    Utility::query($sql, 'ss', ['1', $TadAmModuleConfig['module_id_temp']]) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=?';
     Utility::query($sql, 'ss', ['', 'module_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -232,10 +228,10 @@ function unable_blocks()
 //還原所有區塊
 function enable_blocks()
 {
-    global $xoopsDB, $xoopsModuleConfig;
+    global $xoopsDB, $TadAmModuleConfig;
 
     $sql = 'UPDATE `' . $xoopsDB->prefix('newblocks') . '` SET `visible`=? WHERE `bid` IN (?)';
-    Utility::query($sql, 'ss', ['1', $xoopsModuleConfig['block_id_temp']]) or Utility::web_error($sql, __FILE__, __LINE__);
+    Utility::query($sql, 'ss', ['1', $TadAmModuleConfig['block_id_temp']]) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=?';
     Utility::query($sql, 'ss', ['', 'block_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -275,7 +271,7 @@ function send_passwd()
 //立即寄出
 function send_now($email = '', $title = '', $content = '')
 {
-    global $xoopsConfig, $xoopsDB, $xoopsModuleConfig, $xoopsModule;
+    global $xoopsConfig, $xoopsDB, $TadAmModuleConfig, $xoopsModule;
 
     $xoopsMailer = getMailer();
     $xoopsMailer->multimailer->ContentType = 'text/html';
@@ -676,8 +672,8 @@ while (list($uid, $uname, $name) = $xoopsDB->fetchRow($result)) {
     $XoopsFormSelectUserOption .= "<option value='{$uid}'>{$uname}{$showname}</option>";
 }
 
-if ('' != $xoopsModuleConfig['module_id_temp']) {
-    $modules_amount = count(explode(',', $xoopsModuleConfig['module_id_temp']));
+if ('' != $TadAmModuleConfig['module_id_temp']) {
+    $modules_amount = count(explode(',', $TadAmModuleConfig['module_id_temp']));
     $modules_tool = "<a href='index.php?op=enable_modules'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_ENABLE_ALL_MODS, $modules_amount) . "'></i> " . sprintf(_MD_TADADM_ENABLE_ALL_MODS, $modules_amount) . '</a>';
 } else {
     //計算模組數量
@@ -691,8 +687,8 @@ if ('' != $xoopsModuleConfig['module_id_temp']) {
     $modules_tool = "<a href='index.php?op=unable_modules'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_UNABLE_ALL_MODS, $modules_amount) . "'></i> " . sprintf(_MD_TADADM_UNABLE_ALL_MODS, $modules_amount) . '</a>';
 }
 
-if ('' != $xoopsModuleConfig['block_id_temp']) {
-    $blocks_amount = count(explode(',', $xoopsModuleConfig['block_id_temp']));
+if ('' != $TadAmModuleConfig['block_id_temp']) {
+    $blocks_amount = count(explode(',', $TadAmModuleConfig['block_id_temp']));
     $blocks_tool = "<a href='index.php?op=enable_blocks'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_ENABLE_ALL_BLOCKS, $blocks_amount) . "'></i> " . sprintf(_MD_TADADM_ENABLE_ALL_BLOCKS, $blocks_amount) . '</a>';
 } else {
     //計算區塊數量

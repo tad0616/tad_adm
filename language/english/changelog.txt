@@ -1,3 +1,11 @@
+Tad Adm 3.0 (Released on 2024-11-11)
+==================================================================
+1.Support XOOPS 2.5.11
+2.Support PHP 8.3
+3.Upgrade Adminer to AdminerEvo 4.8.4
+4.Database Syntax Parameterization
+
+
 Tad Adm 2.9.3 (Released on 2022-09-01)
 ==================================================================
 1. Re-enforce zip.php security.
