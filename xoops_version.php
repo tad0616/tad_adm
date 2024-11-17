@@ -111,9 +111,9 @@ $modversion['hasSearch'] = 0;
 //$modversion['search']['file'] = "include/search.php";
 //$modversion['search']['func'] = "搜尋函數名稱";
 
-//---區塊設定---//
+//---區塊設定 (索引為固定值，若欲刪除區塊記得補上索引，避免區塊重複)---//
 $modversion['blocks'] = [
-    [
+    1 => [
         'file' => 'tad_adm_new.php',
         'name' => _MI_TADADM_BNAME1,
         'description' => _MI_TADADM_BDESC1,

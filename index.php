@@ -18,10 +18,10 @@ $uid = Request::getInt('uid');
 $show = Request::getBool('show');
 $msg_box = '';
 if ($xoopsUser) {
-    $_SESSION['sys_adm'] = $xoopsUser->isAdmin(1);
+    $sys_adm = $xoopsUser->isAdmin(1);
 } elseif ('helpme' === $op) {
     $TadAmModuleConfig = Utility::getXoopsModuleConfig('tad_adm');
-    $_SESSION['sys_adm'] = ('' != $TadAmModuleConfig['login'] and '' != $help_passwd and $TadAmModuleConfig['login'] == $help_passwd) ? true : false;
+    $sys_adm = ('' != $TadAmModuleConfig['login'] and '' != $help_passwd and $TadAmModuleConfig['login'] == $help_passwd) ? true : false;
 } elseif ('send_passwd' === $op) {
     $result = send_passwd();
     header("location: {$_SERVER['PHP_SELF']}?op=msg&show={$result}");
@@ -35,7 +35,7 @@ if ($xoopsUser) {
     $msg_box = "<div class='alert alert-info'>$msg</div>";
 }
 
-if (!$_SESSION['sys_adm']) {
+if (!$sys_adm) {
     if ('forgot' === $op) {
         $SweetAlert = new SweetAlert();
         $SweetAlertCode = $SweetAlert->render("forget_mail", "index.php?op=send_passwd&go=", 'go', _MD_TADADM_CHANGE_CONFIRM_TITLE, _MD_TADADM_CHANGE_CONFIRM_TEXT, _MD_TADADM_CHANGE_CONFIRM_BTN, 'warning', true);
@@ -169,7 +169,7 @@ switch ($op) {
         break;
 
     case 'logout':
-        $_SESSION['sys_adm'] = false;
+        $sys_adm = false;
         header("location: {$_SERVER['PHP_SELF']}");
         exit;
 }
@@ -215,13 +215,15 @@ function unable_blocks()
         $bid_array[] = $bid;
     }
 
-    $all_bid = implode(',', $bid_array);
+    if ($bid_array) {
+        $all_bid = implode(',', $bid_array);
 
-    $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=?';
-    Utility::query($sql, 'ss', [$all_bid, 'block_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
+        $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=?';
+        Utility::query($sql, 'ss', [$all_bid, 'block_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
 
-    $sql = 'UPDATE `' . $xoopsDB->prefix('newblocks') . '` SET `visible`=? WHERE `bid` IN (' . $all_bid . ')';
-    Utility::query($sql, 's', ['0']) or Utility::web_error($sql, __FILE__, __LINE__);
+        $sql = 'UPDATE `' . $xoopsDB->prefix('newblocks') . '` SET `visible`=? WHERE `bid` IN (' . $all_bid . ')';
+        Utility::query($sql, 's', ['0']) or Utility::web_error($sql, __FILE__, __LINE__);
+    }
 
 }
 
