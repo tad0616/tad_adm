@@ -713,7 +713,7 @@ $main3 = "
                 <div class='form-group row mb-3'>
                     <label class='sr-only visually-hidden'>" . _MD_TADADM_RESET_ADMIN_PASSWD . "</label>
                     <div class='col-sm-4'>
-                        <select name='uid' class='form-select'>
+                        <select name='uid' class='form-control form-select'>
                             {$admin_options}
                         </select>
                     </div>
@@ -732,7 +732,7 @@ $main3 = "
                 <div class='form-group row mb-3'>
                     <label class='sr-only visually-hidden'>" . _MD_TADADM_RESET_MEM_PASSWD . "</label>
                     <div class='col-sm-4'>
-                        <select name='uid' class='form-select'>
+                        <select name='uid' class='form-control form-select'>
                         {$XoopsFormSelectUserOption}
                         </select>
                     </div>

@@ -1,11 +1,11 @@
 <script language="JavaScript">
   $().ready(function(){
-    $("#clickAll").change(function () {
+    $("#clickAll").on('change', function () {
         $("input:checkbox").prop('checked', $(this).prop("checked"));
         updateSize();
     });
 
-    $(".dirfile").change(function(){
+    $(".dirfile").on('change', function(){
         if($(this).is(":checked")){
             $(this).parent().addClass("text-danger");
         }else{
@@ -67,7 +67,7 @@
             <div class="form-check form-check-inline">
               <input class="form-check-input dirfile" name="dirs[]" type="checkbox" id="clickAll" value="<{$dir.dir_path}>" checked title="<{$dir.size}>" >
               <label class="form-check-label" for="clickAll">
-                <i class="fa fa-folder-open-o" aria-hidden="true"></i> <{$dir.dir_name}>
+                <i class="fa fa-folder-open" aria-hidden="true"></i> <{$dir.dir_name}>
               </label>
             </div>
           </td>
@@ -80,7 +80,7 @@
             <div class="form-check form-check-inline text-info">
               <input class="form-check-input dirfile" name="files[]" type="checkbox" id="clickAll" value="<{$file.file_path}>" checked title="<{$file.size}>" >
               <label class="form-check-label" for="clickAll">
-                  <i class="fa fa-file-text-o" aria-hidden="true"></i> <{$file.file_name}>
+                  <i class="fa fa-file-text" aria-hidden="true"></i> <{$file.file_name}>
               </label>
             </div>
           </td>
