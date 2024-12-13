@@ -605,7 +605,7 @@ class OnlineUpgrade
             Utility::query($sql, 'sssssss', [$theme, '0', $bootstrap_color, $theme_kind, '0', $bootstrap_color, $theme_kind])
             or redirect_header($_SERVER['PHP_SELF'], 3, $xoopsDB->error());
         } else {
-            $array = array_diff($xoopsConfig['theme_set_allowed'], $theme);
+            $array = array_diff($xoopsConfig['theme_set_allowed'], [$theme]);
             $theme_set_allowed = serialize($array);
 
             $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '`
