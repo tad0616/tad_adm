@@ -5,7 +5,7 @@ define('_MD_TADADM_NAME', 'Webmaster Tools');
 define('_MD_TADADM_PASSWD', 'Recover Password');
 define('_MD_TADADM_INPUT_PASSWD', '[Step 2] input rescue password:');
 define('_MD_TADADM_INPUT_PASSWD_DESC', "[a]<a href='index.php?op=send_passwd'>first step Click here to send relief to the administrator password for the mailbox </a>");
-define('_MD_TADADM_MAIL_CONTENT', "Rescue password is: <span style='color:red;'>%s</span><p>Please connect to: <a href='' . XOOPS_URL . '/modules/tad_adm'>' . XOOPS_URL . '/modules/tad_adm</a> inputs</p><p>If this is not what you requested, it means that someone（from: %s）did it for evil intentions, we recommend that you rename file ' . XOOPS_ROOT_PATH . '/modules/tad_adm/index.php (eg: xxx.php), in order to avoid indiscriminate use by others </p>");
+define('_MD_TADADM_MAIL_CONTENT', 'The rescue password is: <span style="color:red;">%s</span><p>Please go to: <a href="' . XOOPS_URL . '/modules/tad_adm">' . XOOPS_URL . '/modules/tad_adm</a> and enter it</p><p>If this is not what you requested, it is usually triggered by the search engine. Don\'t worry about it. It will not affect the website. However, if you keep receiving these messages within a short period of time, it means that someone (from: %s) may have bad intentions towards your website. We recommend that you rename the ' . XOOPS_ROOT_PATH . '/modules/tad_adm/index.php file (e.g.: xxx.php) to prevent it from being misused by others. </p>');
 define('_MD_TADADM_MAIL_PASSWD_OK', 'password has been sent to the rescue %s');
 define('_MD_TADADM_MAIL_PASSWD_FAIL', 'rescue the password sent to %s failed!');
 define('_MD_TADADM_LOGIN', 'login');

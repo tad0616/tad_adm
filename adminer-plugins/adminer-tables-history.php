@@ -11,14 +11,11 @@
  */
 class AdminerTablesHistory
 {
-    public function __construct()
-    {
-    }
 
     public function tablesPrint($tables)
     {
         ?>
- <script <?php echo nonce(); ?>>
+<script type="text/javascript"<?php echo Adminer\nonce(); ?>>
 
 	history_length = 5;
 
@@ -27,7 +24,6 @@ class AdminerTablesHistory
       exdate.setDate(exdate.getDate() + exdays);
       var c_value = escape(value) + ((exdays == null) ? "" : "; expires=" + exdate.toUTCString());
       document.cookie = c_name + "=" + c_value;
-      console.log(document.cookie);
     }
 
     function getCookie(c_name) {
@@ -44,7 +40,8 @@ class AdminerTablesHistory
     }
 
 	function addToHistory(table) {
-		// alert(table)
+		console.log(table);
+
 		var history_array = [];
 		var history_cookie = getCookie('adminer_tables_history');
 		if (history_cookie != '') {
@@ -59,29 +56,39 @@ class AdminerTablesHistory
 		}
 	}
 
-	// $(document).ready "equivalent" without jQuery. should work with current browsers
-	document.addEventListener('DOMContentLoaded',function(){
-		// alert('chuila');
-		var tables = document.getElementById('tables').getElementsByTagName('a');
-		for (var i = 0; i < tables.length; i = i + 2) {
-			var a = tables[i + 1];
-			var text = a.innerText || a.textContent;
-			a.setAttribute('onclick', 'addToHistory("'+text+'")');
-			var a = tables[i];
-			a.setAttribute('onclick', 'addToHistory("'+text+'")');
-		}
-	})
+	document.addEventListener('DOMContentLoaded', function() {
+    var tables = document.getElementById('tables').getElementsByTagName('a');
+    for (var i = 0; i < tables.length; i += 2) {
+        (function(text) {
+            if (tables[i]) {
+                tables[i].addEventListener('click', function() {
+                    addToHistory(text);
+                });
+            }
+            if (tables[i + 1]) {
+                tables[i + 1].addEventListener('click', function() {
+                    addToHistory(text);
+                });
+            }
+        })((tables[i + 1].innerText || tables[i + 1].textContent));
+    }
+});
 </script>
 <?php if (array_key_exists('adminer_tables_history', $_COOKIE)): ?>
-<p onmouseover="menuOver(this, event);" onmouseout="menuOut(this);" style="white-space:nowrap;overflow:auto;text-overflow:ellipsis;"><?php
-// print_r($_COOKIE['adminer_tables_history']);
-        foreach (array_reverse(json_decode($_COOKIE['adminer_tables_history'])) as $table) {
-            echo '<a href="' . h(ME) . 'select=' . urlencode($table) . '"' . bold($_GET["select"] == $table) . ">" . lang('select') . "</a>&nbsp;";
-            echo '<a href="' . h(ME) . 'table=' . urlencode($table) . '"' . bold($_GET["table"] == $table) . ">" . h($table) . "</a><br>\n";
+<div class="history">
+    <span class="title"><?php echo Adminer\lang('Table') . Adminer\lang('History'); ?></span>
+</div>
+<ul id="history">
+<?php
+foreach (array_reverse(json_decode($_COOKIE['adminer_tables_history'])) as $table) {
+            echo '<li>
+        <a href="' . Adminer\h(Adminer\ME) . 'select=' . urlencode($table) . '" class="select"></a>
+        <a href="' . Adminer\h(Adminer\ME) . 'table=' . urlencode($table) . '" class="structure">' . Adminer\h($table) . '</a>
+        </li>';
         }
-        ?></p>
-<?php endif;?>
-
+        ?>
+</ul>
+<?php endif; ?>
 <?php
 return null;
     }

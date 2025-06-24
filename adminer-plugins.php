@@ -1,0 +1,21 @@
+<?php // adminer-plugins.php
+return array(
+    new AdminerTablesHistory(),
+    new AdminerTablesFilter(),
+    new AdminerPrettyJsonColumn(),
+    new AdminerJsonPreview(),
+    new AdminerDumpJson(),
+    new AdminerDumpPhp(),
+    new AdminerDumpDate(),
+    new AdminerDumpZip(),
+    new AdminerColorfields(),
+    new AdminerEnumOption(),
+    new AdminerRestoreMenuScroll(),
+    new AdminerReadableDates(),
+    new AdminerBackwardKeys(),
+    new AdminerSqlGemini(),
+    new AdminerShowColumnComment(),
+    new AdminerFavoriteQuery(),
+    new AdminerImagefields(),
+    new searchAutocomplete(),
+);

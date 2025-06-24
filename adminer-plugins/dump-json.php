@@ -6,10 +6,9 @@
 * @license https://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
 * @license https://www.gnu.org/licenses/gpl-2.0.html GNU General Public License, version 2 (one or other)
 */
-class AdminerDumpJson {
-	/** @access protected */
-	var $database = false;
-	
+class AdminerDumpJson extends Adminer\Plugin {
+	protected $database = false;
+
 	function dumpFormat() {
 		return array('json' => 'JSON');
 	}
@@ -19,11 +18,7 @@ class AdminerDumpJson {
 			return true;
 		}
 	}
-	
-	function _database() {
-		echo "}\n";
-	}
-	
+
 	function dumpData($table, $style, $query) {
 		if ($_POST["format"] == "json") {
 			if ($this->database) {
@@ -31,10 +26,8 @@ class AdminerDumpJson {
 			} else {
 				$this->database = true;
 				echo "{\n";
-				register_shutdown_function(array($this, '_database'));
 			}
-			$connection = connection();
-			$result = $connection->query($query, 1);
+			$result = Adminer\connection()->query($query, 1);
 			if ($result) {
 				echo '"' . addcslashes($table, "\r\n\"\\") . "\": [\n";
 				$first = true;
@@ -42,9 +35,9 @@ class AdminerDumpJson {
 					echo ($first ? "" : ", ");
 					$first = false;
 					foreach ($row as $key => $val) {
-						json_row($key, $val);
+						Adminer\json_row($key, $val);
 					}
-					json_row("");
+					Adminer\json_row("");
 				}
 				echo "]";
 			}
@@ -59,4 +52,17 @@ class AdminerDumpJson {
 		}
 	}
 
+	function dumpFooter() {
+		if ($_POST["format"] == "json" && $this->database) {
+			echo "}\n";
+		}
+	}
+
+	protected $translations = array(
+		'cs' => array('' => 'Export do formátu JSON'),
+		'de' => array('' => 'Export im JSON-Format'),
+		'pl' => array('' => 'Zrzuć do formatu JSON'),
+		'ro' => array('' => 'Dump în format JSON'),
+		'ja' => array('' => 'JSON 形式でエクスポート'),
+	);
 }
