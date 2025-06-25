@@ -1,3 +1,8 @@
+Tad Adm 3.1 (Released on 2025-06-25)
+==================================================================
+1.Fixed ubuntu's inability to use SSH connection.
+2.Upgrade Adminer to 5.3.0
+
 Tad Adm 3.0 (Released on 2024-12-12)
 ==================================================================
 1.Support XOOPS 2.5.11

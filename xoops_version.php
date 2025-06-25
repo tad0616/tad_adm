@@ -3,27 +3,26 @@ $modversion = [];
 global $xoopsConfig;
 
 //---模組基本資訊---//
-$modversion['name'] = _MI_TADADM_NAME;
-$modversion['version'] = $_SESSION['xoops_version'] >= 20511 ? '3.0.0-Stable' : '3.0';
-// $modversion['version'] = '2.93';
+$modversion['name']        = _MI_TADADM_NAME;
+$modversion['version']     = $_SESSION['xoops_version'] >= 20511 ? '3.1.0-Stable' : '3.1';
 $modversion['description'] = _MI_TADADM_DESC;
-$modversion['author'] = _MI_TADADM_AUTHOR;
-$modversion['credits'] = _MI_TADADM_CREDITS;
-$modversion['help'] = 'page=help';
-$modversion['license'] = 'GNU GPL 2.0';
+$modversion['author']      = _MI_TADADM_AUTHOR;
+$modversion['credits']     = _MI_TADADM_CREDITS;
+$modversion['help']        = 'page=help';
+$modversion['license']     = 'GNU GPL 2.0';
 $modversion['license_url'] = 'www.gnu.org/licenses/gpl-2.0.html/';
-$modversion['image'] = "images/logo_{$xoopsConfig['language']}.png";
-$modversion['dirname'] = basename(__DIR__);
+$modversion['image']       = "images/logo_{$xoopsConfig['language']}.png";
+$modversion['dirname']     = basename(__DIR__);
 
 //---模組狀態資訊---//
-$modversion['release_date'] = '2024-12-12';
-$modversion['module_website_url'] = 'https://tad0616.net/';
+$modversion['release_date']        = '2025-06-25';
+$modversion['module_website_url']  = 'https://tad0616.net/';
 $modversion['module_website_name'] = _MI_TAD_WEB;
-$modversion['module_status'] = 'release';
-$modversion['author_website_url'] = 'https://tad0616.net/';
+$modversion['module_status']       = 'release';
+$modversion['author_website_url']  = 'https://tad0616.net/';
 $modversion['author_website_name'] = _MI_TAD_WEB;
-$modversion['min_php'] = 5.4;
-$modversion['min_xoops'] = '2.5.10';
+$modversion['min_php']             = 5.4;
+$modversion['min_xoops']           = '2.5.10';
 
 //---paypal資訊---//
 $modversion['paypal'] = [
@@ -35,23 +34,23 @@ $modversion['paypal'] = [
 
 //---模組資料表架構---//
 $modversion['sqlfile']['mysql'] = 'sql/mysql.sql';
-$modversion['tables'] = ['tad_adm'];
+$modversion['tables']           = ['tad_adm'];
 
 //---後台使用系統選單---//
 $modversion['system_menu'] = 1;
 
 //---後台管理介面設定---//
-$modversion['hasAdmin'] = 1;
+$modversion['hasAdmin']   = 1;
 $modversion['adminindex'] = 'admin/index.php';
-$modversion['adminmenu'] = 'admin/menu.php';
+$modversion['adminmenu']  = 'admin/menu.php';
 
 //---前台主選單設定---//
 $modversion['hasMain'] = 1;
 // $modversion['sub'] = [['name' => '申請狀態', 'url' => 'status.php']];
 
 //---模組自動功能---//
-$modversion['onInstall'] = 'include/onInstall.php';
-$modversion['onUpdate'] = 'include/onUpdate.php';
+$modversion['onInstall']   = 'include/onInstall.php';
+$modversion['onUpdate']    = 'include/onUpdate.php';
 $modversion['onUninstall'] = 'include/onUninstall.php';
 
 //---偏好設定---//
