@@ -1,3 +1,8 @@
+Tad Adm 3.2 (Released on 2025-08-14)
+==================================================================
+1. Fixed the problem that the upgrade button still appears after upgrading.
+2. Modify XOOPS website upgrade and move guide.
+
 Tad Adm 3.1 (Released on 2025-06-25)
 ==================================================================
 1.Fixed ubuntu's inability to use SSH connection.

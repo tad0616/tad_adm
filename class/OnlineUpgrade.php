@@ -34,6 +34,7 @@ class OnlineUpgrade
 
         //取得升級訊息
         $all_mods = self::get_tad_json_info('all2.json');
+        Utility::test($all_mods, 'all_mods', 'dd');
         // Utility::dd($all_mods);
         // 已安裝模組
         $mods = $blocks = [];
@@ -99,6 +100,7 @@ class OnlineUpgrade
                 }
             }
         }
+        Utility::test($all_install, 'all_install', 'dd');
         // var_dump($all_install['latest']['theme']);
         // var_dump($all_install);
         // var_dump($all_uninstall);
@@ -198,7 +200,7 @@ class OnlineUpgrade
     public static function get_tad_json_info($json = 'all.json')
     {
         $TadAmModuleConfig = self::get_adm_config();
-        $source            = empty($TadAmModuleConfig['source']) ? 'http://120.115.2.90' : $TadAmModuleConfig['source'];
+        $source            = empty($TadAmModuleConfig['source']) ? 'https://campus-xoops.tn.edu.tw' : $TadAmModuleConfig['source'];
         $url               = "{$source}/uploads/tad_modules/{$json}";
         $error             = '';
         if (function_exists('curl_init')) {
@@ -427,7 +429,7 @@ class OnlineUpgrade
         // 20511
         $my_xoops_version     = Utility::get_version('xoops');
         $my_php_version       = Utility::get_version('php');
-        $now_version          = Utility::get_version($type, $now_version, $dirname);
+        $now_version          = empty($now_version) ? Utility::get_version($type, $now_version, $dirname) : $now_version;
         $new_version          = Utility::get_version($type, $mod_data['new_version'], $dirname);
         $xoops_version        = Utility::get_version('xoops', $mod_data['xoops_version']);
         $xoops_min_version    = Utility::get_version('xoops', $mod_data['xoops_min_version']);
@@ -1023,7 +1025,7 @@ class OnlineUpgrade
         if (!$inSchoolWeb) {
             $file_link = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
             if ('tad_adm' === $dirname) {
-                $new_file = str_replace('http://120.115.2.90/uploads/tad_modules/file/', XOOPS_ROOT_PATH . '/uploads/', $file_link);
+                $new_file = str_replace('https://campus-xoops.tn.edu.tw/uploads/tad_modules/file/', XOOPS_ROOT_PATH . '/uploads/', $file_link);
             } else {
                 $new_file = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
             }

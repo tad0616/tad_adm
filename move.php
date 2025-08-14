@@ -7,7 +7,7 @@ use XoopsModules\Tad_adm\OnlineUpgrade;
 require_once dirname(dirname(__DIR__)) . '/mainfile.php';
 // require_once XOOPS_ROOT_PATH . '/header.php';
 
-$isWin = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
+$isWin       = 'WIN' === mb_strtoupper(mb_substr(PHP_OS, 0, 3)) ? true : false;
 $inSchoolWeb = is_link(XOOPS_ROOT_PATH . '/mainfile.php') ? true : false;
 xoops_loadLanguage('main', 'tadtools');
 
@@ -16,15 +16,15 @@ require_once __DIR__ . '/function.php';
 $sys_adm = ($xoopsUser) ? $xoopsUser->isAdmin(1) : false;
 // $sys_adm = 1; //不須密碼模式，危險，沒事勿用。
 
-$on = '<img src="images/icons/yes.png" alt="on" style="margin-right: 4px;">';
-$off = '<img src="images/icons/no.png" alt="off" style="margin-right: 4px;">';
-$add = '<img src="images/icons/add.png" alt="add" style="margin-right: 4px;">';
-$up = '<img src="images/icons/up.png" alt="up" style="margin-right: 4px;">';
+$on   = '<img src="images/icons/yes.png" alt="on" style="margin-right: 4px;">';
+$off  = '<img src="images/icons/no.png" alt="off" style="margin-right: 4px;">';
+$add  = '<img src="images/icons/add.png" alt="add" style="margin-right: 4px;">';
+$up   = '<img src="images/icons/up.png" alt="up" style="margin-right: 4px;">';
 $down = '<img src="images/icons/down.png" alt="down" style="margin-right: 4px;">';
 
-$system_mods = ['system', 'profile', 'pm', 'protector'];
+$system_mods  = ['system', 'profile', 'pm', 'protector'];
 $system_theme = ['default', 'suico', 'zetagenesis'];
-$bad_mods = [
+$bad_mods     = [
     'fred_honorboard' => ['tad_honor', 66],
     'fred_place' => ['jill_booking', 71],
     'eguide' => ['tad_form', 9],
@@ -40,24 +40,24 @@ $source_mod = OnlineUpgrade::get_tad_json_info('all.json');
 
 $xoops_patch = OnlineUpgrade::get_tad_json_info('xoops.json');
 // Utility::dd($xoops_patch);
-$max_xoops_version = 0;
+$max_xoops_version    = 0;
 $latest_xoops_version = '';
 foreach ($xoops_patch as $x) {
     if ($x['xoops_type'] == 'upgrade') {
         $xoops_version = Utility::get_version('xoops', $x['xoops_version']);
         if ($xoops_version > $max_xoops_version) {
-            $max_xoops_version = $xoops_version;
+            $max_xoops_version    = $xoops_version;
             $latest_xoops_version = $x['xoops_version'];
         }
     }
 }
 
-$op = Request::getString('op');
+$op      = Request::getString('op');
 $new_url = Request::getString('new_url');
 if (!empty($new_url)) {
     $_SESSION['new_url'] = $new_url;
 }
-$dir = Request::getString('dir');
+$dir          = Request::getString('dir');
 $schoolweb_id = Request::getString('schoolweb_id');
 
 switch ($op) {
@@ -83,8 +83,8 @@ function move_step()
     $id = '帳號';
     if (mb_strpos($_SERVER['SERVER_NAME'], '.tn.edu.tw')) {
         $str = str_replace('.tn.edu.tw', '', $_SERVER['SERVER_NAME']);
-        $s = explode('.', $str);
-        $id = $s[1] ? "{$s[1]}_{$s[0]}" : $s[0];
+        $s   = explode('.', $str);
+        $id  = $s[1] ? "{$s[1]}_{$s[0]}" : $s[0];
         if (isset($_SESSION['schoolweb_id'])) {
             $_SESSION['schoolweb_id'] = $id;
         }
@@ -98,12 +98,12 @@ function move_step()
     }
 
     $content = '
-    <link href="https://schoolweb.tn.edu.tw/uploads/fonts/woff2.css" rel="stylesheet">
+    <link href="' . XOOPS_URL . '/modules/tadtools/css/fonts.css" rel="stylesheet">
     <style>
     h1{
         padding:6px 0px;
         text-align:left;
-        font-family: HanWangMingBlack, jf-openhuninn, Mamelon;
+        font-family: HanWangMingBlack, JfOpenhuninn, KingnamMaiyuan;
         background: -webkit-linear-gradient(#346cdb, #000000);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -112,7 +112,7 @@ function move_step()
     h2{
         padding:6px 0px;
         text-align:left;
-        font-family: HanWangMingBlack, jf-openhuninn, Mamelon;
+        font-family: HanWangMingBlack, JfOpenhuninn, KingnamMaiyuan;
         background: -webkit-linear-gradient(#5F951F, #007FA0);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -120,7 +120,7 @@ function move_step()
 
     h3{
         padding:6px 18px;
-        font-family: jf-openhuninn, Mamelon;
+        font-family: JfOpenhuninn, KingnamMaiyuan;
     }
 
     li{
@@ -221,10 +221,10 @@ function modules_version()
     $sql = 'SELECT *
         FROM `' . $xoopsDB->prefix('modules') . '`
         ORDER BY `hasmain` DESC, `weight`';
-    $result = Utility::query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+    $result      = Utility::query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     $need_update = false;
-    $i = 0;
-    $mod_msg = '';
+    $i           = 0;
+    $mod_msg     = '';
     //模組部份
     while (false !== ($data = $xoopsDB->fetchArray($result))) {
         foreach ($data as $k => $v) {
@@ -234,20 +234,24 @@ function modules_version()
             continue;
         }
         if ('module' === $source_mod[$dirname]['module']['kind']) {
-            $version = (int) $version;
-            $old_version = round($version / 100, 2);
-            $new_version = $source_mod[$dirname]['module']['new_version'] * 100;
-            $new_version = (int) $new_version;
+            // $version = (int) $version;
+            // $old_version = round($version / 100, 2);
+            // $new_version = $source_mod[$dirname]['module']['new_version'] * 100;
+            // $new_version = (int) $new_version;
+            $old_version = $version;
+            // $version     = Utility::version_format('module', $version);
+            $version     = Utility::get_version('module', $version, $dirname);
+            $new_version = Utility::get_version('module', $source_mod[$dirname]['module']['new_version'], $dirname);
 
-            $last_update = filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php");
+            $last_update     = filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php");
             $new_last_update = $source_mod[$dirname]['module']['new_last_update'];
 
             $tad_adm = 'tad_adm' === $dirname ? '<span class="important">（站長工具箱務必第一個升級，否則其他模組無法升級）</span>' : '';
 
-            if (($new_version > $version) or ($new_last_update > $last_update)) {
-                $link = !empty($source_mod[$dirname]['module']['update_sn']) ? "<a href='" . XOOPS_URL . "/modules/tad_adm/admin/main.php?op=update_module&dirname={$dirname}&file_link={$source_mod[$dirname]['module']['file_link']}&update_sn={$source_mod[$dirname]['module']['update_sn']}&tad_adm_tpl=clean' target='_blank'>需先升級至最新的 {$source_mod[$dirname]['module']['new_version']}</a>" : "需先升級至最新的 {$source_mod[$dirname]['module']['new_version']}";
+            if (($new_version > $version)) {
+                $link = !empty($source_mod[$dirname]['module']['update_sn']) ? "<a href='" . XOOPS_URL . "/modules/tad_adm/admin/main.php?op=update_module&dirname={$dirname}&file_link={$source_mod[$dirname]['module']['file_link']}&update_sn={$source_mod[$dirname]['module']['update_sn']}&tad_adm_tpl=clean' target='_blank'>需先升級至最新的 {$source_mod[$dirname]['module']['new_version']} ($new_version)</a>" : "需先升級至最新的 {$source_mod[$dirname]['module']['new_version']} ($new_version)";
 
-                $mod_msg .= "<li class='danger'>{$dirname} ($old_version) 模組{$link}{$tad_adm}</li>";
+                $mod_msg .= "<li class='danger'>{$dirname} $old_version ($version)模組{$link}{$tad_adm}</li>";
                 $need_update = true;
                 $i++;
             }
@@ -265,24 +269,24 @@ function xoops_version()
     global $latest_xoops_version, $max_xoops_version, $on, $off, $add, $up, $down, $isWin, $xoopsModuleConfig;
 
     $XOOPS_ROOT_PATH = XOOPS_ROOT_PATH;
-    $XOOPS_VAR_PATH = XOOPS_VAR_PATH;
-    $XOOPS_PATH = XOOPS_PATH;
+    $XOOPS_VAR_PATH  = XOOPS_VAR_PATH;
+    $XOOPS_PATH      = XOOPS_PATH;
 
     $now_xoops_version = Utility::get_version('xoops', XOOPS_VERSION);
 
     if ($now_xoops_version < $max_xoops_version) {
-        $pic = $off;
+        $pic  = $off;
         $msg2 = "新主機的 XOOPS 版本為 {$latest_xoops_version}，故請將本站也升級到 {$latest_xoops_version}";
 
         if ($isWin) {
-            $ftp = '';
+            $ftp  = '';
             $ftp2 = '覆蓋新檔案：';
         } else {
-            $ftp = "<li>安裝<a href='{$xoopsModuleConfig['source']}/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>，並啟動之，連線至本網站 <code>{$_SERVER['SERVER_NAME']}</code>，FileZilla 左邊切換至<code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade</code>，右邊按照以下指示切換。</li>";
+            $ftp  = "<li>安裝<a href='{$xoopsModuleConfig['source']}/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>，並啟動之，連線至本網站 <code>{$_SERVER['SERVER_NAME']}</code>，FileZilla 左邊切換至<code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade</code>，右邊按照以下指示切換。</li>";
             $ftp2 = "依序將底下目錄上傳<span class='important'>（左、右邊是指 FileZilla 的左右視窗）</span>：";
         }
 
-        $htdocs_path = pathinfo(XOOPS_ROOT_PATH);
+        $htdocs_path    = pathinfo(XOOPS_ROOT_PATH);
         $htdocs_dcspath = $htdocs_path['dirname'];
         if ('htdocs' !== $htdocs_path['basename']) {
             $htdocs = $isWin ? "先將 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade\\</code> 下的 <code>htdocs</code> 改名為 <code>{$htdocs_path['basename']}</code>，然後複製並覆蓋 <code>" . $XOOPS_ROOT_PATH . '</code> 即可。' : "先將左邊的 <code>htdocs</code> 改名為 <code>{$htdocs_path['basename']}</code>，右邊切換到 <code>{$htdocs_dcspath}</code>，然後上傳 <code>{$htdocs_path['basename']}</code> 覆蓋 <code>" . $XOOPS_ROOT_PATH . '</code>。';
@@ -290,7 +294,7 @@ function xoops_version()
             $htdocs = $isWin ? "複製 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade\\{$htdocs_path['dirname']}</code> 並覆蓋 <code>" . $XOOPS_ROOT_PATH . '</code> 即可。' : "右邊切換到 <code>{$htdocs_dcspath}</code>，然後將左邊的 <code>htdocs</code> 上傳覆蓋<code>" . $XOOPS_ROOT_PATH . '</code> 即可。';
         }
 
-        $xoops_data_path = pathinfo(XOOPS_VAR_PATH);
+        $xoops_data_path    = pathinfo(XOOPS_VAR_PATH);
         $xoops_data_dcspath = $xoops_data_path['dirname'];
         if ('xoops_data' === $xoops_data_path['basename']) {
             $xoops_data = $isWin ? '複製 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade\\xoops_data</code> 並覆蓋 <code>' . $XOOPS_VAR_PATH . '</code> 即可。' : "右邊切換到 <code>{$xoops_data_dcspath}</code>，然後將左邊的 <code>xoops_data</code> 上傳覆蓋 <code>" . $XOOPS_VAR_PATH . '</code> 即可。';
@@ -298,7 +302,7 @@ function xoops_version()
             $xoops_data = $isWin ? "先將 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade\\</code> 下的 <code>xoops_data</code> 改名為 <code>{$xoops_data_path['basename']}</code>，然後複製並覆蓋 <code>" . $XOOPS_VAR_PATH . '</code>即可。' : "先將左邊的 <code>xoops_data</code> 改名為 <code>{$xoops_data_path['basename']}</code>，右邊切換到 <code>{$xoops_data_dcspath}</code>，然後上傳 <code>{$xoops_data_path['basename']}</code> 覆蓋 <code>" . $XOOPS_VAR_PATH . '</code>。';
         }
 
-        $xoops_lib_path = pathinfo(XOOPS_PATH);
+        $xoops_lib_path    = pathinfo(XOOPS_PATH);
         $xoops_lib_dcspath = $xoops_lib_path['dirname'];
         if ('xoops_lib' === $xoops_lib_path['basename']) {
             $xoops_lib = $isWin ? '複製 <code>C:\\move\\XoopsCore25-{$latest_xoops_version}_for_upgrade\\xoops_lib</code> 並覆蓋 <code>' . $XOOPS_PATH . '</code> 即可。' : "右邊切換到 <code>{$xoops_lib_dcspath}</code>，然後將左邊的 <code>xoops_lib</code> 上傳覆蓋 <code>" . $XOOPS_PATH . '</code> 即可。';
@@ -319,7 +323,7 @@ function xoops_version()
 
         $mainfile_w = '777' == $mainfile_mode ? '' : '<li>將 <code>' . $XOOPS_ROOT_PATH . "/mainfile.php</code> {$mainfile_mode_txt}</li>";
 
-        $secure_mode = get_mod(XOOPS_VAR_PATH . '/data/secure.php');
+        $secure_mode     = get_mod(XOOPS_VAR_PATH . '/data/secure.php');
         $secure_mode_txt = $isWin ? '請取消唯讀' : "權限設為 777 可寫入狀態（目前為 {$secure_mode}）。";
 
         $secure_w = '777' == $secure_mode ? '' : '<li>將 <code>' . $XOOPS_VAR_PATH . "/data/secure.php</code> {$secure_mode_txt}</li>";
@@ -363,12 +367,12 @@ function xoops_version()
         </ol>
         </div>";
     } else {
-        $pic = $on;
+        $pic  = $on;
         $msg2 = '已是最新，所以，無需再升級！';
         $msg3 = '';
     }
     $msg4 = '';
-    $msg = "{$pic}您目前網站版本為：<span class='important'>" . XOOPS_VERSION . "</span>，{$msg2}{$msg3}";
+    $msg  = "{$pic}您目前網站版本為：<span class='important'>" . XOOPS_VERSION . "</span>，{$msg2}{$msg3}";
 
     return $msg;
 }
@@ -391,22 +395,22 @@ function upload_modules()
                     define('XOOPS_URL', '{$new_url}');
                 </div>
                 以下假設新主機的網頁目錄位置在「<code>/var/www/html</code>」請自行依照實際狀況修改。如：
-                <pre class='brush:php;gutter:false;'>
+                <pre><code class=\"language-php\">
                     define('XOOPS_ROOT_PATH', '/var/www/html');
                     define('XOOPS_PATH', '/var/www/xoops_lib');
                     define('XOOPS_VAR_PATH', '/var/www/xoops_data');
                     define('XOOPS_URL', '{$new_url}');
-                </pre>
+                </code></pre>
             </li>
         </ol>
     </li>
 
     <li>開啟 <code>C:\\move\\xoops_data\\data\\secure.php</code>，這是資料庫設定檔，要修改成新主機的資料庫資料，修改後請存檔：
-        <pre class='brush:php;gutter:false;'>
+        <pre><code class=\"language-php\">
             define('XOOPS_DB_USER', '新主機的資料庫帳號');
             define('XOOPS_DB_PASS', '新主機的資料庫密碼');
             define('XOOPS_DB_NAME', '新主機的資料庫名稱');
-        </pre>
+        </code></pre>
     </li>
 
     <li>接著用FTP軟體（如：<a href='{$xoopsModuleConfig['source']}/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入到新主機，將 FileZilla 左邊切換至 <code>C:\\move\\</code>，右邊切換至新主機的網頁目錄下，例如：/var/www/ 下。</li>
@@ -418,10 +422,11 @@ function upload_modules()
             chmod -R 777 網頁目錄/uploads<br>
         </div>
         如：
-        <pre class='brush:bash;gutter:false;'>
+        <pre><code class=\"language-bash\">
             chmod -R 777 /var/www/html/uploads
             chmod -R 777 /var/www/xoops_data
-        </pre>
+
+        </code></pre>
     </li>";
 
     return $msg;
@@ -434,8 +439,8 @@ function download_files()
     $XOOPS_ROOT_PATH = XOOPS_ROOT_PATH;
 
     $public_html_size = format_size(GetDirectorySize(XOOPS_ROOT_PATH));
-    $xoops_data_size = format_size(GetDirectorySize(XOOPS_VAR_PATH));
-    $xoops_lib_size = format_size(GetDirectorySize(XOOPS_PATH));
+    $xoops_data_size  = format_size(GetDirectorySize(XOOPS_VAR_PATH));
+    $xoops_lib_size   = format_size(GetDirectorySize(XOOPS_PATH));
 
     $filezilla = '';
     $filezilla = $isWin ? '' : "<div class='alert alert-info'>請先用FTP軟體（如：<a href='{$xoopsModuleConfig['source']}/modules/tad_uploader/index.php?op=dlfile&cfsn=33&cat_sn=22'>FileZilla</a>）登入本網站 <code>" . $_SERVER['SERVER_NAME'] . '</code>，左邊切換至<code>C:\\move\\</code>，右邊切換到 <code>' . dirname(XOOPS_ROOT_PATH) . "/</code>，將 <span class='danger'>" . basename(XOOPS_ROOT_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_VAR_PATH) . "</span>、<span class='danger'>" . basename(XOOPS_PATH) . "</span> 三個資料夾下載到左邊的 <code>C:\\move\\</code> 底下即可。</div>";
@@ -473,7 +478,7 @@ function download_sql()
 
     $tn_note = '';
     $new_url = $_SESSION['new_url'] ? $_SESSION['new_url'] : ' http://新主機的網址 ';
-    $value = $_SESSION['new_url'] ? $_SESSION['new_url'] : '';
+    $value   = $_SESSION['new_url'] ? $_SESSION['new_url'] : '';
 
     $msg = '
     <li>若只是單純要做本站的資料庫備份，請按 <a href="' . $_SERVER['PHP_SELF'] . '?op=export_sql" class="btn btn-success"><img src="images/icons/down.png" alt="down" style="width:16px; margin-right: 4px;">下載 SQL 檔（約 ' . $dbsize . ' MB）</a> 即可。</li>
@@ -520,8 +525,8 @@ function export_sql($new_url = '')
     set_time_limit(0);
     ignore_user_abort(true);
 
-    $randname = date('YmdHis') . '-' . md5(Utility::randStr(8));
-    $filename = XOOPS_ROOT_PATH . "/uploads/tad_adm/mysql-{$randname}.sql";
+    $randname     = date('YmdHis') . '-' . md5(Utility::randStr(8));
+    $filename     = XOOPS_ROOT_PATH . "/uploads/tad_adm/mysql-{$randname}.sql";
     $filename_url = XOOPS_URL . "/uploads/tad_adm/mysql-{$randname}.sql";
     if (file_exists($filename)) {
         unlink($filename);
