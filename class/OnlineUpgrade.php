@@ -734,9 +734,9 @@ class OnlineUpgrade
     }
 
     //取得XOOPS升級或補釘
-    public static function delete_theme($theme, $ssh = '')
+    public static function delete_theme($theme, $ssh = null)
     {
-        if ('' != $ssh) {
+        if ($ssh) {
             $ssh->exec("rm -Rf " . XOOPS_ROOT_PATH . "/themes/$theme");
             return true;
         }
@@ -1046,11 +1046,25 @@ class OnlineUpgrade
             $zip->close($new_file);
 
             if ('' != $ssh) {
-                $ssh->exec('cp -fr ' . XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname " . XOOPS_ROOT_PATH . "/{$work_dir}/");
-                $ssh->exec('chmod -R 755 ' . XOOPS_ROOT_PATH . "/{$work_dir}/$dirname");
-                $ssh->exec("chown -R {$ssh_id}:{$ssh_id} " . XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}");
-                $ssh->exec('rm -fr ' . XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}");
-                $ssh->exec("rm -f $new_file");
+                // $ssh->exec('cp -fr ' . XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname " . XOOPS_ROOT_PATH . "/{$work_dir}/");
+                // $ssh->exec('chmod -R 755 ' . XOOPS_ROOT_PATH . "/{$work_dir}/$dirname");
+                // $ssh->exec("chown -R {$ssh_id}:{$ssh_id} " . XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}");
+                // $ssh->exec('rm -fr ' . XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}");
+                // $ssh->exec("rm -f $new_file");
+                $cmd = sprintf(
+                    'cp -fr %1$s/uploads/tad_adm/%2$s %1$s/%3$s/ &&
+     chmod -R 755 %1$s/%3$s/%2$s &&
+     chown -R %4$s:%4$s %1$s/%3$s/%2$s &&
+     rm -fr %1$s/uploads/tad_adm/%2$s &&
+     rm -f %5$s',
+                    XOOPS_ROOT_PATH,
+                    escapeshellarg($dirname),
+                    $work_dir,
+                    escapeshellarg($ssh_id),
+                    escapeshellarg($new_file)
+                );
+
+                $output = $ssh->exec($cmd);
             } else {
                 // echo XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname<br>";
                 // echo XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}";

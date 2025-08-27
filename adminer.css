@@ -504,8 +504,7 @@ a[href*="&default="] {
 }
 
 table tbody input[type="checkbox"] {
-	display: block;
-	float: left;
+	display: block-inline;
 }
 
 table a[href*="&edit="][href*="&where"] {

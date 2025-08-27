@@ -1,3 +1,9 @@
+Tad Adm 3.3 (released 2025-08-27)
+==================================================================
+1.Adjust Adminer interface.
+2. Fixed decompression problem.
+3. Optimize the ssh command to avoid incomplete execution.
+
 Tad Adm 3.2 (Released on 2025-08-14)
 ==================================================================
 1. Fixed the problem that the upgrade button still appears after upgrading.

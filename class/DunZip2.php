@@ -68,24 +68,24 @@ class DunZip2
     // Public
     public $fileName;
     public $lastError;
-    public $compressedList; // You will problably use only this one!
-    public $centralDirList; // Central dir list... It's a kind of 'extra attributes' for a set of files
-    public $endOfCentral; // End of central dir, contains ZIP Comments
+    public $compressedList = []; // You will problably use only this one!
+    public $centralDirList = []; // Central dir list... It's a kind of 'extra attributes' for a set of files
+    public $endOfCentral   = []; // End of central dir, contains ZIP Comments
     public $debug;
 
     // Private
     public $fh;
-    public $zipSignature = "\x50\x4b\x03\x04"; // local file header signature
-    public $dirSignature = "\x50\x4b\x01\x02"; // central dir header signature
+    public $zipSignature  = "\x50\x4b\x03\x04"; // local file header signature
+    public $dirSignature  = "\x50\x4b\x01\x02"; // central dir header signature
     public $dirSignatureE = "\x50\x4b\x05\x06"; // end of central dir signature
 
     // Public
     public function __construct($fileName)
     {
-        $this->fileName = $fileName;
-        $this->compressedList =
-        $this->centralDirList =
-        $this->endOfCentral = [];
+        $this->fileName       = $fileName;
+        $this->compressedList = [];
+        $this->centralDirList = [];
+        $this->endOfCentral   = [];
     }
 
     public function getList($stopOnFile = false)
@@ -97,7 +97,7 @@ class DunZip2
         }
 
         // Open file, and set file handler
-        $fh = fopen($this->fileName, 'rb');
+        $fh       = fopen($this->fileName, 'rb');
         $this->fh = &$fh;
         if (!$fh) {
             $this->debugMsg(2, 'Failed to load file.');
@@ -228,7 +228,7 @@ class DunZip2
 
         fseek($this->fh, $fdetails['contents-startOffset']);
         $toUncompress = fread($this->fh, $fdetails['compressed_size']);
-        $ret = $this->uncompress(
+        $ret          = $this->uncompress(
             $toUncompress,
             $fdetails['compression_method'],
             $fdetails['uncompressed_size'],
@@ -253,17 +253,17 @@ class DunZip2
         }
 
         $lista = $this->getList();
-        if (count($lista)) {
+        if (is_array($lista) and count($lista)) {
             foreach ($lista as $fileName => $trash) {
                 $dirname = dirname($fileName);
-                $outDN = "$targetDir/$dirname";
+                $outDN   = "$targetDir/$dirname";
 
                 if (mb_substr($dirname, 0, mb_strlen($baseDir)) != $baseDir) {
                     continue;
                 }
 
                 if (!is_dir($outDN) && $maintainStructure) {
-                    $str = '';
+                    $str     = '';
                     $folders = explode('/', $dirname);
                     foreach ($folders as $folder) {
                         $str = $str ? "$str/$folder" : $folder;
@@ -388,15 +388,15 @@ class DunZip2
             $signature = fread($fh, 4);
             if ($signature == $this->dirSignatureE) {
                 // If found EOF Central Dir
-                $eodir['disk_number_this'] = unpack('v', fread($fh, 2)); // number of this disk
-                $eodir['disk_number'] = unpack('v', fread($fh, 2)); // number of the disk with the start of the central directory
+                $eodir['disk_number_this']   = unpack('v', fread($fh, 2)); // number of this disk
+                $eodir['disk_number']        = unpack('v', fread($fh, 2)); // number of the disk with the start of the central directory
                 $eodir['total_entries_this'] = unpack('v', fread($fh, 2)); // total number of entries in the central dir on this disk
-                $eodir['total_entries'] = unpack('v', fread($fh, 2)); // total number of entries in
-                $eodir['size_of_cd'] = unpack('V', fread($fh, 4)); // size of the central directory
-                $eodir['offset_start_cd'] = unpack('V', fread($fh, 4)); // offset of start of central directory with respect to the starting disk number
-                $zipFileCommentLenght = unpack('v', fread($fh, 2)); // zipfile comment length
-                $eodir['zipfile_comment'] = $zipFileCommentLenght[1] ? fread($fh, $zipFileCommentLenght[1]) : ''; // zipfile comment
-                $this->endOfCentral = [
+                $eodir['total_entries']      = unpack('v', fread($fh, 2)); // total number of entries in
+                $eodir['size_of_cd']         = unpack('V', fread($fh, 4)); // size of the central directory
+                $eodir['offset_start_cd']    = unpack('V', fread($fh, 4)); // offset of start of central directory with respect to the starting disk number
+                $zipFileCommentLenght        = unpack('v', fread($fh, 2)); // zipfile comment length
+                $eodir['zipfile_comment']    = $zipFileCommentLenght[1] ? fread($fh, $zipFileCommentLenght[1]) : ''; // zipfile comment
+                $this->endOfCentral          = [
                     'disk_number_this' => $eodir['disk_number_this'][1],
                     'disk_number' => $eodir['disk_number'][1],
                     'total_entries_this' => $eodir['total_entries_this'][1],
@@ -411,36 +411,36 @@ class DunZip2
                 $signature = fread($fh, 4);
 
                 while ($signature == $this->dirSignature) {
-                    $dir['version_madeby'] = unpack('v', fread($fh, 2)); // version made by
-                    $dir['version_needed'] = unpack('v', fread($fh, 2)); // version needed to extract
-                    $dir['general_bit_flag'] = unpack('v', fread($fh, 2)); // general purpose bit flag
-                    $dir['compression_method'] = unpack('v', fread($fh, 2)); // compression method
-                    $dir['lastmod_time'] = unpack('v', fread($fh, 2)); // last mod file time
-                    $dir['lastmod_date'] = unpack('v', fread($fh, 2)); // last mod file date
-                    $dir['crc-32'] = fread($fh, 4); // crc-32
-                    $dir['compressed_size'] = unpack('V', fread($fh, 4)); // compressed size
-                    $dir['uncompressed_size'] = unpack('V', fread($fh, 4)); // uncompressed size
-                    $fileNameLength = unpack('v', fread($fh, 2)); // filename length
-                    $extraFieldLength = unpack('v', fread($fh, 2)); // extra field length
-                    $fileCommentLength = unpack('v', fread($fh, 2)); // file comment length
-                    $dir['disk_number_start'] = unpack('v', fread($fh, 2)); // disk number start
-                    $dir['internal_attributes'] = unpack('v', fread($fh, 2)); // internal file attributes-byte1
+                    $dir['version_madeby']       = unpack('v', fread($fh, 2)); // version made by
+                    $dir['version_needed']       = unpack('v', fread($fh, 2)); // version needed to extract
+                    $dir['general_bit_flag']     = unpack('v', fread($fh, 2)); // general purpose bit flag
+                    $dir['compression_method']   = unpack('v', fread($fh, 2)); // compression method
+                    $dir['lastmod_time']         = unpack('v', fread($fh, 2)); // last mod file time
+                    $dir['lastmod_date']         = unpack('v', fread($fh, 2)); // last mod file date
+                    $dir['crc-32']               = fread($fh, 4); // crc-32
+                    $dir['compressed_size']      = unpack('V', fread($fh, 4)); // compressed size
+                    $dir['uncompressed_size']    = unpack('V', fread($fh, 4)); // uncompressed size
+                    $fileNameLength              = unpack('v', fread($fh, 2)); // filename length
+                    $extraFieldLength            = unpack('v', fread($fh, 2)); // extra field length
+                    $fileCommentLength           = unpack('v', fread($fh, 2)); // file comment length
+                    $dir['disk_number_start']    = unpack('v', fread($fh, 2)); // disk number start
+                    $dir['internal_attributes']  = unpack('v', fread($fh, 2)); // internal file attributes-byte1
                     $dir['external_attributes1'] = unpack('v', fread($fh, 2)); // external file attributes-byte2
                     $dir['external_attributes2'] = unpack('v', fread($fh, 2)); // external file attributes
-                    $dir['relative_offset'] = unpack('V', fread($fh, 4)); // relative offset of local header
-                    $dir['file_name'] = fread($fh, $fileNameLength[1]); // filename
-                    $dir['extra_field'] = $extraFieldLength[1] ? fread($fh, $extraFieldLength[1]) : ''; // extra field
-                    $dir['file_comment'] = $fileCommentLength[1] ? fread($fh, $fileCommentLength[1]) : ''; // file comment
+                    $dir['relative_offset']      = unpack('V', fread($fh, 4)); // relative offset of local header
+                    $dir['file_name']            = fread($fh, $fileNameLength[1]); // filename
+                    $dir['extra_field']          = $extraFieldLength[1] ? fread($fh, $extraFieldLength[1]) : ''; // extra field
+                    $dir['file_comment']         = $fileCommentLength[1] ? fread($fh, $fileCommentLength[1]) : ''; // file comment
 
                     // Convert the date and time, from MS-DOS format to UNIX Timestamp
                     $BINlastmod_date = str_pad(decbin($dir['lastmod_date'][1]), 16, '0', STR_PAD_LEFT);
                     $BINlastmod_time = str_pad(decbin($dir['lastmod_time'][1]), 16, '0', STR_PAD_LEFT);
-                    $lastmod_dateY = bindec(mb_substr($BINlastmod_date, 0, 7)) + 1980;
-                    $lastmod_dateM = bindec(mb_substr($BINlastmod_date, 7, 4));
-                    $lastmod_dateD = bindec(mb_substr($BINlastmod_date, 11, 5));
-                    $lastmod_timeH = bindec(mb_substr($BINlastmod_time, 0, 5));
-                    $lastmod_timeM = bindec(mb_substr($BINlastmod_time, 5, 6));
-                    $lastmod_timeS = bindec(mb_substr($BINlastmod_time, 11, 5));
+                    $lastmod_dateY   = bindec(mb_substr($BINlastmod_date, 0, 7)) + 1980;
+                    $lastmod_dateM   = bindec(mb_substr($BINlastmod_date, 7, 4));
+                    $lastmod_dateD   = bindec(mb_substr($BINlastmod_date, 11, 5));
+                    $lastmod_timeH   = bindec(mb_substr($BINlastmod_time, 0, 5));
+                    $lastmod_timeM   = bindec(mb_substr($BINlastmod_time, 5, 6));
+                    $lastmod_timeS   = bindec(mb_substr($BINlastmod_time, 11, 5));
 
                     // Some protection agains attacks...
                     $dir['file_name'] = $this->_decodeFilename($dir['file_name']);
@@ -475,16 +475,16 @@ class DunZip2
                 // If loaded centralDirs, then try to identify the offsetPosition of the compressed data.
                 if ($this->centralDirList) {
                     foreach ($this->centralDirList as $filename => $details) {
-                        $i = $this->_getFileHeaderInformation($fh, $details['relative_offset']);
-                        $this->compressedList[$filename]['file_name'] = $filename;
-                        $this->compressedList[$filename]['compression_method'] = $details['compression_method'];
-                        $this->compressedList[$filename]['version_needed'] = $details['version_needed'];
-                        $this->compressedList[$filename]['lastmod_datetime'] = $details['lastmod_datetime'];
-                        $this->compressedList[$filename]['crc-32'] = $details['crc-32'];
-                        $this->compressedList[$filename]['compressed_size'] = $details['compressed_size'];
-                        $this->compressedList[$filename]['uncompressed_size'] = $details['uncompressed_size'];
-                        $this->compressedList[$filename]['lastmod_datetime'] = $details['lastmod_datetime'];
-                        $this->compressedList[$filename]['extra_field'] = $i['extra_field'];
+                        $i                                                       = $this->_getFileHeaderInformation($fh, $details['relative_offset']);
+                        $this->compressedList[$filename]['file_name']            = $filename;
+                        $this->compressedList[$filename]['compression_method']   = $details['compression_method'];
+                        $this->compressedList[$filename]['version_needed']       = $details['version_needed'];
+                        $this->compressedList[$filename]['lastmod_datetime']     = $details['lastmod_datetime'];
+                        $this->compressedList[$filename]['crc-32']               = $details['crc-32'];
+                        $this->compressedList[$filename]['compressed_size']      = $details['compressed_size'];
+                        $this->compressedList[$filename]['uncompressed_size']    = $details['uncompressed_size'];
+                        $this->compressedList[$filename]['lastmod_datetime']     = $details['lastmod_datetime'];
+                        $this->compressedList[$filename]['extra_field']          = $i['extra_field'];
                         $this->compressedList[$filename]['contents-startOffset'] = $i['contents-startOffset'];
                         if (mb_strtolower($stopOnFile) == mb_strtolower($filename)) {
                             break;
@@ -515,9 +515,9 @@ class DunZip2
                 $this->debugMsg(1, 'Still invalid signature. Probably reached the end of the file.');
                 break;
             }
-            $filename = $details['file_name'];
+            $filename                        = $details['file_name'];
             $this->compressedList[$filename] = $details;
-            $return = true;
+            $return                          = true;
             if (mb_strtolower($stopOnFile) == mb_strtolower($filename)) {
                 break;
             }
@@ -537,18 +537,18 @@ class DunZip2
             # $this->debugMsg(1, "Zip Signature!");
 
             // Get information about the zipped file
-            $file['version_needed'] = unpack('v', fread($fh, 2)); // version needed to extract
-            $file['general_bit_flag'] = unpack('v', fread($fh, 2)); // general purpose bit flag
-            $file['compression_method'] = unpack('v', fread($fh, 2)); // compression method
-            $file['lastmod_time'] = unpack('v', fread($fh, 2)); // last mod file time
-            $file['lastmod_date'] = unpack('v', fread($fh, 2)); // last mod file date
-            $file['crc-32'] = fread($fh, 4); // crc-32
-            $file['compressed_size'] = unpack('V', fread($fh, 4)); // compressed size
-            $file['uncompressed_size'] = unpack('V', fread($fh, 4)); // uncompressed size
-            $fileNameLength = unpack('v', fread($fh, 2)); // filename length
-            $extraFieldLength = unpack('v', fread($fh, 2)); // extra field length
-            $file['file_name'] = fread($fh, $fileNameLength[1]); // filename
-            $file['extra_field'] = $extraFieldLength[1] ? fread($fh, $extraFieldLength[1]) : ''; // extra field
+            $file['version_needed']       = unpack('v', fread($fh, 2)); // version needed to extract
+            $file['general_bit_flag']     = unpack('v', fread($fh, 2)); // general purpose bit flag
+            $file['compression_method']   = unpack('v', fread($fh, 2)); // compression method
+            $file['lastmod_time']         = unpack('v', fread($fh, 2)); // last mod file time
+            $file['lastmod_date']         = unpack('v', fread($fh, 2)); // last mod file date
+            $file['crc-32']               = fread($fh, 4); // crc-32
+            $file['compressed_size']      = unpack('V', fread($fh, 4)); // compressed size
+            $file['uncompressed_size']    = unpack('V', fread($fh, 4)); // uncompressed size
+            $fileNameLength               = unpack('v', fread($fh, 2)); // filename length
+            $extraFieldLength             = unpack('v', fread($fh, 2)); // extra field length
+            $file['file_name']            = fread($fh, $fileNameLength[1]); // filename
+            $file['extra_field']          = $extraFieldLength[1] ? fread($fh, $extraFieldLength[1]) : ''; // extra field
             $file['contents-startOffset'] = ftell($fh);
 
             // Bypass the whole compressed contents, and look for the next file
@@ -557,12 +557,12 @@ class DunZip2
             // Convert the date and time, from MS-DOS format to UNIX Timestamp
             $BINlastmod_date = str_pad(decbin($file['lastmod_date'][1]), 16, '0', STR_PAD_LEFT);
             $BINlastmod_time = str_pad(decbin($file['lastmod_time'][1]), 16, '0', STR_PAD_LEFT);
-            $lastmod_dateY = bindec(mb_substr($BINlastmod_date, 0, 7)) + 1980;
-            $lastmod_dateM = bindec(mb_substr($BINlastmod_date, 7, 4));
-            $lastmod_dateD = bindec(mb_substr($BINlastmod_date, 11, 5));
-            $lastmod_timeH = bindec(mb_substr($BINlastmod_time, 0, 5));
-            $lastmod_timeM = bindec(mb_substr($BINlastmod_time, 5, 6));
-            $lastmod_timeS = bindec(mb_substr($BINlastmod_time, 11, 5));
+            $lastmod_dateY   = bindec(mb_substr($BINlastmod_date, 0, 7)) + 1980;
+            $lastmod_dateM   = bindec(mb_substr($BINlastmod_date, 7, 4));
+            $lastmod_dateD   = bindec(mb_substr($BINlastmod_date, 11, 5));
+            $lastmod_timeH   = bindec(mb_substr($BINlastmod_time, 0, 5));
+            $lastmod_timeM   = bindec(mb_substr($BINlastmod_time, 5, 6));
+            $lastmod_timeS   = bindec(mb_substr($BINlastmod_time, 11, 5));
 
             // Some protection agains attacks...
             $file['file_name'] = $this->_decodeFilename($file['file_name']);
@@ -618,14 +618,14 @@ class DunZip2
         }
 
         if ('/' == mb_substr($fullPath, -1)) {
-            $base = '';
+            $base     = '';
             $fullPath = mb_substr($fullPath, 0, -1);
         } else {
-            $base = basename($fullPath);
+            $base     = basename($fullPath);
             $fullPath = dirname($fullPath);
         }
 
-        $parts = explode('/', $fullPath);
+        $parts   = explode('/', $fullPath);
         $lastIdx = false;
         foreach ($parts as $idx => $part) {
             if ('.' == $part) {
