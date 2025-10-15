@@ -50,7 +50,6 @@
 
 <div class="container-fluid">
 
-    <h1><{$smarty.const._MA_TADADM_FREE_SPACE}><{$free_space|default:''}></h1>
     <form action="zip.php" method="post" class="form-horizontal" role="form">
         <div class="card panel panel-primary">
             <div class="panel-heading card-header text-white bg-primary">

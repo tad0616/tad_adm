@@ -13,7 +13,6 @@ return array(
     new AdminerRestoreMenuScroll(),
     new AdminerReadableDates(),
     new AdminerBackwardKeys(),
-    new AdminerSqlGemini(),
     new AdminerShowColumnComment(),
     new AdminerFavoriteQuery(),
     new AdminerImagefields(),
