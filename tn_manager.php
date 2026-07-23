@@ -1,22 +1,29 @@
 <?php
+
 use Xmf\Request;
-use XoopsModules\Tadtools\Utility;
-// 此檔案為南市資訊中心用來替所有網站進行模組自動升級用檔案，請勿刪除或變更
+// 此檔案有重要用途，請勿刪除或變更
 
-// require __DIR__ . '/header.php';
-// $xoopsOption['template_main'] = 'tad_adm_tn_manager.tpl';
-// require_once XOOPS_ROOT_PATH . '/header.php';
 require_once dirname(dirname(__DIR__)) . '/mainfile.php';
-// $allowed_referers = [
-//     'https://schoolweb.tn.edu.tw/modules/tn_xoops/admin/main.php',
-//     'https://schoolweb2.tn.edu.tw/modules/tn_xoops/admin/main.php',
-//     'https://schoolweb3.tn.edu.tw/modules/tn_xoops/admin/main.php',
-//     'https://schoolweb4.tn.edu.tw/modules/tn_xoops/admin/main.php',
-// ];
 
-// if (in_array($_SERVER['HTTP_REFERER'] ?? '', $allowed_referers, true)) {
+$allowed_ips = [
+    '120.115.2.88',
+    '120.115.2.89',
+    '120.115.2.84',
+    '120.115.2.85',
+    '2001:288:7201:2::88',
+    '2001:288:7201:2::89',
+    '2001:288:7201:2::84',
+    '2001:288:7201:2::85',
+];
+
+if (!in_array($_SERVER['REMOTE_ADDR'], $allowed_ips)) {
+    header('HTTP/1.0 403 Forbidden');
+    echo "{$_SERVER['REMOTE_ADDR']} Access denied";
+    exit;
+}
+
+// 檢查 Referer 是否在允許的列表中
 $op      = Request::getString('op');
-$tx_sn   = Request::getInt('tx_sn');
 $dirname = Request::getString('dirname');
 $mode    = Request::getString('mode');
 
@@ -27,15 +34,8 @@ switch ($op) {
     //升級模組
     case 'tn_module_update':
         $msg = tn_module_update($dirname);
-        die("{$dirname} 升級完成");
-
-        //反安裝模組
-//     case 'tn_module_uninstall':
-//         $msg = tn_module_uninstall($dirname);
-//         die("{$dirname} 反安裝完成");
-// }
+        die("{$dirname} 升級結果：{$msg}");
 }
-// require_once XOOPS_ROOT_PATH . '/footer.php';
 
 function tn_module_update($dirname)
 {
@@ -43,15 +43,35 @@ function tn_module_update($dirname)
     require_once XOOPS_ROOT_PATH . '/class/template.php';
     require_once XOOPS_ROOT_PATH . '/modules/system/admin/modulesadmin/modulesadmin.php';
 
+    global $xoopsConfig;
+
+    // 確保 XOOPS 版本號存在，這會影響一些模組的 xoops_version.php 判斷
+    if (!isset($_SESSION['xoops_version'])) {
+        include_once XOOPS_ROOT_PATH . '/include/version.php';
+        $ver = str_replace('XOOPS ', '', XOOPS_VERSION);
+        $v = explode('.', $ver);
+        $_SESSION['xoops_version'] = (int) $v[0] * 10000 + (int) $v[1] * 100 + (int) $v[2];
+    }
+
+    // 在執行升級前，先載入該模組的語言檔，以免 xoops_version.php 中的常數無法解析
+    if (file_exists(XOOPS_ROOT_PATH . "/modules/{$dirname}/language/{$xoopsConfig['language']}/modinfo.php")) {
+        include_once XOOPS_ROOT_PATH . "/modules/{$dirname}/language/{$xoopsConfig['language']}/modinfo.php";
+    } elseif (file_exists(XOOPS_ROOT_PATH . "/modules/{$dirname}/language/english/modinfo.php")) {
+        include_once XOOPS_ROOT_PATH . "/modules/{$dirname}/language/english/modinfo.php";
+    }
+
+    // 執行系統內建的模組升級函數
     $msg = xoops_module_update($dirname);
+
+    // 升級後的清理與啟動步驟，參考 modules\system\admin\modulesadmin\main.php
+    xoops_setActiveModules();
+    xoops_module_delayed_clean_cache();
+
+    // 清除控制面板快取
+    xoops_load('cpanel', 'system');
+    if (class_exists('XoopsSystemCpanel')) {
+        XoopsSystemCpanel::flush();
+    }
+
     return $msg;
 }
-
-// function tn_module_uninstall($dirname)
-// {
-//     require_once XOOPS_ROOT_PATH . '/class/xoopsblock.php';
-//     require_once XOOPS_ROOT_PATH . '/class/template.php';
-//     require_once XOOPS_ROOT_PATH . '/modules/system/admin/modulesadmin/modulesadmin.php';
-//     $msg = xoops_module_uninstall($dirname);
-//     return $msg;
-// }

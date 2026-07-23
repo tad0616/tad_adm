@@ -1,5 +1,5 @@
 <?php // adminer-plugins.php
-return array(
+return [
     new AdminerTablesHistory(),
     new AdminerTablesFilter(),
     new AdminerPrettyJsonColumn(),
@@ -9,7 +9,6 @@ return array(
     new AdminerDumpDate(),
     new AdminerDumpZip(),
     new AdminerColorfields(),
-    new AdminerEnumOption(),
     new AdminerRestoreMenuScroll(),
     new AdminerReadableDates(),
     new AdminerBackwardKeys(),
@@ -17,4 +16,4 @@ return array(
     new AdminerFavoriteQuery(),
     new AdminerImagefields(),
     new searchAutocomplete(),
-);
+];

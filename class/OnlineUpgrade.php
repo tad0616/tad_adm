@@ -1,4 +1,5 @@
 <?php
+
 namespace XoopsModules\Tad_adm;
 
 use XoopsModules\Tadtools\EasyResponsiveTabs;
@@ -12,8 +13,7 @@ class OnlineUpgrade
 {
     //建構函數
     public function __construct()
-    {
-    }
+    {}
 
     public static function get_adm_config()
     {
@@ -129,7 +129,7 @@ class OnlineUpgrade
         $EasyResponsiveTabs->render();
     }
 
-//列出所有XOOPS升級資訊
+    //列出所有XOOPS升級資訊
     public static function list_xoops($mode = "tpl")
     {
         global $xoopsTpl;
@@ -152,7 +152,7 @@ class OnlineUpgrade
         // $xoops_patch[1]["file_link"]   = "https://campus-xoops.tn.edu.tw/uploads/tad_modules/file/bs4_upgrade.zip";
 
         //後台部份
-        $all_patch = $all_upgrade = array();
+        $all_patch = $all_upgrade = [];
         foreach ($xoops_patch as $k => $xoops) {
             $type                          = $xoops['xoops_type'];
             list($function, $mod_data)     = self::get_patch($type, $xoops);
@@ -364,7 +364,7 @@ class OnlineUpgrade
 
         $item['now_version'] = Utility::version_format($data['kind'], $int_version);
         // $item['now_version'] = $int_version;
-        $item['last_update'] = date('Y-m-d H:i', $last_update);
+        $item['last_update'] = date('Y-m-d H:i', (int) $last_update);
 
         if (file_exists($path)) {
             $item['fileowner'] = self::getpwuid($path);
@@ -465,7 +465,6 @@ class OnlineUpgrade
                 $now_mod_last_update = strtotime(file_get_contents(XOOPS_ROOT_PATH . "/uploads/module_sn_{$mod_data['module_sn']}.txt"));
             }
             $new_mod_last_update = $mod_data['new_last_update'];
-
         } else {
             $filemtime           = file_exists(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php") ? filemtime(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php") : 0;
             $now_mod_last_update = $last_update ? $last_update : $filemtime;
@@ -478,37 +477,31 @@ class OnlineUpgrade
             if ($debug == 1) {
                 echo "<div>php_min_version: $my_php_version < $php_min_version</div>";
             }
-
         } elseif (!empty($mod_data['php_max_version']) and $my_php_version > $php_max_version) {
             $status = 'PHP ' . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . ($mod_data['php_max_version']) . _MA_TADADM_UNABLE_UPGRADE;
             if ($debug == 1) {
                 echo "<div>my_php_version: $my_php_version > $php_max_version</div>";
             }
-
         } elseif (!empty($mod_data['xoops_min_version']) and $my_xoops_version < $xoops_min_version) {
             $status = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . ($mod_data['xoops_min_version']) . _MA_TADADM_UNABLE_UPGRADE;
             if ($debug == 1) {
                 echo "<div>xoops_min_version: $my_xoops_version < $xoops_min_version</div>";
             }
-
         } elseif (!empty($mod_data['xoops_version']) and $my_xoops_version > $xoops_version) {
             $status = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_HIGHER . ($mod_data['xoops_version']) . _MA_TADADM_NONEED_UPGRADE;
             if ($debug == 1) {
                 echo "<div>xoops_max_version: $my_xoops_version > $xoops_version</div>";
             }
-
         } elseif (!empty($mod_data['xoops_version']) and $my_xoops_version == $xoops_version) {
             $status = 'XOOPS ' . _MA_TADADM_VERSION . _MA_TADADM_EQUAL . ($mod_data['xoops_version']) . _MA_TADADM_NONEED_UPGRADE;
             if ($debug == 1) {
                 echo "<div>xoops=version: $my_xoops_version == $xoops_version</div>";
             }
-
         } elseif (!empty($mod_data['tadtools_version']) and $now_tadtools_version < $min_tadtools_version) {
             $status = 'Tadtools ' . _MA_TADADM_VERSION . _MA_TADADM_LOWER . ($mod_data['tadtools_version']) . _MA_TADADM_UNABLE_UPGRADE;
             if ($debug == 1) {
                 echo "<div>Tadtools: $now_tadtools_version < $min_tadtools_version</div>";
             }
-
         } elseif (!empty($chk_file) and file_exists($chk_file)) {
             $status = _MA_TADADM_PATCH_INSTALLED;
             if ($debug == 1) {
@@ -618,7 +611,6 @@ class OnlineUpgrade
             $sql = 'DELETE FROM `' . $xoopsDB->prefix('tadtools_setup') . '`
             WHERE `tt_theme` = ?';
             Utility::query($sql, 's', [$theme]) or redirect_header($_SERVER['PHP_SELF'], 3, $xoopsDB->error());
-
         }
     }
 
@@ -630,7 +622,6 @@ class OnlineUpgrade
             SET `conf_value` = ?
             WHERE `conf_name` = ?';
             Utility::query($sql, 'ss', [$theme, 'cpanel']) or Utility::web_error($sql, __FILE__, __LINE__);
-
         }
     }
 
@@ -656,7 +647,6 @@ class OnlineUpgrade
                 redirect_header('main.php', 3, XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}" . _MA_TADADM_THEME_DELETE_OK);
             } else {
                 redirect_header('main.php', 3, XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}" . _MA_TADADM_THEME_DELETE_FAIL);
-
             }
         } elseif ('install_adm_tpl' === $act) {
             if ($inSchoolWeb or self::get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
@@ -843,7 +833,6 @@ class OnlineUpgrade
         } else {
             self::next_to_do($file_link, $dirname, $work_dir, $update_sn, $act, $ssh);
         }
-
     }
 
     public static function get_work_dir($act)
@@ -937,7 +926,6 @@ class OnlineUpgrade
             $a = posix_getpwuid($uid);
 
             return $a['name'];
-
         }
 
         # This works on BSD but not with GNU
@@ -951,7 +939,6 @@ class OnlineUpgrade
             } else {
                 return $uid;
             }
-
         } elseif (is_readable('/etc/passwd')) {
 
             exec(sprintf('grep :%s: /etc/passwd | cut -d: -f1', (int) $uid), $o, $r);
@@ -961,11 +948,9 @@ class OnlineUpgrade
             } else {
                 return $uid;
             }
-
         } else {
             return $uid;
         }
-
     }
 
     public static function getgrgid($file = "")
@@ -985,7 +970,7 @@ class OnlineUpgrade
             if (!chmod($path, $dirmode)) {
                 $dirmode_str = decoct($dirmode);
 
-                print sprintf(_MA_TADADM_CHMOD_FAILED, $path, $dirmode_str, $fileowner['name'], $filegroup['name'], $fileperms);
+                // print sprintf(_MA_TADADM_CHMOD_FAILED, $path, $dirmode_str, $fileowner['name'], $filegroup['name'], $fileperms);
 
                 return;
             }
@@ -1008,7 +993,7 @@ class OnlineUpgrade
                 $filegroup    = self::getgrgid($path);
                 $fileperms    = mb_substr(sprintf('%o', fileperms($path)), -4);
                 $filemode_str = decoct($filemode);
-                print sprintf(_MA_TADADM_CHMOD_FAILED, $path, $filemode_str, $fileowner['name'], $filegroup['name'], $fileperms);
+                // print sprintf(_MA_TADADM_CHMOD_FAILED, $path, $filemode_str, $fileowner['name'], $filegroup['name'], $fileperms);
 
                 return;
             }
@@ -1138,8 +1123,11 @@ class OnlineUpgrade
             $sql              = 'INSERT INTO `' . $xoopsDB->prefix('newblocks') . '`
             (`mid`, `func_num`, `options`, `name`, `title`, `content`, `side`, `weight`, `visible`, `block_type`, `c_type`, `isactive`, `dirname`, `func_file`, `show_func`, `edit_func`, `template`, `bcachetime`, `last_modified`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-            Utility::query($sql, 'iissssiiississsssii',
-                [0, 0, '', '自訂區塊', $block['title'], $block['content'], $block['side'], 0, 1, 'C', $block['c_type'], 1, $block['dirname'], '', '', '', '', 0, $last_modified])
+            Utility::query(
+                $sql,
+                'iissssiiississsssii',
+                [0, 0, '', '自訂區塊', $block['title'], $block['content'], $block['side'], 0, 1, 'C', $block['c_type'], 1, $block['dirname'], '', '', '', '', 0, $last_modified]
+            )
             or Utility::web_error($sql, __FILE__, __LINE__);
 
             $block_id = $xoopsDB->getInsertId();
@@ -1160,14 +1148,12 @@ class OnlineUpgrade
             (`gperm_groupid`, `gperm_itemid`, `gperm_modid`, `gperm_name`)
             VALUES (?, ?, ?, ?), (?, ?, ?, ?), (?, ?, ?, ?)';
             Utility::query($sql, 'iiisiiisiiis', [1, $block_id, 1, 'block_read', 2, $block_id, 1, 'block_read', 3, $block_id, 1, 'block_read']) or Utility::web_error($sql, __FILE__, __LINE__);
-
         } else {
             $block['content'] = \stripslashes($block['content']);
             $sql              = 'UPDATE `' . $xoopsDB->prefix('newblocks') . '`
             SET `content` = ?, `last_modified` = ?
             WHERE `dirname` = ?';
             Utility::query($sql, 'sss', [$block['content'], $last_modified, $block['dirname']]) or Utility::web_error($sql, __FILE__, __LINE__);
-
         }
     }
 
