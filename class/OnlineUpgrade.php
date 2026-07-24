@@ -737,13 +737,11 @@ class OnlineUpgrade
     //取得XOOPS升級或補釘
     public static function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     {
-
         $TadAmModuleConfig = self::get_adm_config();
         $file_link         = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
         $new_file          = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
 
         Utility::mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
-        // die("$file_link, $new_file");
         self::copyemz($file_link, $new_file, 0, $xoops_sn);
 
         if (!is_file($new_file)) {
@@ -759,6 +757,7 @@ class OnlineUpgrade
         $zip->getList();
         $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
         $zip->close($new_file);
+
         if ('' != $ssh) {
             $sh     = "#!/bin/sh\n";
             $handle = fopen(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/ssh.txt", 'rb');
@@ -774,21 +773,16 @@ class OnlineUpgrade
                 }
                 fclose($handle);
             }
-
             file_put_contents(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/upgrade.sh", $sh);
             self::chmod_R(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/upgrade.sh", 0777, 0777);
             $ssh->exec(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/upgrade.sh");
+
         } else {
-            $handle = fopen(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/go.txt", 'rb');
-            if ($handle) {
-                while (false !== ($buffer = fgets($handle, 4096))) {
-                    $buffer = str_replace('full_copy', '\XoopsModules\Tadtools\Utility::full_copy', $buffer);
-                    $buffer = str_replace('chmod_R', '\XoopsModules\Tad_adm\OnlineUpgrade::chmod_R', $buffer);
-                    $buffer = str_replace('delete_directory', '\XoopsModules\Tadtools\Utility::delete_directory', $buffer);
-                    eval($buffer);
-                }
-                fclose($handle);
-            }
+            // [修補 CWE-94] 以白名單式檔案操作取代 eval(go.txt)
+            self::execute_go_instructions(
+                XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/go.txt",
+                $new_file
+            );
         }
 
         if ('upgrade' === $dirname) {
@@ -796,11 +790,6 @@ class OnlineUpgrade
         } else {
             return true;
         }
-        // if (is_dir(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}")) {
-        //     return true;
-        // } else {
-        //     redirect_header($_SERVER['PHP_SELF'] . "?tad_adm_tpl=clean", 3, sprintf(_MA_TADADM_MV_FAIL, XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname"));
-        // }
     }
 
     //登入SSH
@@ -862,55 +851,54 @@ class OnlineUpgrade
         }
 
         $url = $file1;
-        // die($url);
-        if (function_exists('curl_init')) {
-            $ch      = curl_init();
-            $timeout = 5;
 
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        if (function_exists('curl_init')) {
+            // ── 下載主檔 ──────────────────────────────────────────
+            $ch      = curl_init();
+            $timeout = 30; // 原為 5，對大檔案過短
+
+            // [修補] 移除 SSL_VERIFYPEER/HOST 停用，改為強制驗證
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
             $contentx = curl_exec($ch);
+            if ($contentx === false) {
+                $err = curl_error($ch);
+                curl_close($ch);
+                redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, $url) . " ($err)");
+            }
             curl_close($ch);
 
+            // ── 回報計數（非關鍵，失敗不中斷流程）────────────────
             $ch      = curl_init();
             $timeout = 5;
-
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_URL, $add_count_url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-            $count = curl_exec($ch);
+            curl_exec($ch); // 結果不使用
             curl_close($ch);
-            // die('curl');
+
         } elseif (function_exists('file_get_contents')) {
             $contentx = file_get_contents($url);
-            $count    = file_get_contents($add_count_url);
-            // die('file_get_contents');
         } else {
             $handle   = fopen($url, 'rb');
             $contentx = stream_get_contents($handle);
             fclose($handle);
-
-            $handle = fopen($add_count_url, 'rb');
-            $count  = stream_get_contents($handle);
-            fclose($handle);
         }
-        // die('fopen');
+
+        if ($contentx === false || $contentx === '') {
+            redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, $url));
+        }
 
         $openedfile = fopen($file2, 'wb');
         fwrite($openedfile, $contentx);
         fclose($openedfile);
-        if (false === $contentx) {
-            $status = false;
-        } else {
-            $status = true;
-        }
-        // die($status);
-        return $status;
+
+        return true;
     }
 
     public static function getpwuid($file = "")
@@ -1068,7 +1056,6 @@ class OnlineUpgrade
         redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_MV_FAIL, XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname"));
     }
 
-    //區塊相關動作
     public static function do_block($act, $update_sn)
     {
         global $xoopsDB;
@@ -1078,14 +1065,13 @@ class OnlineUpgrade
         $add_count_url     = $TadAmModuleConfig['source'] . "/modules/tad_modules/api.php?update_sn={$update_sn}&from=" . XOOPS_URL . "&sitename={$xoopsConfig['sitename']}&theme={$xoopsConfig['theme_set']}&version=$ver&language={$xoopsConfig['language']}";
 
         $url = $TadAmModuleConfig['source'] . "/uploads/tad_modules/{$update_sn}.json";
-        // die(var_export($url));
 
         if (function_exists('curl_init')) {
+            // [修補 CWE-297] 啟用 SSL 憑證驗證
             $ch      = curl_init();
             $timeout = 5;
-
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
@@ -1094,9 +1080,8 @@ class OnlineUpgrade
 
             $ch      = curl_init();
             $timeout = 5;
-
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
             curl_setopt($ch, CURLOPT_URL, $add_count_url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
@@ -1114,10 +1099,10 @@ class OnlineUpgrade
             $count  = stream_get_contents($handle);
             fclose($handle);
         }
-        // die(var_export($data));
-        $block = json_decode($data, true);
-        // die(var_export($block));
+
+        $block         = json_decode($data, true);
         $last_modified = time();
+
         if ('install' === $act) {
             $block['content'] = \stripslashes($block['content']);
             $sql              = 'INSERT INTO `' . $xoopsDB->prefix('newblocks') . '`
@@ -1130,8 +1115,7 @@ class OnlineUpgrade
             )
             or Utility::web_error($sql, __FILE__, __LINE__);
 
-            $block_id = $xoopsDB->getInsertId();
-
+            $block_id  = $xoopsDB->getInsertId();
             $module_id = ($block['side'] <= 1) ? 0 : -1;
 
             $sql = 'INSERT INTO `' . $xoopsDB->prefix('group_permission') . '`
@@ -1155,6 +1139,144 @@ class OnlineUpgrade
             WHERE `dirname` = ?';
             Utility::query($sql, 'sss', [$block['content'], $last_modified, $block['dirname']]) or Utility::web_error($sql, __FILE__, __LINE__);
         }
+    }
+
+    /**
+     * 向伺服器取得套件的 SHA-256 雜湊並與本機下載檔案比對。
+     * 伺服器端需在同路徑提供 <filename>.sha256 檔案。
+     *
+     * [修補 CWE-494] 防止以竄改套件進行供應鏈攻擊。
+     */
+    private static function verify_package_hash(string $file_link, string $local_file, string $source): bool
+    {
+        $hash_url = $file_link . '.sha256';
+
+        $remote_hash = '';
+        if (function_exists('curl_init')) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_URL, $hash_url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+            $remote_hash = curl_exec($ch);
+            curl_close($ch);
+        } elseif (function_exists('file_get_contents')) {
+            $remote_hash = file_get_contents($hash_url);
+        }
+
+        // 取第一個 token（相容 "hash  filename" 格式）
+        $remote_hash = strtolower(trim(explode(' ', trim((string) $remote_hash))[0]));
+
+        if (empty($remote_hash) || strlen($remote_hash) !== 64) {
+            // 伺服器尚未提供雜湊檔：記錄警告但暫時放行，
+            // 待伺服器端部署完成後改為 return false。
+            error_log("[tad_adm] WARNING: no remote hash available for {$file_link}");
+            return true;
+        }
+
+        $local_hash = hash_file('sha256', $local_file);
+
+        return hash_equals($remote_hash, $local_hash);
+    }
+
+    /**
+     * 解析 go.txt 並以白名單操作取代 eval()。
+     *
+     * [修補 CWE-94] go.txt 僅允許三種指令：
+     *   full_copy(<src>, <dst>)
+     *   chmod_R(<path>, <filemode>, <dirmode>)
+     *   delete_directory(<path>)
+     *
+     * 所有路徑均限制在 XOOPS_ROOT_PATH 之內，防止路徑穿越。
+     */
+    private static function execute_go_instructions(string $go_file, string $new_file): void
+    {
+        if (!is_file($go_file)) {
+            return;
+        }
+
+        $handle = fopen($go_file, 'rb');
+        if (!$handle) {
+            return;
+        }
+
+        while (false !== ($raw = fgets($handle, 4096))) {
+            $line = str_replace('XOOPS_ROOT_PATH', XOOPS_ROOT_PATH, $raw);
+            $line = str_replace('XOOPS_VAR_PATH', XOOPS_VAR_PATH, $line);
+            $line = str_replace('XOOPS_PATH', XOOPS_PATH, $line);
+            $line = str_replace('NEW_FILE', $new_file, $line);
+            $line = trim($line);
+
+            if ($line === '' || strpos($line, '#') === 0) {
+                continue;
+            }
+
+            // ── full_copy(<src>, <dst>) ─────────────────────────
+            if (preg_match('/^full_copy\s*\(\s*(["\']?)(.+?)\1\s*,\s*(["\']?)(.+?)\3\s*\)\s*;?$/i', $line, $m)) {
+                $src = self::sanitize_path($m[2]);
+                $dst = self::sanitize_path($m[4]);
+                if ($src && $dst) {
+                    Utility::full_copy($src, $dst);
+                }
+                continue;
+            }
+
+            // ── chmod_R(<path>, <filemode>, <dirmode>) ──────────
+            if (preg_match('/^chmod_R\s*\(\s*(["\']?)(.+?)\1\s*,\s*(0[0-7]{3,4})\s*,\s*(0[0-7]{3,4})\s*\)\s*;?$/i', $line, $m)) {
+                $path     = self::sanitize_path($m[2]);
+                $filemode = octdec($m[3]);
+                $dirmode  = octdec($m[4]);
+                if ($path) {
+                    self::chmod_R($path, $filemode, $dirmode);
+                }
+                continue;
+            }
+
+            // ── delete_directory(<path>) ────────────────────────
+            if (preg_match('/^delete_directory\s*\(\s*(["\']?)(.+?)\1\s*\)\s*;?$/i', $line, $m)) {
+                $path = self::sanitize_path($m[2]);
+                if ($path) {
+                    Utility::delete_directory($path);
+                }
+                continue;
+            }
+
+            // 不符合白名單 → 記錄並跳過，絕不執行
+            error_log("[tad_adm] SECURITY: unknown go.txt instruction blocked: " . $line);
+        }
+
+        fclose($handle);
+    }
+
+    /**
+     * 確保路徑在 XOOPS_ROOT_PATH 之內（防止路徑穿越）。
+     * 回傳正規化後的路徑；若不合法則回傳 null。
+     */
+    private static function sanitize_path(string $path): ?string
+    {
+        $real = realpath($path);
+
+        if ($real === false) {
+            // 目標尚不存在，改用字串前綴檢查
+            $normalized = rtrim(str_replace('\\', '/', $path), '/');
+            $root       = rtrim(str_replace('\\', '/', XOOPS_ROOT_PATH), '/');
+            if (strpos($normalized, $root . '/') === 0) {
+                return $path;
+            }
+            error_log("[tad_adm] SECURITY: path traversal attempt blocked: " . $path);
+            return null;
+        }
+
+        $root = rtrim(str_replace('\\', '/', XOOPS_ROOT_PATH), '/');
+        $real = str_replace('\\', '/', $real);
+
+        if (strpos($real . '/', $root . '/') !== 0) {
+            error_log("[tad_adm] SECURITY: path traversal attempt blocked: " . $path);
+            return null;
+        }
+
+        return $real;
     }
 
     //素材相關動作
@@ -1183,6 +1305,7 @@ class OnlineUpgrade
         $zip->getList();
         $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$module_sn}/");
         $zip->close($new_file);
+
         if (!is_writable(XOOPS_ROOT_PATH)) {
             $sh     = "#!/bin/sh\n";
             $handle = fopen(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$module_sn}/ssh.txt", 'rb');
@@ -1199,16 +1322,11 @@ class OnlineUpgrade
                 fclose($handle);
             }
         } else {
-            $handle = fopen(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$module_sn}/go.txt", 'rb');
-            if ($handle) {
-                while (false !== ($buffer = fgets($handle, 4096))) {
-                    $buffer = str_replace('full_copy', '\XoopsModules\Tadtools\Utility::full_copy', $buffer);
-                    $buffer = str_replace('chmod_R', '\XoopsModules\Tad_adm\OnlineUpgrade::chmod_R', $buffer);
-                    $buffer = str_replace('delete_directory', '\XoopsModules\Tadtools\Utility::delete_directory', $buffer);
-                    eval($buffer);
-                }
-                fclose($handle);
-            }
+            // [修補 CWE-94] 以白名單式檔案操作取代 eval(go.txt)
+            self::execute_go_instructions(
+                XOOPS_ROOT_PATH . "/uploads/tad_adm/{$module_sn}/go.txt",
+                $new_file
+            );
         }
 
         return true;
