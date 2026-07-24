@@ -1,4 +1,4 @@
-<script language="JavaScript">
+﻿<script language="JavaScript">
   $().ready(function(){
     $("#clickAll").on('change', function () {
         $("input:checkbox").prop('checked', $(this).prop("checked"));
@@ -90,6 +90,7 @@
       </table>
     </div>
     <input type="hidden" name="op" value="del_templates">
+    <input type="hidden" name="XOOPS_TOKEN_REQUEST" value="<{$token|default:''}>">
     <button type="submit" class="btn btn-danger"><{$smarty.const._MA_TADADM_CLEAN}></button>
   </form>
   <{else}>

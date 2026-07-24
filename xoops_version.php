@@ -4,7 +4,7 @@ global $xoopsConfig;
 
 //---模組基本資訊---//
 $modversion['name']        = _MI_TADADM_NAME;
-$modversion['version']     = $_SESSION['xoops_version'] >= 20511 ? '3.4.0-Stable' : '3.4';
+$modversion['version']     = $_SESSION['xoops_version'] >= 20511 ? '3.5.0-Stable' : '3.5';
 $modversion['description'] = _MI_TADADM_DESC;
 $modversion['author']      = _MI_TADADM_AUTHOR;
 $modversion['credits']     = _MI_TADADM_CREDITS;
@@ -15,7 +15,7 @@ $modversion['image']       = "images/logo_{$xoopsConfig['language']}.png";
 $modversion['dirname']     = basename(__DIR__);
 
 //---模組狀態資訊---//
-$modversion['release_date']        = '2025-10-30';
+$modversion['release_date']        = '2026-07-27';
 $modversion['module_website_url']  = 'https://tad0616.net/';
 $modversion['module_website_name'] = _MI_TAD_WEB;
 $modversion['module_status']       = 'release';
@@ -26,9 +26,9 @@ $modversion['min_xoops']           = '2.5.10';
 
 //---paypal資訊---//
 $modversion['paypal'] = [
-    'business' => 'tad0616@gmail.com',
-    'item_name' => 'Donation : ' . _MI_TAD_WEB,
-    'amount' => 0,
+    'business'      => 'tad0616@gmail.com',
+    'item_name'     => 'Donation : ' . _MI_TAD_WEB,
+    'amount'        => 0,
     'currency_code' => 'USD',
 ];
 
@@ -56,52 +56,52 @@ $modversion['onUninstall'] = 'include/onUninstall.php';
 //---偏好設定---//
 $modversion['config'] = [
     [
-        'name' => 'list_amount',
-        'title' => '_MI_TADADM_LIST_AMOUNT',
+        'name'        => 'list_amount',
+        'title'       => '_MI_TADADM_LIST_AMOUNT',
         'description' => '_MI_TADADM_LIST_AMOUNT_DESC',
-        'formtype' => 'textbox',
-        'valuetype' => 'int',
-        'default' => '10',
+        'formtype'    => 'textbox',
+        'valuetype'   => 'int',
+        'default'     => '10',
     ],
     [
-        'name' => 'login',
-        'title' => '_MI_TADADM_LOGIN',
+        'name'        => 'login',
+        'title'       => '_MI_TADADM_LOGIN',
         'description' => '_MI_TADADM_LOGIN_DESC',
-        'formtype' => 'textbox',
-        'valuetype' => 'text',
-        'default' => '',
+        'formtype'    => 'textbox',
+        'valuetype'   => 'text',
+        'default'     => '',
     ],
     [
-        'name' => 'module_id_temp',
-        'title' => '_MI_TADADM_MODULE_ID_TEMP',
+        'name'        => 'module_id_temp',
+        'title'       => '_MI_TADADM_MODULE_ID_TEMP',
         'description' => '_MI_TADADM_MODULE_ID_TEMP_DESC',
-        'formtype' => 'textarea',
-        'valuetype' => 'text',
-        'default' => '',
+        'formtype'    => 'textarea',
+        'valuetype'   => 'text',
+        'default'     => '',
     ],
     [
-        'name' => 'block_id_temp',
-        'title' => '_MI_TADADM_BLOCK_ID_TEMP',
+        'name'        => 'block_id_temp',
+        'title'       => '_MI_TADADM_BLOCK_ID_TEMP',
         'description' => '_MI_TADADM_BLOCK_ID_TEMP_DESC',
-        'formtype' => 'textarea',
-        'valuetype' => 'text',
-        'default' => '',
+        'formtype'    => 'textarea',
+        'valuetype'   => 'text',
+        'default'     => '',
     ],
     [
-        'name' => 'ssh_port',
-        'title' => '_MI_TADADM_SSH_PORT',
+        'name'        => 'ssh_port',
+        'title'       => '_MI_TADADM_SSH_PORT',
         'description' => '_MI_TADADM_SSH_PORT_DESC',
-        'formtype' => 'textbox',
-        'valuetype' => 'int',
-        'default' => '22',
+        'formtype'    => 'textbox',
+        'valuetype'   => 'int',
+        'default'     => '22',
     ],
     [
-        'name' => 'source',
-        'title' => '_MI_TADADM_SOURCE',
+        'name'        => 'source',
+        'title'       => '_MI_TADADM_SOURCE',
         'description' => '_MI_TADADM_SOURCE_DESC',
-        'formtype' => 'textbox',
-        'valuetype' => 'text',
-        'default' => 'https://campus-xoops.tn.edu.tw',
+        'formtype'    => 'textbox',
+        'valuetype'   => 'text',
+        'default'     => 'https://campus-xoops.tn.edu.tw',
     ],
 ];
 
@@ -113,13 +113,13 @@ $modversion['hasSearch'] = 0;
 //---區塊設定 (索引為固定值，若欲刪除區塊記得補上索引，避免區塊重複)---//
 $modversion['blocks'] = [
     1 => [
-        'file' => 'tad_adm_new.php',
-        'name' => _MI_TADADM_BNAME1,
+        'file'        => 'tad_adm_new.php',
+        'name'        => _MI_TADADM_BNAME1,
         'description' => _MI_TADADM_BDESC1,
-        'show_func' => 'tad_adm_new',
-        'template' => 'tad_adm_new.tpl',
-        'edit_func' => 'tad_adm_new_edit',
-        'options' => '10',
+        'show_func'   => 'tad_adm_new',
+        'template'    => 'tad_adm_new.tpl',
+        'edit_func'   => 'tad_adm_new_edit',
+        'options'     => '10',
     ],
 ];
 

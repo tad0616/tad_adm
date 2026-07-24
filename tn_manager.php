@@ -3,6 +3,8 @@
 use Xmf\Request;
 // 此檔案有重要用途，請勿刪除或變更
 
+defined('TN_MANAGER_SHARED_SECRET') || define('TN_MANAGER_SHARED_SECRET', 'tn-module-manager-20260724');
+
 require_once dirname(dirname(__DIR__)) . '/mainfile.php';
 
 $allowed_ips = [
@@ -16,16 +18,50 @@ $allowed_ips = [
     '2001:288:7201:2::85',
 ];
 
-if (!in_array($_SERVER['REMOTE_ADDR'], $allowed_ips)) {
+$remote_addr = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '';
+if (!in_array($remote_addr, $allowed_ips, true)) {
     header('HTTP/1.0 403 Forbidden');
-    echo "{$_SERVER['REMOTE_ADDR']} Access denied";
+    echo "{$remote_addr} Access denied";
     exit;
 }
 
-// 檢查 Referer 是否在允許的列表中
-$op      = Request::getString('op');
-$dirname = Request::getString('dirname');
-$mode    = Request::getString('mode');
+$request_method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
+if ($request_method !== 'POST') {
+    header('HTTP/1.0 405 Method Not Allowed');
+    echo 'Method Not Allowed';
+    exit;
+}
+
+$token = isset($_POST['token']) ? trim($_POST['token']) : '';
+if (!hash_equals(TN_MANAGER_SHARED_SECRET, $token)) {
+    header('HTTP/1.0 403 Forbidden');
+    echo 'Invalid token';
+    exit;
+}
+
+$op      = isset($_POST['op']) ? trim($_POST['op']) : '';
+$dirname = isset($_POST['dirname']) ? trim($_POST['dirname']) : '';
+$mode    = isset($_POST['mode']) ? trim($_POST['mode']) : '';
+
+$allowed_ops = ['tn_module_update'];
+if (!in_array($op, $allowed_ops, true)) {
+    header('HTTP/1.0 400 Bad Request');
+    echo 'Invalid operation';
+    exit;
+}
+
+if (!preg_match('/^[a-z0-9_]+$/', $dirname)) {
+    header('HTTP/1.0 400 Bad Request');
+    echo 'Invalid dirname';
+    exit;
+}
+
+$module_path = XOOPS_ROOT_PATH . "/modules/{$dirname}";
+if (!is_dir($module_path) || !file_exists($module_path . '/xoops_version.php')) {
+    header('HTTP/1.0 400 Bad Request');
+    echo 'Invalid module';
+    exit;
+}
 
 xoops_loadLanguage('admin', 'system');
 xoops_loadLanguage('admin/modulesadmin', 'system');
@@ -48,8 +84,8 @@ function tn_module_update($dirname)
     // 確保 XOOPS 版本號存在，這會影響一些模組的 xoops_version.php 判斷
     if (!isset($_SESSION['xoops_version'])) {
         include_once XOOPS_ROOT_PATH . '/include/version.php';
-        $ver = str_replace('XOOPS ', '', XOOPS_VERSION);
-        $v = explode('.', $ver);
+        $ver                       = str_replace('XOOPS ', '', XOOPS_VERSION);
+        $v                         = explode('.', $ver);
         $_SESSION['xoops_version'] = (int) $v[0] * 10000 + (int) $v[1] * 100 + (int) $v[2];
     }
 

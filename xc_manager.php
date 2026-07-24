@@ -25,6 +25,7 @@ $op      = Request::getString('op');
 $xc_sn   = Request::getInt('xc_sn');
 $dirname = Request::getString('dirname');
 $mode    = Request::getString('mode');
+$token   = Request::getString('token');
 
 xoops_loadLanguage('admin', 'system');
 xoops_loadLanguage('admin/modulesadmin', 'system');
@@ -32,8 +33,39 @@ xoops_loadLanguage('admin/modulesadmin', 'system');
 switch ($op) {
     //升級模組
     case 'xc_module_update':
+        if (!xc_manager_is_allowed_request($dirname, $token, $xc_sn, $mode)) {
+            header('HTTP/1.0 403 Forbidden');
+            die('Invalid upgrade request');
+        }
+
         $msg = xc_module_update($dirname);
         die("{$dirname} 升級結果：{$msg}");
+}
+
+function xc_manager_auth_token($dirname, $xc_sn = 0, $mode = '')
+{
+    $secret = 'xoops_center_xc_manager_2026';
+
+    return hash_hmac('sha256', implode(':', [(string) $dirname, (string) $xc_sn, (string) $mode]), $secret);
+}
+
+function xc_manager_is_allowed_request($dirname, $token, $xc_sn = 0, $mode = '')
+{
+    if (!is_string($token) || $token === '') {
+        return false;
+    }
+
+    if (!is_string($dirname) || $dirname === '' || !preg_match('/^[a-z0-9_]+$/', $dirname)) {
+        return false;
+    }
+
+    if (!is_dir(XOOPS_ROOT_PATH . "/modules/{$dirname}")) {
+        return false;
+    }
+
+    $expected = xc_manager_auth_token($dirname, $xc_sn, $mode);
+
+    return hash_equals($expected, $token);
 }
 
 function xc_module_update($dirname)
@@ -47,8 +79,8 @@ function xc_module_update($dirname)
     // 確保 XOOPS 版本號存在，這會影響一些模組的 xoops_version.php 判斷
     if (!isset($_SESSION['xoops_version'])) {
         include_once XOOPS_ROOT_PATH . '/include/version.php';
-        $ver = str_replace('XOOPS ', '', XOOPS_VERSION);
-        $v = explode('.', $ver);
+        $ver                       = str_replace('XOOPS ', '', XOOPS_VERSION);
+        $v                         = explode('.', $ver);
         $_SESSION['xoops_version'] = (int) $v[0] * 10000 + (int) $v[1] * 100 + (int) $v[2];
     }
 

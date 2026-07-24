@@ -27,14 +27,14 @@ $system_mods  = ['system', 'profile', 'pm', 'protector'];
 $system_theme = ['default', 'suico', 'zetagenesis'];
 $bad_mods     = [
     'fred_honorboard' => ['tad_honor', 66],
-    'fred_place' => ['jill_booking', 71],
-    'eguide' => ['tad_form', 9],
-    'fred_repair' => ['tad_repair', 4],
-    'fred_marquee' => ['yaoh_light', 20],
-    'mytabs' => ['tadnews', 2],
-    'newbb' => ['tad_discuss', 8],
-    'xforum' => ['tad_discuss', 8],
-    'tad_cbox' => ['tad_discuss', 8],
+    'fred_place'      => ['jill_booking', 71],
+    'eguide'          => ['tad_form', 9],
+    'fred_repair'     => ['tad_repair', 4],
+    'fred_marquee'    => ['yaoh_light', 20],
+    'mytabs'          => ['tadnews', 2],
+    'newbb'           => ['tad_discuss', 8],
+    'xforum'          => ['tad_discuss', 8],
+    'tad_cbox'        => ['tad_discuss', 8],
 ];
 
 $source_mod = OnlineUpgrade::get_tad_json_info('all.json');
@@ -484,7 +484,7 @@ function download_sql()
     $msg = '
     <li>若只是單純要做本站的資料庫備份，請按 <a href="' . $_SERVER['PHP_SELF'] . '?op=export_sql" class="btn btn-success"><img src="images/icons/down.png" alt="down" style="width:16px; margin-right: 4px;">下載 SQL 檔（約 ' . $dbsize . ' MB）</a> 即可。</li>
     <li>若是要搬移到新主機的，我們必須將資料庫中的本站網址替換成<span class="important">' . $new_url . '</span>（如此一些連結或圖片才能正常顯示），故請在下方填入新主機的網址<span class="danger">（網址最後不要有 /）</span>。' . $tn_note . '<p>
-    <form action="' . $_SERVER['PHP_SELF'] . '" method="post">
+    <form action="move.php" method="post">
         <div class="input-group">
             <div class="input-group-prepend">
                 <span class="input-group-text" id="sizing-addon1">請輸入新主機的網址：</span>
@@ -602,7 +602,7 @@ function login_form()
                     </label>
                     <div class="col-sm-9">
                         <input type="hidden" name="op" value="login">
-                        <input type="hidden" name="xoops_redirect" value="' . $_SERVER['PHP_SELF'] . '">
+                        <input type="hidden" name="xoops_redirect" value="move.php">
                         <button type="submit" class="btn btn-primary">' . _MD_TADADM_LOGIN . '</button>
                     </div>
                 </div>

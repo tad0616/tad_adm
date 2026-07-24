@@ -44,7 +44,7 @@ if (!$sys_adm) {
         <div class="card">
             <div class="card-header text-white bg-primary">' . _MD_TADADM_FORGOT . '</div>
             <div class="card-body">
-                <form action="' . $_SERVER['PHP_SELF'] . '" method="post" role="form">
+                <form action="index.php" method="post" role="form">
                     <div class="form-group row mb-3">
                         <label class="col-sm-12">' . _MD_TADADM_INPUT_PASSWD_DESC . '</label>
                     </div>
