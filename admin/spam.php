@@ -8,12 +8,12 @@ require_once __DIR__ . '/header.php';
 require_once dirname(__DIR__) . '/function.php';
 
 /*-----------執行動作判斷區----------*/
-$op = Request::getString('op');
-$mode = Request::getString('mode');
+$op      = Request::getString('op');
+$mode    = Request::getString('mode');
 $byemail = Request::getString('byemail');
-$g2p = Request::getInt('g2p', 1);
-$uid = Request::getArray('uid');
-$days = Request::getInt('days');
+$g2p     = Request::getInt('g2p', 1);
+$uid     = Request::getArray('uid');
+$days    = Request::getInt('days');
 
 switch ($op) {
     case 'del_user':
@@ -43,14 +43,14 @@ require_once __DIR__ . '/footer.php';
 function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p = 1)
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
-
     if ('byNeverLoginDays' === $op) {
-        $dayLimit = time() - $days * 86400;
+        $dayLimit    = time() - $days * 86400;
         $andDayLimit = " and last_login=0 and user_regdate <= $dayLimit";
     } elseif ('byNeverStartDays' === $op) {
-        $dayLimit = time() - $days * 86400;
+        $dayLimit    = time() - $days * 86400;
         $andDayLimit = " and level=0 and user_regdate <= $dayLimit";
     } elseif ('byEmail' === $op) {
+        $byemail     = $xoopsDB->escape($byemail);
         $andDayLimit = " and email like '%{$byemail}'";
     } else {
         $andDayLimit = '';
@@ -59,14 +59,14 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
     $PageBar = Utility::getPageBar($sql, $xoopsModuleConfig['list_amount'], 10);
-    $bar = $PageBar['bar'];
-    $sql = $PageBar['sql'];
-    $total = $PageBar['total'];
+    $bar     = $PageBar['bar'];
+    $sql     = $PageBar['sql'];
+    $total   = $PageBar['total'];
 
-    $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+    $result                = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     $_SESSION['chk_start'] = time();
-    $i = 0;
-    $all_data = [];
+    $i                     = 0;
+    $all_data              = [];
     while (false !== ($data = $xoopsDB->fetchArray($result))) {
         foreach ($data as $k => $v) {
             $$k = $v;
@@ -87,7 +87,7 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
                 fclose($handle);
             }
 
-            $buffer = json_decode($json, true);
+            $buffer  = json_decode($json, true);
             $appears = $buffer['email']['appears'];
             replace_tad_adm($uid, $email, $appears);
         }
@@ -97,7 +97,7 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
         $bgcolor = 'white';
         $checked = '';
         if ($appears > 0) {
-            $color = 'red';
+            $color   = 'red';
             $checked = 'checked';
             if ($posts > 0) {
                 $bgcolor = 'yellow';
@@ -110,28 +110,28 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
                 $checked = '';
             } else {
                 $checked = 'checked';
-                $color = '#CC6600';
+                $color   = '#CC6600';
             }
         } else {
             $color = '#505050';
         }
 
         $user_regdate = date('Y-m-d', $user_regdate);
-        $last_login = empty($last_login) ? _MA_TADADM_NEVERLOGIN : date('Y-m-d', $last_login);
+        $last_login   = empty($last_login) ? _MA_TADADM_NEVERLOGIN : date('Y-m-d', $last_login);
 
-        $all_data[$i]['color'] = $color;
-        $all_data[$i]['bgcolor'] = $bgcolor;
-        $all_data[$i]['uid'] = $uid;
-        $all_data[$i]['uname'] = $uname;
-        $all_data[$i]['name'] = $name;
-        $all_data[$i]['posts'] = $posts;
-        $all_data[$i]['email'] = $email;
-        $all_data[$i]['appears'] = $appears;
+        $all_data[$i]['color']        = $color;
+        $all_data[$i]['bgcolor']      = $bgcolor;
+        $all_data[$i]['uid']          = $uid;
+        $all_data[$i]['uname']        = $uname;
+        $all_data[$i]['name']         = $name;
+        $all_data[$i]['posts']        = $posts;
+        $all_data[$i]['email']        = $email;
+        $all_data[$i]['appears']      = $appears;
         $all_data[$i]['user_regdate'] = $user_regdate;
-        $all_data[$i]['last_login'] = $last_login;
+        $all_data[$i]['last_login']   = $last_login;
         $all_data[$i]['days_between'] = $days_between;
-        $all_data[$i]['user_sig'] = $user_sig;
-        $all_data[$i]['checked'] = $checked;
+        $all_data[$i]['user_sig']     = $user_sig;
+        $all_data[$i]['checked']      = $checked;
 
         $i++;
     }
@@ -143,11 +143,11 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
 
     $_SESSION['chk_end'] = time();
 
-    $time = $_SESSION['chk_end'] - $_SESSION['chk_start'];
-    $days = (int) $_REQUEST['days'];
-    $days = empty($days) ? 100 : $days;
+    $time    = $_SESSION['chk_end'] - $_SESSION['chk_start'];
+    $days    = (int) $_REQUEST['days'];
+    $days    = empty($days) ? 100 : $days;
     $byemail = isset($_REQUEST['byemail']) ? $_REQUEST['byemail'] : '';
-    $max = $xoopsModuleConfig['list_amount'] * 20;
+    $max     = $xoopsModuleConfig['list_amount'] * 20;
 
     $xoopsTpl->assign('_MA_TADADM_AUTO_CHECK_DESC', sprintf(_MA_TADADM_AUTO_CHECK_DESC, $max));
     $xoopsTpl->assign('_MA_TADADM_WORKTIME', sprintf(_MA_TADADM_WORKTIME, $time));
@@ -173,14 +173,14 @@ function list_spam($g2p = 1)
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
     $PageBar = Utility::getPageBar($sql, 500, 10);
-    $bar = $PageBar['bar'];
-    $sql = $PageBar['sql'];
-    $total = $PageBar['total'];
+    $bar     = $PageBar['bar'];
+    $sql     = $PageBar['sql'];
+    $total   = $PageBar['total'];
 
     $result = $xoopsDB->query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $all_data = [];
-    $i = 0;
+    $i        = 0;
 
     while (false !== ($all = $xoopsDB->fetchArray($result))) {
         foreach ($all as $k => $v) {
@@ -198,7 +198,7 @@ function list_spam($g2p = 1)
                 $checked = '';
             }
         } elseif ($posts > 0) {
-            $color = 'blue';
+            $color   = 'blue';
             $checked = '';
         } elseif (!empty($user_sig)) {
             if (preg_match("/[\x7f-\xff]/", $user_sig) or preg_match('/.tw/i', $user_sig)) {
@@ -210,21 +210,21 @@ function list_spam($g2p = 1)
         }
 
         $user_regdate = date('Y-m-d', $user_regdate);
-        $last_login = empty($last_login) ? _MA_TADADM_NEVERLOGIN : date('Y-m-d', $last_login);
+        $last_login   = empty($last_login) ? _MA_TADADM_NEVERLOGIN : date('Y-m-d', $last_login);
 
-        $all_data[$i]['color'] = $color;
-        $all_data[$i]['bgcolor'] = $bgcolor;
-        $all_data[$i]['uid'] = $uid;
-        $all_data[$i]['uname'] = $uname;
-        $all_data[$i]['name'] = $name;
-        $all_data[$i]['posts'] = $posts;
-        $all_data[$i]['email'] = $email;
-        $all_data[$i]['appears'] = $appears;
+        $all_data[$i]['color']        = $color;
+        $all_data[$i]['bgcolor']      = $bgcolor;
+        $all_data[$i]['uid']          = $uid;
+        $all_data[$i]['uname']        = $uname;
+        $all_data[$i]['name']         = $name;
+        $all_data[$i]['posts']        = $posts;
+        $all_data[$i]['email']        = $email;
+        $all_data[$i]['appears']      = $appears;
         $all_data[$i]['user_regdate'] = $user_regdate;
-        $all_data[$i]['last_login'] = $last_login;
+        $all_data[$i]['last_login']   = $last_login;
         $all_data[$i]['days_between'] = $days_between;
-        $all_data[$i]['user_sig'] = $user_sig;
-        $all_data[$i]['checked'] = $checked;
+        $all_data[$i]['user_sig']     = $user_sig;
+        $all_data[$i]['checked']      = $checked;
 
         $i++;
     }
@@ -241,7 +241,7 @@ function replace_tad_adm($uid = '', $email = '', $result = '')
     global $xoopsDB, $xoopsUser;
 
     $chk_date = date('Y-m-d H:i:s', xoops_getUserTimestamp(time()));
-    $sql = 'REPLACE INTO `' . $xoopsDB->prefix('tad_adm') . '`
+    $sql      = 'REPLACE INTO `' . $xoopsDB->prefix('tad_adm') . '`
     (`uid`, `email`, `result`, `chk_date`)
     VALUES (?, ?, ?, ?)';
     Utility::query($sql, 'isss', [$uid, $email, $result, $chk_date]) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -279,7 +279,7 @@ function del_user($del_uid)
     Utility::query($sql, 'i', [$del_uid]) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $memberHandler = xoops_getHandler('member');
-    $user = $memberHandler->getUser($del_uid);
+    $user          = $memberHandler->getUser($del_uid);
     if (empty($user)) {
         return;
     }
