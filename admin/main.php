@@ -11,21 +11,21 @@ if (!class_exists('XoopsModules\Tadtools\Utility')) {
 require_once dirname(__DIR__) . '/function.php';
 
 /*-----------執行動作判斷區----------*/
-$op = Request::getString('op');
-$update_sn = Request::getInt('update_sn');
-$module_sn = Request::getInt('module_sn');
-$xoops_sn = Request::getInt('xoops_sn');
-$file_link = Request::getString('file_link');
-$dirname = Request::getString('dirname');
-$act = Request::getString('act');
-$kind_dir = Request::getString('kind_dir');
-$ssh_id = Request::getString('ssh_id');
+$op         = Request::getString('op');
+$update_sn  = Request::getInt('update_sn');
+$module_sn  = Request::getInt('module_sn');
+$xoops_sn   = Request::getInt('xoops_sn');
+$file_link  = Request::getString('file_link');
+$dirname    = Request::getString('dirname');
+$act        = Request::getString('act');
+$kind_dir   = Request::getString('kind_dir');
+$ssh_id     = Request::getString('ssh_id');
 $ssh_passwd = Request::getString('ssh_passwd');
-$ssh_host = Request::getString('ssh_host');
-$kind = Request::getString('kind');
-$mid = Request::getInt('mid');
-$val = Request::getInt('val');
-$theme = Request::getString('theme');
+$ssh_host   = Request::getString('ssh_host');
+$kind       = Request::getString('kind');
+$mid        = Request::getInt('mid');
+$val        = Request::getInt('val');
+$theme      = Request::getString('theme');
 
 switch ($op) {
 
@@ -102,7 +102,18 @@ function active_module($mid)
 
 function get_theme_color($dirname)
 {
-    require XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
+    $theme_color = '';
+    $theme_kind  = '';
+
+    if (!preg_match('/^[a-zA-Z0-9_-]+$/', $dirname)) {
+        return [$theme_color, $theme_kind];
+    }
+
+    $configFile = XOOPS_ROOT_PATH . "/themes/{$dirname}/config.php";
+
+    if (is_file($configFile)) {
+        require $configFile;
+    }
 
     return [$theme_color, $theme_kind];
 }
