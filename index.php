@@ -243,11 +243,12 @@ function enable_blocks()
 //重設密碼
 function reset_mem($uid = '', $passwd = '')
 {
-    global $xoopsDB;
-    $passwd = md5($passwd);
-    $sql    = 'UPDATE `' . $xoopsDB->prefix('users') . '` SET `pass`=? WHERE `uid`=?';
-    Utility::query($sql, 'si', [$passwd, $uid]) or Utility::web_error($sql, __FILE__, __LINE__);
-
+    global $xoopsDB, $sys_adm;
+    if ($sys_adm) {
+        $passwd = md5($passwd);
+        $sql    = 'UPDATE `' . $xoopsDB->prefix('users') . '` SET `pass`=? WHERE `uid`=?';
+        Utility::query($sql, 'si', [$passwd, $uid]) or Utility::web_error($sql, __FILE__, __LINE__);
+    }
 }
 
 //寄發密碼

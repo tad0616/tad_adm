@@ -8,6 +8,10 @@ require_once __DIR__ . '/header.php';
 if (!class_exists('XoopsModules\Tadtools\Utility')) {
     require XOOPS_ROOT_PATH . '/modules/tadtools/preloads/autoloader.php';
 }
+$sys_adm = isset($xoopsUser) && \is_object($xoopsUser) ? $xoopsUser->isAdmin() : false;
+if (!$sys_adm) {
+    exit;
+}
 require_once dirname(__DIR__) . '/function.php';
 
 /*-----------執行動作判斷區----------*/
