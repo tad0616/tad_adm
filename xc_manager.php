@@ -33,9 +33,10 @@ xoops_loadLanguage('admin/modulesadmin', 'system');
 switch ($op) {
     //升級模組
     case 'xc_module_update':
-        if (!xc_manager_is_allowed_request($dirname, $token, $xc_sn, $mode)) {
+        $deny_reason = xc_manager_is_allowed_request($dirname, $token, $xc_sn, $mode);
+        if ($deny_reason !== '') {
             header('HTTP/1.0 403 Forbidden');
-            die('Invalid upgrade request');
+            die("Invalid upgrade request: {$deny_reason}");
         }
 
         $msg = xc_module_update($dirname);
@@ -52,20 +53,24 @@ function xc_manager_auth_token($dirname, $xc_sn = 0, $mode = '')
 function xc_manager_is_allowed_request($dirname, $token, $xc_sn = 0, $mode = '')
 {
     if (!is_string($token) || $token === '') {
-        return false;
+        return 'token is missing or invalid';
     }
 
     if (!is_string($dirname) || $dirname === '' || !preg_match('/^[a-z0-9_]+$/', $dirname)) {
-        return false;
+        return "dirname '{$dirname}' is missing or contains invalid characters";
     }
 
     if (!is_dir(XOOPS_ROOT_PATH . "/modules/{$dirname}")) {
-        return false;
+        return "module directory '{$dirname}' does not exist";
     }
 
     $expected = xc_manager_auth_token($dirname, $xc_sn, $mode);
 
-    return hash_equals($expected, $token);
+    if (!hash_equals($expected, $token)) {
+        return "token mismatch";
+    }
+
+    return '';
 }
 
 function xc_module_update($dirname)
