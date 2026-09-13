@@ -32,4 +32,7 @@ define('_MI_TADADM_HELP_OVERVIEW', 'Overview');
 define('_MI_TADADM_SOURCE', 'Download the list source');
 define('_MI_TADADM_SOURCE_DESC', 'If the update list can not be displayed, change to: https://www.tad0616.net');
 
+define('_MI_TADADM_USE_FORGOT_PASSWD', 'Use Forgot Password Function');
+define('_MI_TADADM_USE_FORGOT_PASSWD_DESC', 'Whether to enable the forgot password function');
+
 define('_MI_TADADM_XOOPS_UPGRADE', 'XOOPS Upgrade');

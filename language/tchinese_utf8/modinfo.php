@@ -32,4 +32,7 @@ define('_MI_TADADM_HELP_OVERVIEW', '概要');
 define('_MI_TADADM_SOURCE', '下載清單來源');
 define('_MI_TADADM_SOURCE_DESC', '預設為 https://campus-xoops.tn.edu.tw ');
 
+define('_MI_TADADM_USE_FORGOT_PASSWD', '使用忘記密碼功能');
+define('_MI_TADADM_USE_FORGOT_PASSWD_DESC', '是否啟用忘記密碼功能');
+
 define('_MI_TADADM_XOOPS_UPGRADE', 'XOOPS升級');

@@ -12,16 +12,17 @@ if (!class_exists('XoopsModules\Tadtools\Utility')) {
 xoops_loadLanguage('main', 'tadtools');
 require_once __DIR__ . '/function.php';
 
-$op          = Request::getString('op');
-$help_passwd = Request::getString('help_passwd');
-$uid         = Request::getInt('uid');
-$show        = Request::getBool('show');
-$msg_box     = '';
+$op                = Request::getString('op');
+$help_passwd       = Request::getString('help_passwd');
+$uid               = Request::getInt('uid');
+$show              = Request::getBool('show');
+$msg_box           = '';
+$TadAmModuleConfig = Utility::getXoopsModuleConfig('tad_adm');
+
 if ($xoopsUser) {
     $sys_adm = $xoopsUser->isAdmin(1);
 } elseif ('helpme' === $op) {
-    $TadAmModuleConfig = Utility::getXoopsModuleConfig('tad_adm');
-    $sys_adm           = ('' != $TadAmModuleConfig['login'] and '' != $help_passwd and $TadAmModuleConfig['login'] == $help_passwd) ? true : false;
+    $sys_adm = ('' != $TadAmModuleConfig['login'] and '' != $help_passwd and $TadAmModuleConfig['login'] == $help_passwd) ? true : false;
 } elseif ('send_passwd' === $op) {
     $result = send_passwd();
     header("location: {$_SERVER['PHP_SELF']}?op=msg&show={$result}");
@@ -36,7 +37,7 @@ if ($xoopsUser) {
 }
 
 if (!$sys_adm) {
-    if ('forgot' === $op) {
+    if ('forgot' === $op and $TadAmModuleConfig['use_forgot_passwd']) {
         $SweetAlert     = new SweetAlert();
         $SweetAlertCode = $SweetAlert->render("forget_mail", "index.php?op=send_passwd&go=", 'go', _MD_TADADM_CHANGE_CONFIRM_TITLE, _MD_TADADM_CHANGE_CONFIRM_TEXT, _MD_TADADM_CHANGE_CONFIRM_BTN, 'warning', true);
 
@@ -62,7 +63,8 @@ if (!$sys_adm) {
             </div>
         </div>';
     } else {
-        $form = $SweetAlertCode . '
+        $forgot = ($TadAmModuleConfig['use_forgot_passwd']) ? '<a href="index.php?op=forgot" style="font-size: 0.75rem;color:gray;">' . _MD_TADADM_FORGOT . '</a>' : '';
+        $form   = $SweetAlertCode . '
         <form action="' . XOOPS_URL . '/user.php" method="post" role="form">
             <div class="card">
                 <div class="card-header text-white bg-primary">' . _MD_TADADM_LOGIN . '</div>
@@ -81,7 +83,7 @@ if (!$sys_adm) {
                         </div>
                     </div>
                     <div class="form-group row mb-3">
-                        <label class="col-sm-3 col-form-label text-md-right"><a href="index.php?op=forgot" style="font-size: 0.75rem;color:gray;">' . _MD_TADADM_FORGOT . '</a></label>
+                        <label class="col-sm-3 col-form-label text-md-right">' . $forgot . '</label>
                         <div class="col-sm-9">
                             <input type="hidden" name="op" value="login">
                             <input type="hidden" name="xoops_redirect" value="/index.php">
@@ -126,7 +128,7 @@ switch ($op) {
 
     case 'enable_blocks':
         enable_blocks();
-        header("location: {$_SERVER['PHP_SELF']}");
+        // header("location: {$_SERVER['PHP_SELF']}");
         exit;
 
     case 'enable_modules':
@@ -217,6 +219,7 @@ function unable_blocks()
 
     if ($bid_array) {
         $all_bid = implode(',', $bid_array);
+        $all_bid = $xoopsDB->escape($all_bid);
 
         $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=?';
         Utility::query($sql, 'ss', [$all_bid, 'block_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -231,13 +234,17 @@ function unable_blocks()
 function enable_blocks()
 {
     global $xoopsDB, $TadAmModuleConfig;
+    if (!empty($TadAmModuleConfig['block_id_temp'])) {
+        $all_bid = $xoopsDB->escape($TadAmModuleConfig['block_id_temp']);
+        $sql     = 'UPDATE `' . $xoopsDB->prefix('newblocks') . "` SET `visible`=1 WHERE `bid` IN ({$all_bid})";
+        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
-    $sql = 'UPDATE `' . $xoopsDB->prefix('newblocks') . '` SET `visible`=? WHERE `bid` IN (?)';
-    Utility::query($sql, 'ss', ['1', $TadAmModuleConfig['block_id_temp']]) or Utility::web_error($sql, __FILE__, __LINE__);
-
-    $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=?';
-    Utility::query($sql, 'ss', ['', 'block_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
-
+        $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=?';
+        Utility::query($sql, 'ss', ['', 'block_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
+        redirect_header($_SERVER['PHP_SELF'], 3, "已成功執行！");
+    } else {
+        redirect_header($_SERVER['PHP_SELF'], 3, "沒有任何區塊被關閉！");
+    }
 }
 
 //重設密碼
@@ -782,7 +789,7 @@ $main4 = "
         $into_setup
         $into_module
         <li class='list-group-item'><a href='pma.php' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_DB . "'></i> " . _MD_TADADM_DB . "</a></li>
-        <li class='list-group-item'><a href='move.php' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_MOVE288 . "'></i> " . _MD_TADADM_MOVE288 . "</a></li>
+        <!-- <li class='list-group-item'><a href='move.php' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_MOVE288 . "'></i> " . _MD_TADADM_MOVE288 . "</a></li> -->
         <li class='list-group-item'><a href='$logout' target='_blank'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_LOGOUT . "'></i> " . _MD_TADADM_LOGOUT . '</a></li>
 
     </ul>

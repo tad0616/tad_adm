@@ -1,3 +1,16 @@
+Tad Adm 3.6 (Released September 4, 2026)
+==================================================================
+1. Added a "Forgot Password" toggle setting
+2. Fixed an issue where blocks disabled in batch could not be restored
+3. Upgraded Adminer to 6.0.1
+
+Tad Adm 3.5 (Released on July 27, 2026)
+==================================================================
+1. Removed the AdminerEnumOption plugin
+2. Upgraded Adminer to version 5.5.1
+3. Resolved various security issues
+
+
 Tad Adm 3.4 (Released 2025-10-30)
 ==================================================================
 1. Upgraded Adminer to 5.4.1
