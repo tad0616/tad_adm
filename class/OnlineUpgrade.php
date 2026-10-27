@@ -61,6 +61,7 @@ class OnlineUpgrade
         }
         $installed_blocks = array_keys($blocks);
 
+        $all_install = $all_uninstall = [];
         foreach ($all_mods as $kind => $items) {
             foreach ($items as $dirname => $data) {
                 switch ($kind) {
@@ -326,7 +327,7 @@ class OnlineUpgrade
                 $path = XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}";
 
                 $int_new_version = Utility::get_version('adm_tpl', $data['new_version']);
-                $int_version     = Utility::get_version('adm_tpl', file_get_contents("{$path}/version.txt"));
+                $int_version     = Utility::get_version('adm_tpl', '', $dirname);
                 $last_update     = file_exists("{$path}/version.txt") ? filemtime("{$path}/version.txt") : '';
                 $enable          = $dirname == $xoopsConfig['cpanel'] ? 1 : 0;
                 $is_link         = is_link($path);
@@ -404,6 +405,13 @@ class OnlineUpgrade
         $item['logo_thumb']      = $data['logo_thumb'];
         $item['new_version']     = ($data['new_version']) ? $data['new_version'] . $rc : '';
         $item['new_last_update'] = ($data['new_last_update']) ? date('Y-m-d H:i', $data['new_last_update']) : '';
+        // 與已安裝項目共用 sub_modules_list.tpl，補齊未安裝時沒有的欄位
+        $item['mid']         = '';
+        $item['now_version'] = '';
+        $item['last_update'] = '';
+        $item['fileowner']   = $item['filegroup']   = $item['fileperms']   = '';
+        $item['is_link']     = false;
+        $item['enable']      = 0;
 
         $item_data[] = $function;
         $item_data[] = $item;

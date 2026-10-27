@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <{if $now_op=="login_form"}>
+    <{if $now_op|default:''=="login_form"}>
         <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
     <{else}>
         <div id="xoopsTab">

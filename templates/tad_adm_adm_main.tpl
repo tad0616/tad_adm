@@ -1,10 +1,10 @@
 <div class="container-fluid">
-    <{if $now_op=="login_form"}>
+    <{if $now_op|default:''=="login_form"}>
         <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
     <{else}>
         <div id="modTab">
             <ul class="resp-tabs-list vert">
-                <{if $all_install.upgrade or $all_install.unable}>
+                <{if $all_install.upgrade|default:false or $all_install.unable|default:false}>
                     <li><{$smarty.const._MA_TADADM_NEED_UPGRADE}></li>
                 <{/if}>
                 <li><{$smarty.const._MA_TADADM_INSTALLED_ITEM}></li>
@@ -16,13 +16,13 @@
             </ul>
 
             <div class="resp-tabs-container vert">
-                <{if $all_install.upgrade or $all_install.unable}>
+                <{if $all_install.upgrade|default:false or $all_install.unable|default:false}>
                     <div>
                         <!-- 需升級 -->
                         <{if $all_install.upgrade|default:false}>
                             <{foreach from=$all_install.upgrade key=kind item=items}>
                                 <!-- 使用中 -->
-                                <{if $items.1}>
+                                <{if $items.1|default:false}>
                                     <h2 class="mod_head"><{$kind|default:''}></h2>
                                     <table class="footable">
                                     <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -33,7 +33,7 @@
                                 <{/if}>
 
                                 <!-- 關閉中 -->
-                                <{if $items.0}>
+                                <{if $items.0|default:false}>
                                     <h2 class="mod_head"><{$kind|default:''}><{$smarty.const._MA_TADADM_CLOSED}></h2>
                                     <table class="footable">
                                     <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -49,7 +49,7 @@
                         <{if $all_install.unable|default:false}>
                             <{foreach from=$all_install.unable key=kind item=items}>
                                 <!-- 使用中 -->
-                                <{if $items.1}>
+                                <{if $items.1|default:false}>
                                     <h2 class="mod_head"><{$kind|default:''}></h2>
                                     <table class="footable">
                                     <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -60,7 +60,7 @@
                                 <{/if}>
 
                                 <!-- 關閉中 -->
-                                <{if $items.0}>
+                                <{if $items.0|default:false}>
                                     <h2 class="mod_head"><{$kind|default:''}><{$smarty.const._MA_TADADM_CLOSED}></h2>
                                     <table class="footable">
                                     <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -75,9 +75,9 @@
                 <{/if}>
 
                 <div>
-                    <{foreach from=$all_install.latest key=kind item=items}>
+                    <{foreach from=$all_install.latest|default:[] key=kind item=items}>
                         <!-- 使用中 -->
-                        <{if $items.1}>
+                        <{if $items.1|default:false}>
                             <h2 class="mod_head"><{$kind|default:''}></h2>
                             <table class="footable">
                             <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>
@@ -88,7 +88,7 @@
                         <{/if}>
 
                         <!-- 關閉中 -->
-                        <{if $items.0}>
+                        <{if $items.0|default:false}>
                             <h2 class="mod_head"><{$kind|default:''}><{$smarty.const._MA_TADADM_CLOSED}></h2>
                             <table class="footable">
                             <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_thead.tpl"}>

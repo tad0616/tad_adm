@@ -23,7 +23,7 @@ switch ($op) {
 
     case 'spam':
         list_spam($g2p);
-        $xoopsTpl->assign('op', spam);
+        $xoopsTpl->assign('op', 'spam');
         break;
 
     default:
@@ -73,7 +73,7 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
         }
 
         if ('force' !== $mode) {
-            $adm = get_tad_adm($uid);
+            $adm = get_tad_adm($uid) ?: ['email' => '', 'result' => ''];
         } else {
             $adm['email'] = '';
         }
@@ -126,6 +126,7 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
         $all_data[$i]['name']         = $name;
         $all_data[$i]['posts']        = $posts;
         $all_data[$i]['email']        = $email;
+        $all_data[$i]['url']          = $url;
         $all_data[$i]['appears']      = $appears;
         $all_data[$i]['user_regdate'] = $user_regdate;
         $all_data[$i]['last_login']   = $last_login;
@@ -144,9 +145,10 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
     $_SESSION['chk_end'] = time();
 
     $time    = $_SESSION['chk_end'] - $_SESSION['chk_start'];
-    $days    = (int) $_REQUEST['days'];
+    $days    = (int) $days;
     $days    = empty($days) ? 100 : $days;
-    $byemail = isset($_REQUEST['byemail']) ? $_REQUEST['byemail'] : '';
+    // 會直接放進 input 的 value，必須跳脫
+    $byemail = htmlspecialchars(Request::getString('byemail'), ENT_QUOTES);
     $max     = $xoopsModuleConfig['list_amount'] * 20;
 
     $xoopsTpl->assign('_MA_TADADM_AUTO_CHECK_DESC', sprintf(_MA_TADADM_AUTO_CHECK_DESC, $max));
@@ -219,6 +221,7 @@ function list_spam($g2p = 1)
         $all_data[$i]['name']         = $name;
         $all_data[$i]['posts']        = $posts;
         $all_data[$i]['email']        = $email;
+        $all_data[$i]['url']          = $url;
         $all_data[$i]['appears']      = $appears;
         $all_data[$i]['user_regdate'] = $user_regdate;
         $all_data[$i]['last_login']   = $last_login;

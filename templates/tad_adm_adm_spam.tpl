@@ -11,7 +11,7 @@
         </ol>
     </div>
 
-    <{if $op=="spam"}>
+    <{if $op|default:''=="spam"}>
 
         <form action="spam.php" method="post">
             <{$bar|default:''}>
