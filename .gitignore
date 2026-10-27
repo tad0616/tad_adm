@@ -212,3 +212,6 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+
+manager_tn.php
+manager_xc.php
