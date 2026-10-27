@@ -1,4 +1,4 @@
-<tr id="<{$mod.dirname}>" style="background: <{$mod.background}>;">
+<tr id="<{$mod.dirname|default:''}>" style="background: <{$mod.background}>;">
     <td>
         <div style="margin:4px 0px; font-size: 1.67rem; font-weight: bolder;">
             <{$mod.xoops_sn}>
@@ -46,7 +46,7 @@
         <{/if}>
 
         <div style="margin:4px 0px; font-size: 0.6875rem; font-weight: normal;">
-            <{$mod.new_version}> <{$mod.new_xoops_date}>
+            <{$mod.new_version|default:''}> <{$mod.new_xoops_date|default:''}>
         </div>
     </td>
     <td>

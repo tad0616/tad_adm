@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 use Xmf\Request;
 use XoopsModules\Tadtools\Utility;
 
