@@ -1,3 +1,8 @@
+Tad Adm 3.7 (Released October 29, 2026)
+==================================================================
+1. Removed the migration and backup features
+2. Upgraded Adminer to version 6.2.0
+
 Tad Adm 3.6 (Released September 4, 2026)
 ==================================================================
 1. Added a "Forgot Password" toggle setting
