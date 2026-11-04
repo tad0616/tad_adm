@@ -766,9 +766,16 @@ class OnlineUpgrade
         $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
         $zip->close($new_file);
 
-        if ('' != $ssh) {
+        $work_path = XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}";
+        $fail_url  = $_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean';
+        $ssh_output = '';
+
+        if (!empty($ssh)) {
+            if (!is_file("{$work_path}/ssh.txt")) {
+                redirect_header($fail_url, 5, sprintf(_MA_TADADM_SCRIPT_NOT_FOUND, "{$work_path}/ssh.txt"));
+            }
             $sh     = "#!/bin/sh\n";
-            $handle = fopen(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/ssh.txt", 'rb');
+            $handle = fopen("{$work_path}/ssh.txt", 'rb');
             if ($handle) {
                 while (false !== ($buffer = fgets($handle, 4096))) {
                     $buffer = str_replace('XOOPS_ROOT_PATH', XOOPS_ROOT_PATH, $buffer);
@@ -781,19 +788,33 @@ class OnlineUpgrade
                 }
                 fclose($handle);
             }
-            file_put_contents(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/upgrade.sh", $sh);
-            self::chmod_R(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/upgrade.sh", 0777, 0777);
-            $ssh->exec(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/upgrade.sh");
+            if (false === file_put_contents("{$work_path}/upgrade.sh", $sh)) {
+                redirect_header($fail_url, 5, sprintf(_MA_TADADM_SCRIPT_NOT_FOUND, "{$work_path}/upgrade.sh"));
+            }
+            self::chmod_R("{$work_path}/upgrade.sh", 0777, 0777);
+            $result = $ssh->exec("sh {$work_path}/upgrade.sh 2>&1");
+            if (false === $result) {
+                redirect_header($fail_url, 5, sprintf(_MA_TADADM_SSH_EXEC_FAIL, "{$work_path}/upgrade.sh"));
+            }
+            $ssh_output = trim((string) $result);
 
         } else {
+            if (!is_file("{$work_path}/go.txt")) {
+                redirect_header($fail_url, 5, sprintf(_MA_TADADM_SCRIPT_NOT_FOUND, "{$work_path}/go.txt"));
+            }
             // [修補 CWE-94] 以白名單式檔案操作取代 eval(go.txt)
-            self::execute_go_instructions(
-                XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/go.txt",
-                $new_file
-            );
+            self::execute_go_instructions("{$work_path}/go.txt", $new_file);
         }
 
         if ('upgrade' === $dirname) {
+            // 確認 /upgrade 目錄真的已被複製到網站根目錄，避免導向 404
+            if (!is_dir(XOOPS_ROOT_PATH . '/upgrade')) {
+                $msg = sprintf(_MA_TADADM_UPGRADE_DIR_MISSING, XOOPS_ROOT_PATH . '/upgrade');
+                if (!empty($ssh_output)) {
+                    $msg .= '<pre>' . htmlspecialchars($ssh_output, ENT_QUOTES) . '</pre>';
+                }
+                redirect_header($fail_url, 10, $msg);
+            }
             redirect_header(XOOPS_URL . '/upgrade', 3, _MA_TADADM_UPGRADE_FROM_URL);
         } else {
             return true;
