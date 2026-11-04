@@ -80,7 +80,7 @@ class AdminerTablesHistory
 </div>
 <ul id="history">
 <?php
-foreach (array_reverse(json_decode($_COOKIE['adminer_tables_history'])) as $table) {
+foreach (array_reverse((array)json_decode($_COOKIE['adminer_tables_history'])) as $table) {
             echo '<li>
         <a href="' . Adminer\h(Adminer\ME) . 'select=' . urlencode($table) . '" class="select"></a>
         <a href="' . Adminer\h(Adminer\ME) . 'table=' . urlencode($table) . '" class="structure">' . Adminer\h($table) . '</a>

@@ -41,19 +41,19 @@ class searchAutocomplete
 			unset($_POST["getAutoCompleteData"]);
 			
 			$where= array();
-			$fields=array();
+			$fields=Adminer\fields($table);
 			
 			//each new search field refines the search for autocomplete
 			//reuse relevant parts of Adminer::selectSearchProcess. Just using static method won't work.
 			//get SQL from operation-selection.
-			$adminer=new Adminer();
+			$adminer=Adminer\adminer();
 			foreach ((array) $_POST["where"] as $key => $val) 
 			{
 				
 				$prefix = "";
 				$cond = " $val[op]";
 				if (preg_match('~IN$~', $val["op"])) {
-					$in = process_length($val["val"]);
+					$in = Adminer\process_in($val["val"]);
 					$cond .= " " . ($in != "" ? $in : "(NULL)");
 				} elseif ($val["op"] == "SQL") {
 					$cond = " $val[val]"; // SQL injection
@@ -62,14 +62,14 @@ class searchAutocomplete
 				} elseif ($val["op"] == "ILIKE %%") {
 					$cond = " ILIKE " . $adminer->processInput($fields[$val["col"]], "%$val[val]%");
 				} elseif ($val["op"] == "FIND_IN_SET") {
-					$prefix = "$val[op](" . q($val["val"]) . ", ";
+					$prefix = "$val[op](" . Adminer\q($val["val"]) . ", ";
 					$cond = ")";
 				} elseif (!preg_match('~NULL$~', $val["op"])) {
 					$cond .= " " . $adminer->processInput($fields[$val["col"]], $val["val"]);
 				}
 				
-				$Min_SQL=new Min_SQL(null );				
-				$where[] = $prefix .  $Min_SQL->convertSearch(idf_escape($val["col"]), $val, $fields[$val["col"]]) . $cond;
+				$Min_SQL=Adminer\driver();				
+				$where[] = $prefix .  $Min_SQL->convertSearch(Adminer\idf_escape($val["col"]), $val, $fields[$val["col"]]) . $cond;
 			}	
 				
 			//this will likely not use any indexes. 
@@ -81,7 +81,7 @@ class searchAutocomplete
 			//to order even text-columns naturally, use this ugly hack, this is tested in MySQL only. Sorry.
 			$orderSQLforNaturalSort="`$column`+0<>0 DESC, `$column`+0, `$column`";		
 			//deliver json
-			echo json_encode(get_vals("SELECT DISTINCT `$column` FROM `$table` $whereSQL ORDER BY $orderSQLforNaturalSort"));
+			header("HTTP/1.1 200 OK"); header("Content-Type: application/json; charset=utf-8"); echo json_encode(Adminer\get_vals("SELECT DISTINCT `$column` FROM `$table` $whereSQL ORDER BY $orderSQLforNaturalSort"));
 			//stop delivering anything...
 			die();
 		}
@@ -94,7 +94,7 @@ class searchAutocomplete
 		if(!isset($_GET["select"]))
 			return;
 	?>
-		<script <?php echo nonce()?> type='text/javascript'>
+		<script <?php echo Adminer\nonce()?> type='text/javascript'>
 		//prepare autocomplete searchFields on page load
 		document.addEventListener('DOMContentLoaded', function()
 		{

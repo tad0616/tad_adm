@@ -45,7 +45,7 @@ ORDER BY ORDINAL_POSITION", null, "") as $row
 				echo "<a href='" . Adminer\h($link) . "'>" . Adminer\h($backwardKey["name"]) . "</a>";
 				$link = Adminer\ME . 'edit=' . urlencode($table);
 				foreach ($cols as $column => $val) {
-					$link .= "&set" . urlencode("[" . Adminer\bracket_escape($column) . "]") . "=" . urlencode($row[$val]);
+					$link .= "&set" . urlencode("[" . Adminer\bracket_escape($column) . "]") . "=" . urlencode((string)$row[$val]);
 				}
 				echo "<a href='" . Adminer\h($link) . "' title='" . Adminer\lang('New item') . "'>+</a> ";
 			}

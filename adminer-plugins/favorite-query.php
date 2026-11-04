@@ -20,7 +20,7 @@ class AdminerFavoriteQuery extends Adminer\Plugin {
         }
 
         $remove_favorite = filter_input(INPUT_GET, 'remove_favorite');
-        $query = trim(filter_input(INPUT_POST, 'query'));
+        $query = trim((string)filter_input(INPUT_POST, 'query'));
 
         if(filter_input(INPUT_POST, 'add_favorite') && $query){
             $_POST['query'] = trim((string)$_POST['query']);

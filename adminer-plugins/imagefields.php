@@ -17,7 +17,7 @@ class AdminerImagefields
         $this->url = $url;
     }
 
-    function head(?bool $dark = null): bool {
+    function head(?bool $dark = null) {
 
         echo sprintf('<script %s>', Adminer\nonce());
         echo sprintf("        
@@ -46,6 +46,6 @@ class AdminerImagefields
         ", $this->width, $this->height, $this->url ? '' : "links[this].innerHTML = '';");
         echo '</script>';
 
-        return true;
+        // return null;
     }
 }

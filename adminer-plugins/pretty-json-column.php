@@ -8,7 +8,7 @@
 */
 class AdminerPrettyJsonColumn extends Adminer\Plugin {
 	private function testJson($value) {
-		if ((substr($value, 0, 1) == '{' || substr($value, 0, 1) == '[') && ($json = json_decode($value, true))) {
+		if (is_string($value) && (substr($value, 0, 1) == '{' || substr($value, 0, 1) == '[') && ($json = json_decode($value, true))) {
 			return $json;
 		}
 		return $value;

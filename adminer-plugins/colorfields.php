@@ -13,7 +13,7 @@ class AdminerColorfields {
 
 	public function selectVal(&$val, $link, $field, $original) {
 
-		$trimmed = trim($val);
+		$trimmed = trim((string)$val);
 
 		if (self::isHex($trimmed) || self::isRGBa($trimmed)) {
 			$val = sprintf(self::$template, $val, $trimmed);
