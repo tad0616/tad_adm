@@ -482,6 +482,16 @@ namespace {
         file_put_contents(XOOPS_ROOT_PATH . '/upgrade/index.php', 'original');
         $unwritablePaths = [str_replace('\\', '/', XOOPS_ROOT_PATH . '/upgrade/index.php')];
         $coreUrl = $source . '/uploads/tad_modules/file/core.zip';
+        $unwritablePaths = [str_replace('\\', '/', XOOPS_ROOT_PATH . '/uploads')];
+        $stagingSsh = new FakeSsh(0, '');
+        try {
+            OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, $stagingSsh);
+            throw new \RuntimeException('Expected inaccessible core staging redirect');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'staging') !== false, 'Core staging failure was not reported');
+        }
+        check($stagingSsh->command === null, 'Core staging attempted an SSH chmod');
+        $unwritablePaths = [str_replace('\\', '/', XOOPS_ROOT_PATH . '/upgrade/index.php')];
         $xoopsTpl = new FakeTemplate();
         check(!OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, ''), 'Core manifest preflight did not stop');
         check($xoopsTpl->values['now_op'] === 'login_form', 'Core manifest preflight did not show SSH login');

@@ -9,13 +9,13 @@ namespace XoopsModules\Tad_adm;
  *   - PHP 直接執行（run_php）
  *   - 轉成 /bin/sh 腳本，交由 SSH 執行（to_shell）
  *
- * 支援操作：copy、mkdir、delete、chmod、write
+ * 支援操作：copy、mkdir、delete、chmod、chmod_except、write、prune_index_html
  * 路徑變數：{ROOT} {VAR} {LIB} {WORK} {NEW_FILE} {SN} {NOW}
  * 所有路徑必須位於 ROOT、VAR、LIB 之內，且不得含有「..」。
  */
 class UpgradeManifest
 {
-    public const OPS = ['copy', 'mkdir', 'delete', 'chmod', 'write', 'prune_index_html'];
+    public const OPS = ['copy', 'mkdir', 'delete', 'chmod', 'chmod_except', 'write', 'prune_index_html'];
 
     /**
      * 讀取並驗證流程檔，回傳已展開變數的步驟清單。
@@ -84,11 +84,25 @@ class UpgradeManifest
                     break;
 
                 case 'chmod':
+                case 'chmod_except':
                     [$step['path']] = self::resolve($s['path'] ?? '', $vars, $roots, $n);
                     $both = $s['mode'] ?? null;
                     $step['file']      = self::mode($s['file'] ?? $both, $n);
                     $step['dir']       = self::mode($s['dir'] ?? $both, $n);
                     $step['recursive'] = !empty($s['recursive']);
+                    if ('chmod_except' === $s['op']) {
+                        if (!$step['recursive'] || empty($s['exclude']) || !is_array($s['exclude']) || in_array('.', explode('/', $step['path']), true)) {
+                            throw new \RuntimeException("step $n: recursive chmod_except requires excluded paths");
+                        }
+                        $step['exclude'] = [];
+                        foreach ($s['exclude'] as $raw) {
+                            [$excluded] = self::resolve($raw, $vars, $roots, $n);
+                            if (in_array('.', explode('/', $excluded), true)) {
+                                throw new \RuntimeException("step $n: invalid excluded path");
+                            }
+                            $step['exclude'][] = $excluded;
+                        }
+                    }
                     break;
 
                 case 'prune_index_html':
@@ -116,7 +130,7 @@ class UpgradeManifest
     /** 失敗時是否只算警告（chmod、delete 或標示 optional 的步驟） */
     public static function is_soft(array $step): bool
     {
-        return $step['optional'] || in_array($step['op'], ['chmod', 'delete', 'prune_index_html'], true);
+        return $step['optional'] || in_array($step['op'], ['chmod', 'chmod_except', 'delete', 'prune_index_html'], true);
     }
 
     /**
@@ -175,8 +189,9 @@ class UpgradeManifest
                     self::remove($step['path'], $fails);
                     break;
                 case 'chmod':
+                case 'chmod_except':
                     if (file_exists($step['path'])) {
-                        self::chmod_tree($step['path'], $step['file'], $step['dir'], $step['recursive'], $fails);
+                        self::chmod_tree($step['path'], $step['file'], $step['dir'], $step['recursive'], $fails, $step['exclude'] ?? []);
                     }
                     break;
                 case 'prune_index_html':
@@ -230,16 +245,32 @@ class UpgradeManifest
                     $cmd = 'rm -rf -- ' . $q($step['path']);
                     break;
                 case 'chmod':
+                case 'chmod_except':
                     $p  = $q($step['path']);
                     $fm = sprintf('%04o', $step['file']);
                     $dm = sprintf('%04o', $step['dir']);
+                    foreach ($step['exclude'] ?? [] as $excluded) {
+                        if (self::within($step['path'], $excluded)) {
+                            $cmd = ':';
+                            break 2;
+                        }
+                    }
                     if ($step['recursive']) {
+                        $prune = '';
+                        if (!empty($step['exclude'])) {
+                            $patterns = [];
+                            foreach ($step['exclude'] as $excluded) {
+                                $pattern = str_replace(['\\', '*', '?', '['], ['\\\\', '\\*', '\\?', '\\['], $excluded);
+                                $patterns[] = '-path ' . $q($pattern);
+                            }
+                            $prune = '\\( ' . implode(' -o ', $patterns) . ' \\) -prune -o ';
+                        }
                         if ($fm === $dm) {
                             // Fix directories before descent; find's single-item -exec failures do not set its exit status.
                             $warn = $q("TAD_ADM_WARN step $n chmod");
-                            $cmd = "find $p \\( -type d ! -perm $dm -exec sh -c 'chmod \"\$1\" \"\$2\" || { printf \"%s\\n\" \"\$3\"; exit 1; }' sh $dm {} $warn \\; \\) -o \\( -type f ! -perm $fm -exec chmod $fm {} + \\)";
+                            $cmd = "find $p $prune\\( -type d ! -perm $dm -exec sh -c 'chmod \"\$1\" \"\$2\" || { printf \"%s\\n\" \"\$3\"; exit 1; }' sh $dm {} $warn \\; \\) -o \\( -type f ! -perm $fm -exec chmod $fm {} + \\)";
                         } else {
-                            $cmd = "{ find $p -type d ! -perm $dm -exec chmod $dm {} + && find $p -type f ! -perm $fm -exec chmod $fm {} + ; }";
+                            $cmd = "{ find $p $prune\\( -type d ! -perm $dm -exec chmod $dm {} + \\) && find $p $prune\\( -type f ! -perm $fm -exec chmod $fm {} + \\) ; }";
                         }
                     } else {
                         $cmd = "if [ -d $p ]; then chmod $dm $p; else chmod $fm $p; fi";
@@ -295,6 +326,15 @@ class UpgradeManifest
     private static function norm(string $p): string
     {
         return rtrim(preg_replace('#/+#', '/', str_replace('\\', '/', $p)), '/');
+    }
+
+    private static function within(string $path, string $parent): bool
+    {
+        if (DIRECTORY_SEPARATOR === '\\') {
+            $path = strtolower($path);
+            $parent = strtolower($parent);
+        }
+        return $path === $parent || 0 === strpos($path, $parent . '/');
     }
 
     /** @return array [正規化路徑, 原字串是否以 / 結尾] */
@@ -401,8 +441,13 @@ class UpgradeManifest
         }
     }
 
-    private static function chmod_tree(string $p, int $fm, int $dm, bool $recursive, array &$fails): void
+    private static function chmod_tree(string $p, int $fm, int $dm, bool $recursive, array &$fails, array $exclude = []): void
     {
+        foreach ($exclude as $excluded) {
+            if (self::within($p, $excluded)) {
+                return;
+            }
+        }
         if (is_link($p)) {
             return;
         }
@@ -413,7 +458,7 @@ class UpgradeManifest
         if ($is_dir && $recursive) {
             foreach (scandir($p) as $item) {
                 if ('.' !== $item && '..' !== $item) {
-                    self::chmod_tree("$p/$item", $fm, $dm, true, $fails);
+                    self::chmod_tree("$p/$item", $fm, $dm, true, $fails, $exclude);
                 }
             }
         }

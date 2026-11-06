@@ -11,7 +11,7 @@ fi
 
 base=$(mktemp -d)
 trap 'rm -rf -- "$base"' EXIT HUP INT TERM
-tree="$base/tree with ' quote"
+tree="$base/tree with [brackets] ' quote"
 mkdir -p "$tree/sub" "$base/bin"
 printf 'data' > "$tree/sub/file with spaces"
 printf 'outside' > "$base/outside"
@@ -96,6 +96,24 @@ sh "$base/run-missing.sh" > "$base/output" 2> "$base/errors"
 grep -q 'TAD_ADM_WARN step 1 chmod' "$base/output"
 grep -q 'TAD_ADM_PROGRESS 2' "$base/output"
 tree=$original_tree
+
+for variant in same different; do
+    "$PHP_BIN" -r '
+        require $argv[1];
+        echo \XoopsModules\Tad_adm\UpgradeManifest::to_shell([
+            ["n" => 1, "op" => "chmod_except", "optional" => false, "path" => $argv[2], "file" => $argv[3] === "same" ? 0700 : 0600, "dir" => 0700, "recursive" => true, "exclude" => [$argv[2] . "/sub"]]
+        ], true);
+    ' "$manifest" "$tree" "$variant" > "$base/run-exclude.sh"
+    "$real_chmod" 755 "$tree" "$tree/sub" "$tree/sub/file with spaces"
+    : > "$TEST_CHMOD_LOG"
+    sh "$base/run-exclude.sh" > "$base/output"
+    if grep -Fq "$tree/sub" "$TEST_CHMOD_LOG"; then
+        echo "Excluded subtree was chmodded ($variant)" >&2
+        exit 1
+    fi
+    grep -Fq "$tree" "$TEST_CHMOD_LOG"
+    grep -q 'TAD_ADM_PROGRESS 1' "$base/output"
+done
 
 "$real_chmod" 700 "$tree"
 if [ "$(stat -c %a "$tree")" = 700 ]; then

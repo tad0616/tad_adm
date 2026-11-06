@@ -20,18 +20,27 @@ The default theme and themes on shared school sites cannot be deleted here.
 
 Downloading and extracting packages always require the PHP process to be able
 to write to uploads and uploads/tad_adm, including when SSH is used to copy
-the files. SSH does not automatically change ownership or recursively relax
-permissions. A copy can still fail after the check (for example, if permissions
+the files. Core upgrades stop and report inaccessible staging directories
+instead of recursively changing uploads permissions. Other legacy package paths
+may still change permissions. A copy can still fail after the check (for example, if permissions
 change); inspect the reported errors and repair any partially updated files.
 For recursive SSH chmod steps, files and directories already at the requested
 mode are skipped; when the modes match, the tree is traversed once. This
 reduces work but does not eliminate the cost of scanning large trees or guarantee
 that a web server timeout will be avoided.
 
+The upgrade.json operation chmod_except supports recursive chmod with an
+exclude array of paths within the allowed roots. Excluded trees are not
+visited by chmod, including when the target is itself inside an excluded tree.
+Older tad_adm versions reject this operation; update this
+module before using a package that requires it. This does not prevent copy
+operations from changing attributes, or other operations from scanning those
+trees.
+
 XOOPS upgrades display the current download, extraction and copy step while
 the upgrade runs. For upgrade.json, PHP and SSH report each step's destination.
-After SSH login, the form remains visible while the upgrade runs so these
-updates can continue; its result or error is then displayed in the same window.
+After SSH login, the form is hidden and the progress is shown at the top;
+the result or error is then displayed in the same window.
 If the SSH request ends without the upgrade handoff, its result is uncertain:
 do not rerun or open /upgrade/ until host logs and file integrity confirm the
 copy has finished. A gateway error can occur even if the SSH command continues.

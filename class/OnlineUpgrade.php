@@ -889,8 +889,22 @@ class OnlineUpgrade
         $file_link         = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
         $new_file          = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
 
-        // SSH 模式下，若 PHP 無法寫入 uploads，先用 SSH 身分開放，才能下載與解壓
-        if (!empty($ssh) && (!is_writable(XOOPS_ROOT_PATH . '/uploads') || (is_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm') && !is_writable(XOOPS_ROOT_PATH . '/uploads/tad_adm')))) {
+        if ('upgrade' === $dirname) {
+            $uploads = XOOPS_ROOT_PATH . '/uploads';
+            $staging = XOOPS_ROOT_PATH . '/uploads/tad_adm';
+            $work = $staging . '/upgrade';
+            $stagingProblem = '';
+            if (!is_dir($uploads) || !is_writable($uploads)) {
+                $stagingProblem = $uploads;
+            } elseif ((!is_dir($staging) && !@mkdir($staging, 0755, true) && !is_dir($staging)) || !is_writable($staging)) {
+                $stagingProblem = $staging;
+            } elseif (file_exists($work) && (!is_dir($work) || !is_writable($work))) {
+                $stagingProblem = $work;
+            }
+            if ('' !== $stagingProblem) {
+                self::upgrade_redirect($fail_url, 15, sprintf(_MA_TADADM_STAGING_WRITE_FAIL, htmlspecialchars($stagingProblem, ENT_QUOTES), htmlspecialchars(UpgradeManifest::php_user(), ENT_QUOTES)));
+            }
+        } elseif (!empty($ssh) && (!is_writable(XOOPS_ROOT_PATH . '/uploads') || (is_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm') && !is_writable(XOOPS_ROOT_PATH . '/uploads/tad_adm')))) {
             $ssh->exec('mkdir -p ' . escapeshellarg(XOOPS_ROOT_PATH . '/uploads/tad_adm') . ' && chmod -R 777 ' . escapeshellarg(XOOPS_ROOT_PATH . '/uploads') . ' 2>&1');
             clearstatcache();
         }
