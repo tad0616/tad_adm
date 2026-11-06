@@ -73,7 +73,36 @@
             var timer;
             var request;
             var startedAt = Date.now();
+            var stateStartedAt = startedAt;
             var receivedStatus = false;
+            var maxExecutionTime = null;
+            var timerElement = document.createElement('div');
+            timerElement.className = 'tad-adm-progress-timer small text-muted mt-2';
+            timerElement.setAttribute('role', 'timer');
+            element.insertAdjacentElement('afterend', timerElement);
+
+            function setStatus(message) {
+                if (element.textContent !== message) {
+                    element.textContent = message;
+                    stateStartedAt = Date.now();
+                }
+            }
+
+            function renderTimer() {
+                var elapsed = Math.floor((Date.now() - stateStartedAt) / 1000);
+                var elapsedText = element.getAttribute('data-progress-elapsed').replace('%s', elapsed);
+                var limitText = element.getAttribute('data-progress-limit-unavailable');
+                if (maxExecutionTime !== null) {
+                    limitText = maxExecutionTime === 0
+                        ? element.getAttribute('data-progress-unlimited')
+                        : element.getAttribute('data-progress-limit').replace('%s', maxExecutionTime);
+                }
+                timerElement.textContent = elapsedText + '；' + limitText;
+            }
+
+            renderTimer();
+            var timerInterval = window.setInterval(renderTimer, 1000);
+
             function poll() {
                 request = new XMLHttpRequest();
                 request.open('GET', endpoint + '?token=' + encodeURIComponent(token), true);
@@ -85,23 +114,27 @@
                     if (request.status === 200) {
                         try {
                             var result = JSON.parse(request.responseText);
+                            if (typeof result.max_execution_time === 'number' && result.max_execution_time >= 0) {
+                                maxExecutionTime = result.max_execution_time;
+                                renderTimer();
+                            }
                             if (typeof result.message === 'string') {
-                                element.textContent = result.message;
+                                setStatus(result.message);
                                 receivedStatus = true;
                             } else if (!receivedStatus && Date.now() - startedAt >= 15000) {
-                                element.textContent = element.getAttribute('data-progress-error');
+                                setStatus(element.getAttribute('data-progress-error'));
                             }
                         } catch (error) {
-                            element.textContent = element.getAttribute('data-progress-error');
+                            setStatus(element.getAttribute('data-progress-error'));
                         }
                     } else {
-                        element.textContent = element.getAttribute('data-progress-error');
+                        setStatus(element.getAttribute('data-progress-error'));
                     }
                     timer = window.setTimeout(poll, 800);
                 };
                 request.onerror = request.ontimeout = function () {
                     if (!stopped) {
-                        element.textContent = element.getAttribute('data-progress-error');
+                        setStatus(element.getAttribute('data-progress-error'));
                         timer = window.setTimeout(poll, 2000);
                     }
                 };
@@ -111,6 +144,8 @@
             return function () {
                 stopped = true;
                 window.clearTimeout(timer);
+                window.clearInterval(timerInterval);
+                timerElement.remove();
                 if (request) {
                     request.abort();
                 }

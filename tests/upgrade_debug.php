@@ -87,6 +87,7 @@ try {
         checkUpgradeDebug((int) file_get_contents($statusFile) === $expected, "Wrong progress HTTP status for debug mode $mode, admin $admin, noise $noise");
         $data = json_decode($output);
         checkUpgradeDebug(is_object($data) && json_last_error() === JSON_ERROR_NONE, 'Progress response was not clean JSON');
+        checkUpgradeDebug($expected !== 200 || (isset($data->max_execution_time) && is_int($data->max_execution_time) && $data->max_execution_time >= 0), 'PHP execution time limit was not reported');
         checkUpgradeDebug($expected !== 200 || ($data->message ?? '') === 'Copying to: /target', 'Progress message was lost');
         checkUpgradeDebug($expected !== 500 || ($data->error ?? '') === 'progress_unavailable', 'Unexpected output was not reported as an error');
     }

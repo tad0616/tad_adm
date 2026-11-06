@@ -32,7 +32,12 @@ $path = \XoopsModules\Tad_adm\UpgradeProgress::path($token, session_id());
 if (session_status() === PHP_SESSION_ACTIVE) {
     session_write_close();
 }
-$progressResponse = json_encode($path ? (\XoopsModules\Tad_adm\UpgradeProgress::read($path) ?? new \stdClass()) : new \stdClass(), JSON_INVALID_UTF8_SUBSTITUTE);
+$progressData = $path ? (\XoopsModules\Tad_adm\UpgradeProgress::read($path) ?? []) : [];
+$maxExecutionTime = ini_get('max_execution_time');
+if (false !== $maxExecutionTime) {
+    $progressData['max_execution_time'] = (int) $maxExecutionTime;
+}
+$progressResponse = json_encode($progressData, JSON_INVALID_UTF8_SUBSTITUTE);
 if (false === $progressResponse) {
     error_log('[tad_adm] Unable to encode upgrade progress response');
     http_response_code(500);

@@ -1,7 +1,11 @@
 <{if $action|default:'' == 'xoops.php' && $act|default:'' == 'upgrade'}>
     <div id="ssh-upgrade-progress" class="alert alert-info" role="status" aria-live="polite" tabindex="-1" hidden
          data-progress-error="<{$smarty.const._MA_TADADM_PROGRESS_UNAVAILABLE|escape:'html'}>"
-         data-progress-wait="<{$smarty.const._MA_TADADM_XOOPS_UPGRADE_WAIT|escape:'html'}>"></div>
+         data-progress-wait="<{$smarty.const._MA_TADADM_XOOPS_UPGRADE_WAIT|escape:'html'}>"
+         data-progress-elapsed="<{$smarty.const._MA_TADADM_PROGRESS_ELAPSED|escape:'html'}>"
+         data-progress-limit="<{$smarty.const._MA_TADADM_PROGRESS_PHP_LIMIT|escape:'html'}>"
+         data-progress-unlimited="<{$smarty.const._MA_TADADM_PROGRESS_PHP_UNLIMITED|escape:'html'}>"
+         data-progress-limit-unavailable="<{$smarty.const._MA_TADADM_PROGRESS_PHP_LIMIT_UNAVAILABLE|escape:'html'}>"></div>
 <{/if}>
 <div id="ssh-login-content">
 <h2><{$smarty.const._MA_TADADM_SSH_ID}></h2>
@@ -54,7 +58,7 @@
     <div id="ssh-upgrade-confirmed" hidden></div>
     <iframe id="ssh-upgrade-result" name="ssh-upgrade-result" title="<{$smarty.const._MA_TADADM_SSH_UPGRADE_RESULT|escape:'html'}>"
             style="width: 100%; min-height: 420px; border: 0" hidden></iframe>
-    <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js?v=2026110604"></script>
+    <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js?v=2026110605"></script>
     <script>
         (function () {
             var form = document.querySelector('#ssh-login-content form');
