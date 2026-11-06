@@ -1,15 +1,20 @@
-Tad Adm 3.7 (Released October 29, 2026)
+Tad Adm 3.8 (Released 2026-11-06)
+==================================================================
+1. Upgraded Adminer to version 6.3.0
+2. Added a new XOOPS upgrade mechanism for greater security and stability
+
+Tad Adm 3.7 (Released 2026-10-29)
 ==================================================================
 1. Removed the migration and backup features
 2. Upgraded Adminer to version 6.2.0
 
-Tad Adm 3.6 (Released September 4, 2026)
+Tad Adm 3.6 (Released 2026-09-04)
 ==================================================================
 1. Added a "Forgot Password" toggle setting
 2. Fixed an issue where blocks disabled in batch could not be restored
 3. Upgraded Adminer to 6.0.1
 
-Tad Adm 3.5 (Released on July 27, 2026)
+Tad Adm 3.5 (Released 2026-07-27)
 ==================================================================
 1. Removed the AdminerEnumOption plugin
 2. Upgraded Adminer to version 5.5.1
