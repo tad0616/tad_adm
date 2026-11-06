@@ -176,6 +176,7 @@ define('_MA_TADADM_PREFLIGHT_FAIL', '升級已中止，尚未變更任何檔案�
 define('_MA_TADADM_PREFLIGHT_SHOWN', '（僅列出前 %d 個）');
 define('_MA_TADADM_COPY_FAIL', '有 %1$d 個檔案無法複製，網站可能處於部分更新狀態，請修正權限後重新執行升級：<br>%2$s');
 define('_MA_TADADM_UPGRADE_WARN', '升級檔案已複製，但部分步驟需要手動處理（詳見主機錯誤日誌）：%s');
+define('_MA_TADADM_WRITE_FAIL', '無法寫入下載檔 %1$s。PHP 以「%2$s」身分執行，對 uploads 目錄沒有寫入權限。請修正 uploads 的擁有者或權限（例如以 root 執行：chmod -R 777 uploads），或改用 SSH 登入方式執行升級。');
 define('_MA_TADADM_MANIFEST_INVALID', '升級流程檔 upgrade.json 無效：%s');
 define('_MA_TADADM_SSH_STEPS_FAIL', '透過 SSH 執行時，有升級步驟失敗：<pre>%s</pre>');
 define('_MA_TADADM_WARN_STEP', '步驟 %1$d（%2$s）有 %3$d 個項目失敗，例如：%4$s');

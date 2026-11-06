@@ -699,7 +699,7 @@ class OnlineUpgrade
             exit;
         }
 
-        $is_writable = is_writable(XOOPS_ROOT_PATH) && !\Xmf\Request::getInt('force_ssh');
+        $is_writable = is_writable(XOOPS_ROOT_PATH) && is_writable(XOOPS_ROOT_PATH . '/uploads') && !\Xmf\Request::getInt('force_ssh');
 
         //若是可以寫入
         if ($is_writable) {
@@ -750,6 +750,12 @@ class OnlineUpgrade
         $go_warn           = '';
         $file_link         = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
         $new_file          = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
+
+        // SSH 模式下，若 PHP 無法寫入 uploads，先用 SSH 身分開放，才能下載與解壓
+        if (!empty($ssh) && (!is_writable(XOOPS_ROOT_PATH . '/uploads') || (is_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm') && !is_writable(XOOPS_ROOT_PATH . '/uploads/tad_adm')))) {
+            $ssh->exec('mkdir -p ' . escapeshellarg(XOOPS_ROOT_PATH . '/uploads/tad_adm') . ' && chmod -R 777 ' . escapeshellarg(XOOPS_ROOT_PATH . '/uploads') . ' 2>&1');
+            clearstatcache();
+        }
 
         Utility::mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
         self::copyemz($file_link, $new_file, 0, $xoops_sn);
@@ -984,7 +990,10 @@ class OnlineUpgrade
             redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, $url));
         }
 
-        $openedfile = fopen($file2, 'wb');
+        $openedfile = @fopen($file2, 'wb');
+        if (false === $openedfile) {
+            redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 15, sprintf(_MA_TADADM_WRITE_FAIL, htmlspecialchars($file2, ENT_QUOTES), htmlspecialchars(UpgradeManifest::php_user(), ENT_QUOTES)));
+        }
         fwrite($openedfile, $contentx);
         fclose($openedfile);
 

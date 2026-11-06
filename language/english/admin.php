@@ -177,6 +177,7 @@ define('_MA_TADADM_PREFLIGHT_FAIL', 'Upgrade stopped before any file was changed
 define('_MA_TADADM_PREFLIGHT_SHOWN', ', first %d shown');
 define('_MA_TADADM_COPY_FAIL', '%1$d file(s) could not be copied, so the site may be partly updated. Fix the permissions and run the upgrade again:<br>%2$s');
 define('_MA_TADADM_UPGRADE_WARN', 'Upgrade files copied, but some steps need manual attention (see your server log): %s');
+define('_MA_TADADM_WRITE_FAIL', 'Cannot write the download file %1$s. PHP runs as "%2$s" and has no write permission on the uploads directory. Fix the ownership or permissions of uploads (for example as root: chmod -R 777 uploads), or run the upgrade through SSH.');
 define('_MA_TADADM_MANIFEST_INVALID', 'The upgrade manifest upgrade.json is invalid: %s');
 define('_MA_TADADM_SSH_STEPS_FAIL', 'Some upgrade steps failed over SSH:<pre>%s</pre>');
 define('_MA_TADADM_WARN_STEP', 'step %1$d (%2$s): %3$d item(s) failed, e.g. %4$s');
