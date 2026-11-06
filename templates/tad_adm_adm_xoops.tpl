@@ -35,6 +35,45 @@
                 <{/if}>
             </div>
         </div>
+        <script>
+            $(function() {
+                $('a.modulesadmin[href*="op=upgrade_xoops"]:not(.disabled)').on('click', function() {
+                    $('body').addClass('tad-adm-xoops-upgrade-loading');
+                });
+
+                $(document).on('afterShow.tadAdmXoopsUpgrade afterClose.tadAdmXoopsUpgrade', function() {
+                    $('body').removeClass('tad-adm-xoops-upgrade-loading');
+                });
+            });
+        </script>
+        <style>
+            body.tad-adm-xoops-upgrade-loading #fancybox-loading {
+                width: auto;
+                height: auto;
+                margin: 0;
+                background: none;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            body.tad-adm-xoops-upgrade-loading #fancybox-loading div {
+                display: none;
+            }
+
+            body.tad-adm-xoops-upgrade-loading #fancybox-loading::after {
+                content: "<{$smarty.const._MA_TADADM_XOOPS_UPGRADE_WAIT}>";
+                display: block;
+                padding: 1rem 1.5rem;
+                border: 1px solid #ccc;
+                border-radius: 0.4rem;
+                background: #fff;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+                color: #333;
+                font-size: 1rem;
+                white-space: nowrap;
+            }
+        </style>
     <{/if}>
 </div>
 

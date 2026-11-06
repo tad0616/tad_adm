@@ -128,6 +128,7 @@ define('_MA_TADADM_ENABLE_BLOCK', 'Installable Blocks');
 define('_MA_TADADM_UNABLE_BLOCKS', 'Closed blocks');
 define('_MA_TADADM_MOD_UPDATE_BLOCK', 'Upgrade Blocks Now');
 define('_MA_TADADM_UPGRADE_XOOPS', 'Upgrade now to');
+define('_MA_TADADM_XOOPS_UPGRADE_WAIT', 'Downloading, extracting, and applying the XOOPS upgrade. Please wait...');
 define('_MA_TADADM_PATCH_XOOPS', 'add');
 define('_MA_TADADM_UPGRADE_XOOPS_ITEMS', 'Upgradeable items');
 define('_MA_TADADM_PATCH_XOOPS_ITEMS', 'Supplementary items');

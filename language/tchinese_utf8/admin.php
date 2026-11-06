@@ -127,6 +127,7 @@ define('_MA_TADADM_ENABLE_BLOCK', '可安裝區塊');
 define('_MA_TADADM_UNABLE_BLOCKS', '關閉中區塊');
 define('_MA_TADADM_MOD_UPDATE_BLOCK', '立即升級區塊');
 define('_MA_TADADM_UPGRADE_XOOPS', '立即升級至');
+define('_MA_TADADM_XOOPS_UPGRADE_WAIT', '正在下載、解壓並套用 XOOPS 升級檔，請稍候…');
 define('_MA_TADADM_PATCH_XOOPS', '加入');
 define('_MA_TADADM_UPGRADE_XOOPS_ITEMS', '可升級的項目');
 define('_MA_TADADM_PATCH_XOOPS_ITEMS', '可補丁的項目');
