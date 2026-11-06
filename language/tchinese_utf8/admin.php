@@ -152,6 +152,8 @@ define('_MA_TADADM_UPGRADE_OK', '升級成功！');
 define('_MA_TADADM_UPGRADE_FROM_URL', '接著請手動進行升級程序');
 define('_MA_TADADM_SCRIPT_NOT_FOUND', '找不到或無法建立升級腳本「%s」，無法完成升級！');
 define('_MA_TADADM_SSH_EXEC_FAIL', 'SSH 執行「%s」失敗，請檢查 SSH 帳號權限！');
+define('_MA_TADADM_UPGRADE_TIME_LIMIT_FAIL', '無法解除 PHP 升級執行時間限制，尚未開始複製。請調整主機設定後重試。');
+define('_MA_TADADM_SSH_INCOMPLETE', '無法確認 SSH 升級腳本已成功完成，網站可能只更新了一部分。請先確認伺服器上的升級程序是否仍在執行；確認停止後，再依備份或升級套件修復，切勿直接重複執行。');
 define('_MA_TADADM_UPGRADE_DIR_MISSING', '升級腳本已執行，但「%s」目錄不存在，請檢查檔案權限或手動複製 uploads/tad_adm/upgrade 內的檔案。');
 define('_MA_TADADM_VERSION', '版本');
 define('_MA_TADADM_HIGHER', '高於');

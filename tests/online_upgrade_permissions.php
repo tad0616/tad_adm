@@ -96,6 +96,10 @@ namespace {
         public $status;
         public $output;
         public $command;
+        public $timeout;
+        public $keepAlive;
+        public $timedOut = false;
+        public $exception = false;
 
         public function __construct($status, $output)
         {
@@ -106,6 +110,9 @@ namespace {
         public function exec($command, $callback = null)
         {
             $this->command = $command;
+            if ($this->exception) {
+                throw new \RuntimeException('connection closed');
+            }
             if ($callback && false !== $this->output) {
                 $middle = intdiv(strlen($this->output), 2);
                 $callback(substr($this->output, 0, $middle));
@@ -118,6 +125,21 @@ namespace {
         public function getExitStatus()
         {
             return $this->status;
+        }
+
+        public function setTimeout($timeout)
+        {
+            $this->timeout = $timeout;
+        }
+
+        public function setKeepAlive($interval)
+        {
+            $this->keepAlive = $interval;
+        }
+
+        public function isTimeout()
+        {
+            return $this->timedOut;
         }
     }
 
@@ -148,6 +170,8 @@ namespace {
     define('_MA_TADADM_SESSION_RESTORE_FAIL', 'session restore failed');
     define('_MA_TADADM_COPY_FAIL', 'copy %1$d %2$s');
     define('_MA_TADADM_SSH_STEPS_FAIL', 'ssh %s');
+    define('_MA_TADADM_UPGRADE_TIME_LIMIT_FAIL', 'time limit failed');
+    define('_MA_TADADM_SSH_INCOMPLETE', 'ssh incomplete; possible partial upgrade');
     define('_MA_TADADM_MV_FAIL', 'move %s');
     define('_MA_TADADM_PREFLIGHT_FAIL', 'preflight %1$s %2$d %3$s %4$s');
     define('_MA_TADADM_PREFLIGHT_SHOWN', 'shown %d');
@@ -359,6 +383,7 @@ namespace {
         $legacyZip = new \PharData($legacyArchive);
         $legacyZip->addFromString('payload/index.php', 'legacy upgrade');
         $legacyZip->addFromString('go.txt', 'full_copy("XOOPS_ROOT_PATH/uploads/tad_adm/upgrade/payload", "XOOPS_ROOT_PATH/upgrade")' . "\n");
+        $legacyZip->addFromString('ssh.txt', 'cp -R XOOPS_ROOT_PATH/uploads/tad_adm/upgrade/payload/. XOOPS_ROOT_PATH/upgrade/' . "\n");
         unset($legacyZip);
         $legacyUrl = $source . '/uploads/tad_modules/file/core-legacy.zip';
         $xoopsTpl = new FakeTemplate();
@@ -426,15 +451,61 @@ namespace {
         check(file_get_contents(XOOPS_ROOT_PATH . '/upgrade/index.php') === 'upgrade', 'Core upgrade files were not copied');
         $status = \XoopsModules\Tad_adm\UpgradeProgress::read($statusPath);
         check(isset($status['message']) && strpos(str_replace('\\', '/', $status['message']), '/upgrade') !== false && strpos($status['message'], 'Copying to:') === 0, 'Actual core copy destination was not reported');
-        $coreSsh = new FakeSsh(0, "TAD_ADM_PROGRESS 1\n");
+        $coreSsh = new FakeSsh(0, "TAD_ADM_PROGRESS 1\n\nTAD_ADM_EXIT 0\n");
         try {
             OnlineUpgrade::get_upgrade_file($source . '/uploads/tad_modules/file/core.zip', 'upgrade', 1, $coreSsh);
             throw new \RuntimeException('Expected SSH upgrade redirect');
         } catch (Redirect $e) {
             check($e->getMessage() === 'Upgrade ready', 'SSH core upgrade did not finish normally');
         }
+        check($coreSsh->timeout === 0 && $coreSsh->keepAlive === 15, 'SSH core upgrade did not disable the short timeout and enable keepalive');
+        check(strpos($coreSsh->command, 'TAD_ADM_EXIT') !== false, 'SSH script completion marker missing');
         $status = \XoopsModules\Tad_adm\UpgradeProgress::read($statusPath);
         check(isset($status['message']) && strpos($status['message'], 'Copying to:') === 0, 'SSH copy marker did not report destination');
+        foreach ([
+            new FakeSsh(false, "TAD_ADM_PROGRESS 1\n"),
+            new FakeSsh(0, "TAD_ADM_PROGRESS 1\n"),
+            new FakeSsh(1, "TAD_ADM_PROGRESS 1\nTAD_ADM_FAIL step 1 copy\n\nTAD_ADM_EXIT 1\n"),
+            new FakeSsh(0, "TAD_ADM_PROGRESS 1\n\nTAD_ADM_EXIT 1\n"),
+        ] as $failedSsh) {
+            try {
+                OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, $failedSsh);
+                throw new \RuntimeException('Expected incomplete SSH upgrade failure');
+            } catch (Redirect $e) {
+                check(strpos($e->getMessage(), 'ssh incomplete') !== false, 'Incomplete SSH upgrade was accepted');
+                check(!$lastRedirect['ajax'] && $lastRedirect['time'] >= 30, 'Incomplete SSH warning was not shown on a visible page');
+            }
+        }
+        $timedOutSsh = new FakeSsh(0, "TAD_ADM_PROGRESS 1\n\nTAD_ADM_EXIT 0\n");
+        $timedOutSsh->timedOut = true;
+        try {
+            OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, $timedOutSsh);
+            throw new \RuntimeException('Expected SSH timeout failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'ssh incomplete') !== false, 'Timed-out SSH upgrade was accepted');
+        }
+        $closedSsh = new FakeSsh(false, '');
+        $closedSsh->exception = true;
+        try {
+            OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, $closedSsh);
+            throw new \RuntimeException('Expected SSH connection failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'ssh incomplete') !== false && strpos($e->getMessage(), 'connection closed') !== false, 'SSH connection failure was not displayed');
+        }
+        $legacySsh = new FakeSsh(0, "\nTAD_ADM_EXIT 0\n");
+        try {
+            OnlineUpgrade::get_upgrade_file($legacyUrl, 'upgrade', 1, $legacySsh);
+            throw new \RuntimeException('Expected legacy SSH upgrade redirect');
+        } catch (Redirect $e) {
+            check($e->getMessage() === 'Upgrade ready', 'Legacy SSH core upgrade did not finish normally');
+        }
+        $legacySsh = new FakeSsh(0, '');
+        try {
+            OnlineUpgrade::get_upgrade_file($legacyUrl, 'upgrade', 1, $legacySsh);
+            throw new \RuntimeException('Expected incomplete legacy SSH upgrade failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'ssh incomplete') !== false, 'Incomplete legacy SSH upgrade was accepted');
+        }
         echo "Package copy, preflight, SSH failure, legacy/manifest packages and theme deletion tests passed.\n";
     } finally {
         \XoopsModules\Tadtools\Utility::delete_directory($base);

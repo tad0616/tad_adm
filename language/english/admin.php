@@ -153,6 +153,8 @@ define('_MA_TADADM_UPGRADE_OK', 'We got promoted!');
 define('_MA_TADADM_UPGRADE_FROM_URL', 'Then please proceed with the upgrade process manually.');
 define('_MA_TADADM_SCRIPT_NOT_FOUND', 'Upgrade script "%s" was not found or could not be created; upgrade aborted!');
 define('_MA_TADADM_SSH_EXEC_FAIL', 'SSH failed to execute "%s". Please check the SSH account permissions!');
+define('_MA_TADADM_UPGRADE_TIME_LIMIT_FAIL', 'Could not remove the PHP upgrade execution time limit. No files have been copied; adjust the server configuration and retry.');
+define('_MA_TADADM_SSH_INCOMPLETE', 'Could not confirm successful completion of the SSH upgrade script. The site may be partially updated. First check whether the server-side upgrade is still running; once stopped, recover from backup or the upgrade package. Do not retry immediately.');
 define('_MA_TADADM_UPGRADE_DIR_MISSING', 'The upgrade script ran, but "%s" does not exist. Check file permissions or manually copy the files from uploads/tad_adm/upgrade.');
 define('_MA_TADADM_VERSION', 'editions');
 define('_MA_TADADM_HIGHER', 'higher than');

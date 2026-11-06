@@ -27,3 +27,11 @@ If the core upgrade preflight finds inaccessible destinations, the SSH login
 form shows the affected paths before any destination files are changed.
 Other core upgrade errors use the regular redirect page, even when AJAX
 redirects are enabled, so the error remains visible before returning.
+
+Back up the site files and database before a core upgrade and schedule downtime:
+copying live core files is not atomic. SSH core upgrades disable phpseclib's
+short command timeout and require both a successful exit status and a completion
+marker. If a connection or server timeout interrupts the upgrade, the site may
+be partially updated. Check whether the server-side process is still running
+before restoring or repairing from a backup or package; do not retry concurrently.
+Web server, proxy and PHP-FPM termination limits can still interrupt the request.

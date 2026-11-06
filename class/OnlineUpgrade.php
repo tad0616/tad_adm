@@ -839,7 +839,15 @@ class OnlineUpgrade
     {
         self::$coreUpgrade = 'upgrade' === $dirname;
         if ('upgrade' === $dirname) {
+            if (!set_time_limit(0)) {
+                self::upgrade_redirect($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 30, _MA_TADADM_UPGRADE_TIME_LIMIT_FAIL);
+            }
+            ignore_user_abort(true);
             UpgradeProgress::start(\Xmf\Request::getString('upgrade_progress_token'));
+        }
+        if (!empty($ssh)) {
+            $ssh->setTimeout(0);
+            $ssh->setKeepAlive(15);
         }
         $TadAmModuleConfig = self::get_adm_config();
         $orig_link         = $file_link;
@@ -911,7 +919,7 @@ class OnlineUpgrade
                     foreach ($steps as $step) {
                         $byNumber[$step['n']] = $step;
                     }
-                    $ok = $ssh->exec("sh {$work_path}/upgrade.sh 2>&1", static function ($chunk) use (&$output, &$buffer, $byNumber): void {
+                    $callback = static function ($chunk) use (&$output, &$buffer, $byNumber): void {
                         $output .= $chunk;
                         $buffer .= $chunk;
                         while (false !== ($newline = strpos($buffer, "\n"))) {
@@ -921,15 +929,12 @@ class OnlineUpgrade
                                 self::manifest_progress($byNumber[(int) $match[1]]);
                             }
                         }
-                    });
-                    $result = false === $ok ? false : $output;
+                    };
+                    $ssh_output = self::run_core_ssh_script($ssh, "{$work_path}/upgrade.sh", $fail_url, $callback, $output);
                 } else {
-                    $result = $ssh->exec("sh {$work_path}/upgrade.sh 2>&1");
+                    $output = '';
+                    $ssh_output = self::run_core_ssh_script($ssh, "{$work_path}/upgrade.sh", $fail_url, null, $output);
                 }
-                if (false === $result) {
-                    self::upgrade_redirect($fail_url, 5, sprintf(_MA_TADADM_SSH_EXEC_FAIL, "{$work_path}/upgrade.sh"));
-                }
-                $ssh_output = trim((string) $result);
                 [$sh_errors, $sh_warnings] = UpgradeManifest::parse_shell_output($ssh_output);
                 if ($sh_errors) {
                     self::upgrade_redirect($fail_url, 30, sprintf(_MA_TADADM_SSH_STEPS_FAIL, htmlspecialchars(implode("\n", $sh_errors) . "\n" . $ssh_output, ENT_QUOTES)));
@@ -976,11 +981,8 @@ class OnlineUpgrade
             }
             self::chmod_R("{$work_path}/upgrade.sh", 0777, 0777);
             UpgradeProgress::update(_MA_TADADM_PROGRESS_SSH);
-            $result = $ssh->exec("sh {$work_path}/upgrade.sh 2>&1");
-            if (false === $result) {
-                self::upgrade_redirect($fail_url, 5, sprintf(_MA_TADADM_SSH_EXEC_FAIL, "{$work_path}/upgrade.sh"));
-            }
-            $ssh_output = trim((string) $result);
+            $output = '';
+            $ssh_output = self::run_core_ssh_script($ssh, "{$work_path}/upgrade.sh", $fail_url, null, $output);
 
         } else {
             if (!is_file("{$work_path}/go.txt")) {
@@ -1015,6 +1017,30 @@ class OnlineUpgrade
         } else {
             return true;
         }
+    }
+
+    private static function run_core_ssh_script($ssh, string $script, string $failUrl, ?callable $callback, string &$output): string
+    {
+        $command = 'sh ' . escapeshellarg($script) . " 2>&1; tad_adm_status=\$?; printf '\\nTAD_ADM_EXIT %s\\n' \"\$tad_adm_status\"; exit \"\$tad_adm_status\"";
+        try {
+            $result = $ssh->exec($command, $callback);
+            if (null === $callback && is_string($result)) {
+                $output = $result;
+            }
+            $status = $ssh->getExitStatus();
+            $timedOut = $ssh->isTimeout();
+        } catch (\RuntimeException $e) {
+            $details = htmlspecialchars($e->getMessage(), ENT_QUOTES);
+            self::upgrade_redirect($failUrl, 30, _MA_TADADM_SSH_INCOMPLETE . '<pre>' . $details . '</pre>');
+        }
+
+        $completed = preg_match('/(?:^|\n)TAD_ADM_EXIT ([0-9]+)\r?\n?$/D', $output, $match);
+        if (false === $result || $timedOut || !$completed || 0 !== $status || '0' !== $match[1]) {
+            $details = trim($output);
+            $details .= "\nSSH exit status: " . (false === $status || null === $status ? 'unavailable' : $status);
+            self::upgrade_redirect($failUrl, 30, _MA_TADADM_SSH_INCOMPLETE . '<pre>' . htmlspecialchars(trim($details), ENT_QUOTES) . '</pre>');
+        }
+        return trim((string) preg_replace('/(?:^|\n)TAD_ADM_EXIT [0-9]+\r?\n?$/D', '', $output));
     }
 
     private static function upgrade_redirect($url, $time, $message, bool $success = false): void
