@@ -987,7 +987,7 @@ class OnlineUpgrade
                     self::upgrade_redirect($fail_url, 30, sprintf(_MA_TADADM_SSH_STEPS_FAIL, htmlspecialchars(implode("\n", $sh_errors) . "\n" . $ssh_output, ENT_QUOTES)));
                 }
                 if ($sh_warnings) {
-                    $go_warn = htmlspecialchars(implode('; ', $sh_warnings), ENT_QUOTES);
+                    $go_warn = self::manifest_ssh_warnings($sh_warnings, $steps, $ssh_output);
                 }
             } else {
                 $preflight = UpgradeManifest::preflight($steps, XOOPS_ROOT_PATH);
@@ -1077,7 +1077,38 @@ class OnlineUpgrade
         $xoopsTpl->assign('upgrade_handoff_message', _MA_TADADM_UPGRADE_FROM_URL);
         $xoopsTpl->assign('upgrade_handoff_warning', '' === $warning ? '' : sprintf(_MA_TADADM_UPGRADE_WARN, $warning));
         $xoopsTpl->assign('upgrade_handoff_session_error', $sessionRestored ? '' : _MA_TADADM_SESSION_RESTORE_FAIL);
-        $xoopsTpl->assign('upgrade_handoff_delay', $sessionRestored ? ('' === $warning ? 3 : 15) : 0);
+        $xoopsTpl->assign('upgrade_handoff_delay', $sessionRestored && '' === $warning ? 3 : 0);
+    }
+
+    private static function manifest_ssh_warnings(array $warnings, array $steps, string $output): string
+    {
+        $byNumber = [];
+        foreach ($steps as $step) {
+            $byNumber[$step['n']] = $step;
+        }
+        $items = [];
+        foreach (array_unique($warnings) as $warning) {
+            if (preg_match('/^TAD_ADM_WARN step (\d+) (\S+)$/D', $warning, $match)
+                && isset($byNumber[(int) $match[1]])) {
+                $step = $byNumber[(int) $match[1]];
+                $paths = $step['paths'] ?? (isset($step['path']) ? [$step['path']] : []);
+                $target = $paths ? implode(', ', $paths) : ($step['to'] ?? '');
+                $items[] = sprintf(_MA_TADADM_SSH_WARN_STEP, (int) $match[1], htmlspecialchars($step['op'], ENT_QUOTES), htmlspecialchars($target, ENT_QUOTES));
+            } else {
+                $items[] = htmlspecialchars($warning, ENT_QUOTES);
+            }
+        }
+        $details = [];
+        foreach (preg_split('/\R/', $output) as $line) {
+            if ('' !== trim($line) && !preg_match('/^TAD_ADM_(?:PROGRESS|WARN|FAIL|EXIT)\b/', $line)) {
+                $details[] = $line;
+            }
+        }
+        $result = '<ul><li>' . implode('</li><li>', $items) . '</li></ul>';
+        if ($details) {
+            $result .= '<div>' . _MA_TADADM_SSH_WARN_OUTPUT . '</div><pre>' . htmlspecialchars(implode("\n", $details), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . '</pre>';
+        }
+        return $result;
     }
 
     private static function run_core_ssh_script($ssh, string $script, string $failUrl, ?callable $callback, string &$output): string

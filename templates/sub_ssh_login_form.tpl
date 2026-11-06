@@ -51,9 +51,10 @@
         <{$smarty.const._MA_TADADM_SSH_RESPONSE_UNCERTAIN|escape:'html'}>
         <a href="<{$xoops_url|escape:'html'}>/upgrade/" target="_top"><{$smarty.const._MA_TADADM_UPGRADE_OPEN|escape:'html'}></a>
     </div>
+    <div id="ssh-upgrade-confirmed" hidden></div>
     <iframe id="ssh-upgrade-result" name="ssh-upgrade-result" title="<{$smarty.const._MA_TADADM_SSH_UPGRADE_RESULT|escape:'html'}>"
             style="width: 100%; min-height: 420px; border: 0" hidden></iframe>
-    <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js?v=2026110603"></script>
+    <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js?v=2026110604"></script>
     <script>
         (function () {
             var form = document.querySelector('#ssh-login-content form');
@@ -74,7 +75,8 @@
                 status,
                 document.getElementById('ssh-upgrade-result'),
                 document.getElementById('ssh-upgrade-uncertain'),
-                'upgrade_progress.php'
+                'upgrade_progress.php',
+                document.getElementById('ssh-upgrade-confirmed')
             );
         }());
     </script>

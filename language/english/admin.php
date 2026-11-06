@@ -207,6 +207,8 @@ define('_MA_TADADM_WRITE_FAIL', 'Cannot write the download file %1$s. PHP runs a
 define('_MA_TADADM_MANIFEST_INVALID', 'The upgrade manifest upgrade.json is invalid: %s');
 define('_MA_TADADM_SSH_STEPS_FAIL', 'Some upgrade steps failed over SSH:<pre>%s</pre>');
 define('_MA_TADADM_WARN_STEP', 'step %1$d (%2$s): %3$d item(s) failed, e.g. %4$s');
+define('_MA_TADADM_SSH_WARN_STEP', 'Step %1$d (%2$s) did not fully succeed; check target: %3$s');
+define('_MA_TADADM_SSH_WARN_OUTPUT', 'SSH output details:');
 define('_MA_TADADM_WARN_BLOCKED', '%d unsupported instruction(s) or disallowed path(s) were skipped');
 define('_MA_TADADM_WARN_CHMOD', '%d chmod operation(s) failed');
 define('_MA_TADADM_WARN_DELETE', '%d path(s) could not be deleted, please remove them manually');

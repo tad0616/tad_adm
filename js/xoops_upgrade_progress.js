@@ -12,7 +12,7 @@
                 return ('0' + value.toString(16)).slice(-2);
             }).join('');
         },
-        bindSshForm: function (form, content, status, result, uncertain, endpoint) {
+        bindSshForm: function (form, content, status, result, uncertain, endpoint, confirmedContent) {
             var submitted = false;
             var stopProgress;
             result.addEventListener('load', function () {
@@ -20,11 +20,13 @@
                     return;
                 }
                 var confirmed = false;
+                var handoffContent;
                 try {
                     if (result.contentWindow.location.href === 'about:blank') {
                         return;
                     }
                     confirmed = !!result.contentDocument.getElementById('tad-adm-upgrade-handoff');
+                    handoffContent = result.contentDocument.getElementById('tad-adm-upgrade-handoff-content');
                 } catch (error) {
                     confirmed = false;
                 }
@@ -35,7 +37,17 @@
                 content.hidden = true;
                 status.hidden = confirmed;
                 uncertain.hidden = confirmed;
-                result.hidden = false;
+                if (confirmed && handoffContent && confirmedContent) {
+                    var copy = handoffContent.cloneNode(true);
+                    copy.querySelectorAll('script').forEach(function (script) {
+                        script.remove();
+                    });
+                    confirmedContent.appendChild(copy);
+                    confirmedContent.hidden = false;
+                    result.hidden = true;
+                } else {
+                    result.hidden = false;
+                }
             });
             form.addEventListener('submit', function (event) {
                 if (submitted) {

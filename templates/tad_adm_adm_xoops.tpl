@@ -2,6 +2,7 @@
     <{if $now_op|default:''=="login_form"}>
         <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
     <{elseif $now_op|default:''=="upgrade_handoff"}>
+      <div id="tad-adm-upgrade-handoff-content">
         <div class="alert alert-info"><{$upgrade_handoff_message|escape:'html'}></div>
         <{if $upgrade_handoff_warning|default:''}>
             <div class="alert alert-warning"><{$upgrade_handoff_warning}></div>
@@ -17,6 +18,7 @@
                 }, <{$upgrade_handoff_delay}> * 1000);
             </script>
         <{/if}>
+      </div>
     <{else}>
         <div id="xoopsTab">
             <ul class="resp-tabs-list vert">
@@ -51,7 +53,7 @@
                 <{/if}>
             </div>
         </div>
-        <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js?v=2026110603"></script>
+        <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js?v=2026110604"></script>
         <script>
             $(function() {
                 var stopProgress;

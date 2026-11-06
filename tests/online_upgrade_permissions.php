@@ -205,6 +205,8 @@ namespace {
     define('_MA_TADADM_MANIFEST_INVALID', 'invalid manifest %s');
     define('_MA_TADADM_UPGRADE_WARN', 'warning %s');
     define('_MA_TADADM_WARN_STEP', 'step %1$d %2$s %3$d %4$s');
+    define('_MA_TADADM_SSH_WARN_STEP', 'step %1$d (%2$s) target %3$s');
+    define('_MA_TADADM_SSH_WARN_OUTPUT', 'SSH output:');
     define('_MA_TADADM_WARN_BLOCKED', 'blocked %d');
     define('_MA_TADADM_WARN_CHMOD', 'chmod %d');
     define('_MA_TADADM_WARN_DELETE', 'delete %d');
@@ -617,10 +619,21 @@ namespace {
         } catch (Redirect $e) {
             check(strpos($e->getMessage(), 'ssh incomplete') !== false, 'Incomplete legacy SSH upgrade was accepted');
         }
-        $warningSsh = new FakeSsh(0, "TAD_ADM_WARN step 2 chmod\n\nTAD_ADM_EXIT 0\n");
+        $warningArchive = $base . '/source/uploads/tad_modules/file/core-warning.zip';
+        $warningZip = new \PharData($warningArchive);
+        $warningZip->addFromString('payload/index.php', 'upgrade');
+        $warningZip->addFromString('upgrade.json', json_encode(['version' => 1, 'steps' => [
+            ['op' => 'copy', 'from' => '{WORK}/payload', 'to' => '{ROOT}/upgrade'],
+            ['op' => 'delete', 'path' => '{ROOT}/uploads/problem<file>'],
+        ]]));
+        unset($warningZip);
+        $warningSsh = new FakeSsh(0, "TAD_ADM_PROGRESS 2\nrm: <file>: Permission denied\nTAD_ADM_WARN step 2 delete\n\nTAD_ADM_EXIT 0\n");
         $xoopsTpl = new FakeTemplate();
-        check(!OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, $warningSsh), 'Warning handoff was not shown');
-        check(strpos($xoopsTpl->values['upgrade_handoff_warning'], 'TAD_ADM_WARN') !== false && $xoopsTpl->values['upgrade_handoff_delay'] === 15, 'Upgrade warning or delay was not preserved');
+        check(!OnlineUpgrade::get_upgrade_file($source . '/uploads/tad_modules/file/core-warning.zip', 'upgrade', 1, $warningSsh), 'Warning handoff was not shown');
+        $warning = $xoopsTpl->values['upgrade_handoff_warning'];
+        check(strpos($warning, 'step 2 (delete)') !== false && strpos($warning, 'uploads/problem&lt;file&gt;') !== false, 'Warning did not identify escaped operation and target');
+        check(strpos($warning, 'rm: &lt;file&gt;: Permission denied') !== false && strpos($warning, 'TAD_ADM_PROGRESS') === false, 'SSH failure details were not safely presented');
+        check($xoopsTpl->values['upgrade_handoff_delay'] === 0, 'Warning handoff must wait for manual navigation');
         $forceSessionRestoreFailure = true;
         $xoopsTpl = new FakeTemplate();
         check(!OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, ''), 'Session failure handoff was not shown');

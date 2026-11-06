@@ -56,7 +56,11 @@ Other core upgrade errors use the regular redirect page, even when AJAX
 redirects are enabled, so the error remains visible before returning.
 After a successful core copy, the upgrade wizard opens in the top-level
 browser window rather than inside FancyBox. The handoff page also provides
-a link when automatic navigation is unavailable.
+a link when automatic navigation is unavailable. Warnings include the
+affected manifest step and target, plus available SSH output; the target may
+be a directory containing a failure rather than the exact failed file. When
+there is a warning, the wizard opens only after the administrator chooses to
+continue.
 
 Back up the site files and database before a core upgrade and schedule downtime:
 copying live core files is not atomic. SSH core upgrades disable phpseclib's
