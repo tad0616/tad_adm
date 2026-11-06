@@ -23,3 +23,7 @@ the upgrade runs. For upgrade.json, PHP and SSH report each step's destination.
 Legacy SSH scripts report that the script is running but cannot report their
 individual commands. Live status is visible only to the same administrator
 session; failure to retrieve it does not stop the upgrade.
+If the core upgrade preflight finds inaccessible destinations, the SSH login
+form shows the affected paths before any destination files are changed.
+Other core upgrade errors use the regular redirect page, even when AJAX
+redirects are enabled, so the error remains visible before returning.

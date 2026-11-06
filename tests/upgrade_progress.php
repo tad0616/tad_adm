@@ -27,6 +27,13 @@ UpgradeProgress::update('Downloading: package.zip');
 checkProgress(UpgradeProgress::read($path)['message'] === 'Downloading: package.zip', 'Download status not recorded');
 UpgradeProgress::update('Copying to: /site/modules');
 checkProgress(UpgradeProgress::read($path)['message'] === 'Copying to: /site/modules', 'Copy destination not recorded');
+checkProgress(UpgradeProgress::resumeSession(), 'Session could not be restored');
+checkProgress(session_status() === PHP_SESSION_ACTIVE, 'Session not active before redirect');
+$_SESSION['redirect_message'] = 'Upgrade ready';
+session_write_close();
+session_start();
+checkProgress($_SESSION['redirect_message'] === 'Upgrade ready', 'Redirect message was not persisted');
+session_write_close();
 
 $steps = [
     ['n' => 1, 'op' => 'mkdir', 'optional' => false, 'path' => sys_get_temp_dir()],

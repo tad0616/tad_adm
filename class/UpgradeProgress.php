@@ -5,6 +5,7 @@ namespace XoopsModules\Tad_adm;
 class UpgradeProgress
 {
     private static $path;
+    private static $sessionReleased = false;
 
     public static function path(string $token, string $sessionId): ?string
     {
@@ -23,13 +24,29 @@ class UpgradeProgress
         if (session_status() === PHP_SESSION_ACTIVE) {
             if (!session_write_close()) {
                 error_log('[tad_adm] Unable to release session for upgrade progress');
+            } else {
+                self::$sessionReleased = true;
             }
         }
+
         register_shutdown_function(static function (): void {
             if (self::$path && is_file(self::$path) && !@unlink(self::$path)) {
                 error_log('[tad_adm] Unable to remove upgrade progress file');
             }
         });
+    }
+
+    public static function resumeSession(): bool
+    {
+        if (!self::$sessionReleased) {
+            return true;
+        }
+        if (session_status() !== PHP_SESSION_ACTIVE && !@session_start()) {
+            error_log('[tad_adm] Unable to restore session before upgrade redirect');
+            return false;
+        }
+        self::$sessionReleased = false;
+        return true;
     }
 
     public static function update(string $message): void

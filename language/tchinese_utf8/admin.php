@@ -35,6 +35,7 @@ define('_MA_TADADM_FTP_ID', '請輸入FTP登入帳號');
 define('_MA_TADADM_FTP_PASS', '請輸入FTP登入密碼');
 define('_MA_TADADM_DL_FAIL', '「%s」下載失敗！');
 define('_MA_TADADM_EXTRACT_FAIL', '無法準備或解壓升級套件至「%s」，請檢查套件及目錄權限。尚未複製至目標位置。');
+define('_MA_TADADM_SESSION_RESTORE_FAIL', '無法恢復登入工作階段，請重新登入後再繼續。');
 define('_MA_TADADM_INVALID_PACKAGE_DIR', '無效的套件目錄或識別碼：「%s」。');
 define('_MA_TADADM_DELETE_PATHS_FAIL', '有 %1$d 個路徑無法刪除，佈景可能只刪除了一部分，請檢查權限：<br>%2$s');
 define('_MA_TADADM_STAGING_WRITE_FAIL', 'PHP 以「%2$s」身分執行，無法寫入套件暫存目錄「%1$s」或 uploads。下載與解壓即使使用 SSH 也需要 PHP 寫入權限，請先修正目錄擁有者或權限再重試。');

@@ -35,6 +35,7 @@ define('_MA_TADADM_FTP_ID', 'Please enter an FTP login account');
 define('_MA_TADADM_FTP_PASS', 'Please enter the FTP login password');
 define('_MA_TADADM_DL_FAIL', '"%s" failed to download!');
 define('_MA_TADADM_EXTRACT_FAIL', 'Could not prepare or extract the package at "%s". Check the package and directory permissions. Nothing was copied to the destination.');
+define('_MA_TADADM_SESSION_RESTORE_FAIL', 'Could not restore the login session. Please log in again before continuing.');
 define('_MA_TADADM_INVALID_PACKAGE_DIR', 'Invalid package directory or identifier: "%s".');
 define('_MA_TADADM_DELETE_PATHS_FAIL', '%1$d path(s) could not be deleted. The theme may be partially removed; check the permissions:<br>%2$s');
 define('_MA_TADADM_STAGING_WRITE_FAIL', 'PHP runs as "%2$s" and cannot write to the package staging directory "%1$s" or uploads. Downloading and extraction require PHP write access even when using SSH. Fix the directory ownership or permissions and retry.');

@@ -47,6 +47,12 @@ namespace XoopsModules\Tadtools {
 }
 
 namespace XoopsModules\Tad_adm {
+    function session_start()
+    {
+        global $forceSessionRestoreFailure;
+        return empty($forceSessionRestoreFailure) ? \session_start() : false;
+    }
+
     function is_writable($path)
     {
         global $unwritablePaths;
@@ -70,6 +76,11 @@ namespace {
 
     function redirect_header($url, $time, $message)
     {
+        global $xoopsConfig, $lastRedirect;
+        $lastRedirect = ['url' => $url, 'time' => $time, 'ajax' => $xoopsConfig['redirect_message_ajax'] ?? false];
+        if (!empty($xoopsConfig['redirect_message_ajax'])) {
+            $_SESSION['redirect_message'] = $message;
+        }
         throw new Redirect($message);
     }
 
@@ -134,6 +145,7 @@ namespace {
     define('_MA_TADADM_DL_FAIL', 'download %s');
     define('_MA_TADADM_WRITE_FAIL', 'write %1$s %2$s');
     define('_MA_TADADM_EXTRACT_FAIL', 'extract %s');
+    define('_MA_TADADM_SESSION_RESTORE_FAIL', 'session restore failed');
     define('_MA_TADADM_COPY_FAIL', 'copy %1$d %2$s');
     define('_MA_TADADM_SSH_STEPS_FAIL', 'ssh %s');
     define('_MA_TADADM_MV_FAIL', 'move %s');
@@ -167,7 +179,7 @@ namespace {
     };
     $source = 'file:///' . ltrim(str_replace('\\', '/', $base . '/source'), '/');
     $xoopsModuleConfig = ['source' => $source];
-    $xoopsConfig = ['sitename' => 'test', 'theme_set' => 'test', 'language' => 'english'];
+    $xoopsConfig = ['sitename' => 'test', 'theme_set' => 'test', 'language' => 'english', 'redirect_message_ajax' => 1];
     $xoopsTpl = new FakeTemplate();
     $archive = $base . '/source/uploads/tad_modules/file/demo.zip';
 
@@ -331,11 +343,85 @@ namespace {
         $sessionId = session_id();
         \Xmf\Request::$progressToken = bin2hex(random_bytes(16));
         $statusPath = \XoopsModules\Tad_adm\UpgradeProgress::path(\Xmf\Request::$progressToken, $sessionId);
+        mkdir(XOOPS_ROOT_PATH . '/upgrade');
+        file_put_contents(XOOPS_ROOT_PATH . '/upgrade/index.php', 'original');
+        $unwritablePaths = [str_replace('\\', '/', XOOPS_ROOT_PATH . '/upgrade/index.php')];
+        $coreUrl = $source . '/uploads/tad_modules/file/core.zip';
+        $xoopsTpl = new FakeTemplate();
+        check(!OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, ''), 'Core manifest preflight did not stop');
+        check($xoopsTpl->values['now_op'] === 'login_form', 'Core manifest preflight did not show SSH login');
+        check(strpos(str_replace('\\', '/', $xoopsTpl->values['ssh_preflight_message']), '/upgrade/index.php') !== false, 'Core manifest preflight path missing');
+        check($xoopsTpl->values['file_link'] === $coreUrl && $xoopsTpl->values['act'] === 'upgrade', 'Core manifest retry context lost');
+        check(session_status() === PHP_SESSION_ACTIVE, 'Session not restored before SSH form');
+        check(file_get_contents(XOOPS_ROOT_PATH . '/upgrade/index.php') === 'original', 'Core manifest preflight modified target');
+
+        $legacyArchive = $base . '/source/uploads/tad_modules/file/core-legacy.zip';
+        $legacyZip = new \PharData($legacyArchive);
+        $legacyZip->addFromString('payload/index.php', 'legacy upgrade');
+        $legacyZip->addFromString('go.txt', 'full_copy("XOOPS_ROOT_PATH/uploads/tad_adm/upgrade/payload", "XOOPS_ROOT_PATH/upgrade")' . "\n");
+        unset($legacyZip);
+        $legacyUrl = $source . '/uploads/tad_modules/file/core-legacy.zip';
+        $xoopsTpl = new FakeTemplate();
+        check(!OnlineUpgrade::get_upgrade_file($legacyUrl, 'upgrade', 1, ''), 'Core legacy preflight did not stop');
+        check($xoopsTpl->values['now_op'] === 'login_form', 'Core legacy preflight did not show SSH login');
+        check(strpos(str_replace('\\', '/', $xoopsTpl->values['ssh_preflight_message']), '/upgrade/index.php') !== false, 'Core legacy preflight path missing');
+        check($xoopsTpl->values['file_link'] === $legacyUrl && $xoopsTpl->values['act'] === 'upgrade', 'Core legacy retry context lost');
+        check(file_get_contents(XOOPS_ROOT_PATH . '/upgrade/index.php') === 'original', 'Core legacy preflight modified target');
+        $unwritablePaths = [];
+
+        $invalidArchive = $base . '/source/uploads/tad_modules/file/invalid-manifest.zip';
+        $invalidZip = new \PharData($invalidArchive);
+        $invalidZip->addFromString('upgrade.json', '{invalid');
+        unset($invalidZip);
         try {
-            OnlineUpgrade::get_upgrade_file($source . '/uploads/tad_modules/file/core.zip', 'upgrade', 1, '');
+            OnlineUpgrade::get_upgrade_file($source . '/uploads/tad_modules/file/invalid-manifest.zip', 'upgrade', 1, '');
+            throw new \RuntimeException('Expected invalid manifest redirect');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'invalid manifest') !== false, 'Invalid manifest reason missing');
+            check(!$lastRedirect['ajax'] && $lastRedirect['time'] >= 30, 'Core error did not use visible redirect page');
+            check(session_status() === PHP_SESSION_ACTIVE, 'Session not restored before error redirect');
+        }
+        $xoopsConfig['redirect_message_ajax'] = 1;
+        \Xmf\Request::$progressToken = '';
+        try {
+            OnlineUpgrade::get_upgrade_file($source . '/uploads/tad_modules/file/invalid-manifest.zip', 'upgrade', 1, '');
+            throw new \RuntimeException('Expected invalid manifest redirect without progress token');
+        } catch (Redirect $e) {
+            check(!$lastRedirect['ajax'] && $lastRedirect['time'] >= 30, 'Core error without progress token did not use visible redirect page');
+        }
+        \Xmf\Request::$progressToken = bin2hex(random_bytes(16));
+        $statusPath = \XoopsModules\Tad_adm\UpgradeProgress::path(\Xmf\Request::$progressToken, $sessionId);
+        $xoopsConfig['redirect_message_ajax'] = 1;
+        $forceSessionRestoreFailure = true;
+        try {
+            OnlineUpgrade::get_upgrade_file($source . '/uploads/tad_modules/file/invalid-manifest.zip', 'upgrade', 1, '');
+            throw new \RuntimeException('Expected session restoration failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'invalid manifest') !== false && strpos($e->getMessage(), 'session restore failed') !== false, 'Session restoration failure was not displayed with the original error');
+            check(!$lastRedirect['ajax'] && $lastRedirect['time'] >= 30, 'Session restoration failure did not use visible redirect page');
+        }
+        $forceSessionRestoreFailure = false;
+        check(\XoopsModules\Tad_adm\UpgradeProgress::resumeSession(), 'Session could not be restored after simulated failure');
+        $xoopsConfig['redirect_message_ajax'] = 1;
+        file_put_contents($base . '/source/uploads/tad_modules/file/empty.zip', '');
+        try {
+            OnlineUpgrade::get_upgrade_file($source . '/uploads/tad_modules/file/empty.zip', 'upgrade', 1, '');
+            throw new \RuntimeException('Expected download failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'download') !== false, 'Download failure reason missing');
+            check(!$lastRedirect['ajax'] && $lastRedirect['time'] >= 30, 'Download failure did not use visible redirect page');
+            check(session_status() === PHP_SESSION_ACTIVE, 'Session not restored before download error redirect');
+        }
+        $xoopsConfig['redirect_message_ajax'] = 1;
+        try {
+            OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, '');
             throw new \RuntimeException('Expected upgrade redirect');
         } catch (Redirect $e) {
             check($e->getMessage() === 'Upgrade ready', 'Core upgrade did not finish normally');
+            check(session_status() === PHP_SESSION_ACTIVE, 'Session not restored before success redirect');
+            session_write_close();
+            session_start();
+            check($_SESSION['redirect_message'] === 'Upgrade ready', 'AJAX redirect message was not persisted');
         }
         check(file_get_contents(XOOPS_ROOT_PATH . '/upgrade/index.php') === 'upgrade', 'Core upgrade files were not copied');
         $status = \XoopsModules\Tad_adm\UpgradeProgress::read($statusPath);
