@@ -699,7 +699,7 @@ class OnlineUpgrade
             exit;
         }
 
-        $is_writable = is_writable(XOOPS_ROOT_PATH);
+        $is_writable = is_writable(XOOPS_ROOT_PATH) && !\Xmf\Request::getInt('force_ssh');
 
         //若是可以寫入
         if ($is_writable) {
@@ -746,6 +746,8 @@ class OnlineUpgrade
     public static function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     {
         $TadAmModuleConfig = self::get_adm_config();
+        $orig_link         = $file_link;
+        $go_warn           = '';
         $file_link         = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
         $new_file          = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
 
@@ -803,7 +805,18 @@ class OnlineUpgrade
                 redirect_header($fail_url, 5, sprintf(_MA_TADADM_SCRIPT_NOT_FOUND, "{$work_path}/go.txt"));
             }
             // [修補 CWE-94] 以白名單式檔案操作取代 eval(go.txt)
-            self::execute_go_instructions("{$work_path}/go.txt", $new_file);
+            // 先檢查寫入權限：任何目標不可寫就在變更檔案之前中止，避免網站半新半舊
+            $preflight = self::preflight_go_scan("{$work_path}/go.txt", $new_file);
+            if ($preflight['count'] > 0) {
+                $force_link = $_SERVER['PHP_SELF'] . "?op={$dirname}_xoops&xoops_sn={$xoops_sn}&force_ssh=1&file_link=" . rawurlencode($orig_link);
+                $msg        = self::preflight_message($preflight) . '<br><a href="' . htmlspecialchars($force_link, ENT_QUOTES) . '">SSH</a>';
+                redirect_header($fail_url, 30, $msg);
+            }
+            $report = self::execute_go_instructions("{$work_path}/go.txt", $new_file);
+            if (!empty($report['copy'])) {
+                redirect_header($fail_url, 30, sprintf(_MA_TADADM_COPY_FAIL, count($report['copy']), self::format_path_list($report['copy'], 10)));
+            }
+            $go_warn = self::go_warnings($report);
         }
 
         if ('upgrade' === $dirname) {
@@ -815,7 +828,7 @@ class OnlineUpgrade
                 }
                 redirect_header($fail_url, 10, $msg);
             }
-            redirect_header(XOOPS_URL . '/upgrade', 3, _MA_TADADM_UPGRADE_FROM_URL);
+            redirect_header(XOOPS_URL . '/upgrade', '' === $go_warn ? 3 : 15, '' === $go_warn ? _MA_TADADM_UPGRADE_FROM_URL : _MA_TADADM_UPGRADE_FROM_URL . '<br>' . sprintf(_MA_TADADM_UPGRADE_WARN, $go_warn));
         } else {
             return true;
         }
@@ -978,6 +991,8 @@ class OnlineUpgrade
             return [];
         }
     }
+    private static $chmod_fail = 0;
+
     public static function chmod_R($path, $filemode, $dirmode)
     {
         if (is_dir($path)) {
@@ -988,6 +1003,7 @@ class OnlineUpgrade
                 $dirmode_str = decoct($dirmode);
 
                 // print sprintf(_MA_TADADM_CHMOD_FAILED, $path, $dirmode_str, $fileowner['name'], $filegroup['name'], $fileperms);
+                self::$chmod_fail++;
 
                 return;
             }
@@ -1011,6 +1027,7 @@ class OnlineUpgrade
                 $fileperms    = mb_substr(sprintf('%o', fileperms($path)), -4);
                 $filemode_str = decoct($filemode);
                 // print sprintf(_MA_TADADM_CHMOD_FAILED, $path, $filemode_str, $fileowner['name'], $filegroup['name'], $fileperms);
+                self::$chmod_fail++;
 
                 return;
             }
@@ -1219,16 +1236,18 @@ class OnlineUpgrade
      *
      * 所有路徑均限制在 XOOPS_ROOT_PATH 之內，防止路徑穿越。
      */
-    private static function execute_go_instructions(string $go_file, string $new_file): void
+    private static function execute_go_instructions(string $go_file, string $new_file): array
     {
+        $report = ['copy' => [], 'blocked' => 0, 'chmod' => 0, 'delete' => 0];
         if (!is_file($go_file)) {
-            return;
+            return $report;
         }
 
         $handle = fopen($go_file, 'rb');
         if (!$handle) {
-            return;
+            return $report;
         }
+        self::$chmod_fail = 0;
 
         while (false !== ($raw = fgets($handle, 4096))) {
             $line = str_replace('XOOPS_ROOT_PATH', XOOPS_ROOT_PATH, $raw);
@@ -1246,7 +1265,9 @@ class OnlineUpgrade
                 $src = self::sanitize_path($m[2]);
                 $dst = self::sanitize_path($m[4]);
                 if ($src && $dst) {
-                    Utility::full_copy($src, $dst);
+                    self::copy_tree($src, $dst, $report['copy']);
+                } else {
+                    $report['blocked']++;
                 }
                 continue;
             }
@@ -1258,6 +1279,8 @@ class OnlineUpgrade
                 $dirmode  = octdec($m[4]);
                 if ($path) {
                     self::chmod_R($path, $filemode, $dirmode);
+                } else {
+                    $report['blocked']++;
                 }
                 continue;
             }
@@ -1267,6 +1290,11 @@ class OnlineUpgrade
                 $path = self::sanitize_path($m[2]);
                 if ($path) {
                     Utility::delete_directory($path);
+                    if (file_exists($path)) {
+                        $report['delete']++;
+                    }
+                } else {
+                    $report['blocked']++;
                 }
                 continue;
             }
@@ -1276,6 +1304,123 @@ class OnlineUpgrade
         }
 
         fclose($handle);
+        $report['chmod'] = self::$chmod_fail;
+
+        return $report;
+    }
+
+    /** 複製目錄樹並收集失敗的目標路徑 */
+    private static function copy_tree(string $src, string $dst, array &$failed): void
+    {
+        if (is_dir($src)) {
+            if (!is_dir($dst) && !@mkdir($dst, 0755, true) && !is_dir($dst)) {
+                $failed[] = $dst;
+                return;
+            }
+            foreach (scandir($src) as $item) {
+                if ('.' !== $item && '..' !== $item) {
+                    self::copy_tree($src . '/' . $item, $dst . '/' . $item, $failed);
+                }
+            }
+        } elseif (is_file($src)) {
+            if (!@copy($src, $dst)) {
+                $failed[] = $dst;
+            }
+        }
+    }
+
+    /** 只讀掃描 go.txt 的 full_copy 目標，找出 PHP 無法寫入的路徑 */
+    private static function preflight_go_scan(string $go_file, string $new_file): array
+    {
+        $result         = ['count' => 0, 'paths' => [], 'seen' => [], 'root' => XOOPS_ROOT_PATH];
+        $result['user'] = function_exists('posix_geteuid') && function_exists('posix_getpwuid')
+            ? (posix_getpwuid(posix_geteuid())['name'] ?? get_current_user())
+            : get_current_user();
+        if (!is_file($go_file)) {
+            return $result;
+        }
+        foreach (file($go_file, FILE_IGNORE_NEW_LINES) as $raw) {
+            $line = str_replace(['XOOPS_ROOT_PATH', 'XOOPS_VAR_PATH', 'XOOPS_PATH', 'NEW_FILE'], [XOOPS_ROOT_PATH, XOOPS_VAR_PATH, XOOPS_PATH, $new_file], $raw);
+            if (!preg_match('/^\s*full_copy\s*\(\s*(["\']?)(.+?)\1\s*,\s*(["\']?)(.+?)\3\s*\)\s*;?\s*$/i', $line, $m)) {
+                continue;
+            }
+            $src = self::sanitize_path($m[2]);
+            $dst = self::sanitize_path($m[4]);
+            if ($src && $dst) {
+                self::scan_unwritable($src, $dst, $result);
+            }
+        }
+
+        return $result;
+    }
+
+    private static function scan_unwritable(string $src, string $dst, array &$result): void
+    {
+        if (is_dir($src)) {
+            if (!file_exists($dst)) {
+                $parent = dirname($dst);
+                while (!file_exists($parent) && dirname($parent) !== $parent) {
+                    $parent = dirname($parent);
+                }
+                if (!is_writable($parent)) {
+                    self::add_unwritable($parent, $result);
+                }
+                return;
+            }
+            if (!is_writable($dst)) {
+                self::add_unwritable($dst, $result);
+                return;
+            }
+            foreach (scandir($src) as $item) {
+                if ('.' !== $item && '..' !== $item) {
+                    self::scan_unwritable($src . '/' . $item, $dst . '/' . $item, $result);
+                }
+            }
+        } elseif (is_file($src) && file_exists($dst) && !is_writable($dst) && md5_file($src) !== md5_file($dst)) {
+            self::add_unwritable($dst, $result);
+        }
+    }
+
+    private static function add_unwritable(string $path, array &$result): void
+    {
+        if (!isset($result['seen'][$path])) {
+            $result['seen'][$path] = true;
+            $result['count']++;
+            if (count($result['paths']) < 10) {
+                $result['paths'][] = $path;
+            }
+        }
+    }
+
+    private static function format_path_list(array $paths, int $limit): string
+    {
+        $paths = array_slice(array_unique($paths), 0, $limit);
+
+        return '<code>' . implode('</code><br><code>', array_map(static fn($p) => htmlspecialchars($p, ENT_QUOTES), $paths)) . '</code>';
+    }
+
+    private static function preflight_message(array $scan): string
+    {
+        $fix   = 'chown -R ' . $scan['user'] . ':' . $scan['user'] . ' ' . $scan['root'];
+        $shown = $scan['count'] > count($scan['paths']) ? sprintf(_MA_TADADM_PREFLIGHT_SHOWN, count($scan['paths'])) : '';
+
+        return sprintf(_MA_TADADM_PREFLIGHT_FAIL, htmlspecialchars($scan['user'], ENT_QUOTES), $scan['count'], $shown, self::format_path_list($scan['paths'], 10), htmlspecialchars($fix, ENT_QUOTES));
+    }
+
+    private static function go_warnings(array $report): string
+    {
+        $w = [];
+        if ($report['blocked']) {
+            $w[] = sprintf(_MA_TADADM_WARN_BLOCKED, $report['blocked']);
+        }
+        if ($report['chmod']) {
+            $w[] = sprintf(_MA_TADADM_WARN_CHMOD, $report['chmod']);
+        }
+        if ($report['delete']) {
+            $w[] = sprintf(_MA_TADADM_WARN_DELETE, $report['delete']);
+        }
+
+        return implode('; ', $w);
     }
 
     /**
