@@ -234,7 +234,13 @@ class UpgradeManifest
                     $fm = sprintf('%04o', $step['file']);
                     $dm = sprintf('%04o', $step['dir']);
                     if ($step['recursive']) {
-                        $cmd = "{ find $p -type d -exec chmod $dm {} + && find $p -type f -exec chmod $fm {} + ; }";
+                        if ($fm === $dm) {
+                            // Fix directories before descent; find's single-item -exec failures do not set its exit status.
+                            $warn = $q("TAD_ADM_WARN step $n chmod");
+                            $cmd = "find $p \\( -type d ! -perm $dm -exec sh -c 'chmod \"\$1\" \"\$2\" || { printf \"%s\\n\" \"\$3\"; exit 1; }' sh $dm {} $warn \\; \\) -o \\( -type f ! -perm $fm -exec chmod $fm {} + \\)";
+                        } else {
+                            $cmd = "{ find $p -type d ! -perm $dm -exec chmod $dm {} + && find $p -type f ! -perm $fm -exec chmod $fm {} + ; }";
+                        }
                     } else {
                         $cmd = "if [ -d $p ]; then chmod $dm $p; else chmod $fm $p; fi";
                     }

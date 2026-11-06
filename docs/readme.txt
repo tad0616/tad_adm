@@ -23,6 +23,10 @@ to write to uploads and uploads/tad_adm, including when SSH is used to copy
 the files. SSH does not automatically change ownership or recursively relax
 permissions. A copy can still fail after the check (for example, if permissions
 change); inspect the reported errors and repair any partially updated files.
+For recursive SSH chmod steps, files and directories already at the requested
+mode are skipped; when the modes match, the tree is traversed once. This
+reduces work but does not eliminate the cost of scanning large trees or guarantee
+that a web server timeout will be avoided.
 
 XOOPS upgrades display the current download, extraction and copy step while
 the upgrade runs. For upgrade.json, PHP and SSH report each step's destination.
