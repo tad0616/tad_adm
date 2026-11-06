@@ -557,7 +557,7 @@ class OnlineUpgrade
     //安裝套件
     public static function to_do($file_link = '', $dirname = '', $act = 'install_module', $update_sn = '')
     {
-        global $xoopsTpl, $inSchoolWeb;
+        global $xoopsTpl, $inSchoolWeb, $xoopsConfig;
         //從 act 判斷目前要執行什麼動作
         $op = self::get_act_op($act);
         if (empty($file_link) and ('install' === $op or 'update' === $op)) {
@@ -569,6 +569,13 @@ class OnlineUpgrade
         $work_dir    = self::get_work_dir($act);
         $is_writable = is_writable(XOOPS_ROOT_PATH . "/{$work_dir}/") && !\Xmf\Request::getInt('force_ssh');
         $ssh_message = '';
+        if ('delete_theme' === $act && ($inSchoolWeb || $dirname === $xoopsConfig['theme_set'])) {
+            redirect_header('main.php', 3, _MA_TADADM_THEME_DELETE_FAIL);
+        }
+        if ('delete_theme' === $act && !$is_writable && !\Xmf\Request::getInt('force_ssh')) {
+            $scan = ['count' => 1, 'paths' => [XOOPS_ROOT_PATH . '/themes'], 'user' => UpgradeManifest::php_user()];
+            $ssh_message = self::theme_delete_preflight_message($scan);
+        }
         if ($is_writable && in_array($act, ['upgrade_module', 'upgrade_theme', 'upgrade_adm_tpl', 'install_module', 'install_theme', 'install_adm_tpl'], true)
             && preg_match('/^[a-zA-Z0-9_-]+$/D', $dirname)) {
             $target = XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}";
@@ -654,7 +661,7 @@ class OnlineUpgrade
 
     public static function next_to_do($file_link = '', $dirname = '', $work_dir = '', $update_sn = '', $act = '', $ssh = '')
     {
-        global $inSchoolWeb;
+        global $inSchoolWeb, $xoopsConfig;
 
         $op = self::get_act_op($act);
 
@@ -669,11 +676,16 @@ class OnlineUpgrade
                 redirect_header('main.php', 3, _MA_TADADM_THEME_UPDATE_OK);
             }
         } elseif ('delete_theme' === $act) {
-            if ($inSchoolWeb or self::delete_theme($dirname, $ssh)) {
+            $deleted = !$inSchoolWeb && $dirname !== $xoopsConfig['theme_set'] ? self::delete_theme($dirname, $ssh) : false;
+            if (null === $deleted) {
+                return;
+            }
+            if ($deleted) {
                 self::update_allowed($dirname, 0);
                 redirect_header('main.php', 3, XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}" . _MA_TADADM_THEME_DELETE_OK);
             } else {
-                redirect_header('main.php', 3, XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}" . _MA_TADADM_THEME_DELETE_FAIL);
+                $xoopsConfig['redirect_message_ajax'] = 0;
+                redirect_header('main.php', 15, htmlspecialchars(XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}", ENT_QUOTES) . _MA_TADADM_THEME_DELETE_FAIL);
             }
         } elseif ('install_adm_tpl' === $act) {
             if ($inSchoolWeb or self::get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh, $act)) {
@@ -772,23 +784,37 @@ class OnlineUpgrade
             return false;
         }
         if ($ssh) {
-            self::run_ssh_command($ssh, 'rm -rf -- ' . escapeshellarg($path) . ' 2>&1', $_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean');
+            self::run_ssh_command($ssh, 'rm -rf -- ' . escapeshellarg($path) . ' 2>&1', $_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', _MA_TADADM_THEME_DELETE_SSH_FAIL);
         } else {
             $scan = ['count' => 0, 'paths' => [], 'seen' => [], 'user' => UpgradeManifest::php_user(), 'root' => XOOPS_ROOT_PATH];
             self::scan_theme_delete($path, $scan);
             if ($scan['count'] > 0) {
-                $force_link = $_SERVER['PHP_SELF'] . '?' . http_build_query(['op' => 'delete_theme', 'dirname' => $theme, 'force_ssh' => 1, 'tad_adm_tpl' => 'clean']);
-                redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 30, self::preflight_message($scan) . '<br><a href="' . htmlspecialchars($force_link, ENT_QUOTES) . '">SSH</a>');
+                self::package_ssh_form('', $theme, 'delete_theme', '', self::theme_delete_preflight_message($scan));
+                return null;
             }
             $failed = [];
             self::remove_theme_tree($path, $failed);
             if ($failed) {
+                global $xoopsConfig;
+                $xoopsConfig['redirect_message_ajax'] = 0;
                 redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 30, sprintf(_MA_TADADM_DELETE_PATHS_FAIL, count($failed), self::format_path_list($failed, 10)));
             }
         }
 
         clearstatcache();
         return !file_exists($path) && !is_link($path);
+    }
+
+    private static function theme_delete_preflight_message(array $scan): string
+    {
+        $shown = $scan['count'] > count($scan['paths']) ? sprintf(_MA_TADADM_PREFLIGHT_SHOWN, count($scan['paths'])) : '';
+        return sprintf(
+            _MA_TADADM_THEME_DELETE_PREFLIGHT,
+            htmlspecialchars($scan['user'], ENT_QUOTES),
+            $scan['count'],
+            $shown,
+            self::format_path_list($scan['paths'], 10)
+        );
     }
 
     private static function scan_theme_delete(string $path, array &$scan): void
@@ -1363,16 +1389,20 @@ class OnlineUpgrade
         redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_MV_FAIL, XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname"));
     }
 
-    private static function run_ssh_command($ssh, string $command, string $fail_url): string
+    private static function run_ssh_command($ssh, string $command, string $fail_url, ?string $visibleErrorFormat = null): string
     {
         $output = $ssh->exec($command);
         $status = $ssh->getExitStatus();
         if (false === $output || 0 !== $status) {
+            global $xoopsConfig;
+            if (null !== $visibleErrorFormat) {
+                $xoopsConfig['redirect_message_ajax'] = 0;
+            }
             $details = trim((string) $output);
             if ('' === $details) {
                 $details = 'SSH exit status: ' . (false === $status || null === $status ? 'unavailable' : $status);
             }
-            redirect_header($fail_url, 30, sprintf(_MA_TADADM_SSH_STEPS_FAIL, htmlspecialchars($details, ENT_QUOTES)));
+            redirect_header($fail_url, 30, sprintf($visibleErrorFormat ?? _MA_TADADM_SSH_STEPS_FAIL, htmlspecialchars($details, ENT_QUOTES)));
         }
         return (string) $output;
     }

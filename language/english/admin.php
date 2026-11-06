@@ -118,6 +118,8 @@ define('_MA_TADADM_NOT_ALLOWED_THEMES', "Don't open the selected site themes");
 define('_MA_TADADM_SPECIAL_THEMES', "Special Themes");
 define('_MA_TADADM_THEME_DELETE_OK', "Removal of the theme was successful!");
 define('_MA_TADADM_THEME_DELETE_FAIL', 'theme removal failed!');
+define('_MA_TADADM_THEME_DELETE_SSH_FAIL', 'Theme deletion over SSH failed; the theme may be partially removed. Check the directory:<pre>%s</pre>');
+define('_MA_TADADM_THEME_DELETE_PREFLIGHT', 'The theme has not been deleted: PHP runs as "%1$s" and cannot write to or read %2$d path(s)%3$s:<br>%4$s<br>Fix the directory ownership or permissions, or sign in with SSH to delete it.');
 
 define('_MA_TADADM_FAILED_TO_GET_JSON', "Unable to get file list");
 

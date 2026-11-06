@@ -117,6 +117,8 @@ define('_MA_TADADM_NOT_ALLOWED_THEMES', '不開放選用的網站佈景');
 define('_MA_TADADM_SPECIAL_THEMES', '特殊佈景');
 define('_MA_TADADM_THEME_DELETE_OK', '佈景移除成功！');
 define('_MA_TADADM_THEME_DELETE_FAIL', '佈景移除失敗！');
+define('_MA_TADADM_THEME_DELETE_SSH_FAIL', '透過 SSH 刪除佈景失敗，佈景可能只刪除了一部分，請檢查目錄：<pre>%s</pre>');
+define('_MA_TADADM_THEME_DELETE_PREFLIGHT', '佈景尚未刪除：PHP 以「%1$s」身分執行，以下 %2$d 個路徑無法寫入或讀取%3$s：<br>%4$s<br>請修正目錄擁有者或權限，或以 SSH 登入後刪除。');
 
 define('_MA_TADADM_FAILED_TO_GET_JSON', '無法取得檔案清單');
 

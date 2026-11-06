@@ -21,6 +21,20 @@ namespace Xmf {
 namespace XoopsModules\Tadtools {
     class Utility
     {
+        public static $queries = [];
+        public static $sshMock;
+
+        public static function query($sql, $types, $values)
+        {
+            self::$queries[] = [$sql, $values];
+            return true;
+        }
+
+        public static function ssh_login($host, $port, $user, $password)
+        {
+            return self::$sshMock;
+        }
+
         public static function mk_dir($path)
         {
             if (!is_dir($path)) {
@@ -100,6 +114,7 @@ namespace {
         public $keepAlive;
         public $timedOut = false;
         public $exception = false;
+        public $deletePath = '';
 
         public function __construct($status, $output)
         {
@@ -112,6 +127,9 @@ namespace {
             $this->command = $command;
             if ($this->exception) {
                 throw new \RuntimeException('connection closed');
+            }
+            if ($this->deletePath !== '' && $this->status === 0) {
+                \XoopsModules\Tadtools\Utility::delete_directory($this->deletePath);
             }
             if ($callback && false !== $this->output) {
                 $middle = intdiv(strlen($this->output), 2);
@@ -174,6 +192,10 @@ namespace {
     define('_MA_TADADM_SSH_INCOMPLETE', 'ssh incomplete; possible partial upgrade');
     define('_MA_TADADM_MV_FAIL', 'move %s');
     define('_MA_TADADM_PREFLIGHT_FAIL', 'preflight %1$s %2$d %3$s %4$s');
+    define('_MA_TADADM_THEME_DELETE_PREFLIGHT', 'delete preflight %1$s %2$d %3$s %4$s');
+    define('_MA_TADADM_THEME_DELETE_FAIL', 'theme delete failed');
+    define('_MA_TADADM_THEME_DELETE_SSH_FAIL', 'theme SSH delete failed; possible partial deletion: %s');
+    define('_MA_TADADM_THEME_DELETE_OK', 'theme delete succeeded');
     define('_MA_TADADM_PREFLIGHT_SHOWN', 'shown %d');
     define('_MA_TADADM_SCRIPT_NOT_FOUND', 'missing script %s');
     define('_MA_TADADM_MANIFEST_INVALID', 'invalid manifest %s');
@@ -205,6 +227,9 @@ namespace {
     $xoopsModuleConfig = ['source' => $source];
     $xoopsConfig = ['sitename' => 'test', 'theme_set' => 'test', 'language' => 'english', 'redirect_message_ajax' => 1];
     $xoopsTpl = new FakeTemplate();
+    $xoopsDB = new class {
+        public function prefix($table) { return 'xoops_' . $table; }
+    };
     $archive = $base . '/source/uploads/tad_modules/file/demo.zip';
 
     try {
@@ -343,16 +368,79 @@ namespace {
         check(strpos(UpgradeManifest::to_shell($steps), 'exit 1;') !== false, 'SSH script does not stop after a required copy fails');
         mkdir(XOOPS_ROOT_PATH . '/themes/demo/sub', 0755, true);
         file_put_contents(XOOPS_ROOT_PATH . '/themes/demo/sub/file.txt', 'theme');
+        $unwritablePaths = [str_replace('\\', '/', XOOPS_ROOT_PATH . '/themes/demo/sub')];
+        $xoopsTpl = new FakeTemplate();
+        $queriesBefore = count(\XoopsModules\Tadtools\Utility::$queries);
+        OnlineUpgrade::to_do('', 'demo', 'delete_theme');
+        check($xoopsTpl->values['now_op'] === 'login_form', 'Nested theme permissions did not show SSH login');
+        check($xoopsTpl->values['action'] === 'main.php' && $xoopsTpl->values['dirname'] === 'demo' && $xoopsTpl->values['act'] === 'delete_theme', 'Theme SSH retry context lost');
+        check(strpos(str_replace('\\', '/', $xoopsTpl->values['ssh_preflight_message']), '/themes/demo/sub') !== false, 'Theme permission details missing');
+        check(is_file(XOOPS_ROOT_PATH . '/themes/demo/sub/file.txt') && count(\XoopsModules\Tadtools\Utility::$queries) === $queriesBefore, 'Theme preflight changed files or configuration');
+        $unwritablePaths = [str_replace('\\', '/', XOOPS_ROOT_PATH . '/themes')];
+        $xoopsTpl = new FakeTemplate();
+        OnlineUpgrade::to_do('', 'demo', 'delete_theme');
+        check($xoopsTpl->values['now_op'] === 'login_form' && strpos($xoopsTpl->values['ssh_preflight_message'], '/themes') !== false, 'Unwritable themes parent did not show the SSH reason');
+        $unwritablePaths = [];
+        \Xmf\Request::$forceSsh = 1;
+        $xoopsTpl = new FakeTemplate();
+        OnlineUpgrade::to_do('', 'demo', 'delete_theme');
+        check($xoopsTpl->values['now_op'] === 'login_form' && $xoopsTpl->values['dirname'] === 'demo', 'Forced SSH did not preserve the theme');
+        \Xmf\Request::$forceSsh = 0;
         $themeSsh = new FakeSsh(1, 'theme permission denied');
         try {
-            OnlineUpgrade::delete_theme('demo', $themeSsh);
+            OnlineUpgrade::next_to_do('', 'demo', 'themes', '', 'delete_theme', $themeSsh);
             throw new \RuntimeException('Expected theme SSH deletion failure');
         } catch (Redirect $e) {
             check(strpos($e->getMessage(), 'theme permission denied') !== false, 'Theme SSH failure was not reported');
+            check(!$lastRedirect['ajax'] && $lastRedirect['time'] >= 30, 'Theme SSH failure was not displayed persistently');
         }
         check(is_file(XOOPS_ROOT_PATH . '/themes/demo/sub/file.txt'), 'Failed SSH deletion changed the theme');
-        check(OnlineUpgrade::delete_theme('demo'), 'PHP theme deletion failed');
+        check(count(\XoopsModules\Tadtools\Utility::$queries) === $queriesBefore, 'Failed SSH deletion changed theme configuration');
+        $xoopsConfig['redirect_message_ajax'] = 1;
+        $ssh = new FakeSsh(0, '');
+        $ssh->deletePath = XOOPS_ROOT_PATH . '/themes/demo';
+        \XoopsModules\Tadtools\Utility::$sshMock = $ssh;
+        $xoopsModuleConfig['ssh_port'] = 22;
+        $xoopsConfig['theme_set_allowed'] = ['demo', 'test'];
+        try {
+            OnlineUpgrade::ssh_login('127.0.0.1', 'user', 'password', '', 'demo', 'delete_theme');
+            throw new \RuntimeException('Expected theme success redirect');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'theme delete succeeded') !== false, 'SSH theme deletion did not report success');
+        }
         check(!file_exists(XOOPS_ROOT_PATH . '/themes/demo'), 'Theme was not removed');
+        check(count(\XoopsModules\Tadtools\Utility::$queries) === $queriesBefore + 2, 'Deleted theme configuration not updated');
+        mkdir(XOOPS_ROOT_PATH . '/themes/test');
+        try {
+            OnlineUpgrade::to_do('', 'test', 'delete_theme');
+            throw new \RuntimeException('Expected default theme deletion rejection');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'theme delete failed') !== false, 'Default theme deletion was not rejected');
+        }
+        check(is_dir(XOOPS_ROOT_PATH . '/themes/test'), 'Default theme was deleted');
+        mkdir(XOOPS_ROOT_PATH . '/themes/demo');
+        $inSchoolWeb = true;
+        try {
+            OnlineUpgrade::to_do('', 'demo', 'delete_theme');
+            throw new \RuntimeException('Expected shared site theme deletion rejection');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'theme delete failed') !== false, 'Shared site deletion was not rejected');
+        }
+        try {
+            OnlineUpgrade::next_to_do('', 'demo', 'themes', '', 'delete_theme', $ssh);
+            throw new \RuntimeException('Expected shared site SSH deletion rejection');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'theme delete failed') !== false, 'Shared site SSH deletion was not rejected');
+        }
+        check(is_dir(XOOPS_ROOT_PATH . '/themes/demo'), 'Shared site theme was deleted');
+        $inSchoolWeb = false;
+        try {
+            OnlineUpgrade::to_do('', 'demo', 'delete_theme');
+            throw new \RuntimeException('Expected PHP theme success redirect');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'theme delete succeeded') !== false, 'PHP theme deletion did not report success');
+        }
+        check(!file_exists(XOOPS_ROOT_PATH . '/themes/demo'), 'PHP theme deletion failed');
         check(!OnlineUpgrade::delete_theme('..'), 'Invalid theme name was accepted');
 
         $coreArchive = $base . '/source/uploads/tad_modules/file/core.zip';

@@ -12,6 +12,11 @@ the ownership or permissions, or sign in with an account that can write those
 files. Other packages are also
 checked when their upgrade instructions are available.
 
+For theme removal, PHP checks the parent directories needed to delete the
+theme tree. If access is insufficient, the SSH login form shows the affected
+paths; the theme is removed from configuration only after deletion succeeds.
+The default theme and themes on shared school sites cannot be deleted here.
+
 Downloading and extracting packages always require the PHP process to be able
 to write to uploads and uploads/tad_adm, including when SSH is used to copy
 the files. SSH does not automatically change ownership or recursively relax
