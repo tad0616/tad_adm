@@ -177,6 +177,9 @@ define('_MA_TADADM_PREFLIGHT_FAIL', 'Upgrade stopped before any file was changed
 define('_MA_TADADM_PREFLIGHT_SHOWN', ', first %d shown');
 define('_MA_TADADM_COPY_FAIL', '%1$d file(s) could not be copied, so the site may be partly updated. Fix the permissions and run the upgrade again:<br>%2$s');
 define('_MA_TADADM_UPGRADE_WARN', 'Upgrade files copied, but some steps need manual attention (see your server log): %s');
+define('_MA_TADADM_MANIFEST_INVALID', 'The upgrade manifest upgrade.json is invalid: %s');
+define('_MA_TADADM_SSH_STEPS_FAIL', 'Some upgrade steps failed over SSH:<pre>%s</pre>');
+define('_MA_TADADM_WARN_STEP', 'step %1$d (%2$s): %3$d item(s) failed, e.g. %4$s');
 define('_MA_TADADM_WARN_BLOCKED', '%d path(s) outside the site root were skipped');
 define('_MA_TADADM_WARN_CHMOD', '%d chmod operation(s) failed');
 define('_MA_TADADM_WARN_DELETE', '%d path(s) could not be deleted, please remove them manually');

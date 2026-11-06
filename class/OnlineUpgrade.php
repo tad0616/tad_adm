@@ -772,7 +772,55 @@ class OnlineUpgrade
         $fail_url  = $_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean';
         $ssh_output = '';
 
-        if (!empty($ssh)) {
+        if (is_file("{$work_path}/upgrade.json")) {
+            // 新機制：單一流程檔，自動判斷以 PHP 直接執行或轉為 SSH 腳本
+            try {
+                $steps = UpgradeManifest::load("{$work_path}/upgrade.json", [
+                    'ROOT'     => XOOPS_ROOT_PATH,
+                    'VAR'      => XOOPS_VAR_PATH,
+                    'LIB'      => XOOPS_PATH,
+                    'WORK'     => $work_path,
+                    'NEW_FILE' => $new_file,
+                    'SN'       => $xoops_sn,
+                ]);
+            } catch (\RuntimeException $e) {
+                redirect_header($fail_url, 10, sprintf(_MA_TADADM_MANIFEST_INVALID, htmlspecialchars($e->getMessage(), ENT_QUOTES)));
+            }
+
+            if (!empty($ssh)) {
+                if (false === file_put_contents("{$work_path}/upgrade.sh", UpgradeManifest::to_shell($steps))) {
+                    redirect_header($fail_url, 5, sprintf(_MA_TADADM_SCRIPT_NOT_FOUND, "{$work_path}/upgrade.sh"));
+                }
+                $result = $ssh->exec("sh {$work_path}/upgrade.sh 2>&1");
+                if (false === $result) {
+                    redirect_header($fail_url, 5, sprintf(_MA_TADADM_SSH_EXEC_FAIL, "{$work_path}/upgrade.sh"));
+                }
+                $ssh_output = trim((string) $result);
+                [$sh_errors, $sh_warnings] = UpgradeManifest::parse_shell_output($ssh_output);
+                if ($sh_errors) {
+                    redirect_header($fail_url, 30, sprintf(_MA_TADADM_SSH_STEPS_FAIL, htmlspecialchars(implode("\n", $sh_errors) . "\n" . $ssh_output, ENT_QUOTES)));
+                }
+                if ($sh_warnings) {
+                    $go_warn = htmlspecialchars(implode('; ', $sh_warnings), ENT_QUOTES);
+                }
+            } else {
+                $preflight = UpgradeManifest::preflight($steps, XOOPS_ROOT_PATH);
+                if ($preflight['count'] > 0) {
+                    $force_link = $_SERVER['PHP_SELF'] . "?op={$dirname}_xoops&xoops_sn={$xoops_sn}&force_ssh=1&file_link=" . rawurlencode($orig_link);
+                    $msg        = self::preflight_message($preflight) . '<br><a href="' . htmlspecialchars($force_link, ENT_QUOTES) . '">SSH</a>';
+                    redirect_header($fail_url, 30, $msg);
+                }
+                $report = UpgradeManifest::run_php($steps);
+                if (!empty($report['errors'])) {
+                    redirect_header($fail_url, 30, sprintf(_MA_TADADM_COPY_FAIL, count($report['errors']), self::format_path_list($report['errors'], 10)));
+                }
+                $warns = [];
+                foreach ($report['warnings'] as [$n, $op, $count, $sample]) {
+                    $warns[] = sprintf(_MA_TADADM_WARN_STEP, $n, $op, $count, htmlspecialchars($sample, ENT_QUOTES));
+                }
+                $go_warn = implode('; ', $warns);
+            }
+        } elseif (!empty($ssh)) {
             if (!is_file("{$work_path}/ssh.txt")) {
                 redirect_header($fail_url, 5, sprintf(_MA_TADADM_SCRIPT_NOT_FOUND, "{$work_path}/ssh.txt"));
             }

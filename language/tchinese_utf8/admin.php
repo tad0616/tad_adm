@@ -176,6 +176,9 @@ define('_MA_TADADM_PREFLIGHT_FAIL', '升級已中止，尚未變更任何檔案�
 define('_MA_TADADM_PREFLIGHT_SHOWN', '（僅列出前 %d 個）');
 define('_MA_TADADM_COPY_FAIL', '有 %1$d 個檔案無法複製，網站可能處於部分更新狀態，請修正權限後重新執行升級：<br>%2$s');
 define('_MA_TADADM_UPGRADE_WARN', '升級檔案已複製，但部分步驟需要手動處理（詳見主機錯誤日誌）：%s');
+define('_MA_TADADM_MANIFEST_INVALID', '升級流程檔 upgrade.json 無效：%s');
+define('_MA_TADADM_SSH_STEPS_FAIL', '透過 SSH 執行時，有升級步驟失敗：<pre>%s</pre>');
+define('_MA_TADADM_WARN_STEP', '步驟 %1$d（%2$s）有 %3$d 個項目失敗，例如：%4$s');
 define('_MA_TADADM_WARN_BLOCKED', '有 %d 個位於網站根目錄之外的路徑已略過');
 define('_MA_TADADM_WARN_CHMOD', '有 %d 項權限變更失敗');
 define('_MA_TADADM_WARN_DELETE', '有 %d 個路徑無法刪除，請自行手動刪除');
