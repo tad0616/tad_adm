@@ -15,7 +15,7 @@ namespace XoopsModules\Tad_adm;
  */
 class UpgradeManifest
 {
-    public const OPS = ['copy', 'mkdir', 'delete', 'chmod', 'write'];
+    public const OPS = ['copy', 'mkdir', 'delete', 'chmod', 'write', 'prune_index_html'];
 
     /**
      * 讀取並驗證流程檔，回傳已展開變數的步驟清單。
@@ -91,6 +91,16 @@ class UpgradeManifest
                     $step['recursive'] = !empty($s['recursive']);
                     break;
 
+                case 'prune_index_html':
+                    if (empty($s['paths']) || !is_array($s['paths'])) {
+                        throw new \RuntimeException("step $n: paths must be a non-empty array");
+                    }
+                    $step['paths'] = [];
+                    foreach ($s['paths'] as $raw) {
+                        [$step['paths'][]] = self::resolve($raw, $vars, $roots, $n);
+                    }
+                    break;
+
                 case 'write':
                     [$step['path']] = self::resolve($s['path'] ?? '', $vars, $roots, $n);
                     $content = (string) ($s['content'] ?? '');
@@ -106,7 +116,7 @@ class UpgradeManifest
     /** 失敗時是否只算警告（chmod、delete 或標示 optional 的步驟） */
     public static function is_soft(array $step): bool
     {
-        return $step['optional'] || in_array($step['op'], ['chmod', 'delete'], true);
+        return $step['optional'] || in_array($step['op'], ['chmod', 'delete', 'prune_index_html'], true);
     }
 
     /**
@@ -166,6 +176,11 @@ class UpgradeManifest
                         self::chmod_tree($step['path'], $step['file'], $step['dir'], $step['recursive'], $fails);
                     }
                     break;
+                case 'prune_index_html':
+                    foreach ($step['paths'] as $dir) {
+                        self::prune_index($dir, $fails);
+                    }
+                    break;
                 case 'write':
                     if (!is_dir(dirname($step['path'])) && !@mkdir(dirname($step['path']), 0755, true)) {
                         $fails[] = $step['path'];
@@ -216,6 +231,13 @@ class UpgradeManifest
                     } else {
                         $cmd = "if [ -d $p ]; then chmod $dm $p; else chmod $fm $p; fi";
                     }
+                    break;
+                case 'prune_index_html':
+                    $cmds = [];
+                    foreach ($step['paths'] as $dir) {
+                        $cmds[] = 'if [ -d ' . $q($dir) . ' ]; then find ' . $q($dir) . " -type f -name index.html -size -60c -exec sh -c 'for f; do [ -f \"\${f%/*}/index.php\" ] && rm -f \"\$f\"; done' sh {} + ; fi";
+                    }
+                    $cmd = '{ ' . implode('; ', $cmds) . '; }';
                     break;
                 default: // write
                     $cmd = 'mkdir -p ' . $q(dirname($step['path'])) . " && printf '%s' " . $q($step['content']) . ' > ' . $q($step['path']);
@@ -297,6 +319,22 @@ class UpgradeManifest
         }
 
         return octdec((string) $v);
+    }
+
+    /** 刪除已被 index.php 取代、小於 60 位元組的 index.html（與 upd_2.5.10-to-2.5.11 的規則相同） */
+    private static function prune_index(string $dir, array &$fails): void
+    {
+        if (!is_dir($dir) || is_link($dir)) {
+            return;
+        }
+        $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS));
+        foreach ($it as $f) {
+            if ($f->isFile() && 'index.html' === $f->getFilename() && $f->getSize() < 60 && is_file($f->getPath() . '/index.php')) {
+                if (!@unlink($f->getPathname())) {
+                    $fails[] = $f->getPathname();
+                }
+            }
+        }
     }
 
     private static function copy_tree(string $src, string $dst, array &$fails): void
