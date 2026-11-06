@@ -26,6 +26,11 @@ change); inspect the reported errors and repair any partially updated files.
 
 XOOPS upgrades display the current download, extraction and copy step while
 the upgrade runs. For upgrade.json, PHP and SSH report each step's destination.
+After SSH login, the form remains visible while the upgrade runs so these
+updates can continue; its result or error is then displayed in the same window.
+If the SSH request ends without the upgrade handoff, its result is uncertain:
+do not rerun or open /upgrade/ until host logs and file integrity confirm the
+copy has finished. A gateway error can occur even if the SSH command continues.
 Legacy SSH scripts report that the script is running but cannot report their
 individual commands. Live status is visible only to the same administrator
 session; failure to retrieve it does not stop the upgrade.

@@ -51,7 +51,7 @@
                 <{/if}>
             </div>
         </div>
-        <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js"></script>
+        <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js?v=2026110602"></script>
         <script>
             $(function() {
                 var stopProgress;

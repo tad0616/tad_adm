@@ -12,10 +12,54 @@
                 return ('0' + value.toString(16)).slice(-2);
             }).join('');
         },
+        bindSshForm: function (form, content, status, result, uncertain, endpoint) {
+            var submitted = false;
+            var stopProgress;
+            result.addEventListener('load', function () {
+                if (!submitted) {
+                    return;
+                }
+                var confirmed = false;
+                try {
+                    if (result.contentWindow.location.href === 'about:blank') {
+                        return;
+                    }
+                    confirmed = !!result.contentDocument.getElementById('tad-adm-upgrade-handoff');
+                } catch (error) {
+                    confirmed = false;
+                }
+                submitted = false;
+                if (confirmed && stopProgress) {
+                    stopProgress();
+                }
+                content.hidden = true;
+                status.hidden = confirmed;
+                uncertain.hidden = confirmed;
+                result.hidden = false;
+            });
+            form.addEventListener('submit', function (event) {
+                if (submitted) {
+                    event.preventDefault();
+                    return;
+                }
+                submitted = true;
+                form.target = result.name;
+                var token = window.tadAdmUpgradeProgress.token();
+                form.elements.upgrade_progress_token.value = token;
+                status.hidden = false;
+                status.textContent = status.getAttribute(token ? 'data-progress-wait' : 'data-progress-error');
+                form.querySelector('button[type="submit"]').disabled = true;
+                if (token) {
+                    stopProgress = window.tadAdmUpgradeProgress.start(status, token, endpoint);
+                }
+            });
+        },
         start: function (element, token, endpoint) {
             var stopped = false;
             var timer;
             var request;
+            var startedAt = Date.now();
+            var receivedStatus = false;
             function poll() {
                 request = new XMLHttpRequest();
                 request.open('GET', endpoint + '?token=' + encodeURIComponent(token), true);
@@ -29,6 +73,9 @@
                             var result = JSON.parse(request.responseText);
                             if (typeof result.message === 'string') {
                                 element.textContent = result.message;
+                                receivedStatus = true;
+                            } else if (!receivedStatus && Date.now() - startedAt >= 15000) {
+                                element.textContent = element.getAttribute('data-progress-error');
                             }
                         } catch (error) {
                             element.textContent = element.getAttribute('data-progress-error');
