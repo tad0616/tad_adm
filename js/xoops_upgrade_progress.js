@@ -46,8 +46,10 @@
                 form.target = result.name;
                 var token = window.tadAdmUpgradeProgress.token();
                 form.elements.upgrade_progress_token.value = token;
+                content.hidden = true;
                 status.hidden = false;
                 status.textContent = status.getAttribute(token ? 'data-progress-wait' : 'data-progress-error');
+                status.focus();
                 form.querySelector('button[type="submit"]').disabled = true;
                 if (token) {
                     stopProgress = window.tadAdmUpgradeProgress.start(status, token, endpoint);
