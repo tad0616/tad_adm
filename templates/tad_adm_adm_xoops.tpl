@@ -35,13 +35,45 @@
                 <{/if}>
             </div>
         </div>
+        <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js"></script>
         <script>
             $(function() {
-                $('a.modulesadmin[href*="op=upgrade_xoops"]:not(.disabled)').on('click', function() {
+                var stopProgress;
+                var token;
+                document.addEventListener('click', function(event) {
+                    var link = event.target.closest('a.modulesadmin[href*="op=upgrade_xoops"]:not(.disabled)');
+                    if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+                        return;
+                    }
+                    token = window.tadAdmUpgradeProgress.token();
+                    var url = new URL(link.href, window.location.href);
+                    if (token) {
+                        url.searchParams.set('upgrade_progress_token', token);
+                    } else {
+                        url.searchParams.delete('upgrade_progress_token');
+                    }
+                    link.href = url.toString();
                     $('body').addClass('tad-adm-xoops-upgrade-loading');
+                }, true);
+
+                $(document).on('onLoading.tadAdmXoopsUpgrade', function() {
+                    if (!$('body').hasClass('tad-adm-xoops-upgrade-loading')) {
+                        return;
+                    }
+                    var status = $('<div class="tad-adm-progress" role="status" aria-live="polite"></div>')
+                        .text('<{$smarty.const._MA_TADADM_XOOPS_UPGRADE_WAIT}>')
+                        .attr('data-progress-error', '<{$smarty.const._MA_TADADM_PROGRESS_UNAVAILABLE}>');
+                    $('#fancybox-loading').append(status);
+                    if (token) {
+                        stopProgress = window.tadAdmUpgradeProgress.start(status[0], token, 'upgrade_progress.php');
+                    }
                 });
 
-                $(document).on('afterShow.tadAdmXoopsUpgrade afterClose.tadAdmXoopsUpgrade', function() {
+                $(document).on('afterShow.tadAdmXoopsUpgrade afterClose.tadAdmXoopsUpgrade onCancel.tadAdmXoopsUpgrade', function() {
+                    if (stopProgress) {
+                        stopProgress();
+                        stopProgress = null;
+                    }
                     $('body').removeClass('tad-adm-xoops-upgrade-loading');
                 });
             });
@@ -57,13 +89,14 @@
                 transform: translate(-50%, -50%);
             }
 
-            body.tad-adm-xoops-upgrade-loading #fancybox-loading div {
+            body.tad-adm-xoops-upgrade-loading #fancybox-loading > div:not(.tad-adm-progress) {
                 display: none;
             }
 
-            body.tad-adm-xoops-upgrade-loading #fancybox-loading::after {
-                content: "<{$smarty.const._MA_TADADM_XOOPS_UPGRADE_WAIT}>";
+            body.tad-adm-xoops-upgrade-loading #fancybox-loading .tad-adm-progress {
                 display: block;
+                width: auto;
+                height: auto;
                 padding: 1rem 1.5rem;
                 border: 1px solid #ccc;
                 border-radius: 0.4rem;
@@ -71,7 +104,9 @@
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
                 color: #333;
                 font-size: 1rem;
-                white-space: nowrap;
+                min-width: 20rem;
+                max-width: 80vw;
+                overflow-wrap: anywhere;
             }
         </style>
     <{/if}>

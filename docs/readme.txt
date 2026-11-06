@@ -17,3 +17,9 @@ to write to uploads and uploads/tad_adm, including when SSH is used to copy
 the files. SSH does not automatically change ownership or recursively relax
 permissions. A copy can still fail after the check (for example, if permissions
 change); inspect the reported errors and repair any partially updated files.
+
+XOOPS upgrades display the current download, extraction and copy step while
+the upgrade runs. For upgrade.json, PHP and SSH report each step's destination.
+Legacy SSH scripts report that the script is running but cannot report their
+individual commands. Live status is visible only to the same administrator
+session; failure to retrieve it does not stop the upgrade.

@@ -27,6 +27,9 @@
             <input type="hidden" name="update_sn" value="<{$update_sn|default:''}>">
             <input type="hidden" name="module_sn" value="<{$module_sn|default:''}>">
             <input type="hidden" name="xoops_sn" value="<{$xoops_sn|default:''}>">
+            <{if $action|default:'' == 'xoops.php' && $act|default:'' == 'upgrade'}>
+                <input type="hidden" name="upgrade_progress_token" value="<{$upgrade_progress_token|default:''|escape:'html'}>">
+            <{/if}>
             <input type="hidden" name="tad_adm_tpl" value="clean">
             <input type="hidden" name="op" value="ssh_login">
             <button type="submit" class="btn btn-primary"><{$smarty.const._MA_TADADM_LOGIN}>SSH</button>
@@ -35,4 +38,25 @@
 </div>
 <{if $ssh_preflight_message|default:''}>
     <div class="alert alert-warning"><{$ssh_preflight_message}></div>
+<{/if}>
+<{if $action|default:'' == 'xoops.php' && $act|default:'' == 'upgrade'}>
+    <div id="ssh-upgrade-progress" class="alert alert-info" role="status" aria-live="polite" hidden
+         data-progress-error="<{$smarty.const._MA_TADADM_PROGRESS_UNAVAILABLE|escape:'html'}>"></div>
+    <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js"></script>
+    <script>
+        $(function() {
+            $('form input[name="upgrade_progress_token"]').closest('form').on('submit', function() {
+                var tokenInput = this.elements.upgrade_progress_token;
+                if (!tokenInput.value) {
+                    tokenInput.value = window.tadAdmUpgradeProgress.token();
+                }
+                var status = document.getElementById('ssh-upgrade-progress');
+                status.hidden = false;
+                status.textContent = '<{$smarty.const._MA_TADADM_XOOPS_UPGRADE_WAIT}>';
+                if (tokenInput.value) {
+                    window.tadAdmUpgradeProgress.start(status, tokenInput.value, 'upgrade_progress.php');
+                }
+            });
+        });
+    </script>
 <{/if}>

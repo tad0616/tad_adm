@@ -728,6 +728,7 @@ class OnlineUpgrade
             $xoopsTpl->assign('act', $act);
             $xoopsTpl->assign('xoops_sn', $xoops_sn);
             $xoopsTpl->assign('file_link', $file_link);
+            $xoopsTpl->assign('upgrade_progress_token', \Xmf\Request::getString('upgrade_progress_token'));
             $tad_adm_ssh_host = empty($_SESSION['tad_adm_ssh_host']) ? $_SERVER['SERVER_ADDR'] : $_SESSION['tad_adm_ssh_host'];
             $xoopsTpl->assign('tad_adm_ssh_host', $tad_adm_ssh_host);
             $xoopsTpl->assign('tad_adm_ssh_id', $_SESSION['tad_adm_ssh_id']);
@@ -824,9 +825,13 @@ class OnlineUpgrade
     //取得XOOPS升級或補釘
     public static function get_upgrade_file($file_link, $dirname, $xoops_sn, $ssh)
     {
+        if ('upgrade' === $dirname) {
+            UpgradeProgress::start(\Xmf\Request::getString('upgrade_progress_token'));
+        }
         $TadAmModuleConfig = self::get_adm_config();
         $orig_link         = $file_link;
         $go_warn           = '';
+        $fail_url          = $_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean';
         $file_link         = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
         $new_file          = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
 
@@ -836,27 +841,36 @@ class OnlineUpgrade
             clearstatcache();
         }
 
+        UpgradeProgress::update(_MA_TADADM_PROGRESS_PREPARE);
         Utility::mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
-        self::copyemz($file_link, $new_file, 0, $xoops_sn);
+        UpgradeProgress::update(sprintf(_MA_TADADM_PROGRESS_DOWNLOAD, basename(parse_url($file_link, PHP_URL_PATH) ?: $file_link)));
+        $download_progress = 'upgrade' === $dirname ? static function (string $stage, string $path): void {
+            UpgradeProgress::update('count' === $stage ? _MA_TADADM_PROGRESS_COUNT : sprintf(_MA_TADADM_PROGRESS_SAVE, basename($path)));
+        } : null;
+        self::copyemz($file_link, $new_file, 0, $xoops_sn, $download_progress);
 
         if (!is_file($new_file)) {
             redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
         }
 
+        UpgradeProgress::update(_MA_TADADM_PROGRESS_STAGING);
         if (is_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname")) {
             Utility::delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
         }
         Utility::mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
 
+        UpgradeProgress::update(sprintf(_MA_TADADM_PROGRESS_EXTRACT, basename($new_file)));
         $zip = new DunZip2($new_file);
-        $zip->getList();
-        $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
-        $zip->close($new_file);
+        $extracted = $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
+        $zip->close();
+        if (!$extracted) {
+            redirect_header($fail_url, 15, sprintf(_MA_TADADM_EXTRACT_FAIL, htmlspecialchars(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}", ENT_QUOTES)));
+        }
 
         $work_path = XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}";
-        $fail_url  = $_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean';
         $ssh_output = '';
 
+        UpgradeProgress::update(_MA_TADADM_PROGRESS_CHECK);
         if (is_file("{$work_path}/upgrade.json")) {
             // 新機制：單一流程檔，自動判斷以 PHP 直接執行或轉為 SSH 腳本
             try {
@@ -873,10 +887,32 @@ class OnlineUpgrade
             }
 
             if (!empty($ssh)) {
-                if (false === file_put_contents("{$work_path}/upgrade.sh", UpgradeManifest::to_shell($steps))) {
+                if (false === file_put_contents("{$work_path}/upgrade.sh", UpgradeManifest::to_shell($steps, 'upgrade' === $dirname))) {
                     redirect_header($fail_url, 5, sprintf(_MA_TADADM_SCRIPT_NOT_FOUND, "{$work_path}/upgrade.sh"));
                 }
-                $result = $ssh->exec("sh {$work_path}/upgrade.sh 2>&1");
+                UpgradeProgress::update(_MA_TADADM_PROGRESS_SSH);
+                if ('upgrade' === $dirname) {
+                    $output = '';
+                    $buffer = '';
+                    $byNumber = [];
+                    foreach ($steps as $step) {
+                        $byNumber[$step['n']] = $step;
+                    }
+                    $ok = $ssh->exec("sh {$work_path}/upgrade.sh 2>&1", static function ($chunk) use (&$output, &$buffer, $byNumber): void {
+                        $output .= $chunk;
+                        $buffer .= $chunk;
+                        while (false !== ($newline = strpos($buffer, "\n"))) {
+                            $line = rtrim(substr($buffer, 0, $newline), "\r");
+                            $buffer = substr($buffer, $newline + 1);
+                            if (preg_match('/^TAD_ADM_PROGRESS (\d+)$/D', $line, $match) && isset($byNumber[(int) $match[1]])) {
+                                self::manifest_progress($byNumber[(int) $match[1]]);
+                            }
+                        }
+                    });
+                    $result = false === $ok ? false : $output;
+                } else {
+                    $result = $ssh->exec("sh {$work_path}/upgrade.sh 2>&1");
+                }
                 if (false === $result) {
                     redirect_header($fail_url, 5, sprintf(_MA_TADADM_SSH_EXEC_FAIL, "{$work_path}/upgrade.sh"));
                 }
@@ -895,7 +931,7 @@ class OnlineUpgrade
                     $msg        = self::preflight_message($preflight) . '<br><a href="' . htmlspecialchars($force_link, ENT_QUOTES) . '">SSH</a>';
                     redirect_header($fail_url, 30, $msg);
                 }
-                $report = UpgradeManifest::run_php($steps);
+                $report = UpgradeManifest::run_php($steps, [self::class, 'manifest_progress']);
                 if (!empty($report['errors'])) {
                     redirect_header($fail_url, 30, sprintf(_MA_TADADM_COPY_FAIL, count($report['errors']), self::format_path_list($report['errors'], 10)));
                 }
@@ -927,6 +963,7 @@ class OnlineUpgrade
                 redirect_header($fail_url, 5, sprintf(_MA_TADADM_SCRIPT_NOT_FOUND, "{$work_path}/upgrade.sh"));
             }
             self::chmod_R("{$work_path}/upgrade.sh", 0777, 0777);
+            UpgradeProgress::update(_MA_TADADM_PROGRESS_SSH);
             $result = $ssh->exec("sh {$work_path}/upgrade.sh 2>&1");
             if (false === $result) {
                 redirect_header($fail_url, 5, sprintf(_MA_TADADM_SSH_EXEC_FAIL, "{$work_path}/upgrade.sh"));
@@ -945,7 +982,9 @@ class OnlineUpgrade
                 $msg        = self::preflight_message($preflight) . '<br><a href="' . htmlspecialchars($force_link, ENT_QUOTES) . '">SSH</a>';
                 redirect_header($fail_url, 30, $msg);
             }
-            $report = self::execute_go_instructions("{$work_path}/go.txt", $new_file);
+            $report = self::execute_go_instructions("{$work_path}/go.txt", $new_file, 0, static function (string $operation, string $path): void {
+                UpgradeProgress::update('copy' === $operation ? sprintf(_MA_TADADM_PROGRESS_COPY, $path) : sprintf(_MA_TADADM_PROGRESS_STEP, $operation, $path));
+            });
             if (!empty($report['copy'])) {
                 redirect_header($fail_url, 30, sprintf(_MA_TADADM_COPY_FAIL, count($report['copy']), self::format_path_list($report['copy'], 10)));
             }
@@ -964,6 +1003,15 @@ class OnlineUpgrade
             redirect_header(XOOPS_URL . '/upgrade', '' === $go_warn ? 3 : 15, '' === $go_warn ? _MA_TADADM_UPGRADE_FROM_URL : _MA_TADADM_UPGRADE_FROM_URL . '<br>' . sprintf(_MA_TADADM_UPGRADE_WARN, $go_warn));
         } else {
             return true;
+        }
+    }
+
+    public static function manifest_progress(array $step): void
+    {
+        if ('copy' === $step['op']) {
+            UpgradeProgress::update(sprintf(_MA_TADADM_PROGRESS_COPY, $step['to']));
+        } else {
+            UpgradeProgress::update(sprintf(_MA_TADADM_PROGRESS_STEP, $step['op'], $step['path'] ?? implode(', ', $step['paths'] ?? [])));
         }
     }
 
@@ -1017,7 +1065,7 @@ class OnlineUpgrade
         return $work_dir;
     }
 
-    public static function copyemz($file1, $file2, $update_sn = '', $xoops_sn = '')
+    public static function copyemz($file1, $file2, $update_sn = '', $xoops_sn = '', ?callable $progress = null)
     {
         global $xoopsConfig;
 
@@ -1051,6 +1099,9 @@ class OnlineUpgrade
             curl_close($ch);
 
             // ── 回報計數（非關鍵，失敗不中斷流程）────────────────
+            if ($progress) {
+                $progress('count', $file2);
+            }
             $ch      = curl_init();
             $timeout = 5;
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
@@ -1073,6 +1124,9 @@ class OnlineUpgrade
             redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, $url));
         }
 
+        if ($progress) {
+            $progress('save', $file2);
+        }
         $openedfile = @fopen($file2, 'wb');
         if (false === $openedfile) {
             redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 15, sprintf(_MA_TADADM_WRITE_FAIL, htmlspecialchars($file2, ENT_QUOTES), htmlspecialchars(UpgradeManifest::php_user(), ENT_QUOTES)));
@@ -1397,7 +1451,7 @@ class OnlineUpgrade
      *
      * 所有路徑均限制在 XOOPS_ROOT_PATH 之內，防止路徑穿越。
      */
-    private static function execute_go_instructions(string $go_file, string $new_file, int $module_sn = 0): array
+    private static function execute_go_instructions(string $go_file, string $new_file, int $module_sn = 0, ?callable $progress = null): array
     {
         $report = ['copy' => [], 'blocked' => 0, 'chmod' => 0, 'delete' => 0];
         if (!is_file($go_file)) {
@@ -1429,6 +1483,9 @@ class OnlineUpgrade
                 $src = self::sanitize_path($m[2]);
                 $dst = self::sanitize_path($m[4]);
                 if ($src && $dst) {
+                    if ($progress) {
+                        $progress('copy', $dst);
+                    }
                     self::copy_tree($src, $dst, $report['copy']);
                     if ($report['copy']) {
                         break;
@@ -1445,6 +1502,9 @@ class OnlineUpgrade
                 $filemode = octdec($m[3]);
                 $dirmode  = octdec($m[4]);
                 if ($path) {
+                    if ($progress) {
+                        $progress('chmod', $path);
+                    }
                     self::chmod_R($path, $filemode, $dirmode);
                 } else {
                     $report['blocked']++;
@@ -1456,6 +1516,9 @@ class OnlineUpgrade
             if (preg_match('/^delete_directory\s*\(\s*(["\']?)(.+?)\1\s*\)\s*;?$/i', $line, $m)) {
                 $path = self::sanitize_path($m[2]);
                 if ($path) {
+                    if ($progress) {
+                        $progress('delete', $path);
+                    }
                     Utility::delete_directory($path);
                     if (file_exists($path)) {
                         $report['delete']++;

@@ -4,10 +4,16 @@ namespace Xmf {
     class Request
     {
         public static $forceSsh = 0;
+        public static $progressToken = '';
 
         public static function getInt($name)
         {
             return 'force_ssh' === $name ? self::$forceSsh : 0;
+        }
+
+        public static function getString($name)
+        {
+            return 'upgrade_progress_token' === $name ? self::$progressToken : '';
         }
     }
 }
@@ -15,6 +21,13 @@ namespace Xmf {
 namespace XoopsModules\Tadtools {
     class Utility
     {
+        public static function mk_dir($path)
+        {
+            if (!is_dir($path)) {
+                mkdir($path, 0755, true);
+            }
+        }
+
         public static function delete_directory($path)
         {
             foreach (scandir($path) as $entry) {
@@ -50,6 +63,7 @@ namespace {
 
     require_once dirname(__DIR__) . '/class/DunZip2.php';
     require_once dirname(__DIR__) . '/class/UpgradeManifest.php';
+    require_once dirname(__DIR__) . '/class/UpgradeProgress.php';
     require_once dirname(__DIR__) . '/class/OnlineUpgrade.php';
 
     class Redirect extends \RuntimeException {}
@@ -78,9 +92,15 @@ namespace {
             $this->output = $output;
         }
 
-        public function exec($command)
+        public function exec($command, $callback = null)
         {
             $this->command = $command;
+            if ($callback && false !== $this->output) {
+                $middle = intdiv(strlen($this->output), 2);
+                $callback(substr($this->output, 0, $middle));
+                $callback(substr($this->output, $middle));
+                return true;
+            }
             return $this->output;
         }
 
@@ -126,6 +146,18 @@ namespace {
     define('_MA_TADADM_WARN_BLOCKED', 'blocked %d');
     define('_MA_TADADM_WARN_CHMOD', 'chmod %d');
     define('_MA_TADADM_WARN_DELETE', 'delete %d');
+    define('_MA_TADADM_PROGRESS_PREPARE', 'Preparing');
+    define('_MA_TADADM_PROGRESS_DOWNLOAD', 'Downloading: %s');
+    define('_MA_TADADM_PROGRESS_COUNT', 'Reporting');
+    define('_MA_TADADM_PROGRESS_SAVE', 'Saving: %s');
+    define('_MA_TADADM_PROGRESS_STAGING', 'Preparing extraction');
+    define('_MA_TADADM_PROGRESS_EXTRACT', 'Extracting: %s');
+    define('_MA_TADADM_PROGRESS_CHECK', 'Checking');
+    define('_MA_TADADM_PROGRESS_COPY', 'Copying to: %s');
+    define('_MA_TADADM_PROGRESS_STEP', 'Running %1$s: %2$s');
+    define('_MA_TADADM_PROGRESS_SSH', 'Running SSH');
+    define('_MA_TADADM_UPGRADE_FROM_URL', 'Upgrade ready');
+    define('_MA_TADADM_UPGRADE_DIR_MISSING', 'Missing %s');
     $_SERVER['PHP_SELF'] = 'main.php';
     $_SESSION = [];
     $inSchoolWeb = false;
@@ -286,6 +318,37 @@ namespace {
         check(OnlineUpgrade::delete_theme('demo'), 'PHP theme deletion failed');
         check(!file_exists(XOOPS_ROOT_PATH . '/themes/demo'), 'Theme was not removed');
         check(!OnlineUpgrade::delete_theme('..'), 'Invalid theme name was accepted');
+
+        $coreArchive = $base . '/source/uploads/tad_modules/file/core.zip';
+        $coreZip = new \PharData($coreArchive);
+        $coreZip->addFromString('payload/index.php', 'upgrade');
+        $coreZip->addFromString('upgrade.json', json_encode(['version' => 1, 'steps' => [
+            ['op' => 'copy', 'from' => '{WORK}/payload', 'to' => '{ROOT}/upgrade'],
+        ]]));
+        unset($coreZip);
+        session_id(bin2hex(random_bytes(16)));
+        session_start();
+        $sessionId = session_id();
+        \Xmf\Request::$progressToken = bin2hex(random_bytes(16));
+        $statusPath = \XoopsModules\Tad_adm\UpgradeProgress::path(\Xmf\Request::$progressToken, $sessionId);
+        try {
+            OnlineUpgrade::get_upgrade_file($source . '/uploads/tad_modules/file/core.zip', 'upgrade', 1, '');
+            throw new \RuntimeException('Expected upgrade redirect');
+        } catch (Redirect $e) {
+            check($e->getMessage() === 'Upgrade ready', 'Core upgrade did not finish normally');
+        }
+        check(file_get_contents(XOOPS_ROOT_PATH . '/upgrade/index.php') === 'upgrade', 'Core upgrade files were not copied');
+        $status = \XoopsModules\Tad_adm\UpgradeProgress::read($statusPath);
+        check(isset($status['message']) && strpos(str_replace('\\', '/', $status['message']), '/upgrade') !== false && strpos($status['message'], 'Copying to:') === 0, 'Actual core copy destination was not reported');
+        $coreSsh = new FakeSsh(0, "TAD_ADM_PROGRESS 1\n");
+        try {
+            OnlineUpgrade::get_upgrade_file($source . '/uploads/tad_modules/file/core.zip', 'upgrade', 1, $coreSsh);
+            throw new \RuntimeException('Expected SSH upgrade redirect');
+        } catch (Redirect $e) {
+            check($e->getMessage() === 'Upgrade ready', 'SSH core upgrade did not finish normally');
+        }
+        $status = \XoopsModules\Tad_adm\UpgradeProgress::read($statusPath);
+        check(isset($status['message']) && strpos($status['message'], 'Copying to:') === 0, 'SSH copy marker did not report destination');
         echo "Package copy, preflight, SSH failure, legacy/manifest packages and theme deletion tests passed.\n";
     } finally {
         \XoopsModules\Tadtools\Utility::delete_directory($base);

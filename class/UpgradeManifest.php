@@ -154,10 +154,13 @@ class UpgradeManifest
      *
      * @return array errors（失敗路徑）、warnings（說明字串陣列，每項為 [步驟, 操作, 數量, 範例]）
      */
-    public static function run_php(array $steps): array
+    public static function run_php(array $steps, ?callable $progress = null): array
     {
         $report = ['errors' => [], 'warnings' => []];
         foreach ($steps as $step) {
+            if ($progress) {
+                $progress($step);
+            }
             $fails = [];
             switch ($step['op']) {
                 case 'copy':
@@ -203,12 +206,15 @@ class UpgradeManifest
     }
 
     /** 轉成 /bin/sh 腳本（供 SSH 執行），失敗行會輸出 TAD_ADM_FAIL / TAD_ADM_WARN */
-    public static function to_shell(array $steps): string
+    public static function to_shell(array $steps, bool $progress = false): string
     {
         $q  = static fn(string $s): string => "'" . str_replace("'", "'\\''", $s) . "'";
         $sh = "#!/bin/sh\nfail=0\n";
         foreach ($steps as $step) {
             $n = $step['n'];
+            if ($progress) {
+                $sh .= "printf 'TAD_ADM_PROGRESS %d\\n' " . (int) $n . "\n";
+            }
             switch ($step['op']) {
                 case 'copy':
                     if ('dir' === $step['kind']) {
