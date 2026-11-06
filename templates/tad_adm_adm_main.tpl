@@ -1,6 +1,19 @@
 <div class="container-fluid">
     <{if $now_op|default:''=="login_form"}>
         <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
+    <{elseif $now_op|default:''=="theme_delete_complete"}>
+        <div class="alert alert-success" role="status">
+            <{$deleted_theme|escape:'html'}> <{$smarty.const._MA_TADADM_THEME_DELETE_OK}>
+        </div>
+        <a href="main.php" class="btn btn-primary" id="theme-delete-close"><{$smarty.const._MA_TADADM_THEME_DELETE_CLOSE}></a>
+        <script>
+            document.getElementById('theme-delete-close').addEventListener('click', function (event) {
+                if (window.parent !== window && window.parent.jQuery && window.parent.jQuery.fancybox) {
+                    event.preventDefault();
+                    window.parent.jQuery.fancybox.close();
+                }
+            });
+        </script>
     <{else}>
         <div id="modTab">
             <ul class="resp-tabs-list vert">

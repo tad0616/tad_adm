@@ -35,7 +35,12 @@
                 <{if $theme_set==$mod.dirname}>
                     <a href="#" class="btn btn-xs btn-primary"><{$smarty.const._MA_TADADM_DEFAULT_THEME}></a>
                 <{elseif !$mod.is_link and $mod.function!="install" and !$inSchoolWeb}>
-                    <a href="javascript:delete_theme('<{$mod.dirname}>')" title="<{$smarty.const._MA_TADADM_REMOVE}> <{$mod.dirname}>" class="btn btn-xs btn-danger">
+                    <a href="main.php?op=delete_theme&amp;dirname=<{$mod.dirname|escape:'url'}>&amp;tad_adm_tpl=clean"
+                       title="<{$smarty.const._MA_TADADM_REMOVE|escape:'html'}> <{$mod.dirname|escape:'html'}>"
+                       data-confirm-title="<{$smarty.const._TAD_DEL_CONFIRM_TITLE|escape:'html'}>"
+                       data-confirm-text="<{$smarty.const._TAD_DEL_CONFIRM_TEXT|escape:'html'}>"
+                       data-confirm-button="<{$smarty.const._TAD_DEL_CONFIRM_BTN|escape:'html'}>"
+                       class="btn btn-xs btn-danger delete-theme">
                         <i class="fa fa-times"></i> <{$smarty.const._MA_TADADM_REMOVE}>
                     </a>
                 <{/if}>

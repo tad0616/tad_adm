@@ -5,6 +5,7 @@ namespace Xmf {
     {
         public static $forceSsh = 0;
         public static $progressToken = '';
+        public static $templateMode = '';
 
         public static function getInt($name)
         {
@@ -13,7 +14,10 @@ namespace Xmf {
 
         public static function getString($name)
         {
-            return 'upgrade_progress_token' === $name ? self::$progressToken : '';
+            if ('upgrade_progress_token' === $name) {
+                return self::$progressToken;
+            }
+            return 'tad_adm_tpl' === $name ? self::$templateMode : '';
         }
     }
 }
@@ -442,6 +446,25 @@ namespace {
         }
         check(!file_exists(XOOPS_ROOT_PATH . '/themes/demo'), 'PHP theme deletion failed');
         check(!OnlineUpgrade::delete_theme('..'), 'Invalid theme name was accepted');
+
+        \Xmf\Request::$templateMode = 'clean';
+        mkdir(XOOPS_ROOT_PATH . '/themes/demo/sub', 0755, true);
+        file_put_contents(XOOPS_ROOT_PATH . '/themes/demo/sub/file.txt', 'theme');
+        $unwritablePaths = [str_replace('\\', '/', XOOPS_ROOT_PATH . '/themes/demo/sub')];
+        $xoopsTpl = new FakeTemplate();
+        OnlineUpgrade::to_do('', 'demo', 'delete_theme');
+        check($xoopsTpl->values['now_op'] === 'login_form', 'Clean theme deletion did not show SSH login');
+        $unwritablePaths = [];
+        $xoopsTpl = new FakeTemplate();
+        OnlineUpgrade::ssh_login('127.0.0.1', 'user', 'password', '', 'demo', 'delete_theme');
+        check($xoopsTpl->values['now_op'] === 'theme_delete_complete' && $xoopsTpl->values['deleted_theme'] === 'demo', 'SSH deletion did not show clean completion');
+        check(!file_exists(XOOPS_ROOT_PATH . '/themes/demo'), 'Clean SSH deletion did not remove the theme');
+        mkdir(XOOPS_ROOT_PATH . '/themes/demo');
+        $xoopsTpl = new FakeTemplate();
+        OnlineUpgrade::to_do('', 'demo', 'delete_theme');
+        check($xoopsTpl->values['now_op'] === 'theme_delete_complete' && $xoopsTpl->values['deleted_theme'] === 'demo', 'PHP deletion did not show clean completion');
+        check(!file_exists(XOOPS_ROOT_PATH . '/themes/demo'), 'Clean PHP deletion did not remove the theme');
+        \Xmf\Request::$templateMode = '';
 
         $coreArchive = $base . '/source/uploads/tad_modules/file/core.zip';
         $coreZip = new \PharData($coreArchive);

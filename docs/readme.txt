@@ -15,6 +15,7 @@ checked when their upgrade instructions are available.
 For theme removal, PHP checks the parent directories needed to delete the
 theme tree. If access is insufficient, the SSH login form shows the affected
 paths; the theme is removed from configuration only after deletion succeeds.
+Removal opens in FancyBox after confirmation; close it to refresh the list.
 The default theme and themes on shared school sites cannot be deleted here.
 
 Downloading and extracting packages always require the PHP process to be able

@@ -5,7 +5,6 @@ namespace XoopsModules\Tad_adm;
 use XoopsModules\Tadtools\EasyResponsiveTabs;
 use XoopsModules\Tadtools\FancyBox;
 use XoopsModules\Tadtools\FooTable;
-use XoopsModules\Tadtools\SweetAlert;
 use XoopsModules\Tadtools\Utility;
 use XoopsModules\Tad_adm\DunZip2;
 
@@ -32,7 +31,7 @@ class OnlineUpgrade
     //列出所有模組
     public static function list_modules($mode = 'tpl')
     {
-        global $xoopsDB, $xoopsTpl, $xoopsConfig, $inSchoolWeb;
+        global $xoopsDB, $xoopsTpl, $xoopsConfig, $inSchoolWeb, $xoTheme;
 
         //取得升級訊息
         $all_mods = self::get_tad_json_info('all2.json');
@@ -120,8 +119,10 @@ class OnlineUpgrade
         $FancyBox = new FancyBox('.modulesadmin', '640', '480');
         $FancyBox->render(true);
 
-        $SweetAlert = new SweetAlert();
-        $SweetAlert->render('delete_theme', 'main.php?op=delete_theme&dirname=', 'theme');
+        xoops_loadLanguage('main', 'tadtools');
+        $xoTheme->addStylesheet('modules/tadtools/sweet-alert/sweet-alert.css');
+        $xoTheme->addScript('modules/tadtools/sweet-alert/sweet-alert.js');
+        $xoTheme->addScript('modules/tad_adm/js/delete_theme.js');
 
         $FooTable = new FooTable();
         $FooTable->render();
@@ -682,6 +683,12 @@ class OnlineUpgrade
             }
             if ($deleted) {
                 self::update_allowed($dirname, 0);
+                if ('clean' === \Xmf\Request::getString('tad_adm_tpl')) {
+                    global $xoopsTpl;
+                    $xoopsTpl->assign('now_op', 'theme_delete_complete');
+                    $xoopsTpl->assign('deleted_theme', $dirname);
+                    return;
+                }
                 redirect_header('main.php', 3, XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}" . _MA_TADADM_THEME_DELETE_OK);
             } else {
                 $xoopsConfig['redirect_message_ajax'] = 0;
