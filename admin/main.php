@@ -34,7 +34,7 @@ $theme      = Request::getString('theme');
 switch ($op) {
 
     case 'ssh_login':
-        OnlineUpgrade::ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link, $dirname, $act, $update_sn, $xoops_sn);
+        OnlineUpgrade::ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link, $dirname, $act, $update_sn, $xoops_sn, $module_sn);
         break;
     case 'install_module':
         OnlineUpgrade::to_do($file_link, $dirname, 'install_module', $update_sn);
@@ -58,13 +58,17 @@ switch ($op) {
         OnlineUpgrade::to_do($file_link, $dirname, 'upgrade_adm_tpl', $update_sn);
         break;
     case 'install_other':
-        OnlineUpgrade::do_other($file_link, $update_sn, $module_sn);
-        header('location: main.php');
-        exit;
+        if (OnlineUpgrade::do_other($file_link, $update_sn, $module_sn, 'install_other')) {
+            header('location: main.php');
+            exit;
+        }
+        break;
     case 'upgrade_other':
-        OnlineUpgrade::do_other($file_link, $update_sn, $module_sn);
-        header('location: main.php');
-        exit;
+        if (OnlineUpgrade::do_other($file_link, $update_sn, $module_sn, 'upgrade_other')) {
+            header('location: main.php');
+            exit;
+        }
+        break;
     case 'install_block':
         OnlineUpgrade::do_block('install', $update_sn);
         header('location: main.php');

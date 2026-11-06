@@ -194,6 +194,7 @@ class UpgradeManifest
                     $report['warnings'][] = [$step['n'], $step['op'], count($fails), $fails[0]];
                 } else {
                     $report['errors'] = array_merge($report['errors'], $fails);
+                    break;
                 }
             }
         }
@@ -245,7 +246,7 @@ class UpgradeManifest
             }
             $soft = self::is_soft($step);
             $tag  = $soft ? 'TAD_ADM_WARN' : 'TAD_ADM_FAIL';
-            $mark = $soft ? '' : ' fail=1;';
+            $mark = $soft ? '' : ' exit 1;';
             $sh  .= "$cmd || { echo \"$tag step $n {$step['op']}\";$mark }\n";
         }
 
@@ -343,7 +344,12 @@ class UpgradeManifest
             $fails[] = $dst;
             return;
         }
-        foreach (scandir($src) as $item) {
+        $entries = @scandir($src);
+        if (false === $entries) {
+            $fails[] = $src;
+            return;
+        }
+        foreach ($entries as $item) {
             if ('.' === $item || '..' === $item) {
                 continue;
             }
@@ -408,18 +414,23 @@ class UpgradeManifest
                 self::scan_target($dst, $result);
                 return;
             }
-            if (!is_writable($dst)) {
+            if (!is_dir($dst) || !is_writable($dst)) {
                 self::add($dst, $result);
                 return;
             }
-            foreach (scandir($src) as $item) {
+            $entries = @scandir($src);
+            if (false === $entries) {
+                self::add($src, $result);
+                return;
+            }
+            foreach ($entries as $item) {
                 if ('.' !== $item && '..' !== $item) {
                     self::scan_copy("$src/$item", "$dst/$item", $result);
                 }
             }
         } elseif (is_file($src)) {
             if (file_exists($dst)) {
-                if (!is_writable($dst) && md5_file($src) !== md5_file($dst)) {
+                if (is_dir($dst) || !is_writable($dst)) {
                     self::add($dst, $result);
                 }
             } else {
@@ -435,7 +446,7 @@ class UpgradeManifest
         while (!file_exists($p) && dirname($p) !== $p) {
             $p = dirname($p);
         }
-        if (!is_writable($p)) {
+        if (!is_dir($p) || !is_writable($p)) {
             self::add($p, $result);
         }
     }

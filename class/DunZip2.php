@@ -269,7 +269,9 @@ class DunZip2
                         $str = $str ? "$str/$folder" : $folder;
                         if (!is_dir("$targetDir/$str")) {
                             $this->debugMsg(1, "Creating folder: $targetDir/$str");
-                            mkdir("$targetDir/$str");
+                            if (!mkdir("$targetDir/$str") && !is_dir("$targetDir/$str")) {
+                                return false;
+                            }
                             if ($applyChmod) {
                                 chmod("$targetDir/$str", $applyChmod);
                             }
@@ -280,19 +282,25 @@ class DunZip2
                     continue;
                 }
 
-                $maintainStructure ?
+                $result = $maintainStructure ?
                 $this->unzip($fileName, "$targetDir/$fileName", $applyChmod) :
                 $this->unzip($fileName, "$targetDir/" . basename($fileName), $applyChmod);
+                if (false === $result || $result !== (int) $trash['uncompressed_size']) {
+                    return false;
+                }
             }
+            return true;
         }
+        return false;
     }
 
     public function close()
     {
         // Free the file resource
-        if ($this->fh) {
+        if (is_resource($this->fh)) {
             fclose($this->fh);
         }
+        $this->fh = null;
     }
 
     public function __destroy()

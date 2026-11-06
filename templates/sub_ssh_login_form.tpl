@@ -25,6 +25,7 @@
             <input type="hidden" name="dirname" value="<{$dirname|default:''}>">
             <input type="hidden" name="act" value="<{$act|default:''}>">
             <input type="hidden" name="update_sn" value="<{$update_sn|default:''}>">
+            <input type="hidden" name="module_sn" value="<{$module_sn|default:''}>">
             <input type="hidden" name="xoops_sn" value="<{$xoops_sn|default:''}>">
             <input type="hidden" name="tad_adm_tpl" value="clean">
             <input type="hidden" name="op" value="ssh_login">
@@ -32,3 +33,6 @@
         </div>
     </form>
 </div>
+<{if $ssh_preflight_message|default:''}>
+    <div class="alert alert-warning"><{$ssh_preflight_message}></div>
+<{/if}>

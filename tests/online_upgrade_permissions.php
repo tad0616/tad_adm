@@ -1,0 +1,293 @@
+<?php
+
+namespace Xmf {
+    class Request
+    {
+        public static $forceSsh = 0;
+
+        public static function getInt($name)
+        {
+            return 'force_ssh' === $name ? self::$forceSsh : 0;
+        }
+    }
+}
+
+namespace XoopsModules\Tadtools {
+    class Utility
+    {
+        public static function delete_directory($path)
+        {
+            foreach (scandir($path) as $entry) {
+                if ('.' === $entry || '..' === $entry) {
+                    continue;
+                }
+                $child = $path . '/' . $entry;
+                if (is_dir($child)) {
+                    self::delete_directory($child);
+                } else {
+                    unlink($child);
+                }
+            }
+            return rmdir($path);
+        }
+    }
+}
+
+namespace XoopsModules\Tad_adm {
+    function is_writable($path)
+    {
+        global $unwritablePaths;
+        if (in_array(str_replace('\\', '/', rtrim($path, '/\\')), $unwritablePaths ?? [], true)) {
+            return false;
+        }
+        return \is_writable($path);
+    }
+}
+
+namespace {
+    use XoopsModules\Tad_adm\OnlineUpgrade;
+    use XoopsModules\Tad_adm\UpgradeManifest;
+
+    require_once dirname(__DIR__) . '/class/DunZip2.php';
+    require_once dirname(__DIR__) . '/class/UpgradeManifest.php';
+    require_once dirname(__DIR__) . '/class/OnlineUpgrade.php';
+
+    class Redirect extends \RuntimeException {}
+
+    function redirect_header($url, $time, $message)
+    {
+        throw new Redirect($message);
+    }
+
+    function check($condition, $message)
+    {
+        if (!$condition) {
+            throw new \RuntimeException($message);
+        }
+    }
+
+    class FakeSsh
+    {
+        public $status;
+        public $output;
+        public $command;
+
+        public function __construct($status, $output)
+        {
+            $this->status = $status;
+            $this->output = $output;
+        }
+
+        public function exec($command)
+        {
+            $this->command = $command;
+            return $this->output;
+        }
+
+        public function getExitStatus()
+        {
+            return $this->status;
+        }
+    }
+
+    class FakeTemplate
+    {
+        public $values = [];
+
+        public function assign($key, $value)
+        {
+            $this->values[$key] = $value;
+        }
+    }
+
+    $base = sys_get_temp_dir() . '/tad_adm_test_' . bin2hex(random_bytes(8));
+    mkdir($base . '/site/uploads', 0755, true);
+    mkdir($base . '/site/modules/demo', 0755, true);
+    mkdir($base . '/source/uploads/tad_modules/file', 0755, true);
+    define('XOOPS_ROOT_PATH', $base . '/site');
+    define('XOOPS_VAR_PATH', XOOPS_ROOT_PATH);
+    define('XOOPS_PATH', XOOPS_ROOT_PATH);
+    define('XOOPS_VERSION', 'XOOPS 2.7.4');
+    define('XOOPS_URL', 'http://example.test');
+    define('_MA_TADADM_INVALID_PACKAGE_DIR', 'invalid %s');
+    define('_MA_TADADM_STAGING_WRITE_FAIL', 'staging %1$s %2$s');
+    define('_MA_TADADM_DL_FAIL', 'download %s');
+    define('_MA_TADADM_WRITE_FAIL', 'write %1$s %2$s');
+    define('_MA_TADADM_EXTRACT_FAIL', 'extract %s');
+    define('_MA_TADADM_COPY_FAIL', 'copy %1$d %2$s');
+    define('_MA_TADADM_SSH_STEPS_FAIL', 'ssh %s');
+    define('_MA_TADADM_MV_FAIL', 'move %s');
+    define('_MA_TADADM_PREFLIGHT_FAIL', 'preflight %1$s %2$d %3$s %4$s');
+    define('_MA_TADADM_PREFLIGHT_SHOWN', 'shown %d');
+    define('_MA_TADADM_SCRIPT_NOT_FOUND', 'missing script %s');
+    define('_MA_TADADM_MANIFEST_INVALID', 'invalid manifest %s');
+    define('_MA_TADADM_UPGRADE_WARN', 'warning %s');
+    define('_MA_TADADM_WARN_STEP', 'step %1$d %2$s %3$d %4$s');
+    define('_MA_TADADM_WARN_BLOCKED', 'blocked %d');
+    define('_MA_TADADM_WARN_CHMOD', 'chmod %d');
+    define('_MA_TADADM_WARN_DELETE', 'delete %d');
+    $_SERVER['PHP_SELF'] = 'main.php';
+    $_SESSION = [];
+    $inSchoolWeb = false;
+    $unwritablePaths = [];
+    $xoopsModule = new class {
+        public function dirname() { return 'tad_adm'; }
+    };
+    $source = 'file:///' . ltrim(str_replace('\\', '/', $base . '/source'), '/');
+    $xoopsModuleConfig = ['source' => $source];
+    $xoopsConfig = ['sitename' => 'test', 'theme_set' => 'test', 'language' => 'english'];
+    $xoopsTpl = new FakeTemplate();
+    $archive = $base . '/source/uploads/tad_modules/file/demo.zip';
+
+    try {
+        $zip = new \PharData($archive);
+        $zip->addFromString('demo/nested/file.txt', 'new content');
+        $zip->addFromString('demo/empty.txt', '');
+        unset($zip);
+        $url = $source . '/uploads/tad_modules/file/demo.zip';
+        file_put_contents(XOOPS_ROOT_PATH . '/modules/demo/old.txt', 'keep');
+        $unwritablePaths = [str_replace('\\', '/', XOOPS_ROOT_PATH . '/modules/demo')];
+        OnlineUpgrade::to_do($url, 'demo', 'upgrade_module', 1);
+        check($xoopsTpl->values['now_op'] === 'login_form', 'Unwritable module target did not request SSH login');
+        check(strpos($xoopsTpl->values['ssh_preflight_message'], '/modules/demo') !== false, 'Target permission problem was not shown');
+        check($xoopsTpl->values['dirname'] === 'demo' && $xoopsTpl->values['act'] === 'upgrade_module', 'Module SSH context was lost');
+        check(!is_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm'), 'Module upgrade downloaded before target permission check');
+        $unwritablePaths = [];
+        $xoopsTpl = new FakeTemplate();
+        check(OnlineUpgrade::get_new_file($url, 'demo', 'modules', 1, '', 'upgrade_module'), 'PHP copy failed');
+        check(file_get_contents(XOOPS_ROOT_PATH . '/modules/demo/nested/file.txt') === 'new content', 'PHP copy did not update nested file');
+        check(file_exists(XOOPS_ROOT_PATH . '/modules/demo/empty.txt'), 'Empty file was not extracted');
+        check(file_get_contents(XOOPS_ROOT_PATH . '/modules/demo/old.txt') === 'keep', 'Existing unrelated file was removed');
+
+        $unwritablePaths = [str_replace('\\', '/', XOOPS_ROOT_PATH . '/modules/demo/nested/file.txt')];
+        $xoopsTpl = new FakeTemplate();
+        OnlineUpgrade::to_do($url, 'demo', 'upgrade_module', 1);
+        check($xoopsTpl->values['now_op'] === 'login_form', 'Unwritable nested file did not request SSH login');
+        check(strpos($xoopsTpl->values['ssh_preflight_message'], 'nested/file.txt') !== false, 'Nested permission problem was not shown');
+        check($xoopsTpl->values['file_link'] === $url && $xoopsTpl->values['update_sn'] === 1, 'Nested SSH retry context was lost');
+        $unwritablePaths = [];
+
+        unlink(XOOPS_ROOT_PATH . '/modules/demo/nested/file.txt');
+        rmdir(XOOPS_ROOT_PATH . '/modules/demo/nested');
+        file_put_contents(XOOPS_ROOT_PATH . '/modules/demo/nested', 'conflict');
+        $xoopsTpl = new FakeTemplate();
+        check(!OnlineUpgrade::get_new_file($url, 'demo', 'modules', 1, '', 'upgrade_module'), 'Expected preflight failure');
+        check($xoopsTpl->values['now_op'] === 'login_form', 'Preflight did not request SSH login');
+        check(strpos($xoopsTpl->values['ssh_preflight_message'], 'preflight') !== false, 'Preflight details are missing');
+        check($xoopsTpl->values['file_link'] === $url && $xoopsTpl->values['act'] === 'upgrade_module', 'Preflight SSH context was lost');
+        check(file_get_contents(XOOPS_ROOT_PATH . '/modules/demo/nested') === 'conflict', 'Preflight changed destination');
+
+        $ssh = new FakeSsh(1, 'permission denied');
+        try {
+            OnlineUpgrade::get_new_file($url, 'demo', 'modules', 1, $ssh, 'upgrade_module');
+            throw new \RuntimeException('Expected SSH failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'permission denied') !== false, 'SSH error was not reported');
+        }
+        check(strpos($ssh->command, 'chown') === false, 'Unexpected ownership change');
+        check(file_exists(XOOPS_ROOT_PATH . '/uploads/demo.zip'), 'Failed SSH copy removed package');
+
+        $ssh = new FakeSsh(false, '');
+        try {
+            OnlineUpgrade::get_new_file($url, 'demo', 'modules', 1, $ssh, 'upgrade_module');
+            throw new \RuntimeException('Expected unavailable SSH exit status failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'unavailable') !== false, 'Missing SSH exit status was accepted');
+        }
+
+        \Xmf\Request::$forceSsh = 1;
+        OnlineUpgrade::do_other($url, 12, 34, 'upgrade_other');
+        check($xoopsTpl->values['now_op'] === 'login_form', 'Other package did not request SSH login');
+        check($xoopsTpl->values['module_sn'] === 34 && $xoopsTpl->values['act'] === 'upgrade_other', 'Other package SSH context was lost');
+
+        \Xmf\Request::$forceSsh = 0;
+        $otherArchive = $base . '/source/uploads/tad_modules/file/other.zip';
+        $other = new \PharData($otherArchive);
+        $other->addFromString('files/other.txt', 'other content');
+        $other->addFromString('go.txt', 'full_copy("XOOPS_ROOT_PATH/uploads/tad_adm/MODULE_SN/files", "XOOPS_ROOT_PATH/modules/demo")' . "\n");
+        $other->addFromString('ssh.txt', 'cp -R XOOPS_ROOT_PATH/uploads/tad_adm/MODULE_SN/files/. XOOPS_ROOT_PATH/modules/demo/' . "\n");
+        unset($other);
+        $otherUrl = $source . '/uploads/tad_modules/file/other.zip';
+        check(OnlineUpgrade::do_other($otherUrl, 12, 34, 'upgrade_other'), 'Other package PHP operation failed');
+        check(file_get_contents(XOOPS_ROOT_PATH . '/modules/demo/other.txt') === 'other content', 'Other package did not copy files');
+
+        $otherSsh = new FakeSsh(1, 'other permission denied');
+        try {
+            OnlineUpgrade::do_other($otherUrl, 12, 34, 'upgrade_other', $otherSsh);
+            throw new \RuntimeException('Expected other package SSH failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'other permission denied') !== false, 'Other package SSH error was not reported');
+        }
+
+        $manifestArchive = $base . '/source/uploads/tad_modules/file/manifest.zip';
+        $manifestZip = new \PharData($manifestArchive);
+        $manifestZip->addFromString('files/manifest.txt', 'manifest content');
+        $manifestZip->addFromString('upgrade.json', json_encode(['version' => 1, 'steps' => [
+            ['op' => 'copy', 'from' => '{WORK}/files', 'to' => '{ROOT}/modules/demo'],
+        ]]));
+        unset($manifestZip);
+        $manifestUrl = $source . '/uploads/tad_modules/file/manifest.zip';
+        check(OnlineUpgrade::do_other($manifestUrl, 12, 35, 'install_other'), 'Manifest package PHP operation failed');
+        check(file_get_contents(XOOPS_ROOT_PATH . '/modules/demo/manifest.txt') === 'manifest content', 'Manifest package did not copy files');
+        $otherSsh = new FakeSsh(1, 'manifest permission denied');
+        try {
+            OnlineUpgrade::do_other($manifestUrl, 12, 35, 'install_other', $otherSsh);
+            throw new \RuntimeException('Expected manifest SSH failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'manifest permission denied') !== false, 'Manifest SSH error was not reported');
+        }
+
+        $conflictArchive = $base . '/source/uploads/tad_modules/file/conflict.zip';
+        $conflictZip = new \PharData($conflictArchive);
+        $conflictZip->addFromString('files/item.txt', 'item');
+        $conflictZip->addFromString('upgrade.json', json_encode(['version' => 1, 'steps' => [
+            ['op' => 'copy', 'from' => '{WORK}/files', 'to' => '{ROOT}/modules/demo/nested'],
+        ]]));
+        unset($conflictZip);
+        try {
+            OnlineUpgrade::do_other($source . '/uploads/tad_modules/file/conflict.zip', 12, 36, 'upgrade_other');
+            throw new \RuntimeException('Expected other package preflight failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'force_ssh=1') !== false && strpos($e->getMessage(), 'module_sn=36') !== false, 'Other package retry context was lost');
+        }
+
+        file_put_contents($base . '/source/uploads/tad_modules/file/bad.zip', 'invalid zip');
+        try {
+            OnlineUpgrade::get_new_file($source . '/uploads/tad_modules/file/bad.zip', 'demo', 'modules', 1, '', 'upgrade_module');
+            throw new \RuntimeException('Expected extraction failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'extract') !== false, 'Invalid archive was not rejected');
+        }
+
+        // The failed extraction removes the old staging directory; restore it for preflight testing.
+        mkdir(XOOPS_ROOT_PATH . '/uploads/tad_adm/demo/nested', 0755, true);
+        file_put_contents(XOOPS_ROOT_PATH . '/uploads/tad_adm/demo/nested/file.txt', 'source');
+        $step = ['n' => 1, 'op' => 'copy', 'optional' => false, 'kind' => 'dir', 'from' => XOOPS_ROOT_PATH . '/uploads/tad_adm/demo', 'to' => XOOPS_ROOT_PATH . '/modules/demo'];
+        check(UpgradeManifest::preflight([$step], XOOPS_ROOT_PATH)['count'] > 0, 'Directory/file conflict not detected');
+        $marker = XOOPS_ROOT_PATH . '/marker.txt';
+        file_put_contents($marker, 'preserve');
+        $steps = [
+            ['n' => 1, 'op' => 'copy', 'optional' => false, 'kind' => 'file', 'from' => XOOPS_ROOT_PATH . '/missing', 'to' => XOOPS_ROOT_PATH . '/copy'],
+            ['n' => 2, 'op' => 'delete', 'optional' => false, 'path' => $marker],
+        ];
+        check(count(UpgradeManifest::run_php($steps)['errors']) === 1, 'Copy failure was not reported');
+        check(is_file($marker), 'Cleanup ran after a required copy failed');
+        check(strpos(UpgradeManifest::to_shell($steps), 'exit 1;') !== false, 'SSH script does not stop after a required copy fails');
+        mkdir(XOOPS_ROOT_PATH . '/themes/demo/sub', 0755, true);
+        file_put_contents(XOOPS_ROOT_PATH . '/themes/demo/sub/file.txt', 'theme');
+        $themeSsh = new FakeSsh(1, 'theme permission denied');
+        try {
+            OnlineUpgrade::delete_theme('demo', $themeSsh);
+            throw new \RuntimeException('Expected theme SSH deletion failure');
+        } catch (Redirect $e) {
+            check(strpos($e->getMessage(), 'theme permission denied') !== false, 'Theme SSH failure was not reported');
+        }
+        check(is_file(XOOPS_ROOT_PATH . '/themes/demo/sub/file.txt'), 'Failed SSH deletion changed the theme');
+        check(OnlineUpgrade::delete_theme('demo'), 'PHP theme deletion failed');
+        check(!file_exists(XOOPS_ROOT_PATH . '/themes/demo'), 'Theme was not removed');
+        check(!OnlineUpgrade::delete_theme('..'), 'Invalid theme name was accepted');
+        echo "Package copy, preflight, SSH failure, legacy/manifest packages and theme deletion tests passed.\n";
+    } finally {
+        \XoopsModules\Tadtools\Utility::delete_directory($base);
+    }
+}
