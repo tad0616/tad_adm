@@ -1013,10 +1013,24 @@ class OnlineUpgrade
                 }
                 self::upgrade_redirect($fail_url, 10, $msg);
             }
-            self::upgrade_redirect(XOOPS_URL . '/upgrade', '' === $go_warn ? 3 : 15, '' === $go_warn ? _MA_TADADM_UPGRADE_FROM_URL : _MA_TADADM_UPGRADE_FROM_URL . '<br>' . sprintf(_MA_TADADM_UPGRADE_WARN, $go_warn), true);
+            self::show_core_upgrade_handoff($go_warn);
+            return false;
         } else {
             return true;
         }
+    }
+
+    private static function show_core_upgrade_handoff(string $warning): void
+    {
+        global $xoopsTpl;
+
+        $sessionRestored = UpgradeProgress::resumeSession();
+        $xoopsTpl->assign('now_op', 'upgrade_handoff');
+        $xoopsTpl->assign('upgrade_handoff_url', XOOPS_URL . '/upgrade/');
+        $xoopsTpl->assign('upgrade_handoff_message', _MA_TADADM_UPGRADE_FROM_URL);
+        $xoopsTpl->assign('upgrade_handoff_warning', '' === $warning ? '' : sprintf(_MA_TADADM_UPGRADE_WARN, $warning));
+        $xoopsTpl->assign('upgrade_handoff_session_error', $sessionRestored ? '' : _MA_TADADM_SESSION_RESTORE_FAIL);
+        $xoopsTpl->assign('upgrade_handoff_delay', $sessionRestored ? ('' === $warning ? 3 : 15) : 0);
     }
 
     private static function run_core_ssh_script($ssh, string $script, string $failUrl, ?callable $callback, string &$output): string

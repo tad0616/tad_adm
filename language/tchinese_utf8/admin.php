@@ -150,6 +150,7 @@ define('_MA_TADADM_PATCH_XOOPS_ITEMS', '可補丁的項目');
 define('_MA_TADADM_PATCH_OK', '補丁成功！');
 define('_MA_TADADM_UPGRADE_OK', '升級成功！');
 define('_MA_TADADM_UPGRADE_FROM_URL', '接著請手動進行升級程序');
+define('_MA_TADADM_UPGRADE_OPEN', '在瀏覽器開啟升級程序');
 define('_MA_TADADM_SCRIPT_NOT_FOUND', '找不到或無法建立升級腳本「%s」，無法完成升級！');
 define('_MA_TADADM_SSH_EXEC_FAIL', 'SSH 執行「%s」失敗，請檢查 SSH 帳號權限！');
 define('_MA_TADADM_UPGRADE_TIME_LIMIT_FAIL', '無法解除 PHP 升級執行時間限制，尚未開始複製。請調整主機設定後重試。');

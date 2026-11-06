@@ -1,6 +1,22 @@
 <div class="container-fluid">
     <{if $now_op|default:''=="login_form"}>
         <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
+    <{elseif $now_op|default:''=="upgrade_handoff"}>
+        <div class="alert alert-info"><{$upgrade_handoff_message|escape:'html'}></div>
+        <{if $upgrade_handoff_warning|default:''}>
+            <div class="alert alert-warning"><{$upgrade_handoff_warning}></div>
+        <{/if}>
+        <{if $upgrade_handoff_session_error|default:''}>
+            <div class="alert alert-danger"><{$upgrade_handoff_session_error|escape:'html'}></div>
+        <{/if}>
+        <a id="tad-adm-upgrade-handoff" class="btn btn-primary" href="<{$upgrade_handoff_url|escape:'html'}>" target="_top"><{$smarty.const._MA_TADADM_UPGRADE_OPEN}></a>
+        <{if $upgrade_handoff_delay|default:0 > 0}>
+            <script>
+                window.setTimeout(function() {
+                    document.getElementById('tad-adm-upgrade-handoff').click();
+                }, <{$upgrade_handoff_delay}> * 1000);
+            </script>
+        <{/if}>
     <{else}>
         <div id="xoopsTab">
             <ul class="resp-tabs-list vert">

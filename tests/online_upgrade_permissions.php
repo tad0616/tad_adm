@@ -438,26 +438,19 @@ namespace {
             check(session_status() === PHP_SESSION_ACTIVE, 'Session not restored before download error redirect');
         }
         $xoopsConfig['redirect_message_ajax'] = 1;
-        try {
-            OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, '');
-            throw new \RuntimeException('Expected upgrade redirect');
-        } catch (Redirect $e) {
-            check($e->getMessage() === 'Upgrade ready', 'Core upgrade did not finish normally');
-            check(session_status() === PHP_SESSION_ACTIVE, 'Session not restored before success redirect');
-            session_write_close();
-            session_start();
-            check($_SESSION['redirect_message'] === 'Upgrade ready', 'AJAX redirect message was not persisted');
-        }
+        $xoopsTpl = new FakeTemplate();
+        check(!OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, ''), 'Core upgrade did not show handoff');
+        check($xoopsTpl->values['now_op'] === 'upgrade_handoff', 'Core upgrade handoff not shown');
+        check($xoopsTpl->values['upgrade_handoff_url'] === XOOPS_URL . '/upgrade/', 'Handoff URL incorrect');
+        check($xoopsTpl->values['upgrade_handoff_message'] === 'Upgrade ready' && $xoopsTpl->values['upgrade_handoff_delay'] === 3, 'Normal handoff message or delay incorrect');
+        check(session_status() === PHP_SESSION_ACTIVE, 'Session not restored before success handoff');
         check(file_get_contents(XOOPS_ROOT_PATH . '/upgrade/index.php') === 'upgrade', 'Core upgrade files were not copied');
         $status = \XoopsModules\Tad_adm\UpgradeProgress::read($statusPath);
         check(isset($status['message']) && strpos(str_replace('\\', '/', $status['message']), '/upgrade') !== false && strpos($status['message'], 'Copying to:') === 0, 'Actual core copy destination was not reported');
         $coreSsh = new FakeSsh(0, "TAD_ADM_PROGRESS 1\n\nTAD_ADM_EXIT 0\n");
-        try {
-            OnlineUpgrade::get_upgrade_file($source . '/uploads/tad_modules/file/core.zip', 'upgrade', 1, $coreSsh);
-            throw new \RuntimeException('Expected SSH upgrade redirect');
-        } catch (Redirect $e) {
-            check($e->getMessage() === 'Upgrade ready', 'SSH core upgrade did not finish normally');
-        }
+        $xoopsTpl = new FakeTemplate();
+        check(!OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, $coreSsh), 'SSH core upgrade did not show handoff');
+        check($xoopsTpl->values['now_op'] === 'upgrade_handoff', 'SSH core upgrade handoff not shown');
         check($coreSsh->timeout === 0 && $coreSsh->keepAlive === 15, 'SSH core upgrade did not disable the short timeout and enable keepalive');
         check(strpos($coreSsh->command, 'TAD_ADM_EXIT') !== false, 'SSH script completion marker missing');
         $status = \XoopsModules\Tad_adm\UpgradeProgress::read($statusPath);
@@ -493,12 +486,9 @@ namespace {
             check(strpos($e->getMessage(), 'ssh incomplete') !== false && strpos($e->getMessage(), 'connection closed') !== false, 'SSH connection failure was not displayed');
         }
         $legacySsh = new FakeSsh(0, "\nTAD_ADM_EXIT 0\n");
-        try {
-            OnlineUpgrade::get_upgrade_file($legacyUrl, 'upgrade', 1, $legacySsh);
-            throw new \RuntimeException('Expected legacy SSH upgrade redirect');
-        } catch (Redirect $e) {
-            check($e->getMessage() === 'Upgrade ready', 'Legacy SSH core upgrade did not finish normally');
-        }
+        $xoopsTpl = new FakeTemplate();
+        check(!OnlineUpgrade::get_upgrade_file($legacyUrl, 'upgrade', 1, $legacySsh), 'Legacy SSH core upgrade did not show handoff');
+        check($xoopsTpl->values['now_op'] === 'upgrade_handoff', 'Legacy SSH core upgrade handoff not shown');
         $legacySsh = new FakeSsh(0, '');
         try {
             OnlineUpgrade::get_upgrade_file($legacyUrl, 'upgrade', 1, $legacySsh);
@@ -506,6 +496,16 @@ namespace {
         } catch (Redirect $e) {
             check(strpos($e->getMessage(), 'ssh incomplete') !== false, 'Incomplete legacy SSH upgrade was accepted');
         }
+        $warningSsh = new FakeSsh(0, "TAD_ADM_WARN step 2 chmod\n\nTAD_ADM_EXIT 0\n");
+        $xoopsTpl = new FakeTemplate();
+        check(!OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, $warningSsh), 'Warning handoff was not shown');
+        check(strpos($xoopsTpl->values['upgrade_handoff_warning'], 'TAD_ADM_WARN') !== false && $xoopsTpl->values['upgrade_handoff_delay'] === 15, 'Upgrade warning or delay was not preserved');
+        $forceSessionRestoreFailure = true;
+        $xoopsTpl = new FakeTemplate();
+        check(!OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, ''), 'Session failure handoff was not shown');
+        check($xoopsTpl->values['upgrade_handoff_session_error'] === 'session restore failed' && $xoopsTpl->values['upgrade_handoff_delay'] === 0, 'Session failure did not prevent automatic navigation');
+        $forceSessionRestoreFailure = false;
+        check(\XoopsModules\Tad_adm\UpgradeProgress::resumeSession(), 'Session could not be restored after handoff test');
         echo "Package copy, preflight, SSH failure, legacy/manifest packages and theme deletion tests passed.\n";
     } finally {
         \XoopsModules\Tadtools\Utility::delete_directory($base);

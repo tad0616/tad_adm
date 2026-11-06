@@ -151,6 +151,7 @@ define('_MA_TADADM_PATCH_XOOPS_ITEMS', 'Supplementary items');
 define('_MA_TADADM_PATCH_OK', 'We did it!');
 define('_MA_TADADM_UPGRADE_OK', 'We got promoted!');
 define('_MA_TADADM_UPGRADE_FROM_URL', 'Then please proceed with the upgrade process manually.');
+define('_MA_TADADM_UPGRADE_OPEN', 'Open the upgrade wizard in this browser window');
 define('_MA_TADADM_SCRIPT_NOT_FOUND', 'Upgrade script "%s" was not found or could not be created; upgrade aborted!');
 define('_MA_TADADM_SSH_EXEC_FAIL', 'SSH failed to execute "%s". Please check the SSH account permissions!');
 define('_MA_TADADM_UPGRADE_TIME_LIMIT_FAIL', 'Could not remove the PHP upgrade execution time limit. No files have been copied; adjust the server configuration and retry.');
