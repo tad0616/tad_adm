@@ -38,6 +38,9 @@ copy has finished. A gateway error can occur even if the SSH command continues.
 Legacy SSH scripts report that the script is running but cannot report their
 individual commands. Live status is visible only to the same administrator
 session; failure to retrieve it does not stop the upgrade.
+XOOPS upgrade and progress requests suppress on-screen XOOPS/Smarty debugging
+without changing the site's saved debug preference. PHP error logging remains
+enabled, subject to the site's configured error handlers and logging settings.
 If the core upgrade preflight finds inaccessible destinations, the SSH login
 form shows the affected paths before any destination files are changed.
 Other core upgrade errors use the regular redirect page, even when AJAX

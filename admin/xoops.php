@@ -1,9 +1,15 @@
 <?php
 use Xmf\Request;
 use XoopsModules\Tad_adm\OnlineUpgrade;
+use XoopsModules\Tad_adm\UpgradeRequest;
 
 /*-----------引入檔案區--------------*/
 $xoopsOption['template_main'] = 'tad_adm_adm_xoops.tpl';
+$xoopsOption['pagetype'] = 'admin';
+require_once dirname(__DIR__) . '/class/UpgradeRequest.php';
+UpgradeRequest::beforeBootstrap();
+require_once dirname(__DIR__, 3) . '/mainfile.php';
+UpgradeRequest::afterBootstrap();
 require_once __DIR__ . '/header.php';
 require_once dirname(__DIR__) . '/function.php';
 
