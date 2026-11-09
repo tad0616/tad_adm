@@ -41,6 +41,16 @@ namespace {
         foreach ($GLOBALS['chmodPaths'] as $path) {
             verifyExclude($path !== $base . '/site/uploads' && strpos($path, $base . '/site/uploads/') !== 0, 'Excluded tree was chmodded');
         }
+        if (DIRECTORY_SEPARATOR !== '\\') {
+            $GLOBALS['chmodPaths'] = [];
+            $report = UpgradeManifest::run_php($steps);
+            verifyExclude(!$GLOBALS['chmodPaths'] && !$report['warnings'], 'Matching modes were needlessly changed');
+            chmod($base . '/site/other/file', 0644);
+            $GLOBALS['chmodPaths'] = [];
+            $report = UpgradeManifest::run_php($steps);
+            verifyExclude($GLOBALS['chmodPaths'] === [$base . '/site/other/file'] && !$report['warnings'], 'Changed mode was not repaired');
+            verifyExclude((fileperms($base . '/site/other/file') & 07777) === 0755, 'File mode was not restored');
+        }
         foreach ([
             ['exclude' => [$base . '/outside']],
             ['exclude' => []],

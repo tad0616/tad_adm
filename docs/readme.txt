@@ -69,3 +69,7 @@ marker. If a connection or server timeout interrupts the upgrade, the site may
 be partially updated. Check whether the server-side process is still running
 before restoring or repairing from a backup or package; do not retry concurrently.
 Web server, proxy and PHP-FPM termination limits can still interrupt the request.
+Recursive permission steps may take a long time on sites with many files; a
+displayed step is not proof that it has completed. Check the web server and
+PHP-FPM logs and timeout settings when the response is lost, and do not resume
+the upgrade until all preceding steps have been confirmed complete.

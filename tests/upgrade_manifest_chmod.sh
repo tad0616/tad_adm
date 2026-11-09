@@ -54,6 +54,10 @@ generate() {
 }
 
 generate same > "$base/run.sh"
+if grep -Fq -- "-exec sh -c 'chmod" "$base/run.sh"; then
+    echo "Recursive chmod still launches a shell for each directory" >&2
+    exit 1
+fi
 : > "$TEST_FIND_LOG"
 : > "$TEST_CHMOD_LOG"
 sh "$base/run.sh" > "$base/output"

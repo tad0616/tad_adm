@@ -266,9 +266,9 @@ class UpgradeManifest
                             $prune = '\\( ' . implode(' -o ', $patterns) . ' \\) -prune -o ';
                         }
                         if ($fm === $dm) {
-                            // Fix directories before descent; find's single-item -exec failures do not set its exit status.
+                            // Fix directories before descent and report individual chmod failures.
                             $warn = $q("TAD_ADM_WARN step $n chmod");
-                            $cmd = "find $p $prune\\( -type d ! -perm $dm -exec sh -c 'chmod \"\$1\" \"\$2\" || { printf \"%s\\n\" \"\$3\"; exit 1; }' sh $dm {} $warn \\; \\) -o \\( -type f ! -perm $fm -exec chmod $fm {} + \\)";
+                            $cmd = "find $p $prune\\( -type d ! -perm $dm \\( -exec chmod $dm {} \\; -o -exec printf '%s\\n' $warn \\; \\) \\) -o \\( -type f ! -perm $fm -exec chmod $fm {} + \\)";
                         } else {
                             $cmd = "{ find $p $prune\\( -type d ! -perm $dm -exec chmod $dm {} + \\) && find $p $prune\\( -type f ! -perm $fm -exec chmod $fm {} + \\) ; }";
                         }
@@ -451,8 +451,11 @@ class UpgradeManifest
         if (is_link($p)) {
             return;
         }
+        clearstatcache(true, $p);
         $is_dir = is_dir($p);
-        if (!@chmod($p, $is_dir ? $dm : $fm)) {
+        $mode = $is_dir ? $dm : $fm;
+        $permissions = @fileperms($p);
+        if ((DIRECTORY_SEPARATOR === '\\' || false === $permissions || ($permissions & 07777) !== $mode) && !@chmod($p, $mode)) {
             $fails[] = $p;
         }
         if ($is_dir && $recursive) {
