@@ -1,6 +1,20 @@
 (function () {
     'use strict';
 
+    function updateUpgradeDialog() {
+        var frame = window.frameElement;
+        if (!frame) {
+            return;
+        }
+        var parentJQuery = window.parent.jQuery;
+        var fancybox = parentJQuery && parentJQuery.fancybox;
+        if (fancybox && fancybox.isOpen && fancybox.current &&
+            fancybox.current.type === 'iframe' && fancybox.current.content &&
+            fancybox.current.content[0] === frame) {
+            fancybox.update();
+        }
+    }
+
     window.tadAdmUpgradeProgress = {
         token: function () {
             if (!window.crypto || !window.crypto.getRandomValues) {
@@ -48,6 +62,7 @@
                 } else {
                     result.hidden = false;
                 }
+                updateUpgradeDialog();
             });
             form.addEventListener('submit', function (event) {
                 if (submitted) {
@@ -66,6 +81,7 @@
                 if (token) {
                     stopProgress = window.tadAdmUpgradeProgress.start(status, token, endpoint);
                 }
+                updateUpgradeDialog();
             });
         },
         start: function (element, token, endpoint) {
@@ -76,6 +92,22 @@
             var stateStartedAt = startedAt;
             var receivedStatus = false;
             var maxExecutionTime = null;
+            var stepsElement = document.createElement('div');
+            stepsElement.className = 'tad-adm-progress-steps';
+            stepsElement.hidden = true;
+            var heading = document.createElement('strong');
+            heading.textContent = element.getAttribute('data-progress-steps');
+            var position = document.createElement('div');
+            var bar = document.createElement('progress');
+            bar.setAttribute('aria-label', heading.textContent);
+            var list = document.createElement('ol');
+            stepsElement.appendChild(heading);
+            stepsElement.appendChild(position);
+            stepsElement.appendChild(bar);
+            stepsElement.appendChild(list);
+            element.insertAdjacentElement('beforebegin', stepsElement);
+            var lastSteps = '';
+            var lastCurrent = -1;
             var timerElement = document.createElement('div');
             timerElement.className = 'tad-adm-progress-timer small text-muted mt-2';
             timerElement.setAttribute('role', 'timer');
@@ -85,6 +117,47 @@
                 if (element.textContent !== message) {
                     element.textContent = message;
                     stateStartedAt = Date.now();
+                    updateUpgradeDialog();
+                }
+            }
+
+            function renderSteps(steps, current) {
+                if (!Array.isArray(steps) || !steps.length ||
+                    !steps.every(function (step) { return typeof step === 'string'; }) ||
+                    !Number.isInteger(current) || current < 0 || current >= steps.length) {
+                    return;
+                }
+                var serialized = JSON.stringify(steps);
+                if (serialized !== lastSteps) {
+                    list.textContent = '';
+                    steps.forEach(function (step) {
+                        var item = document.createElement('li');
+                        item.textContent = step;
+                        list.appendChild(item);
+                    });
+                    lastSteps = serialized;
+                    lastCurrent = -1;
+                }
+                if (current !== lastCurrent) {
+                    Array.prototype.forEach.call(list.children, function (item, index) {
+                        item.className = index < current ? 'completed' : (index === current ? 'current' : '');
+                        if (index === current) {
+                            item.setAttribute('aria-current', 'step');
+                        } else {
+                            item.removeAttribute('aria-current');
+                        }
+                    });
+                    var positionText = element.getAttribute('data-progress-position')
+                        .replace('%1$s', current + 1).replace('%2$s', steps.length);
+                    position.textContent = positionText;
+                    bar.max = steps.length;
+                    bar.value = current;
+                    bar.setAttribute('aria-valuetext', positionText);
+                    stepsElement.hidden = false;
+                    var currentItem = list.children[current];
+                    list.scrollTop = Math.max(0, currentItem.offsetTop - list.offsetTop - list.clientHeight / 2);
+                    lastCurrent = current;
+                    updateUpgradeDialog();
                 }
             }
 
@@ -114,9 +187,12 @@
                     if (request.status === 200) {
                         try {
                             var result = JSON.parse(request.responseText);
-                            if (typeof result.max_execution_time === 'number' && result.max_execution_time >= 0) {
+                            renderSteps(result.steps, result.current_step);
+                            if (typeof result.max_execution_time === 'number' && result.max_execution_time >= 0 &&
+                                result.max_execution_time !== maxExecutionTime) {
                                 maxExecutionTime = result.max_execution_time;
                                 renderTimer();
+                                updateUpgradeDialog();
                             }
                             if (typeof result.message === 'string') {
                                 setStatus(result.message);
@@ -146,6 +222,7 @@
                 window.clearTimeout(timer);
                 window.clearInterval(timerInterval);
                 timerElement.remove();
+                stepsElement.remove();
                 if (request) {
                     request.abort();
                 }

@@ -53,7 +53,7 @@
                 <{/if}>
             </div>
         </div>
-        <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js?v=2026110605"></script>
+        <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js?v=2026110902"></script>
         <script>
             $(function() {
                 var stopProgress;
@@ -82,6 +82,8 @@
                         .text('<{$smarty.const._MA_TADADM_XOOPS_UPGRADE_WAIT}>')
                         .attr({
                             'data-progress-error': '<{$smarty.const._MA_TADADM_PROGRESS_UNAVAILABLE}>',
+                            'data-progress-steps': '<{$smarty.const._MA_TADADM_PROGRESS_STEPS|escape:"javascript"}>',
+                            'data-progress-position': '<{$smarty.const._MA_TADADM_PROGRESS_POSITION|escape:"javascript"}>',
                             'data-progress-elapsed': '<{$smarty.const._MA_TADADM_PROGRESS_ELAPSED}>',
                             'data-progress-limit': '<{$smarty.const._MA_TADADM_PROGRESS_PHP_LIMIT}>',
                             'data-progress-unlimited': '<{$smarty.const._MA_TADADM_PROGRESS_PHP_UNLIMITED}>',
@@ -111,10 +113,19 @@
                 left: 50%;
                 top: 50%;
                 transform: translate(-50%, -50%);
+                max-height: calc(100vh - 2rem);
+                overflow-y: auto;
             }
 
-            body.tad-adm-xoops-upgrade-loading #fancybox-loading > div:not(.tad-adm-progress):not(.tad-adm-progress-timer) {
+            body.tad-adm-xoops-upgrade-loading #fancybox-loading > div:not(.tad-adm-progress):not(.tad-adm-progress-timer):not(.tad-adm-progress-steps) {
                 display: none;
+            }
+
+            body.tad-adm-xoops-upgrade-loading #fancybox-loading .tad-adm-progress-steps,
+            body.tad-adm-xoops-upgrade-loading #fancybox-loading .tad-adm-progress-steps div {
+                width: auto;
+                height: auto;
+                background: #fff;
             }
 
             body.tad-adm-xoops-upgrade-loading #fancybox-loading .tad-adm-progress {
@@ -128,7 +139,7 @@
                 box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
                 color: #333;
                 font-size: 1rem;
-                min-width: 20rem;
+                min-width: min(20rem, 80vw);
                 max-width: 80vw;
                 overflow-wrap: anywhere;
             }
@@ -141,7 +152,7 @@
                 padding: 0.5rem 1.5rem;
                 color: #555;
                 font-size: 0.875rem;
-                min-width: 20rem;
+                min-width: min(20rem, 80vw);
                 max-width: 80vw;
             }
         </style>

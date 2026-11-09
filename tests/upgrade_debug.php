@@ -67,7 +67,11 @@ $statusFile = $base . '/status';
 $sessionId = bin2hex(random_bytes(16));
 $token = bin2hex(random_bytes(16));
 $progressFile = UpgradeProgress::path($token, $sessionId);
-file_put_contents($progressFile, json_encode(['message' => 'Copying to: /target']));
+file_put_contents($progressFile, json_encode([
+    'message' => 'Copying to: /target',
+    'steps' => ['Prepare', 'Copy /target', 'Verify'],
+    'current_step' => 1,
+]));
 putenv("TEST_SESSION_ID=$sessionId");
 putenv("TEST_TOKEN=$token");
 putenv("TEST_SESSION_DIR=$base");
@@ -89,6 +93,7 @@ try {
         checkUpgradeDebug(is_object($data) && json_last_error() === JSON_ERROR_NONE, 'Progress response was not clean JSON');
         checkUpgradeDebug($expected !== 200 || (isset($data->max_execution_time) && is_int($data->max_execution_time) && $data->max_execution_time >= 0), 'PHP execution time limit was not reported');
         checkUpgradeDebug($expected !== 200 || ($data->message ?? '') === 'Copying to: /target', 'Progress message was lost');
+        checkUpgradeDebug($expected !== 200 || (($data->steps ?? []) === ['Prepare', 'Copy /target', 'Verify'] && ($data->current_step ?? null) === 1), 'Progress steps were lost');
         checkUpgradeDebug($expected !== 500 || ($data->error ?? '') === 'progress_unavailable', 'Unexpected output was not reported as an error');
     }
 } finally {

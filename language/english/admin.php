@@ -147,6 +147,15 @@ define('_MA_TADADM_PROGRESS_CHECK', 'Checking upgrade steps and file permissions
 define('_MA_TADADM_PROGRESS_COPY', 'Copying to: %s');
 define('_MA_TADADM_PROGRESS_STEP', 'Running %1$s: %2$s');
 define('_MA_TADADM_PROGRESS_SSH', 'Running the upgrade script over SSH...');
+define('_MA_TADADM_PROGRESS_PHASE_PREPARE', 'Prepare upgrade package');
+define('_MA_TADADM_PROGRESS_PHASE_DOWNLOAD', 'Download upgrade package');
+define('_MA_TADADM_PROGRESS_PHASE_STAGING', 'Prepare extraction directory');
+define('_MA_TADADM_PROGRESS_PHASE_EXTRACT', 'Extract upgrade package');
+define('_MA_TADADM_PROGRESS_PHASE_CHECK', 'Check upgrade steps and permissions');
+define('_MA_TADADM_PROGRESS_PHASE_APPLY', 'Run upgrade script');
+define('_MA_TADADM_PROGRESS_PHASE_VERIFY', 'Verify upgrade directory');
+define('_MA_TADADM_PROGRESS_STEPS', 'Upgrade steps');
+define('_MA_TADADM_PROGRESS_POSITION', 'Current step %1$s / %2$s');
 define('_MA_TADADM_PROGRESS_UNAVAILABLE', 'Live status is unavailable. The upgrade may still be running; please wait.');
 define('_MA_TADADM_PROGRESS_ELAPSED', 'Time in this status: %s seconds');
 define('_MA_TADADM_PROGRESS_PHP_LIMIT', 'PHP configured execution time limit: %s seconds');

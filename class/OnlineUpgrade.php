@@ -877,6 +877,15 @@ class OnlineUpgrade
             }
             ignore_user_abort(true);
             UpgradeProgress::start(\Xmf\Request::getString('upgrade_progress_token'));
+            UpgradeProgress::setSteps([
+                'prepare' => _MA_TADADM_PROGRESS_PHASE_PREPARE,
+                'download' => _MA_TADADM_PROGRESS_PHASE_DOWNLOAD,
+                'staging' => _MA_TADADM_PROGRESS_PHASE_STAGING,
+                'extract' => _MA_TADADM_PROGRESS_PHASE_EXTRACT,
+                'check' => _MA_TADADM_PROGRESS_PHASE_CHECK,
+                'apply' => _MA_TADADM_PROGRESS_PHASE_APPLY,
+                'verify' => _MA_TADADM_PROGRESS_PHASE_VERIFY,
+            ]);
         }
         if (!empty($ssh)) {
             $ssh->setTimeout(0);
@@ -909,9 +918,9 @@ class OnlineUpgrade
             clearstatcache();
         }
 
-        UpgradeProgress::update(_MA_TADADM_PROGRESS_PREPARE);
+        UpgradeProgress::update(_MA_TADADM_PROGRESS_PREPARE, 'prepare');
         Utility::mk_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm');
-        UpgradeProgress::update(sprintf(_MA_TADADM_PROGRESS_DOWNLOAD, basename(parse_url($file_link, PHP_URL_PATH) ?: $file_link)));
+        UpgradeProgress::update(sprintf(_MA_TADADM_PROGRESS_DOWNLOAD, basename(parse_url($file_link, PHP_URL_PATH) ?: $file_link)), 'download');
         $download_progress = 'upgrade' === $dirname ? static function (string $stage, string $path): void {
             UpgradeProgress::update('count' === $stage ? _MA_TADADM_PROGRESS_COUNT : sprintf(_MA_TADADM_PROGRESS_SAVE, basename($path)));
         } : null;
@@ -921,13 +930,13 @@ class OnlineUpgrade
             self::upgrade_redirect($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
         }
 
-        UpgradeProgress::update(_MA_TADADM_PROGRESS_STAGING);
+        UpgradeProgress::update(_MA_TADADM_PROGRESS_STAGING, 'staging');
         if (is_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname")) {
             Utility::delete_directory(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
         }
         Utility::mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
 
-        UpgradeProgress::update(sprintf(_MA_TADADM_PROGRESS_EXTRACT, basename($new_file)));
+        UpgradeProgress::update(sprintf(_MA_TADADM_PROGRESS_EXTRACT, basename($new_file)), 'extract');
         $zip = new DunZip2($new_file);
         $extracted = $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
         $zip->close();
@@ -938,7 +947,7 @@ class OnlineUpgrade
         $work_path = XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}";
         $ssh_output = '';
 
-        UpgradeProgress::update(_MA_TADADM_PROGRESS_CHECK);
+        UpgradeProgress::update(_MA_TADADM_PROGRESS_CHECK, 'check');
         if (is_file("{$work_path}/upgrade.json")) {
             // 新機制：單一流程檔，自動判斷以 PHP 直接執行或轉為 SSH 腳本
             try {
@@ -954,11 +963,19 @@ class OnlineUpgrade
                 self::upgrade_redirect($fail_url, 10, sprintf(_MA_TADADM_MANIFEST_INVALID, htmlspecialchars($e->getMessage(), ENT_QUOTES)));
             }
 
+            if ('upgrade' === $dirname) {
+                $stepLabels = [];
+                foreach ($steps as $step) {
+                    $stepLabels[$step['n']] = self::manifest_progress_message($step);
+                }
+                UpgradeProgress::setManifestSteps($stepLabels);
+            }
+
             if (!empty($ssh)) {
                 if (false === file_put_contents("{$work_path}/upgrade.sh", UpgradeManifest::to_shell($steps, 'upgrade' === $dirname))) {
                     self::upgrade_redirect($fail_url, 5, sprintf(_MA_TADADM_SCRIPT_NOT_FOUND, "{$work_path}/upgrade.sh"));
                 }
-                UpgradeProgress::update(_MA_TADADM_PROGRESS_SSH);
+                UpgradeProgress::update(_MA_TADADM_PROGRESS_SSH, 'apply');
                 if ('upgrade' === $dirname) {
                     $output = '';
                     $buffer = '';
@@ -995,6 +1012,7 @@ class OnlineUpgrade
                     self::xoops_ssh_form($orig_link, $xoops_sn, $dirname, self::preflight_message($preflight));
                     return false;
                 }
+                UpgradeProgress::update(_MA_TADADM_PROGRESS_PHASE_APPLY, 'apply');
                 $report = UpgradeManifest::run_php($steps, [self::class, 'manifest_progress']);
                 if (!empty($report['errors'])) {
                     self::upgrade_redirect($fail_url, 30, sprintf(_MA_TADADM_COPY_FAIL, count($report['errors']), self::format_path_list($report['errors'], 10)));
@@ -1027,7 +1045,7 @@ class OnlineUpgrade
                 self::upgrade_redirect($fail_url, 5, sprintf(_MA_TADADM_SCRIPT_NOT_FOUND, "{$work_path}/upgrade.sh"));
             }
             self::chmod_R("{$work_path}/upgrade.sh", 0777, 0777);
-            UpgradeProgress::update(_MA_TADADM_PROGRESS_SSH);
+            UpgradeProgress::update(_MA_TADADM_PROGRESS_SSH, 'apply');
             $output = '';
             $ssh_output = self::run_core_ssh_script($ssh, "{$work_path}/upgrade.sh", $fail_url, null, $output);
 
@@ -1042,6 +1060,7 @@ class OnlineUpgrade
                 self::xoops_ssh_form($orig_link, $xoops_sn, $dirname, self::preflight_message($preflight));
                 return false;
             }
+            UpgradeProgress::update(_MA_TADADM_PROGRESS_PHASE_APPLY, 'apply');
             $report = self::execute_go_instructions("{$work_path}/go.txt", $new_file, 0, static function (string $operation, string $path): void {
                 UpgradeProgress::update('copy' === $operation ? sprintf(_MA_TADADM_PROGRESS_COPY, $path) : sprintf(_MA_TADADM_PROGRESS_STEP, $operation, $path));
             });
@@ -1052,6 +1071,7 @@ class OnlineUpgrade
         }
 
         if ('upgrade' === $dirname) {
+            UpgradeProgress::update(_MA_TADADM_PROGRESS_PHASE_VERIFY, 'verify');
             // 確認 /upgrade 目錄真的已被複製到網站根目錄，避免導向 404
             if (!is_dir(XOOPS_ROOT_PATH . '/upgrade')) {
                 $msg = sprintf(_MA_TADADM_UPGRADE_DIR_MISSING, XOOPS_ROOT_PATH . '/upgrade');
@@ -1153,11 +1173,15 @@ class OnlineUpgrade
 
     public static function manifest_progress(array $step): void
     {
+        UpgradeProgress::update(self::manifest_progress_message($step), 'manifest-' . $step['n']);
+    }
+
+    private static function manifest_progress_message(array $step): string
+    {
         if ('copy' === $step['op']) {
-            UpgradeProgress::update(sprintf(_MA_TADADM_PROGRESS_COPY, $step['to']));
-        } else {
-            UpgradeProgress::update(sprintf(_MA_TADADM_PROGRESS_STEP, $step['op'], $step['path'] ?? implode(', ', $step['paths'] ?? [])));
+            return sprintf(_MA_TADADM_PROGRESS_COPY, $step['to']);
         }
+        return sprintf(_MA_TADADM_PROGRESS_STEP, $step['op'], $step['path'] ?? implode(', ', $step['paths'] ?? []));
     }
 
     //登入SSH

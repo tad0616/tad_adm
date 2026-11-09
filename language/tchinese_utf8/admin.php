@@ -146,6 +146,15 @@ define('_MA_TADADM_PROGRESS_CHECK', '正在檢查升級流程與檔案權限…'
 define('_MA_TADADM_PROGRESS_COPY', '正在複製至：%s');
 define('_MA_TADADM_PROGRESS_STEP', '正在執行 %1$s：%2$s');
 define('_MA_TADADM_PROGRESS_SSH', '正在透過 SSH 執行升級腳本…');
+define('_MA_TADADM_PROGRESS_PHASE_PREPARE', '準備升級套件');
+define('_MA_TADADM_PROGRESS_PHASE_DOWNLOAD', '下載升級套件');
+define('_MA_TADADM_PROGRESS_PHASE_STAGING', '準備解壓暫存目錄');
+define('_MA_TADADM_PROGRESS_PHASE_EXTRACT', '解壓升級套件');
+define('_MA_TADADM_PROGRESS_PHASE_CHECK', '檢查升級流程與權限');
+define('_MA_TADADM_PROGRESS_PHASE_APPLY', '執行升級腳本');
+define('_MA_TADADM_PROGRESS_PHASE_VERIFY', '確認升級目錄');
+define('_MA_TADADM_PROGRESS_STEPS', '升級步驟');
+define('_MA_TADADM_PROGRESS_POSITION', '目前步驟 %1$s / %2$s');
 define('_MA_TADADM_PROGRESS_UNAVAILABLE', '無法取得即時狀態，升級程序可能仍在執行，請稍候。');
 define('_MA_TADADM_PROGRESS_ELAPSED', '此狀態已執行 %s 秒');
 define('_MA_TADADM_PROGRESS_PHP_LIMIT', 'PHP 設定執行時間上限：%s 秒');

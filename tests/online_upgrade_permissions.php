@@ -220,6 +220,13 @@ namespace {
     define('_MA_TADADM_PROGRESS_COPY', 'Copying to: %s');
     define('_MA_TADADM_PROGRESS_STEP', 'Running %1$s: %2$s');
     define('_MA_TADADM_PROGRESS_SSH', 'Running SSH');
+    define('_MA_TADADM_PROGRESS_PHASE_PREPARE', 'Prepare');
+    define('_MA_TADADM_PROGRESS_PHASE_DOWNLOAD', 'Download');
+    define('_MA_TADADM_PROGRESS_PHASE_STAGING', 'Prepare extraction');
+    define('_MA_TADADM_PROGRESS_PHASE_EXTRACT', 'Extract');
+    define('_MA_TADADM_PROGRESS_PHASE_CHECK', 'Check');
+    define('_MA_TADADM_PROGRESS_PHASE_APPLY', 'Apply');
+    define('_MA_TADADM_PROGRESS_PHASE_VERIFY', 'Verify');
     define('_MA_TADADM_UPGRADE_FROM_URL', 'Upgrade ready');
     define('_MA_TADADM_UPGRADE_DIR_MISSING', 'Missing %s');
     $_SERVER['PHP_SELF'] = 'main.php';
@@ -569,7 +576,8 @@ namespace {
         check(session_status() === PHP_SESSION_ACTIVE, 'Session not restored before success handoff');
         check(file_get_contents(XOOPS_ROOT_PATH . '/upgrade/index.php') === 'upgrade', 'Core upgrade files were not copied');
         $status = \XoopsModules\Tad_adm\UpgradeProgress::read($statusPath);
-        check(isset($status['message']) && strpos(str_replace('\\', '/', $status['message']), '/upgrade') !== false && strpos($status['message'], 'Copying to:') === 0, 'Actual core copy destination was not reported');
+        check($status['message'] === 'Verify' && $status['current_step'] === count($status['steps']) - 1, 'PHP verification progress not reported');
+        check(strpos(str_replace('\\', '/', $status['steps'][5]), '/upgrade') !== false && strpos($status['steps'][5], 'Copying to:') === 0, 'Actual core copy destination missing from steps');
         $coreSsh = new FakeSsh(0, "TAD_ADM_PROGRESS 1\n\nTAD_ADM_EXIT 0\n");
         $xoopsTpl = new FakeTemplate();
         check(!OnlineUpgrade::get_upgrade_file($coreUrl, 'upgrade', 1, $coreSsh), 'SSH core upgrade did not show handoff');
@@ -577,7 +585,7 @@ namespace {
         check($coreSsh->timeout === 0 && $coreSsh->keepAlive === 15, 'SSH core upgrade did not disable the short timeout and enable keepalive');
         check(strpos($coreSsh->command, 'TAD_ADM_EXIT') !== false, 'SSH script completion marker missing');
         $status = \XoopsModules\Tad_adm\UpgradeProgress::read($statusPath);
-        check(isset($status['message']) && strpos($status['message'], 'Copying to:') === 0, 'SSH copy marker did not report destination');
+        check($status['message'] === 'Verify' && $status['current_step'] === count($status['steps']) - 1, 'SSH verification progress not reported');
         foreach ([
             new FakeSsh(false, "TAD_ADM_PROGRESS 1\n"),
             new FakeSsh(0, "TAD_ADM_PROGRESS 1\n"),
@@ -590,6 +598,8 @@ namespace {
             } catch (Redirect $e) {
                 check(strpos($e->getMessage(), 'ssh incomplete') !== false, 'Incomplete SSH upgrade was accepted');
                 check(!$lastRedirect['ajax'] && $lastRedirect['time'] >= 30, 'Incomplete SSH warning was not shown on a visible page');
+                $status = \XoopsModules\Tad_adm\UpgradeProgress::read($statusPath);
+                check(strpos($status['message'], 'Copying to:') === 0 && $status['current_step'] === 5, 'SSH marker did not report the active copy step');
             }
         }
         $timedOutSsh = new FakeSsh(0, "TAD_ADM_PROGRESS 1\n\nTAD_ADM_EXIT 0\n");
@@ -612,6 +622,8 @@ namespace {
         $xoopsTpl = new FakeTemplate();
         check(!OnlineUpgrade::get_upgrade_file($legacyUrl, 'upgrade', 1, $legacySsh), 'Legacy SSH core upgrade did not show handoff');
         check($xoopsTpl->values['now_op'] === 'upgrade_handoff', 'Legacy SSH core upgrade handoff not shown');
+        $status = \XoopsModules\Tad_adm\UpgradeProgress::read($statusPath);
+        check($status['steps'][5] === 'Apply' && $status['current_step'] === 6, 'Legacy SSH stages not reported');
         $legacySsh = new FakeSsh(0, '');
         try {
             OnlineUpgrade::get_upgrade_file($legacyUrl, 'upgrade', 1, $legacySsh);

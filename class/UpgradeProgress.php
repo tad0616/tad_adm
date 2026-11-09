@@ -6,6 +6,8 @@ class UpgradeProgress
 {
     private static $path;
     private static $sessionReleased = false;
+    private static $steps = [];
+    private static $currentStep = null;
 
     public static function path(string $token, string $sessionId): ?string
     {
@@ -18,6 +20,8 @@ class UpgradeProgress
     public static function start(string $token): void
     {
         self::$path = self::path($token, session_id());
+        self::$steps = [];
+        self::$currentStep = null;
         if (null === self::$path) {
             return;
         }
@@ -49,8 +53,35 @@ class UpgradeProgress
         return true;
     }
 
-    public static function update(string $message): void
+    public static function setSteps(array $steps): void
     {
+        self::$steps = $steps;
+        self::$currentStep = null;
+    }
+
+    public static function setManifestSteps(array $steps): void
+    {
+        if (!$steps || !isset(self::$steps['apply'])) {
+            return;
+        }
+        $result = [];
+        foreach (self::$steps as $key => $label) {
+            if ('apply' === $key) {
+                foreach ($steps as $number => $stepLabel) {
+                    $result['manifest-' . $number] = $stepLabel;
+                }
+            } else {
+                $result[$key] = $label;
+            }
+        }
+        self::$steps = $result;
+    }
+
+    public static function update(string $message, ?string $step = null): void
+    {
+        if (null !== $step && isset(self::$steps[$step])) {
+            self::$currentStep = $step;
+        }
         if (!self::$path) {
             return;
         }
@@ -60,7 +91,12 @@ class UpgradeProgress
             return;
         }
         @chmod(self::$path, 0600);
-        $json = json_encode(['message' => $message], JSON_INVALID_UTF8_SUBSTITUTE);
+        $data = ['message' => $message];
+        if (self::$steps && null !== self::$currentStep) {
+            $data['steps'] = array_values(self::$steps);
+            $data['current_step'] = array_search(self::$currentStep, array_keys(self::$steps), true);
+        }
+        $json = json_encode($data, JSON_INVALID_UTF8_SUBSTITUTE);
         if (false === $json || !flock($handle, LOCK_EX)) {
             error_log('[tad_adm] Unable to update upgrade progress file');
             fclose($handle);

@@ -4,6 +4,41 @@
 	border-bottom: 1px solid #eee;
 }
 
+.tad-adm-progress-steps:not([hidden]) {
+	display: block;
+	box-sizing: border-box;
+	padding: 1rem 1.5rem;
+	background: #fff;
+	color: #333;
+	border: 1px solid #ccc;
+	border-radius: 0.4rem;
+	min-width: min(20rem, 80vw);
+	max-width: 80vw;
+	overflow-wrap: anywhere;
+}
+
+.tad-adm-progress-steps progress {
+	display: block;
+	width: 100%;
+	margin: 0.5rem 0;
+}
+
+.tad-adm-progress-steps ol {
+	max-height: 12rem;
+	overflow-y: auto;
+	margin: 0;
+	padding-left: 1.8rem;
+}
+
+.tad-adm-progress-steps li.completed {
+	color: #666;
+}
+
+.tad-adm-progress-steps li.current {
+	color: #0754a0;
+	font-weight: bold;
+}
+
 .my-input {
 	padding: 2px 4px;
 	font-size: 0.875rem;
