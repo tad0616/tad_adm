@@ -5,19 +5,37 @@ use XoopsModules\Tad_adm\UpgradeRequest;
 require_once dirname(__DIR__) . '/class/UpgradeRequest.php';
 UpgradeRequest::beforeBootstrap();
 $progressResponse = null;
-ob_start(static function ($output) use (&$progressResponse) {
-    if (trim($output) !== '' || null === $progressResponse) {
+$unexpectedOutput = false;
+ob_start(static function ($output) use (&$progressResponse, &$unexpectedOutput) {
+    if ($unexpectedOutput || trim($output) !== '' || null === $progressResponse) {
         error_log('[tad_adm] Upgrade progress response failed or contained unexpected output');
         if (!headers_sent()) {
             http_response_code(500);
+            if (!ini_get('zlib.output_compression')) {
+                header_remove('Content-Encoding');
+                header_remove('Content-Length');
+            }
         }
         return '{"error":"progress_unavailable"}';
     }
     return $progressResponse;
 });
+$progressBufferLevel = ob_get_level();
 require dirname(__DIR__, 3) . '/mainfile.php';
 UpgradeRequest::afterBootstrap();
 require dirname(__DIR__) . '/preloads/autoloader.php';
+
+while (ob_get_level() > $progressBufferLevel) {
+    $bufferedOutput = ob_get_clean();
+    if (false === $bufferedOutput) {
+        error_log('[tad_adm] Unable to close upgrade progress output buffer');
+        $unexpectedOutput = true;
+        break;
+    }
+    if (trim($bufferedOutput) !== '') {
+        $unexpectedOutput = true;
+    }
+}
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store');
