@@ -84,6 +84,7 @@ define('_MA_TADADM_MOD_BLOCK', '區塊');
 define('_MA_TADADM_MOD_ADMIN', '模組後台');
 
 define('_MA_TADADM_MODULES_UPDATING', '升級');
+define('_MA_TADADM_MODULE_UPDATE_WAIT', '更新中，請稍候…');
 define('_MA_TADADM_MODULES_INSTALLING', '安裝');
 define('_MA_TADADM_MODULES_PHP_INI_PATH', '重要設定');
 define('_MA_TADADM_FREE_SPACE', '硬碟剩餘空間：');

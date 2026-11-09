@@ -84,6 +84,7 @@ define('_MA_TADADM_MOD_BLOCK', 'Block');
 define('_MA_TADADM_MOD_ADMIN', 'Module backend');
 
 define('_MA_TADADM_MODULES_UPDATING', 'Upgrade');
+define('_MA_TADADM_MODULE_UPDATE_WAIT', 'Updating, please wait...');
 define('_MA_TADADM_MODULES_INSTALLING', 'Install');
 define('_MA_TADADM_MODULES_PHP_INI_PATH', 'Important Settings');
 define('_MA_TADADM_FREE_SPACE', 'hard disk free space:');

@@ -15,6 +15,8 @@
             });
         </script>
     <{else}>
+        <script src="<{$xoops_url}>/modules/tad_adm/js/module_update_guard.js?v=2026110901"
+                data-wait-message="<{$smarty.const._MA_TADADM_MODULE_UPDATE_WAIT|escape:'html'}>"></script>
         <div id="modTab">
             <ul class="resp-tabs-list vert">
                 <{if $all_install.upgrade|default:false or $all_install.unable|default:false}>
