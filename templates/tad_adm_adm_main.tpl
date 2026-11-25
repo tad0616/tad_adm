@@ -3,7 +3,7 @@
         <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
     <{elseif $now_op|default:''=="theme_delete_complete"}>
         <div class="alert alert-success" role="status">
-            <{$deleted_theme|escape:'html'}> <{$smarty.const._MA_TADADM_THEME_DELETE_OK}>
+            <{$deleted_theme|default:''|escape:'html'}> <{$smarty.const._MA_TADADM_THEME_DELETE_OK}>
         </div>
         <a href="main.php" class="btn btn-primary" id="theme-delete-close"><{$smarty.const._MA_TADADM_THEME_DELETE_CLOSE}></a>
         <script>

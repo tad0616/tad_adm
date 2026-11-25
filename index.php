@@ -13,46 +13,65 @@ xoops_loadLanguage('main', 'tadtools');
 require_once __DIR__ . '/function.php';
 
 $op                = Request::getString('op');
-$help_passwd       = Request::getString('help_passwd');
+$help_passwd       = Request::getString('help_passwd', '', 'POST');
 $uid               = Request::getInt('uid');
 $show              = Request::getBool('show');
 $msg_box           = '';
+$sys_adm           = false;
+$SweetAlertCode    = '';
 $TadAmModuleConfig = Utility::getXoopsModuleConfig('tad_adm');
+$is_post           = 'POST' === strtoupper($_SERVER['REQUEST_METHOD'] ?? '');
+$token_valid       = isset($GLOBALS['xoopsSecurity']) && is_object($GLOBALS['xoopsSecurity']) && $GLOBALS['xoopsSecurity']->check();
+$token_html        = isset($GLOBALS['xoopsSecurity']) && is_object($GLOBALS['xoopsSecurity']) ? $GLOBALS['xoopsSecurity']->getTokenHTML() : '';
 
 if ($xoopsUser) {
     $sys_adm = $xoopsUser->isAdmin(1);
-} elseif ('helpme' === $op) {
-    $sys_adm = ('' != $TadAmModuleConfig['login'] and '' != $help_passwd and $TadAmModuleConfig['login'] == $help_passwd) ? true : false;
+} elseif ('helpme' === $op && $is_post && $token_valid) {
+    $stored_login = (string) ($TadAmModuleConfig['login'] ?? '');
+    $sys_adm      = ('' !== $stored_login && '' !== $help_passwd && hash_equals($stored_login, $help_passwd));
 } elseif ('send_passwd' === $op) {
-    $result = send_passwd();
-    header("location: {$_SERVER['PHP_SELF']}?op=msg&show={$result}");
+    if (!empty($TadAmModuleConfig['use_forgot_passwd']) && $is_post && $token_valid) {
+        $result = send_passwd() ? 1 : 0;
+        header("location: index.php?op=msg&show={$result}");
+        exit;
+    }
+    header('location: index.php');
     exit;
 } elseif ('msg' === $op) {
+    $masked_mail = mask_admin_email((string) ($xoopsConfig['adminmail'] ?? ''));
     if ($show) {
-        $msg = sprintf(_MD_TADADM_MAIL_PASSWD_OK, $xoopsConfig['adminmail']);
+        $msg = sprintf(_MD_TADADM_MAIL_PASSWD_OK, $masked_mail);
     } else {
-        $msg = sprintf(_MD_TADADM_MAIL_PASSWD_FAIL, $xoopsConfig['adminmail']);
+        $msg = sprintf(_MD_TADADM_MAIL_PASSWD_FAIL, $masked_mail);
     }
     $msg_box = "<div class='alert alert-info'>$msg</div>";
 }
 
 if (!$sys_adm) {
-    if ('forgot' === $op and $TadAmModuleConfig['use_forgot_passwd']) {
-        $SweetAlert     = new SweetAlert();
-        $SweetAlertCode = $SweetAlert->render("forget_mail", "index.php?op=send_passwd&go=", 'go', _MD_TADADM_CHANGE_CONFIRM_TITLE, _MD_TADADM_CHANGE_CONFIRM_TEXT, _MD_TADADM_CHANGE_CONFIRM_BTN, 'warning', true);
-
-        $form = $SweetAlertCode . '
+    if ('forgot' === $op and !empty($TadAmModuleConfig['use_forgot_passwd'])) {
+        $form = '
+        <div class="card mb-3">
+            <div class="card-header text-white bg-warning">' . _MD_TADADM_CHANGE_CONFIRM_TITLE . '</div>
+            <div class="card-body">
+                <form action="index.php" method="post" role="form" onsubmit="return confirm(\'' . htmlspecialchars(_MD_TADADM_CHANGE_CONFIRM_TEXT, ENT_QUOTES, 'UTF-8') . '\');">
+                    ' . $token_html . '
+                    <input type="hidden" name="op" value="send_passwd">
+                    <button type="submit" class="btn btn-warning">' . _MD_TADADM_CHANGE_CONFIRM_BTN . '</button>
+                </form>
+            </div>
+        </div>
         <div class="card">
             <div class="card-header text-white bg-primary">' . _MD_TADADM_FORGOT . '</div>
             <div class="card-body">
                 <form action="index.php" method="post" role="form">
+                    ' . $token_html . '
                     <div class="form-group row mb-3">
                         <label class="col-sm-12">' . _MD_TADADM_INPUT_PASSWD_DESC . '</label>
                     </div>
                     <div class="form-group row mb-3">
                         <label class="col-sm-3" for="help_passwd">' . _MD_TADADM_INPUT_PASSWD . '</label>
                         <div class="col-sm-7">
-                            <input type="text" name="help_passwd" id="help_passwd" class="form-control" placeholder="">
+                            <input type="password" name="help_passwd" id="help_passwd" class="form-control" placeholder="" autocomplete="one-time-code">
                         </div>
                         <div class="col-sm-2">
                             <input type="hidden" name="op" value="helpme">
@@ -66,6 +85,7 @@ if (!$sys_adm) {
         $forgot = ($TadAmModuleConfig['use_forgot_passwd']) ? '<a href="index.php?op=forgot" style="font-size: 0.75rem;color:gray;">' . _MD_TADADM_FORGOT . '</a>' : '';
         $form   = $SweetAlertCode . '
         <form action="' . XOOPS_URL . '/user.php" method="post" role="form">
+            ' . $token_html . '
             <div class="card">
                 <div class="card-header text-white bg-primary">' . _MD_TADADM_LOGIN . '</div>
                 <div class="card-body">
@@ -115,55 +135,63 @@ $logout = ($xoopsUser) ? XOOPS_URL . '/user.php?op=logout' : 'index.php?op=logou
 
 $v = Request::getInt('v');
 
+$post_ops = ['unable_blocks', 'unable_modules', 'enable_blocks', 'enable_modules', 'reset_mem', 'debug_mode', 'clear_cache', 'clear_session', 'theme_default', 'close_site'];
+if (in_array($op, $post_ops, true)) {
+    if (!$is_post || !$token_valid) {
+        header('location: index.php');
+        exit;
+    }
+}
+
 switch ($op) {
     case 'unable_blocks':
         unable_blocks();
-        header("location: {$_SERVER['PHP_SELF']}");
+        header('location: index.php');
         exit;
 
     case 'unable_modules':
         unable_modules();
-        header("location: {$_SERVER['PHP_SELF']}");
+        header('location: index.php');
         exit;
 
     case 'enable_blocks':
         enable_blocks();
-        // header("location: {$_SERVER['PHP_SELF']}");
         exit;
 
     case 'enable_modules':
         enable_modules();
-        header("location: {$_SERVER['PHP_SELF']}");
+        header('location: index.php');
         exit;
 
     case 'reset_mem':
-        reset_mem($uid, $_POST['new_pass']);
+        $new_pass = Request::getString('new_pass', '', 'POST');
+        reset_mem($uid, $new_pass);
         header('location: ' . XOOPS_URL . "/userinfo.php?uid={$uid}");
         exit;
 
     case 'debug_mode':
         debug_mode($v);
-        header("location: {$_SERVER['PHP_SELF']}");
+        header('location: index.php');
         exit;
 
     case 'clear_cache':
         clear_cache();
-        header("location: {$_SERVER['PHP_SELF']}");
+        header('location: index.php');
         exit;
 
     case 'clear_session':
         clear_session();
-        header("location: {$_SERVER['PHP_SELF']}");
+        header('location: index.php');
         exit;
 
     case 'theme_default':
         theme_default();
-        header("location: {$_SERVER['PHP_SELF']}");
+        header('location: index.php');
         exit;
 
     case 'close_site':
         close_site($v);
-        header("location: {$_SERVER['PHP_SELF']}");
+        header('location: index.php');
         exit;
 
     case 'phpinfo':
@@ -172,7 +200,7 @@ switch ($op) {
 
     case 'logout':
         $sys_adm = false;
-        header("location: {$_SERVER['PHP_SELF']}");
+        header('location: index.php');
         exit;
 }
 
@@ -180,27 +208,38 @@ switch ($op) {
 function unable_modules()
 {
     global $xoopsDB;
-    $sql    = 'SELECT `mid` FROM `' . $xoopsDB->prefix('modules') . '` WHERE `isactive`=1 AND `dirname`!=? AND `dirname`!=?';
-    $result = Utility::query($sql, 'ss', ['system', 'tad_adm']) or Utility::web_error($sql, __FILE__, __LINE__);
+    $mid_array = [];
+    $sql       = 'SELECT `mid` FROM `' . $xoopsDB->prefix('modules') . '` WHERE `isactive`=1 AND `dirname`!=? AND `dirname`!=?';
+    $result    = Utility::query($sql, 'ss', ['system', 'tad_adm']) or Utility::web_error($sql, __FILE__, __LINE__);
     while (list($mid) = $xoopsDB->fetchRow($result)) {
-        $mid_array[] = $mid;
+        $mid_array[] = (int) $mid;
+    }
+
+    if (empty($mid_array)) {
+        return;
     }
 
     $all_mid = implode(',', $mid_array);
     $sql     = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=?';
-    $result  = Utility::query($sql, 'ss', [$all_mid, 'module_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
+    Utility::query($sql, 'ss', [$all_mid, 'module_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
 
-    $sql    = 'UPDATE `' . $xoopsDB->prefix('modules') . '` SET `isactive`=0 WHERE `mid` IN (' . $all_mid . ')';
-    $result = Utility::query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
-
+    $placeholders = implode(',', array_fill(0, count($mid_array), '?'));
+    $types        = str_repeat('i', count($mid_array));
+    $sql          = 'UPDATE `' . $xoopsDB->prefix('modules') . "` SET `isactive`=0 WHERE `mid` IN ({$placeholders})";
+    Utility::query($sql, $types, $mid_array) or Utility::web_error($sql, __FILE__, __LINE__);
 }
 
 //還原所有模組
 function enable_modules()
 {
     global $xoopsDB, $TadAmModuleConfig;
-    $sql = 'UPDATE `' . $xoopsDB->prefix('modules') . '` SET `isactive`=? WHERE `mid` IN (?)';
-    Utility::query($sql, 'ss', ['1', $TadAmModuleConfig['module_id_temp']]) or Utility::web_error($sql, __FILE__, __LINE__);
+    $mid_array = array_values(array_filter(array_map('intval', explode(',', (string) ($TadAmModuleConfig['module_id_temp'] ?? ''))), static fn($v) => $v > 0));
+    if (!empty($mid_array)) {
+        $placeholders = implode(',', array_fill(0, count($mid_array), '?'));
+        $types        = 'i' . str_repeat('i', count($mid_array));
+        $sql          = 'UPDATE `' . $xoopsDB->prefix('modules') . "` SET `isactive`=? WHERE `mid` IN ({$placeholders})";
+        Utility::query($sql, $types, array_merge([1], $mid_array)) or Utility::web_error($sql, __FILE__, __LINE__);
+    }
 
     $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=?';
     Utility::query($sql, 'ss', ['', 'module_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -210,34 +249,37 @@ function enable_modules()
 function unable_blocks()
 {
     global $xoopsDB;
-    $sql    = 'SELECT `bid` FROM `' . $xoopsDB->prefix('newblocks') . '` WHERE `visible`=?';
-    $result = Utility::query($sql, 'i', [1]) or Utility::web_error($sql, __FILE__, __LINE__);
+    $bid_array = [];
+    $sql       = 'SELECT `bid` FROM `' . $xoopsDB->prefix('newblocks') . '` WHERE `visible`=?';
+    $result    = Utility::query($sql, 'i', [1]) or Utility::web_error($sql, __FILE__, __LINE__);
 
     while (list($bid) = $xoopsDB->fetchRow($result)) {
-        $bid_array[] = $bid;
+        $bid_array[] = (int) $bid;
     }
 
-    if ($bid_array) {
+    if (!empty($bid_array)) {
         $all_bid = implode(',', $bid_array);
-        $all_bid = $xoopsDB->escape($all_bid);
 
         $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=?';
         Utility::query($sql, 'ss', [$all_bid, 'block_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
 
-        $sql = 'UPDATE `' . $xoopsDB->prefix('newblocks') . '` SET `visible`=? WHERE `bid` IN (' . $all_bid . ')';
-        Utility::query($sql, 's', ['0']) or Utility::web_error($sql, __FILE__, __LINE__);
+        $placeholders = implode(',', array_fill(0, count($bid_array), '?'));
+        $types        = 'i' . str_repeat('i', count($bid_array));
+        $sql          = 'UPDATE `' . $xoopsDB->prefix('newblocks') . "` SET `visible`=? WHERE `bid` IN ({$placeholders})";
+        Utility::query($sql, $types, array_merge([0], $bid_array)) or Utility::web_error($sql, __FILE__, __LINE__);
     }
-
 }
 
 //還原所有區塊
 function enable_blocks()
 {
     global $xoopsDB, $TadAmModuleConfig;
-    if (!empty($TadAmModuleConfig['block_id_temp'])) {
-        $all_bid = $xoopsDB->escape($TadAmModuleConfig['block_id_temp']);
-        $sql     = 'UPDATE `' . $xoopsDB->prefix('newblocks') . "` SET `visible`=1 WHERE `bid` IN ({$all_bid})";
-        $xoopsDB->queryF($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+    $bid_array = array_values(array_filter(array_map('intval', explode(',', (string) ($TadAmModuleConfig['block_id_temp'] ?? ''))), static fn($v) => $v > 0));
+    if (!empty($bid_array)) {
+        $placeholders = implode(',', array_fill(0, count($bid_array), '?'));
+        $types        = str_repeat('i', count($bid_array));
+        $sql          = 'UPDATE `' . $xoopsDB->prefix('newblocks') . "` SET `visible`=1 WHERE `bid` IN ({$placeholders})";
+        Utility::query($sql, $types, $bid_array) or Utility::web_error($sql, __FILE__, __LINE__);
 
         $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=?';
         Utility::query($sql, 'ss', ['', 'block_id_temp']) or Utility::web_error($sql, __FILE__, __LINE__);
@@ -251,11 +293,24 @@ function enable_blocks()
 function reset_mem($uid = '', $passwd = '')
 {
     global $xoopsDB, $sys_adm;
-    if ($sys_adm) {
-        $passwd = md5($passwd);
+    $uid    = (int) $uid;
+    $passwd = (string) $passwd;
+    if ($sys_adm && $uid > 0 && '' !== $passwd) {
+        $hashed = password_hash($passwd, PASSWORD_DEFAULT);
         $sql    = 'UPDATE `' . $xoopsDB->prefix('users') . '` SET `pass`=? WHERE `uid`=?';
-        Utility::query($sql, 'si', [$passwd, $uid]) or Utility::web_error($sql, __FILE__, __LINE__);
+        Utility::query($sql, 'si', [$hashed, $uid]) or Utility::web_error($sql, __FILE__, __LINE__);
     }
+}
+
+//遮罩管理員 Email（避免未登入頁洩漏完整信箱）
+function mask_admin_email(string $email): string
+{
+    if ('' === $email || false === strpos($email, '@')) {
+        return '***';
+    }
+    list($local, $domain) = explode('@', $email, 2);
+    $prefix               = mb_substr($local, 0, 1);
+    return htmlspecialchars($prefix . '***@' . $domain, ENT_QUOTES, 'UTF-8');
 }
 
 //寄發密碼
@@ -267,14 +322,8 @@ function send_passwd()
     $sql = 'UPDATE `' . $xoopsDB->prefix('config') . '` SET `conf_value`=? WHERE `conf_name`=? AND `conf_title`=?';
     Utility::query($sql, 'sss', [$passwd, 'login', '_MI_TADADM_LOGIN']) or Utility::web_error($sql, __FILE__, __LINE__);
 
-    if (empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $myip = $_SERVER['REMOTE_ADDR'];
-    } else {
-        $myip = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        $myip = $myip[0];
-    }
-
-    $content = sprintf(_MD_TADADM_MAIL_CONTENT, $passwd, $myip);
+    $myip    = htmlspecialchars((string) ($_SERVER['REMOTE_ADDR'] ?? ''), ENT_QUOTES, 'UTF-8');
+    $content = sprintf(_MD_TADADM_MAIL_CONTENT, htmlspecialchars($passwd, ENT_QUOTES, 'UTF-8'), $myip);
     return send_now($xoopsConfig['adminmail'], _MD_TADADM_PASSWD, $content);
 }
 
@@ -295,30 +344,34 @@ function send_now($email = '', $title = '', $content = '')
 
 function GeraHash($qtd)
 {
-    //Under the string $Caracteres you write all the characters you want to be used to randomly generate the code.
-    $Caracteres           = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
-    $QuantidadeCaracteres = mb_strlen($Caracteres);
-    $QuantidadeCaracteres--;
+    $Caracteres = 'ABCDEFGHIJKLMOPQRSTUVXWYZ0123456789';
+    $max_idx    = strlen($Caracteres) - 1;
 
-    $Hash = null;
+    $Hash = '';
     for ($x = 1; $x <= $qtd; $x++) {
-        $Posicao = mt_rand(0, $QuantidadeCaracteres);
-        $Hash .= mb_substr($Caracteres, $Posicao, 1);
+        $Posicao = random_int(0, $max_idx);
+        $Hash .= $Caracteres[$Posicao];
     }
 
     return $Hash;
 }
 
+// 產生帶 CSRF Token 的 POST 操作按鈕（外觀與清單連結一致）
+function tad_adm_post_action(string $op, string $label, array $extra = []): string
+{
+    global $token_html;
+    $hidden = "<input type='hidden' name='op' value='" . htmlspecialchars($op, ENT_QUOTES, 'UTF-8') . "'>";
+    foreach ($extra as $k => $v) {
+        $hidden .= "<input type='hidden' name='" . htmlspecialchars((string) $k, ENT_QUOTES, 'UTF-8') . "' value='" . htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8') . "'>";
+    }
+    return "<form action='index.php' method='post' style='display:inline;margin:0;'>{$token_html}{$hidden}<button type='submit' class='btn btn-link p-0 text-start text-decoration-none'><i class='fa fa-chevron-circle-right' aria-hidden='true'></i> {$label}</button></form>";
+}
+
 //目前硬碟空間
 function get_free_space()
 {
-    $bytes     = disk_free_space('.');
-    $si_prefix = ['B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB'];
-    $base      = 1024;
-    $class     = min((int) log($bytes, $base), count($si_prefix) - 1);
-    $space     = sprintf('%1.2f', $bytes / pow($base, $class)) . ' ' . $si_prefix[$class];
-
-    return $space;
+    $bytes = disk_free_space('.');
+    return format_size(false === $bytes ? 0 : $bytes);
 }
 
 //改回預設佈景
@@ -365,12 +418,8 @@ function session_size()
     $result = Utility::query($sql, 's', [$xoopsDB->prefix('session')]) or Utility::web_error($sql, __FILE__, __LINE__);
     $row    = $xoopsDB->fetchArray($result);
 
-    $bytes = ($row['Data_length'] + $row['Index_length']);
-
-    $si_prefix = ['B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB'];
-    $base      = 1024;
-    $class     = min((int) log($bytes, $base), count($si_prefix) - 1);
-    $space     = sprintf('%1.2f', $bytes / pow($base, $class)) . ' ' . $si_prefix[$class];
+    $bytes = is_array($row) ? ((float) ($row['Data_length'] ?? 0) + (float) ($row['Index_length'] ?? 0)) : 0;
+    $space = format_size($bytes);
 
     return sprintf(_MD_TADADM_BRACKETS, $space);
 }
@@ -412,19 +461,20 @@ function debug_mode_tool()
     $sql    = 'SELECT `conf_value` FROM `' . $xoopsDB->prefix('config') . '` WHERE `conf_name`=?';
     $result = Utility::query($sql, 's', ['debug_mode']) or Utility::web_error($sql, __FILE__, __LINE__);
 
-    list($debug) = $xoopsDB->fetchRow($result);
+    $row   = $xoopsDB->fetchRow($result);
+    $debug = is_array($row) ? ($row[0] ?? 0) : 0;
     if (1 == $debug) {
         $debug_tool = "
-        <li class='list-group-item'><a href='index.php?op=debug_mode&v=0'><i class='fa fa-chevron-circle-right'  title='" . sprintf(_MD_TADADM_UNABLE_DEBUG, 'PHP') . "'></i> " . sprintf(_MD_TADADM_UNABLE_DEBUG, 'PHP') . "</a></li>
-        <li class='list-group-item'><a href='index.php?op=debug_mode&v=3'><i class='fa fa-chevron-circle-right'  title='" . sprintf(_MD_TADADM_ENABLE_DEBUG, 'Smarty') . "'></i> " . sprintf(_MD_TADADM_ENABLE_DEBUG, 'Smarty') . '</a></li>';
+        <li class='list-group-item'>" . tad_adm_post_action('debug_mode', sprintf(_MD_TADADM_UNABLE_DEBUG, 'PHP'), ['v' => 0]) . "</li>
+        <li class='list-group-item'>" . tad_adm_post_action('debug_mode', sprintf(_MD_TADADM_ENABLE_DEBUG, 'Smarty'), ['v' => 3]) . '</li>';
     } elseif (3 == $debug) {
         $debug_tool = "
-        <li class='list-group-item'><a href='index.php?op=debug_mode&v=1'><i class='fa fa-chevron-circle-right'  title='" . sprintf(_MD_TADADM_ENABLE_DEBUG, 'PHP') . "'></i> " . sprintf(_MD_TADADM_ENABLE_DEBUG, 'PHP') . "</a></li>
-        <li class='list-group-item'><a href='index.php?op=debug_mode&v=0'><i class='fa fa-chevron-circle-right'  title='" . sprintf(_MD_TADADM_UNABLE_DEBUG, 'Smarty') . "'></i> " . sprintf(_MD_TADADM_UNABLE_DEBUG, 'Smarty') . '</a></li>';
+        <li class='list-group-item'>" . tad_adm_post_action('debug_mode', sprintf(_MD_TADADM_ENABLE_DEBUG, 'PHP'), ['v' => 1]) . "</li>
+        <li class='list-group-item'>" . tad_adm_post_action('debug_mode', sprintf(_MD_TADADM_UNABLE_DEBUG, 'Smarty'), ['v' => 0]) . '</li>';
     } else {
         $debug_tool = "
-        <li class='list-group-item'><a href='index.php?op=debug_mode&v=1'><i class='fa fa-chevron-circle-right'  title='" . sprintf(_MD_TADADM_ENABLE_DEBUG, 'PHP') . "'></i> " . sprintf(_MD_TADADM_ENABLE_DEBUG, 'PHP') . "</a></li>
-        <li class='list-group-item'><a href='index.php?op=debug_mode&v=3'><i class='fa fa-chevron-circle-right'  title='" . sprintf(_MD_TADADM_ENABLE_DEBUG, 'Smarty') . "'></i> " . sprintf(_MD_TADADM_ENABLE_DEBUG, 'Smarty') . '</a></li>';
+        <li class='list-group-item'>" . tad_adm_post_action('debug_mode', sprintf(_MD_TADADM_ENABLE_DEBUG, 'PHP'), ['v' => 1]) . "</li>
+        <li class='list-group-item'>" . tad_adm_post_action('debug_mode', sprintf(_MD_TADADM_ENABLE_DEBUG, 'Smarty'), ['v' => 3]) . '</li>';
     }
 
     return $debug_tool;
@@ -442,41 +492,32 @@ list($mysql_version) = $xoopsDB->fetchRow($result);
 
 $other = '';
 if ($xoopsDB) {
-    //註冊人數
-    $sql                  = 'SELECT COUNT(*) FROM `' . $xoopsDB->prefix('users') . '`';
-    $result               = Utility::query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
-    list($all_user_count) = $xoopsDB->fetchRow($result);
+    // 合併使用者統計查詢，減少重複全表掃描
+    $sql = 'SELECT
+        COUNT(*) AS all_cnt,
+        SUM(CASE WHEN `last_login` = 0 THEN 1 ELSE 0 END) AS never_login_cnt,
+        SUM(CASE WHEN `user_regdate` = 0 THEN 1 ELSE 0 END) AS never_start_cnt,
+        SUM(CASE WHEN `user_regdate` != 0 AND `last_login` != 0 THEN 1 ELSE 0 END) AS normal_cnt
+        FROM `' . $xoopsDB->prefix('users') . '`';
+    $result = Utility::query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
+    $stat   = $xoopsDB->fetchRow($result) ?: [0, 0, 0, 0];
+    $all_user_count         = (int) ($stat[0] ?? 0);
+    $never_login_user_count = (int) ($stat[1] ?? 0);
+    $never_start_user_count = (int) ($stat[2] ?? 0);
+    $normal_user_count      = (int) ($stat[3] ?? 0);
 
-    //從未登入人數
-    $sql                          = 'SELECT COUNT(*) FROM `' . $xoopsDB->prefix('users') . '` WHERE `last_login`=?';
-    $result                       = Utility::query($sql, 'i', [0]) or Utility::web_error($sql, __FILE__, __LINE__);
-    list($never_login_user_count) = $xoopsDB->fetchRow($result);
-
-    //未啟用人數
-    $sql                          = 'SELECT COUNT(*) FROM `' . $xoopsDB->prefix('users') . '` WHERE `user_regdate`=?';
-    $result                       = Utility::query($sql, 'i', [0]) or Utility::web_error($sql, __FILE__, __LINE__);
-    list($never_start_user_count) = $xoopsDB->fetchRow($result);
-
-    //正常會員人數
-    $sql                     = 'SELECT COUNT(*) FROM `' . $xoopsDB->prefix('users') . '` WHERE `user_regdate`!=0 AND `last_login`!=0';
-    $result                  = Utility::query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
-    list($normal_user_count) = $xoopsDB->fetchRow($result);
-
-    //各群組人數
-    $sql = 'SELECT a.`groupid`, a.`uid`, b.`name`
+    //各群組人數（以 SQL GROUP BY 彙總，避免全表載入 PHP）
+    $sql = 'SELECT a.`groupid`, COUNT(*) AS cnt, b.`name`
         FROM `' . $xoopsDB->prefix('groups_users_link') . '` AS a
         LEFT JOIN `' . $xoopsDB->prefix('groups') . '` AS b ON a.`groupid` = b.`groupid`
+        GROUP BY a.`groupid`, b.`name`
         ORDER BY a.`groupid`';
     $result = Utility::query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
 
     $groupid_count = $group_name = [];
-    while (list($groupid, $uid, $name) = $xoopsDB->fetchRow($result)) {
-        if (isset($groupid_count[$groupid])) {
-            $groupid_count[$groupid]++;
-        } else {
-            $groupid_count[$groupid] = 1;
-        }
-        $group_name[$groupid] = $name;
+    while (list($groupid, $cnt, $name) = $xoopsDB->fetchRow($result)) {
+        $groupid_count[$groupid] = (int) $cnt;
+        $group_name[$groupid]    = $name;
     }
 
     $groupid_count_list = '';
@@ -489,11 +530,13 @@ if ($xoopsDB) {
         } else {
             $gname = empty($group_name[$groupid]) ? _MD_TADADM_SOME_GROUP . " {$groupid}" : $group_name[$groupid];
         }
+        $gname_safe   = htmlspecialchars((string) $gname, ENT_QUOTES, 'UTF-8');
+        $groupid_safe = (int) $groupid;
         $groupid_count_list .= "
         <tr>
             <th>
-                <span class='label label-info'>{$groupid}</span>
-                " . sprintf(_MD_TADADM_GROUP, $gname) . "
+                <span class='label label-info'>{$groupid_safe}</span>
+                " . sprintf(_MD_TADADM_GROUP, $gname_safe) . "
             </th>
             <td style='text-align: right;'>
             " . sprintf(_MD_TADADM_GROUP_COUNTEER, $counter) . '
@@ -638,22 +681,23 @@ $main1 = "
     </table>
 </div>";
 
-$theme_set = ('default' === $xoopsConfig['theme_set']) ? '' : "<li class='list-group-item'><a href='index.php?op=theme_default'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_DEFAULT_THEME . "'></i> " . sprintf(_MD_TADADM_DEFAULT_THEME_DESC, $xoopsConfig['theme_set']) . '</a></li>';
+$theme_set = ('default' === $xoopsConfig['theme_set']) ? '' : "<li class='list-group-item'>" . tad_adm_post_action('theme_default', sprintf(_MD_TADADM_DEFAULT_THEME_DESC, htmlspecialchars((string) $xoopsConfig['theme_set'], ENT_QUOTES, 'UTF-8'))) . '</li>';
 
 $main2 = "
 <div class='card'>
     <div class='card-header text-white bg-warning'>" . _MD_TADADM_AID . "</div>
     <ul class='list-group list-group-flush'>
         " . debug_mode_tool() . "
-        <li class='list-group-item'>
-            <a href='index.php?op=clear_cache'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_CLEAR_CACHE . "'></i> " . _MD_TADADM_CLEAR_CACHE . files_counter() . "</a></li>
-        <li class='list-group-item'><a href='index.php?op=clear_session'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_CLEAR_SESSION . "'></i> " . _MD_TADADM_CLEAR_SESSION . session_size() . "</a></li>
+        <li class='list-group-item'>" . tad_adm_post_action('clear_cache', _MD_TADADM_CLEAR_CACHE . files_counter()) . "</li>
+        <li class='list-group-item'>" . tad_adm_post_action('clear_session', _MD_TADADM_CLEAR_SESSION . session_size()) . "</li>
         $theme_set
 
     </ul>
 </div>";
 
-$close_site = '1' == $xoopsConfig['closesite'] ? "<li class='list-group-item'><a href='index.php?op=close_site&v=0'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_ENABLE_WEB . "'></i> " . _MD_TADADM_ENABLE_WEB . '</a></li>' : "<li class='list-group-item'><a href='index.php?op=close_site&v=1'><i class='fa fa-chevron-circle-right'  title='" . _MD_TADADM_UNABLE_WEB . "'></i> " . _MD_TADADM_UNABLE_WEB . '</a></li>';
+$close_site = '1' == $xoopsConfig['closesite']
+    ? "<li class='list-group-item'>" . tad_adm_post_action('close_site', _MD_TADADM_ENABLE_WEB, ['v' => 0]) . '</li>'
+    : "<li class='list-group-item'>" . tad_adm_post_action('close_site', _MD_TADADM_UNABLE_WEB, ['v' => 1]) . '</li>';
 
 $admin_options = '';
 $sql           = 'SELECT a.`uid`, b.`uname`
@@ -662,7 +706,9 @@ $sql           = 'SELECT a.`uid`, b.`uname`
         WHERE a.`groupid`=?';
 $result = Utility::query($sql, 'i', [1]) or Utility::web_error($sql, __FILE__, __LINE__);
 while (list($uid, $uname) = $xoopsDB->fetchRow($result)) {
-    $admin_options .= "<option value='{$uid}'>{$uname}</option>";
+    $uid_safe   = (int) $uid;
+    $uname_safe = htmlspecialchars((string) $uname, ENT_QUOTES, 'UTF-8');
+    $admin_options .= "<option value='{$uid_safe}'>{$uname_safe}</option>";
 }
 
 $XoopsFormSelectUserOption = '';
@@ -678,13 +724,15 @@ while (list($uid, $uname, $name) = $xoopsDB->fetchRow($result)) {
         continue;
     }
 
-    $showname = empty($name) ? '' : " ({$name})";
-    $XoopsFormSelectUserOption .= "<option value='{$uid}'>{$uname}{$showname}</option>";
+    $uid_safe   = (int) $uid;
+    $uname_safe = htmlspecialchars((string) $uname, ENT_QUOTES, 'UTF-8');
+    $showname   = empty($name) ? '' : ' (' . htmlspecialchars((string) $name, ENT_QUOTES, 'UTF-8') . ')';
+    $XoopsFormSelectUserOption .= "<option value='{$uid_safe}'>{$uname_safe}{$showname}</option>";
 }
 
 if ('' != $TadAmModuleConfig['module_id_temp']) {
     $modules_amount = count(explode(',', $TadAmModuleConfig['module_id_temp']));
-    $modules_tool   = "<a href='index.php?op=enable_modules'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_ENABLE_ALL_MODS, $modules_amount) . "'></i> " . sprintf(_MD_TADADM_ENABLE_ALL_MODS, $modules_amount) . '</a>';
+    $modules_tool   = tad_adm_post_action('enable_modules', sprintf(_MD_TADADM_ENABLE_ALL_MODS, $modules_amount));
 } else {
     //計算模組數量
     $sql = 'SELECT COUNT(*)
@@ -694,12 +742,12 @@ if ('' != $TadAmModuleConfig['module_id_temp']) {
 
     list($modules_amount) = $xoopsDB->fetchRow($result);
 
-    $modules_tool = "<a href='index.php?op=unable_modules'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_UNABLE_ALL_MODS, $modules_amount) . "'></i> " . sprintf(_MD_TADADM_UNABLE_ALL_MODS, $modules_amount) . '</a>';
+    $modules_tool = tad_adm_post_action('unable_modules', sprintf(_MD_TADADM_UNABLE_ALL_MODS, $modules_amount));
 }
 
 if ('' != $TadAmModuleConfig['block_id_temp']) {
     $blocks_amount = count(explode(',', $TadAmModuleConfig['block_id_temp']));
-    $blocks_tool   = "<a href='index.php?op=enable_blocks'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_ENABLE_ALL_BLOCKS, $blocks_amount) . "'></i> " . sprintf(_MD_TADADM_ENABLE_ALL_BLOCKS, $blocks_amount) . '</a>';
+    $blocks_tool   = tad_adm_post_action('enable_blocks', sprintf(_MD_TADADM_ENABLE_ALL_BLOCKS, $blocks_amount));
 } else {
     //計算區塊數量
     $sql = 'SELECT COUNT(*)
@@ -708,7 +756,7 @@ if ('' != $TadAmModuleConfig['block_id_temp']) {
     $result              = Utility::query($sql) or Utility::web_error($sql, __FILE__, __LINE__);
     list($blocks_amount) = $xoopsDB->fetchRow($result);
 
-    $blocks_tool = "<a href='index.php?op=unable_blocks'><i class='fa fa-chevron-circle-right' title='" . sprintf(_MD_TADADM_UNABLE_ALL_BLOCKS, $blocks_amount) . "'></i> " . sprintf(_MD_TADADM_UNABLE_ALL_BLOCKS, $blocks_amount) . '</a>';
+    $blocks_tool = tad_adm_post_action('unable_blocks', sprintf(_MD_TADADM_UNABLE_ALL_BLOCKS, $blocks_amount));
 }
 
 $main3 = "
@@ -717,7 +765,8 @@ $main3 = "
     <ul class='list-group list-group-flush'>
         $close_site
         <li class='list-group-item'>
-            <form  action='{$_SERVER['PHP_SELF']}' method='post' role='form'>
+            <form  action='index.php' method='post' role='form'>
+                {$token_html}
                 <div class='form-group row mb-3'>
                     <label class='sr-only visually-hidden'>" . _MD_TADADM_RESET_ADMIN_PASSWD . "</label>
                     <div class='col-sm-4'>
@@ -736,7 +785,8 @@ $main3 = "
             </form>
         </li>
         <li class='list-group-item'>
-            <form action='{$_SERVER['PHP_SELF']}' method='post' role='form'>
+            <form action='index.php' method='post' role='form'>
+                {$token_html}
                 <div class='form-group row mb-3'>
                     <label class='sr-only visually-hidden'>" . _MD_TADADM_RESET_MEM_PASSWD . "</label>
                     <div class='col-sm-4'>

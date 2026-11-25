@@ -3,19 +3,19 @@
         <{include file="$xoops_rootpath/modules/tad_adm/templates/sub_ssh_login_form.tpl"}>
     <{elseif $now_op|default:''=="upgrade_handoff"}>
       <div id="tad-adm-upgrade-handoff-content">
-        <div class="alert alert-info"><{$upgrade_handoff_message|escape:'html'}></div>
+        <div class="alert alert-info"><{$upgrade_handoff_message|default:''|escape:'html'}></div>
         <{if $upgrade_handoff_warning|default:''}>
             <div class="alert alert-warning"><{$upgrade_handoff_warning}></div>
         <{/if}>
         <{if $upgrade_handoff_session_error|default:''}>
             <div class="alert alert-danger"><{$upgrade_handoff_session_error|escape:'html'}></div>
         <{/if}>
-        <a id="tad-adm-upgrade-handoff" class="btn btn-primary" href="<{$upgrade_handoff_url|escape:'html'}>" target="_top"><{$smarty.const._MA_TADADM_UPGRADE_OPEN}></a>
+        <a id="tad-adm-upgrade-handoff" class="btn btn-primary" href="<{$upgrade_handoff_url|default:''|escape:'html'}>" target="_top"><{$smarty.const._MA_TADADM_UPGRADE_OPEN}></a>
         <{if $upgrade_handoff_delay|default:0 > 0}>
             <script>
                 window.setTimeout(function() {
                     document.getElementById('tad-adm-upgrade-handoff').click();
-                }, <{$upgrade_handoff_delay}> * 1000);
+                }, <{$upgrade_handoff_delay|default:0}> * 1000);
             </script>
         <{/if}>
       </div>
@@ -79,15 +79,15 @@
                         return;
                     }
                     var status = $('<div class="tad-adm-progress" role="status" aria-live="polite"></div>')
-                        .text('<{$smarty.const._MA_TADADM_XOOPS_UPGRADE_WAIT}>')
+                        .text('<{$smarty.const._MA_TADADM_XOOPS_UPGRADE_WAIT|escape:"javascript"}>')
                         .attr({
-                            'data-progress-error': '<{$smarty.const._MA_TADADM_PROGRESS_UNAVAILABLE}>',
+                            'data-progress-error': '<{$smarty.const._MA_TADADM_PROGRESS_UNAVAILABLE|escape:"javascript"}>',
                             'data-progress-steps': '<{$smarty.const._MA_TADADM_PROGRESS_STEPS|escape:"javascript"}>',
                             'data-progress-position': '<{$smarty.const._MA_TADADM_PROGRESS_POSITION|escape:"javascript"}>',
-                            'data-progress-elapsed': '<{$smarty.const._MA_TADADM_PROGRESS_ELAPSED}>',
-                            'data-progress-limit': '<{$smarty.const._MA_TADADM_PROGRESS_PHP_LIMIT}>',
-                            'data-progress-unlimited': '<{$smarty.const._MA_TADADM_PROGRESS_PHP_UNLIMITED}>',
-                            'data-progress-limit-unavailable': '<{$smarty.const._MA_TADADM_PROGRESS_PHP_LIMIT_UNAVAILABLE}>'
+                            'data-progress-elapsed': '<{$smarty.const._MA_TADADM_PROGRESS_ELAPSED|escape:"javascript"}>',
+                            'data-progress-limit': '<{$smarty.const._MA_TADADM_PROGRESS_PHP_LIMIT|escape:"javascript"}>',
+                            'data-progress-unlimited': '<{$smarty.const._MA_TADADM_PROGRESS_PHP_UNLIMITED|escape:"javascript"}>',
+                            'data-progress-limit-unavailable': '<{$smarty.const._MA_TADADM_PROGRESS_PHP_LIMIT_UNAVAILABLE|escape:"javascript"}>'
                         });
                     $('#fancybox-loading').append(status);
                     if (token) {
@@ -158,9 +158,3 @@
         </style>
     <{/if}>
 </div>
-
-<script>
-    $( function() {
-        $( "#admTab1" ).tabs();
-    } );
-</script>

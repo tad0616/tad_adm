@@ -12,13 +12,13 @@
 <div id="ssh-login-content">
 <h2><{$smarty.const._MA_TADADM_SSH_ID}></h2>
 <div class="well card card-body bg-light m-1 d-flex align-items-stretch">
-    <form action="<{$action|default:''}>" method="post" class="form-horizontal" role="form">
+    <form action="<{$action|default:''|escape:'html'}>" method="post" class="form-horizontal" role="form">
         <div class="form-group row mb-3">
             <label class="col-md-2 col-form-label text-md-right text-md-end control-label">
             <{$smarty.const._MA_TADADM_SSH_ID}><{$smarty.const._TAD_FOR}>
             </label>
             <div class="col-md-10">
-            <input type="text" name="ssh_id" placeholder="<{$smarty.const._MA_TADADM_SSH_ID}>" class="form-control" value="<{$tad_adm_ssh_id|default:''}>">
+            <input type="text" name="ssh_id" placeholder="<{$smarty.const._MA_TADADM_SSH_ID|escape:'html'}>" class="form-control" value="<{$tad_adm_ssh_id|default:''|escape:'html'}>">
             </div>
         </div>
         <div class="form-group row mb-3">
@@ -26,19 +26,20 @@
             <{$smarty.const._MA_TADADM_SSH_PASS}><{$smarty.const._TAD_FOR}>
             </label>
             <div class="col-md-10">
-            <input type="password" name="ssh_passwd" placeholder="<{$smarty.const._MA_TADADM_SSH_PASS}>" class="form-control" value="<{$tad_adm_ssh_passwd|default:''}>">
+            <input type="password" name="ssh_passwd" placeholder="<{$smarty.const._MA_TADADM_SSH_PASS|escape:'html'}>" class="form-control" autocomplete="current-password">
             </div>
         </div>
 
 
         <div class="text-center">
+            <{$token_html|default:''}>
             <input type="hidden" name="ssh_host" value="127.0.0.1" >
-            <input type="hidden" name="file_link" value="<{$file_link|default:''}>">
-            <input type="hidden" name="dirname" value="<{$dirname|default:''}>">
-            <input type="hidden" name="act" value="<{$act|default:''}>">
-            <input type="hidden" name="update_sn" value="<{$update_sn|default:''}>">
-            <input type="hidden" name="module_sn" value="<{$module_sn|default:''}>">
-            <input type="hidden" name="xoops_sn" value="<{$xoops_sn|default:''}>">
+            <input type="hidden" name="file_link" value="<{$file_link|default:''|escape:'html'}>">
+            <input type="hidden" name="dirname" value="<{$dirname|default:''|escape:'html'}>">
+            <input type="hidden" name="act" value="<{$act|default:''|escape:'html'}>">
+            <input type="hidden" name="update_sn" value="<{$update_sn|default:''|escape:'html'}>">
+            <input type="hidden" name="module_sn" value="<{$module_sn|default:''|escape:'html'}>">
+            <input type="hidden" name="xoops_sn" value="<{$xoops_sn|default:''|escape:'html'}>">
             <{if $action|default:'' == 'xoops.php' && $act|default:'' == 'upgrade'}>
                 <input type="hidden" name="upgrade_progress_token" value="<{$upgrade_progress_token|default:''|escape:'html'}>">
             <{/if}>

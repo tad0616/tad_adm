@@ -26,45 +26,38 @@
                     <th><{$smarty.const._MA_TADADM_LASTLOGIN}></th>
                     <th style="width:200px;"><{$smarty.const._MA_TADADM_SIGN}></th>
                 </tr>
-                <{foreach from=$all_data item=spam}>
-                    <tr style="color:<{$spam.color}>;background-color:<{$spam.bgcolor}>;">
+                <{foreach from=$all_data|default:[] item=spam}>
+                    <tr style="color:<{$spam.color|default:''|escape:'html'}>;background-color:<{$spam.bgcolor|default:''|escape:'html'}>;">
                     <td>
                         <div class="form-check form-check-inline">
-                        <input class="form-check-input uid" type="checkbox" name="uid[]" id="uid_<{$spam.uid}>" value="<{$spam.uid}>" <{$spam.checked}>
-                        <label class="form-check-label" for="uid_<{$spam.uid}>"><{$spam.uid}></label>
+                        <input class="form-check-input uid" type="checkbox" name="uid[]" id="uid_<{$spam.uid|escape:'html'}>" value="<{$spam.uid|escape:'html'}>" <{$spam.checked|default:''}>>
+                        <label class="form-check-label" for="uid_<{$spam.uid|escape:'html'}>"><{$spam.uid|escape:'html'}></label>
                         </div>
                     </td>
-                    <td><label for="uid_<{$spam.uid}>"><{$spam.uname}></label><div><label for="uid_<{$spam.uid}>"><{$spam.name}></label></div></td>
-                    <td><{$spam.posts}></td>
-                    <td><label for="uid_<{$spam.uid}>"><{$spam.email}></label><div><label for="uid_<{$spam.uid}>"><{$spam.url}></label></div></td>
-                    <td><{$spam.appears}></td>
-                    <td><{$spam.user_regdate}><div><{$spam.last_login}></div></td>
-                    <td><label for="uid_<{$spam.uid}>"><{$spam.days_between}></label></td>
-                    <td><label for="uid_<{$spam.uid}>"><{$spam.user_sig}></label></td>
+                    <td><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.uname|default:''|escape:'html'}></label><div><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.name|default:''|escape:'html'}></label></div></td>
+                    <td><{$spam.posts|default:0|escape:'html'}></td>
+                    <td><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.email|default:''|escape:'html'}></label><div><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.url|default:''|escape:'html'}></label></div></td>
+                    <td><{$spam.appears|default:0|escape:'html'}></td>
+                    <td><{$spam.user_regdate|default:''|escape:'html'}><div><{$spam.last_login|default:''|escape:'html'}></div></td>
+                    <td><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.days_between|default:0|escape:'html'}></label></td>
+                    <td><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.user_sig|default:''|escape:'html'}></label></td>
                     </tr>
                 <{/foreach}>
             </table>
             <{$bar|default:''}>
 
             <{$_MA_TADADM_TOTAL|default:''}>
-            <input type="hidden" name="g2p" value="<{$g2p|default:''}>">
+            <{$token_html|default:''}>
+            <input type="hidden" name="g2p" value="<{$g2p|default:''|escape:'html'}>">
             <input type="hidden" name="op" value="del_user">
             <button type="submit" class="btn btn-sm btn-xs btn-danger"><{$smarty.const._TAD_DEL_CONFIRM}></button>
         </form>
     <{else}>
 
-        <script type="text/javascript">
-            $().ready(function(){
-                $("#clickAll").click(function() {
-                    if($("#clickAll").prop("checked")){
-                        $("input[name='uid[]']").each(function() {
-                            $(this).prop("checked", true);
-                        });
-                    }else{
-                        $("input[name='uid[]']").each(function() {
-                            $(this).prop("checked", false);
-                        });
-                    }
+        <script>
+            $(function() {
+                $("#clickAll").on("change", function() {
+                    $("input[name='uid[]']").prop("checked", $(this).prop("checked"));
                 });
             });
         </script>
@@ -103,27 +96,28 @@
             <th><{$smarty.const._MA_TADADM_LASTLOGIN}></th>
             <th style="width:200px;"><{$smarty.const._MA_TADADM_SIGN}></th>
             </tr>
-            <{foreach from=$all_data item=spam}>
-            <tr style="color:<{$spam.color}>;background-color:<{$spam.bgcolor}>;">
+            <{foreach from=$all_data|default:[] item=spam}>
+            <tr style="color:<{$spam.color|default:''|escape:'html'}>;background-color:<{$spam.bgcolor|default:''|escape:'html'}>;">
                 <td>
                     <div class="form-check form-check-inline">
-                    <input class="form-check-input uid" type="checkbox" name="uid[]" id="uid_<{$spam.uid}>" value="<{$spam.uid}>" <{$spam.checked}>
-                    <label class="form-check-label" for="uid_<{$spam.uid}>"><{$spam.uid}></label>
+                    <input class="form-check-input uid" type="checkbox" name="uid[]" id="uid_<{$spam.uid|escape:'html'}>" value="<{$spam.uid|escape:'html'}>" <{$spam.checked|default:''}>>
+                    <label class="form-check-label" for="uid_<{$spam.uid|escape:'html'}>"><{$spam.uid|escape:'html'}></label>
                     </div>
                 </td>
-                <td><label for="uid_<{$spam.uid}>"><{$spam.uname}></label><div><label for="uid_<{$spam.uid}>"><{$spam.name}></label></div></td>
-                <td><{$spam.posts}></td>
-                <td><label for="uid_<{$spam.uid}>"><{$spam.email}></label><div><label for="uid_<{$spam.uid}>"><{$spam.url}></label></div></td>
-                <td><{$spam.appears}></td>
-                <td><{$spam.user_regdate}><div><{$spam.last_login}></div></td>
-                <td><label for="uid_<{$spam.uid}>"><{$spam.days_between}></label></td>
-                <td><label for="uid_<{$spam.uid}>"><{$spam.user_sig}></label></td>
+                <td><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.uname|default:''|escape:'html'}></label><div><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.name|default:''|escape:'html'}></label></div></td>
+                <td><{$spam.posts|default:0|escape:'html'}></td>
+                <td><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.email|default:''|escape:'html'}></label><div><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.url|default:''|escape:'html'}></label></div></td>
+                <td><{$spam.appears|default:0|escape:'html'}></td>
+                <td><{$spam.user_regdate|default:''|escape:'html'}><div><{$spam.last_login|default:''|escape:'html'}></div></td>
+                <td><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.days_between|default:0|escape:'html'}></label></td>
+                <td><label for="uid_<{$spam.uid|escape:'html'}>"><{$spam.user_sig|default:''|escape:'html'}></label></td>
             </tr>
             <{/foreach}>
             </table>
             <{$bar|default:''}>
             <{$_MA_TADADM_TOTAL|default:''}>
-            <input type="hidden" name="g2p" value="<{$g2p|default:''}>">
+            <{$token_html|default:''}>
+            <input type="hidden" name="g2p" value="<{$g2p|default:''|escape:'html'}>">
             <input type="hidden" name="op" value="del_user">
             <button type="submit" class="btn btn-sm btn-xs btn-danger"><{$smarty.const._TAD_DEL_CONFIRM}></button>
         </form>

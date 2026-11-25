@@ -24,4 +24,3 @@ $adminObject->displayNavigation(basename(__FILE__));
 $adminObject->displayIndex();
 
 require __DIR__ . '/footer.php';
-xoops_cp_footer();

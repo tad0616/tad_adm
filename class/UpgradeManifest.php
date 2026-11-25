@@ -340,8 +340,8 @@ class UpgradeManifest
     /** @return array [正規化路徑, 原字串是否以 / 結尾] */
     private static function resolve($raw, array $vars, array $roots, int $n): array
     {
-        if (!is_string($raw) || '' === $raw) {
-            throw new \RuntimeException("step $n: missing path");
+        if (!is_string($raw) || '' === $raw || false !== strpos($raw, "\0")) {
+            throw new \RuntimeException("step $n: missing or invalid path");
         }
         $p = preg_replace_callback('/\{([A-Z_]+)\}/', static function ($m) use ($vars, $n) {
             if (!isset($vars[$m[1]])) {
@@ -405,7 +405,12 @@ class UpgradeManifest
             if ('.' === $item || '..' === $item) {
                 continue;
             }
-            is_dir("$src/$item") ? self::copy_tree("$src/$item", "$dst/$item", $fails) : self::copy_file("$src/$item", "$dst/$item", $fails);
+            $src_item = "$src/$item";
+            if (is_link($src_item)) {
+                $fails[] = $src_item;
+                continue;
+            }
+            is_dir($src_item) ? self::copy_tree($src_item, "$dst/$item", $fails) : self::copy_file($src_item, "$dst/$item", $fails);
         }
     }
 
@@ -431,7 +436,12 @@ class UpgradeManifest
         if (!is_dir($p)) {
             return;
         }
-        foreach (scandir($p) as $item) {
+        $entries = @scandir($p);
+        if (false === $entries) {
+            $fails[] = $p;
+            return;
+        }
+        foreach ($entries as $item) {
             if ('.' !== $item && '..' !== $item) {
                 self::remove("$p/$item", $fails);
             }
@@ -459,7 +469,12 @@ class UpgradeManifest
             $fails[] = $p;
         }
         if ($is_dir && $recursive) {
-            foreach (scandir($p) as $item) {
+            $entries = @scandir($p);
+            if (false === $entries) {
+                $fails[] = $p;
+                return;
+            }
+            foreach ($entries as $item) {
                 if ('.' !== $item && '..' !== $item) {
                     self::chmod_tree("$p/$item", $fm, $dm, true, $fails, $exclude);
                 }

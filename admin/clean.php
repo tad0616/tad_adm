@@ -97,51 +97,65 @@ function del_templates($dirs = [], $files = [])
         return;
     }
 
-    $allowed_real_base = str_replace('\\', '/', $allowed_real_base);
-    $allowed_real_base = rtrim($allowed_real_base, '/') . '/';
+    $allowed_real_base = rtrim(str_replace('\\', '/', $allowed_real_base), '/') . '/';
+    $is_win            = DIRECTORY_SEPARATOR === '\\';
+    $protected_dirs    = ['system', 'pm', 'profile'];
 
-    $is_safe_path = function ($path) use ($allowed_real_base) {
-        if (!is_string($path) || '' === trim($path)) {
-            return false;
+    $resolve_safe_path = function ($path) use ($allowed_real_base, $is_win, $protected_dirs) {
+        if (!is_string($path) || '' === trim($path) || false !== strpos($path, "\0")) {
+            return null;
         }
 
-        $candidate = $path;
-        if (false === mb_strpos($candidate, '://')) {
-            if (0 !== mb_strpos($candidate, '/')) {
-                $candidate = XOOPS_ROOT_PATH . '/' . ltrim($candidate, '/');
-            }
+        $candidate = str_replace('\\', '/', trim($path));
+        if (false !== strpos($candidate, '://')) {
+            return null;
+        }
+        $is_abs = (0 === strpos($candidate, '/')) || (1 === preg_match('/^[A-Za-z]:\//', $candidate));
+        if (!$is_abs) {
+            $candidate = rtrim(str_replace('\\', '/', XOOPS_ROOT_PATH), '/') . '/' . ltrim($candidate, '/');
         }
 
-        if (!file_exists($candidate)) {
-            return false;
+        if (!file_exists($candidate) || is_link($candidate)) {
+            return null;
         }
 
         $resolved = realpath($candidate);
         if (false === $resolved) {
-            return false;
+            return null;
         }
 
-        $resolved = str_replace('\\', '/', $resolved);
-        $resolved = rtrim($resolved, '/') . '/';
+        $resolved_norm = rtrim(str_replace('\\', '/', $resolved), '/');
+        $base_check    = $is_win ? strtolower($allowed_real_base) : $allowed_real_base;
+        $target_check  = $is_win ? strtolower($resolved_norm . '/') : ($resolved_norm . '/');
 
-        if (is_link($candidate)) {
-            return false;
+        // 必須嚴格位於 themes/{theme}/modules/ 之下，不可刪除根目錄本身
+        if ($target_check === $base_check || 0 !== strpos($target_check, $base_check)) {
+            return null;
         }
 
-        return $resolved === $allowed_real_base || 0 === mb_strpos($resolved, $allowed_real_base);
+        // 禁止刪除受保護的核心樣板目錄（system / pm / profile）
+        $rel        = substr($resolved_norm, strlen($allowed_real_base));
+        $first_part = explode('/', $rel)[0] ?? '';
+        if (in_array($first_part, $protected_dirs, true)) {
+            return null;
+        }
+
+        return $resolved;
     };
 
     if (is_array($dirs)) {
         foreach ($dirs as $dir) {
-            if ($is_safe_path($dir) && is_dir($dir) && !is_link($dir)) {
-                Utility::delete_directory($dir);
+            $safe_dir = $resolve_safe_path($dir);
+            if (null !== $safe_dir && is_dir($safe_dir) && !is_link($safe_dir)) {
+                Utility::delete_directory($safe_dir);
             }
         }
     }
     if (is_array($files)) {
         foreach ($files as $file) {
-            if ($is_safe_path($file) && is_file($file) && !is_link($file)) {
-                unlink($file);
+            $safe_file = $resolve_safe_path($file);
+            if (null !== $safe_file && is_file($safe_file) && !is_link($safe_file)) {
+                unlink($safe_file);
             }
         }
     }

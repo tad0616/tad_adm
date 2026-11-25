@@ -215,3 +215,10 @@ pip-log.txt
 
 manager_tn.php
 manager_xc.php
+*.md
+
+.codegraph/
+*-old.php
+*-old.tpl
+*_bak.php
+/del*.php

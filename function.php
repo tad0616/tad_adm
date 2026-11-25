@@ -20,14 +20,15 @@ function folderSize($dir)
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS)) as $file) {
             $size += $file->getSize();
         }
-    } catch (UnexpectedValueException $e) {
-        // 目錄無法讀取就跳過
+    } catch (RuntimeException $e) {
+        // 目錄或檔案無法讀取就跳過
     }
     return $size;
 }
 
-function format_size($bytes = '')
+function format_size($bytes = 0)
 {
+    $bytes     = is_numeric($bytes) ? (float) $bytes : 0.0;
     $si_prefix = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     $base      = 1024;
     // log(0) 為 -INF，不能轉成 int

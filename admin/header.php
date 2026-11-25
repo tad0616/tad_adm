@@ -18,6 +18,11 @@ include dirname(__DIR__) . '/preloads/autoloader.php';
 
 require_once dirname(dirname(dirname(__DIR__))) . '/include/cp_header.php';
 
+if (!isset($xoopsUser) || !is_object($xoopsUser) || !$xoopsUser->isAdmin(1)) {
+    redirect_header(XOOPS_URL, 3, _NOPERM);
+    exit;
+}
+
 xoops_loadLanguage('main', $xoopsModule->getVar('dirname'));
 
 if (!isset($xoopsTpl) || !is_object($xoopsTpl)) {
@@ -33,7 +38,8 @@ if ('clean' === \Xmf\Request::getString('tad_adm_tpl')) {
 
 // Define Stylesheet and JScript
 $xoTheme->addStylesheet('modules/tadtools/css/iconize.css');
-$xoTheme->addStylesheet(XOOPS_URL . "/modules/tadtools/css/xoops_adm{$_SESSION['bootstrap']}.css");
+$bootstrap = $_SESSION['bootstrap'] ?? '';
+$xoTheme->addStylesheet(XOOPS_URL . "/modules/tadtools/css/xoops_adm{$bootstrap}.css");
 $xoTheme->addStylesheet('modules/' . $xoopsModule->getVar('dirname') . '/css/module.css');
 $xoTheme->addStylesheet('modules/' . $xoopsModule->getVar('dirname') . '/css/admin.css');
 //$xoTheme->addScript("browse.php?Frameworks/jquery/jquery.js");

@@ -1,4 +1,8 @@
 <?php // adminer-plugins.php
+if (!class_exists('AdminerTablesHistory')) {
+    http_response_code(403);
+    exit('Restricted access');
+}
 return [
     new AdminerTablesHistory(),
     new AdminerTablesFilter(),

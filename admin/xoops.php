@@ -15,14 +15,15 @@ require_once dirname(__DIR__) . '/function.php';
 
 /*-----------執行動作判斷區----------*/
 $op = Request::getString('op');
+$update_sn = Request::getInt('update_sn');
 $xoops_sn = Request::getInt('xoops_sn');
 $file_link = Request::getString('file_link');
 $dirname = Request::getString('dirname');
 $act = Request::getString('act');
 $kind_dir = Request::getString('kind_dir');
-$ssh_id = Request::getString('ssh_id');
-$ssh_passwd = Request::getString('ssh_passwd');
-$ssh_host = Request::getString('ssh_host');
+$ssh_id = Request::getString('ssh_id', '', 'POST');
+$ssh_passwd = Request::getString('ssh_passwd', '', 'POST');
+$ssh_host = Request::getString('ssh_host', '', 'POST');
 $kind = Request::getString('kind');
 $mid = Request::getInt('mid');
 $val = Request::getInt('val');
@@ -31,6 +32,11 @@ $theme = Request::getString('theme');
 switch ($op) {
 
     case 'ssh_login':
+        if ('POST' !== strtoupper($_SERVER['REQUEST_METHOD'] ?? '') || !isset($GLOBALS['xoopsSecurity']) || !is_object($GLOBALS['xoopsSecurity']) || !$GLOBALS['xoopsSecurity']->check()) {
+            $err = isset($GLOBALS['xoopsSecurity']) && is_object($GLOBALS['xoopsSecurity']) ? implode('<br>', $GLOBALS['xoopsSecurity']->getErrors()) : _NOPERM;
+            redirect_header('xoops.php?tad_adm_tpl=clean', 3, $err);
+            exit;
+        }
         OnlineUpgrade::ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link, $dirname, $act, $update_sn, $xoops_sn);
         break;
 

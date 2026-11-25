@@ -17,6 +17,11 @@ $days    = Request::getInt('days');
 
 switch ($op) {
     case 'del_user':
+        if ('POST' !== strtoupper($_SERVER['REQUEST_METHOD'] ?? '') || !isset($GLOBALS['xoopsSecurity']) || !is_object($GLOBALS['xoopsSecurity']) || !$GLOBALS['xoopsSecurity']->check()) {
+            $err = isset($GLOBALS['xoopsSecurity']) && is_object($GLOBALS['xoopsSecurity']) ? implode('<br>', $GLOBALS['xoopsSecurity']->getErrors()) : _NOPERM;
+            redirect_header($_SERVER['PHP_SELF'] . "?g2p=$g2p", 3, $err);
+            exit;
+        }
         del_all_user($uid);
         redirect_header($_SERVER['PHP_SELF'] . "?g2p=$g2p", 3, _MA_TADADM_DEL_OK);
         break;
@@ -30,12 +35,15 @@ switch ($op) {
         list_user($op, $mode, $days, $byemail, $g2p);
         if ('all' === $op) {
             $g2p++;
-            redirect_header($_SERVER['PHP_SELF'] . "?op=all&mode=$mode&g2p=$g2p", 3, _MA_TADADM_NEXT_PAGE);
+            $safe_mode = ('force' === $mode) ? 'force' : 'normal';
+            redirect_header($_SERVER['PHP_SELF'] . "?op=all&mode={$safe_mode}&g2p={$g2p}", 3, _MA_TADADM_NEXT_PAGE);
         }
         break;
 }
 
 /*-----------秀出結果區--------------*/
+$token_html = isset($GLOBALS['xoopsSecurity']) && is_object($GLOBALS['xoopsSecurity']) ? $GLOBALS['xoopsSecurity']->getTokenHTML() : '';
+$xoopsTpl->assign('token_html', $token_html);
 require_once __DIR__ . '/footer.php';
 
 /*-----------function區--------------*/
@@ -44,18 +52,22 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
 {
     global $xoopsDB, $xoopsModuleConfig, $xoopsTpl;
     if ('byNeverLoginDays' === $op) {
-        $dayLimit    = time() - $days * 86400;
-        $andDayLimit = " and last_login=0 and user_regdate <= $dayLimit";
+        $dayLimit    = time() - (int) $days * 86400;
+        $andDayLimit = " AND u.`last_login`=0 AND u.`user_regdate` <= {$dayLimit}";
     } elseif ('byNeverStartDays' === $op) {
-        $dayLimit    = time() - $days * 86400;
-        $andDayLimit = " and level=0 and user_regdate <= $dayLimit";
+        $dayLimit    = time() - (int) $days * 86400;
+        $andDayLimit = " AND u.`level`=0 AND u.`user_regdate` <= {$dayLimit}";
     } elseif ('byEmail' === $op) {
-        $byemail     = $xoopsDB->escape($byemail);
-        $andDayLimit = " and email like '%{$byemail}'";
+        $byemail_esc = $xoopsDB->escape(addcslashes((string) $byemail, '%_'));
+        $andDayLimit = " AND u.`email` LIKE '%{$byemail_esc}'";
     } else {
         $andDayLimit = '';
     }
-    $sql = 'select * from ' . $xoopsDB->prefix('users') . " where 1 $andDayLimit order by uid desc";
+    $sql = 'SELECT u.`uid`, u.`uname`, u.`name`, u.`posts`, u.`email`, u.`url`, u.`user_regdate`, u.`last_login`, u.`user_sig`, a.`email` AS `adm_email`, a.`result` AS `adm_result`
+        FROM `' . $xoopsDB->prefix('users') . '` AS u
+        LEFT JOIN `' . $xoopsDB->prefix('tad_adm') . '` AS a ON u.`uid` = a.`uid`
+        WHERE 1' . $andDayLimit . '
+        ORDER BY u.`uid` DESC';
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
     $PageBar = Utility::getPageBar($sql, $xoopsModuleConfig['list_amount'], 10);
@@ -67,35 +79,39 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
     $_SESSION['chk_start'] = time();
     $i                     = 0;
     $all_data              = [];
+    $sfs_context           = stream_context_create(['http' => ['timeout' => 5], 'ssl' => ['verify_peer' => true, 'verify_peer_name' => true]]);
     while (false !== ($data = $xoopsDB->fetchArray($result))) {
-        foreach ($data as $k => $v) {
-            $$k = $v;
-        }
+        $uid          = (int) ($data['uid'] ?? 0);
+        $uname        = (string) ($data['uname'] ?? '');
+        $name         = (string) ($data['name'] ?? '');
+        $posts        = (int) ($data['posts'] ?? 0);
+        $email        = (string) ($data['email'] ?? '');
+        $url          = (string) ($data['url'] ?? '');
+        $user_regdate = (int) ($data['user_regdate'] ?? 0);
+        $last_login   = (int) ($data['last_login'] ?? 0);
+        $user_sig     = (string) ($data['user_sig'] ?? '');
+        $adm_email    = ('force' !== $mode) ? (string) ($data['adm_email'] ?? '') : '';
 
-        if ('force' !== $mode) {
-            $adm = get_tad_adm($uid) ?: ['email' => '', 'result' => ''];
+        if ('' !== $adm_email && $adm_email === $email) {
+            $appears = (int) ($data['adm_result'] ?? 0);
         } else {
-            $adm['email'] = '';
-        }
-
-        if ($adm['email'] == $email) {
-            $appears = $adm['result'];
-        } else {
-            $handle = fopen("http://www.stopforumspam.com/api?email={$email}&f=json", 'rb');
+            $json   = '';
+            $handle = @fopen('https://api.stopforumspam.org/api?email=' . rawurlencode($email) . '&json', 'rb', false, $sfs_context);
             if ($handle) {
-                $json = fgets($handle, 4096);
+                $json = (string) fgets($handle, 4096);
                 fclose($handle);
             }
 
-            $buffer  = json_decode($json, true);
-            $appears = $buffer['email']['appears'];
-            replace_tad_adm($uid, $email, $appears);
+            $buffer  = '' !== $json ? json_decode($json, true) : null;
+            $appears = is_array($buffer) ? (int) ($buffer['email']['appears'] ?? 0) : 0;
+            replace_tad_adm($uid, $email, (string) $appears);
         }
 
         $days_between = ceil(abs(time() - $last_login) / 86400);
 
         $bgcolor = 'white';
         $checked = '';
+        $color   = '#505050';
         if ($appears > 0) {
             $color   = 'red';
             $checked = 'checked';
@@ -112,11 +128,9 @@ function list_user($op = '', $mode = 'normal', $days = '', $byemail = '', $g2p =
                 $checked = 'checked';
                 $color   = '#CC6600';
             }
-        } else {
-            $color = '#505050';
         }
 
-        $user_regdate = date('Y-m-d', $user_regdate);
+        $user_regdate = $user_regdate > 0 ? date('Y-m-d', $user_regdate) : '';
         $last_login   = empty($last_login) ? _MA_TADADM_NEVERLOGIN : date('Y-m-d', $last_login);
 
         $all_data[$i]['color']        = $color;
@@ -167,11 +181,11 @@ function list_spam($g2p = 1)
 {
     global $xoopsDB, $xoopsTpl;
 
-    $sql = 'SELECT a.`uid`, a.`email`, a.`chk_date`, b.`name`, b.`uname`, b.`email`, b.`url`, b.`user_avatar`, b.`user_regdate`, b.`user_icq`, b.`user_from`, b.`user_sig`, b.`user_viewemail`, b.`actkey`, b.`user_aim`, b.`user_yim`, b.`user_msnm`, b.`pass`, b.`posts`, b.`attachsig`, b.`rank`, b.`level`, b.`theme`, b.`timezone_offset`, b.`last_login`, b.`umode`, b.`uorder`, b.`notify_method`, b.`notify_mode`, b.`user_occ`, b.`bio`, b.`user_intrest`, b.`user_mailok` FROM `'
+    $sql = 'SELECT a.`uid`, a.`result` AS `appears`, a.`chk_date`, COALESCE(b.`email`, a.`email`) AS `email`, b.`name`, b.`uname`, b.`url`, b.`user_regdate`, b.`user_sig`, b.`posts`, b.`last_login` FROM `'
     . $xoopsDB->prefix('tad_adm')
     . '` AS a LEFT JOIN `'
     . $xoopsDB->prefix('users')
-        . '` AS b ON a.`uid`=b.`uid` WHERE a.`result`=1 ORDER BY a.`uid` DESC';
+        . '` AS b ON a.`uid`=b.`uid` WHERE a.`result` > 0 ORDER BY a.`uid` DESC';
 
     //getPageBar($原sql語法, 每頁顯示幾筆資料, 最多顯示幾個頁數選項);
     $PageBar = Utility::getPageBar($sql, 500, 10);
@@ -185,14 +199,22 @@ function list_spam($g2p = 1)
     $i        = 0;
 
     while (false !== ($all = $xoopsDB->fetchArray($result))) {
-        foreach ($all as $k => $v) {
-            $$k = $v;
-        }
+        $uid          = (int) ($all['uid'] ?? 0);
+        $uname        = (string) ($all['uname'] ?? '');
+        $name         = (string) ($all['name'] ?? '');
+        $posts        = (int) ($all['posts'] ?? 0);
+        $email        = (string) ($all['email'] ?? '');
+        $url          = (string) ($all['url'] ?? '');
+        $appears      = (int) ($all['appears'] ?? 0);
+        $user_regdate = (int) ($all['user_regdate'] ?? 0);
+        $last_login   = (int) ($all['last_login'] ?? 0);
+        $user_sig     = (string) ($all['user_sig'] ?? '');
 
         $days_between = ceil(abs(time() - $last_login) / 86400);
 
         $bgcolor = 'white';
         $checked = 'checked';
+        $color   = '#505050';
         if ($appears > 0) {
             $color = 'red';
             if ($posts > 0) {
@@ -207,11 +229,9 @@ function list_spam($g2p = 1)
             } else {
                 $color = '#CC6600';
             }
-        } else {
-            $color = '#505050';
         }
 
-        $user_regdate = date('Y-m-d', $user_regdate);
+        $user_regdate = $user_regdate > 0 ? date('Y-m-d', $user_regdate) : '';
         $last_login   = empty($last_login) ? _MA_TADADM_NEVERLOGIN : date('Y-m-d', $last_login);
 
         $all_data[$i]['color']        = $color;
@@ -273,39 +293,37 @@ function get_tad_adm($uid = '')
 function del_user($del_uid)
 {
     global $xoopsDB;
-    if (empty($del_uid)) {
+    $del_uid = (int) $del_uid;
+    if ($del_uid <= 0) {
         return;
+    }
+
+    $memberHandler = xoops_getHandler('member');
+    $user          = $memberHandler->getUser($del_uid);
+    if (!empty($user)) {
+        $groups = $user->getGroups();
+        if (in_array(XOOPS_GROUP_ADMIN, $groups)) {
+            redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_DONT_DEL_ROOT);
+        } elseif (!$memberHandler->deleteUser($user)) {
+            redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_DEL_FAIL);
+        } else {
+            $onlineHandler = xoops_getHandler('online');
+            $onlineHandler->destroy($del_uid);
+            xoops_notification_deletebyuser($del_uid);
+        }
     }
 
     $sql = 'DELETE FROM `' . $xoopsDB->prefix('tad_adm') . '`
     WHERE `uid` = ?';
     Utility::query($sql, 'i', [$del_uid]) or Utility::web_error($sql, __FILE__, __LINE__);
-
-    $memberHandler = xoops_getHandler('member');
-    $user          = $memberHandler->getUser($del_uid);
-    if (empty($user)) {
-        return;
-    }
-
-    $groups = $user->getGroups();
-    if (in_array(XOOPS_GROUP_ADMIN, $groups)) {
-        redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_DONT_DEL_ROOT);
-    } elseif (!$memberHandler->deleteUser($user)) {
-        redirect_header($_SERVER['PHP_SELF'], 3, _MA_TADADM_DEL_FAIL);
-    } else {
-        $onlineHandler = xoops_getHandler('online');
-        $onlineHandler->destroy($del_uid);
-        xoops_notification_deletebyuser($del_uid);
-
-        return;
-        //redirect_header($_SERVER['PHP_SELF'], 3, "刪除成功！");
-    }
-    exit;
 }
 
 //刪除所有選取的使用者
 function del_all_user($uid_arr = [])
 {
+    if (!is_array($uid_arr)) {
+        return;
+    }
     foreach ($uid_arr as $del_uid) {
         del_user($del_uid);
     }

@@ -57,16 +57,35 @@ function phpini()
             continue;
         }
 
-        $global_value = str_replace(',', ' , ', $v['global_value']);
+        $global_value = str_replace(',', ' , ', (string) ($v['global_value'] ?? ''));
 
         $main[$i]['k']            = $k;
         $main[$i]['global_value'] = $global_value;
         $main[$i]['ini']          = isset($ini[$k]) ? $ini[$k] : '';
         $main[$i]['adv']          = $adv_val[$k];
-        if ($adv_val[$k] == $global_value) {
+
+        $size_keys = ['memory_limit', 'post_max_size', 'upload_max_filesize'];
+        if ($adv_val[$k] === $global_value) {
             $color = '#000000';
-        } elseif ($global_value > $adv_val[$k]) {
-            $color = '#3B5E7F';
+        } elseif (in_array($k, $size_keys, true)) {
+            $cur_bytes = phpini_to_bytes($global_value);
+            $adv_bytes = phpini_to_bytes($adv_val[$k]);
+            // memory_limit 為 -1 代表不限制，視為大於建議值
+            if ($cur_bytes < 0 || $cur_bytes > $adv_bytes) {
+                $color = '#3B5E7F';
+            } elseif ($cur_bytes === $adv_bytes) {
+                $color = '#000000';
+            } else {
+                $color = 'red';
+            }
+        } elseif (is_numeric($global_value) && is_numeric($adv_val[$k])) {
+            if ((float) $global_value > (float) $adv_val[$k]) {
+                $color = '#3B5E7F';
+            } elseif ((float) $global_value === (float) $adv_val[$k]) {
+                $color = '#000000';
+            } else {
+                $color = 'red';
+            }
         } else {
             $color = 'red';
         }
@@ -76,4 +95,27 @@ function phpini()
     }
 
     $xoopsTpl->assign('main', $main);
+}
+
+function phpini_to_bytes($val)
+{
+    $val = trim((string) $val);
+    if ('' === $val) {
+        return 0;
+    }
+    if ('-1' === $val) {
+        return -1;
+    }
+    $num  = (float) $val;
+    $unit = strtoupper(substr($val, -1));
+    switch ($unit) {
+        case 'G':
+            return (int) round($num * 1024 * 1024 * 1024);
+        case 'M':
+            return (int) round($num * 1024 * 1024);
+        case 'K':
+            return (int) round($num * 1024);
+        default:
+            return (int) round($num);
+    }
 }

@@ -8,7 +8,7 @@ require_once __DIR__ . '/header.php';
 if (!class_exists('XoopsModules\Tadtools\Utility')) {
     require XOOPS_ROOT_PATH . '/modules/tadtools/preloads/autoloader.php';
 }
-$sys_adm = isset($xoopsUser) && \is_object($xoopsUser) ? $xoopsUser->isAdmin() : false;
+$sys_adm = isset($xoopsUser) && \is_object($xoopsUser) ? $xoopsUser->isAdmin(1) : false;
 if (!$sys_adm) {
     exit;
 }
@@ -23,17 +23,30 @@ $file_link  = Request::getString('file_link');
 $dirname    = Request::getString('dirname');
 $act        = Request::getString('act');
 $kind_dir   = Request::getString('kind_dir');
-$ssh_id     = Request::getString('ssh_id');
-$ssh_passwd = Request::getString('ssh_passwd');
-$ssh_host   = Request::getString('ssh_host');
+$ssh_id     = Request::getString('ssh_id', '', 'POST');
+$ssh_passwd = Request::getString('ssh_passwd', '', 'POST');
+$ssh_host   = Request::getString('ssh_host', '', 'POST');
 $kind       = Request::getString('kind');
 $mid        = Request::getInt('mid');
 $val        = Request::getInt('val');
 $theme      = Request::getString('theme');
 
+$require_post_csrf = static function (string $redirectUrl = 'main.php'): void {
+    if ('POST' !== strtoupper($_SERVER['REQUEST_METHOD'] ?? '')) {
+        redirect_header($redirectUrl, 3, _NOPERM);
+        exit;
+    }
+    if (!isset($GLOBALS['xoopsSecurity']) || !is_object($GLOBALS['xoopsSecurity']) || !$GLOBALS['xoopsSecurity']->check()) {
+        $err = isset($GLOBALS['xoopsSecurity']) && is_object($GLOBALS['xoopsSecurity']) ? implode('<br>', $GLOBALS['xoopsSecurity']->getErrors()) : _NOPERM;
+        redirect_header($redirectUrl, 3, $err);
+        exit;
+    }
+};
+
 switch ($op) {
 
     case 'ssh_login':
+        $require_post_csrf('main.php?tad_adm_tpl=clean');
         OnlineUpgrade::ssh_login($ssh_host, $ssh_id, $ssh_passwd, $file_link, $dirname, $act, $update_sn, $xoops_sn, $module_sn);
         break;
     case 'install_module':
@@ -49,6 +62,7 @@ switch ($op) {
         OnlineUpgrade::to_do($file_link, $dirname, 'upgrade_theme', $update_sn);
         break;
     case 'delete_theme':
+        $require_post_csrf('main.php?tad_adm_tpl=clean');
         OnlineUpgrade::to_do('', $dirname, 'delete_theme');
         break;
     case 'install_adm_tpl':
@@ -78,11 +92,13 @@ switch ($op) {
         header('location: main.php');
         exit;
     case 'active':
+        $require_post_csrf('main.php');
         active_module($mid);
         header('location: main.php');
         exit;
 
     case 'update_allowed':
+        $require_post_csrf('main.php');
         OnlineUpgrade::update_allowed($theme, $val);
         header('location: main.php');
         exit;
@@ -94,6 +110,10 @@ switch ($op) {
 }
 
 /*-----------秀出結果區--------------*/
+$token      = isset($GLOBALS['xoopsSecurity']) && is_object($GLOBALS['xoopsSecurity']) ? $GLOBALS['xoopsSecurity']->createToken() : '';
+$token_html = isset($GLOBALS['xoopsSecurity']) && is_object($GLOBALS['xoopsSecurity']) ? $GLOBALS['xoopsSecurity']->getTokenHTML() : '';
+$xoopsTpl->assign('token', $token);
+$xoopsTpl->assign('token_html', $token_html);
 $xoopsTpl->assign('source', $xoopsModuleConfig['source']);
 require_once __DIR__ . '/footer.php';
 

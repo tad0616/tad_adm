@@ -20,7 +20,7 @@ class OnlineUpgrade
     {
         global $xoopsModule, $xoopsModuleConfig;
 
-        if ('tad_adm' !== $xoopsModule->dirname()) {
+        if (!is_object($xoopsModule) || 'tad_adm' !== $xoopsModule->dirname()) {
             $TadAmModuleConfig = Utility::getXoopsModuleConfig('tad_adm');
         } else {
             $TadAmModuleConfig = $xoopsModuleConfig;
@@ -63,8 +63,12 @@ class OnlineUpgrade
         $installed_blocks = array_keys($blocks);
 
         $all_install = $all_uninstall = [];
-        foreach ($all_mods as $kind => $items) {
-            foreach ($items as $dirname => $data) {
+        if (is_array($all_mods)) {
+            foreach ($all_mods as $kind => $items) {
+                if (!is_array($items)) {
+                    continue;
+                }
+                foreach ($items as $dirname => $data) {
                 switch ($kind) {
                     case "module":
                         $is_installed = in_array($dirname, $installed_modules) ? true : false;
@@ -99,6 +103,7 @@ class OnlineUpgrade
                 } else {
                     list($function, $mod_data)                 = self::get_uninstall($kind, $data);
                     $all_uninstall[$kind][$function][$dirname] = $mod_data;
+                }
                 }
             }
         }
@@ -157,10 +162,15 @@ class OnlineUpgrade
 
         //後台部份
         $all_patch = $all_upgrade = [];
-        foreach ($xoops_patch as $k => $xoops) {
-            $type                          = $xoops['xoops_type'];
-            list($function, $mod_data)     = self::get_patch($type, $xoops);
-            $all_patch[$type][$function][] = $mod_data;
+        if (is_array($xoops_patch)) {
+            foreach ($xoops_patch as $k => $xoops) {
+                if (!is_array($xoops) || !isset($xoops['xoops_type'])) {
+                    continue;
+                }
+                $type                          = $xoops['xoops_type'];
+                list($function, $mod_data)     = self::get_patch($type, $xoops);
+                $all_patch[$type][$function][] = $mod_data;
+            }
         }
         // Utility::dd($all_patch);
         $xoopsTpl->assign('all_patch', $all_patch);
@@ -211,16 +221,15 @@ class OnlineUpgrade
             $ch      = curl_init();
             $timeout = 5;
 
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+            self::apply_curl_ssl_options($ch);
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
             $data = curl_exec($ch);
             if ($data === false) {
-                $error = "<br>Curl error ($url):" . curl_errno($ch) . curl_error($ch);
+                $error = '<br>Curl error (' . htmlspecialchars($url, ENT_QUOTES, 'UTF-8') . '):' . curl_errno($ch) . ' ' . htmlspecialchars(curl_error($ch), ENT_QUOTES, 'UTF-8');
             }
-            curl_close($ch);
+            unset($ch);
         } elseif (function_exists('file_get_contents')) {
             $data = file_get_contents($url);
         } else {
@@ -339,7 +348,8 @@ class OnlineUpgrade
             case "other":
                 $int_new_version = Utility::get_version('other', $data['new_version']);
                 $int_version     = '';
-                $last_update     = file_get_contents(XOOPS_ROOT_PATH . "/uploads/module_sn_{$module_sn}.txt");
+                $other_file      = XOOPS_ROOT_PATH . "/uploads/module_sn_{$data['module_sn']}.txt";
+                $last_update     = is_file($other_file) ? file_get_contents($other_file) : '';
                 $enable          = 1;
                 $is_link         = false;
                 break;
@@ -352,7 +362,7 @@ class OnlineUpgrade
 
         $item['name']       = $data['module_title'];
         $item['dirname']    = $dirname;
-        $item['descript']   = preg_replace('/\s\s+/', '<br>', trim($data['update_descript']));
+        $item['descript']   = preg_replace('/\s\s+/', '<br>', trim((string) ($data['update_descript'] ?? '')));
         $item['update_sn']  = $data['update_sn'];
         $item['module_sn']  = $data['module_sn'];
         $item['file_link']  = $data['file_link'];
@@ -371,8 +381,10 @@ class OnlineUpgrade
         $item['last_update'] = date('Y-m-d H:i', (int) $last_update);
 
         if (file_exists($path)) {
-            $item['fileowner'] = self::getpwuid($path);
-            $item['filegroup'] = self::getgrgid($path);
+            $owner = self::getpwuid($path);
+            $group = self::getgrgid($path);
+            $item['fileowner'] = is_array($owner) ? (string) ($owner['name'] ?? '') : (string) $owner;
+            $item['filegroup'] = is_array($group) ? (string) ($group['name'] ?? '') : (string) $group;
             $item['fileperms'] = mb_substr(sprintf('%o', fileperms($path)), -4);
         } else {
             $item['fileowner'] = $item['filegroup'] = $item['fileperms'] = '';
@@ -396,7 +408,7 @@ class OnlineUpgrade
 
         $item['name']            = $data['module_title'];
         $item['dirname']         = $data['dirname'];
-        $item['descript']        = nl2br(trim($data['module_descript']));
+        $item['descript']        = nl2br(trim((string) ($data['module_descript'] ?? '')));
         $item['update_sn']       = $data['update_sn'];
         $item['module_sn']       = $data['module_sn'];
         $item['file_link']       = $data['file_link'];
@@ -465,7 +477,7 @@ class OnlineUpgrade
             $now_mod_last_update = $last_update ? $last_update : $filemtime;
             $new_mod_last_update = $mod_data['new_last_update'];
         } elseif ($type == "adm_tpl") {
-            $filemtime           = file_exists(XOOPS_ROOT_PATH . "/themes/system/themes/tad/version.txt") ? filemtime(XOOPS_ROOT_PATH . "/themes/system/themes/tad/version.txt") : 0;
+            $filemtime           = file_exists(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt") ? filemtime(XOOPS_ROOT_PATH . "/modules/system/themes/{$dirname}/version.txt") : 0;
             $now_mod_last_update = $last_update ? $last_update : $filemtime;
             $new_mod_last_update = $mod_data['new_last_update'];
         } elseif ($type == "block") {
@@ -543,6 +555,8 @@ class OnlineUpgrade
 
     public static function get_act_op($act)
     {
+        $act_op = '';
+        $act    = (string) $act;
         if (strpos($act, 'install') !== false) {
             $act_op = "install";
         } elseif (strpos($act, 'update') !== false) {
@@ -608,7 +622,8 @@ class OnlineUpgrade
         $xoopsTpl->assign('ssh_preflight_message', $message);
         $xoopsTpl->assign('tad_adm_ssh_host', $_SESSION['tad_adm_ssh_host'] ?? ($_SERVER['SERVER_ADDR'] ?? '127.0.0.1'));
         $xoopsTpl->assign('tad_adm_ssh_id', $_SESSION['tad_adm_ssh_id'] ?? '');
-        $xoopsTpl->assign('tad_adm_ssh_passwd', $_SESSION['tad_adm_ssh_passwd'] ?? '');
+        $xoopsTpl->assign('tad_adm_ssh_passwd', '');
+        $xoopsTpl->assign('token_html', isset($GLOBALS['xoopsSecurity']) && is_object($GLOBALS['xoopsSecurity']) ? $GLOBALS['xoopsSecurity']->getTokenHTML() : '');
     }
 
     public static function update_allowed($theme, $val)
@@ -706,22 +721,34 @@ class OnlineUpgrade
             }
         } elseif ('install_module' === $act) {
             if ($inSchoolWeb or self::get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh, $act)) {
-                header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module={$dirname}&tad_adm_tpl=clean");
+                if (!preg_match('/^[a-zA-Z0-9_-]+$/D', (string) $dirname)) {
+                    redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 10, sprintf(_MA_TADADM_INVALID_PACKAGE_DIR, htmlspecialchars((string) $dirname, ENT_QUOTES, 'UTF-8')));
+                }
+                header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module=" . rawurlencode($dirname) . '&tad_adm_tpl=clean');
                 exit;
             }
         } elseif ('upgrade_module' === $act) {
             if ($inSchoolWeb or self::get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh, $act)) {
-                header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module={$dirname}&tad_adm_tpl=clean");
+                if (!preg_match('/^[a-zA-Z0-9_-]+$/D', (string) $dirname)) {
+                    redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 10, sprintf(_MA_TADADM_INVALID_PACKAGE_DIR, htmlspecialchars((string) $dirname, ENT_QUOTES, 'UTF-8')));
+                }
+                header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module=" . rawurlencode($dirname) . '&tad_adm_tpl=clean');
                 exit;
             }
         } elseif ('install_other' === $act) {
             if ($inSchoolWeb or self::get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
-                header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module={$dirname}&tad_adm_tpl=clean");
+                if (!preg_match('/^[a-zA-Z0-9_-]+$/D', (string) $dirname)) {
+                    redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 10, sprintf(_MA_TADADM_INVALID_PACKAGE_DIR, htmlspecialchars((string) $dirname, ENT_QUOTES, 'UTF-8')));
+                }
+                header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module=" . rawurlencode($dirname) . '&tad_adm_tpl=clean');
                 exit;
             }
         } elseif ('upgrade_other' === $act) {
             if ($inSchoolWeb or self::get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh)) {
-                header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module={$dirname}&tad_adm_tpl=clean");
+                if (!preg_match('/^[a-zA-Z0-9_-]+$/D', (string) $dirname)) {
+                    redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 10, sprintf(_MA_TADADM_INVALID_PACKAGE_DIR, htmlspecialchars((string) $dirname, ENT_QUOTES, 'UTF-8')));
+                }
+                header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module=" . rawurlencode($dirname) . '&tad_adm_tpl=clean');
                 exit;
             }
         }
@@ -764,7 +791,8 @@ class OnlineUpgrade
         $xoopsTpl->assign('upgrade_progress_token', \Xmf\Request::getString('upgrade_progress_token'));
         $xoopsTpl->assign('tad_adm_ssh_host', $_SESSION['tad_adm_ssh_host'] ?? ($_SERVER['SERVER_ADDR'] ?? '127.0.0.1'));
         $xoopsTpl->assign('tad_adm_ssh_id', $_SESSION['tad_adm_ssh_id'] ?? '');
-        $xoopsTpl->assign('tad_adm_ssh_passwd', $_SESSION['tad_adm_ssh_passwd'] ?? '');
+        $xoopsTpl->assign('tad_adm_ssh_passwd', '');
+        $xoopsTpl->assign('token_html', isset($GLOBALS['xoopsSecurity']) && is_object($GLOBALS['xoopsSecurity']) ? $GLOBALS['xoopsSecurity']->getTokenHTML() : '');
     }
 
     public static function next_to_up($file_link = '', $xoops_sn = '', $act = '', $ssh = '')
@@ -895,8 +923,11 @@ class OnlineUpgrade
         $orig_link         = $file_link;
         $go_warn           = '';
         $fail_url          = $_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean';
-        $file_link         = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
-        $new_file          = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
+        $resolved_download = self::resolve_package_download((string) $file_link, (string) ($TadAmModuleConfig['source'] ?? ''));
+        if (null === $resolved_download) {
+            self::upgrade_redirect($fail_url, 10, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars((string) $file_link, ENT_QUOTES, 'UTF-8')));
+        }
+        list($file_link, $new_file) = $resolved_download;
 
         if ('upgrade' === $dirname) {
             $uploads = XOOPS_ROOT_PATH . '/uploads';
@@ -914,7 +945,7 @@ class OnlineUpgrade
                 self::upgrade_redirect($fail_url, 15, sprintf(_MA_TADADM_STAGING_WRITE_FAIL, htmlspecialchars($stagingProblem, ENT_QUOTES), htmlspecialchars(UpgradeManifest::php_user(), ENT_QUOTES)));
             }
         } elseif (!empty($ssh) && (!is_writable(XOOPS_ROOT_PATH . '/uploads') || (is_dir(XOOPS_ROOT_PATH . '/uploads/tad_adm') && !is_writable(XOOPS_ROOT_PATH . '/uploads/tad_adm')))) {
-            $ssh->exec('mkdir -p ' . escapeshellarg(XOOPS_ROOT_PATH . '/uploads/tad_adm') . ' && chmod -R 777 ' . escapeshellarg(XOOPS_ROOT_PATH . '/uploads') . ' 2>&1');
+            $ssh->exec('mkdir -p ' . escapeshellarg(XOOPS_ROOT_PATH . '/uploads/tad_adm') . ' && chmod 0755 ' . escapeshellarg(XOOPS_ROOT_PATH . '/uploads/tad_adm') . ' 2>&1');
             clearstatcache();
         }
 
@@ -927,7 +958,7 @@ class OnlineUpgrade
         self::copyemz($file_link, $new_file, 0, $xoops_sn, $download_progress);
 
         if (!is_file($new_file)) {
-            self::upgrade_redirect($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
+            self::upgrade_redirect($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars($file_link, ENT_QUOTES, 'UTF-8')));
         }
 
         UpgradeProgress::update(_MA_TADADM_PROGRESS_STAGING, 'staging');
@@ -1044,7 +1075,7 @@ class OnlineUpgrade
             if (false === file_put_contents("{$work_path}/upgrade.sh", $sh)) {
                 self::upgrade_redirect($fail_url, 5, sprintf(_MA_TADADM_SCRIPT_NOT_FOUND, "{$work_path}/upgrade.sh"));
             }
-            self::chmod_R("{$work_path}/upgrade.sh", 0777, 0777);
+            @chmod("{$work_path}/upgrade.sh", 0600);
             UpgradeProgress::update(_MA_TADADM_PROGRESS_SSH, 'apply');
             $output = '';
             $ssh_output = self::run_core_ssh_script($ssh, "{$work_path}/upgrade.sh", $fail_url, null, $output);
@@ -1201,9 +1232,8 @@ class OnlineUpgrade
             $_SESSION['tad_adm_ssh_id'] = $ssh_id;
         }
 
-        if (empty($_SESSION['tad_adm_ssh_passwd'])) {
-            $_SESSION['tad_adm_ssh_passwd'] = $ssh_passwd;
-        }
+        // 不將 SSH 密碼明文存入 Session
+        unset($_SESSION['tad_adm_ssh_passwd']);
 
         $work_dir = self::get_work_dir($act);
 
@@ -1254,18 +1284,17 @@ class OnlineUpgrade
             $timeout = 30; // 原為 5，對大檔案過短
 
             // [修補] 移除 SSL_VERIFYPEER/HOST 停用，改為強制驗證
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            self::apply_curl_ssl_options($ch);
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
             $contentx = curl_exec($ch);
             if ($contentx === false) {
                 $err = curl_error($ch);
-                curl_close($ch);
-                self::upgrade_redirect($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, $url) . " ($err)");
+                unset($ch);
+                self::upgrade_redirect($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars($url, ENT_QUOTES, 'UTF-8')) . ' (' . htmlspecialchars($err, ENT_QUOTES, 'UTF-8') . ')');
             }
-            curl_close($ch);
+            unset($ch);
 
             // ── 回報計數（非關鍵，失敗不中斷流程）────────────────
             if ($progress) {
@@ -1273,13 +1302,12 @@ class OnlineUpgrade
             }
             $ch      = curl_init();
             $timeout = 5;
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            self::apply_curl_ssl_options($ch);
             curl_setopt($ch, CURLOPT_URL, $add_count_url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
             curl_exec($ch); // 結果不使用
-            curl_close($ch);
+            unset($ch);
 
         } elseif (function_exists('file_get_contents')) {
             $contentx = file_get_contents($url);
@@ -1290,7 +1318,7 @@ class OnlineUpgrade
         }
 
         if ($contentx === false || $contentx === '') {
-            self::upgrade_redirect($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, $url));
+            self::upgrade_redirect($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars($url, ENT_QUOTES, 'UTF-8')));
         }
 
         if ($progress) {
@@ -1318,35 +1346,29 @@ class OnlineUpgrade
     {
 
         if (function_exists('posix_getpwuid')) {
-
             $a = posix_getpwuid($uid);
-
-            return $a['name'];
+            if (is_array($a) && isset($a['name'])) {
+                return $a['name'];
+            }
         }
 
-        # This works on BSD but not with GNU
-
-        elseif (strstr(php_uname('s'), 'BSD')) {
-
-            exec('id -u ' . (int) $uid, $o, $r);
-
-            if ($r == 0) {
-                return trim($o['0']);
-            } else {
-                return $uid;
+        // Avoid shell commands here: exec() is commonly disabled by shared hosts.
+        // /etc/passwd has the same colon-delimited format on BSD and GNU systems.
+        if (is_readable('/etc/passwd')) {
+            $handle = fopen('/etc/passwd', 'rb');
+            if ($handle) {
+                while (false !== ($line = fgets($handle))) {
+                    $entry = explode(':', $line);
+                    if (isset($entry[2]) && (string) (int) $entry[2] === (string) (int) $uid) {
+                        fclose($handle);
+                        return $entry[0];
+                    }
+                }
+                fclose($handle);
             }
-        } elseif (is_readable('/etc/passwd')) {
-
-            exec(sprintf('grep :%s: /etc/passwd | cut -d: -f1', (int) $uid), $o, $r);
-
-            if ($r == 0) {
-                return trim($o['0']);
-            } else {
-                return $uid;
-            }
-        } else {
-            return $uid;
         }
+
+        return $uid;
     }
 
     public static function getgrgid($file = "")
@@ -1373,7 +1395,11 @@ class OnlineUpgrade
 
                 return;
             }
-            $dh = opendir($path);
+            $dh = @opendir($path);
+            if (false === $dh) {
+                self::$chmod_fail++;
+                return;
+            }
             while (false !== ($file = readdir($dh))) {
                 if ('.' !== $file && '..' !== $file) {
                     // skip self and parent pointing directories
@@ -1412,18 +1438,17 @@ class OnlineUpgrade
             if (!preg_match('/^[a-zA-Z0-9_-]+$/D', $dirname)) {
                 redirect_header($fail_url, 10, sprintf(_MA_TADADM_INVALID_PACKAGE_DIR, htmlspecialchars($dirname, ENT_QUOTES)));
             }
-            $orig_link = $file_link;
-            $file_link = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
-            if ('tad_adm' === $dirname) {
-                $new_file = str_replace('https://campus-xoops.tn.edu.tw/uploads/tad_modules/file/', XOOPS_ROOT_PATH . '/uploads/', $file_link);
-            } else {
-                $new_file = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
+            $orig_link         = $file_link;
+            $resolved_download = self::resolve_package_download((string) $file_link, (string) ($TadAmModuleConfig['source'] ?? ''), (string) $dirname);
+            if (null === $resolved_download) {
+                redirect_header($fail_url, 10, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars((string) $file_link, ENT_QUOTES, 'UTF-8')));
             }
+            list($file_link, $new_file) = $resolved_download;
             self::prepare_package_directory(XOOPS_ROOT_PATH . '/uploads/tad_adm', $fail_url);
             self::copyemz($file_link, $new_file, $update_sn);
 
             if (!is_file($new_file)) {
-                redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
+                redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars($file_link, ENT_QUOTES, 'UTF-8')));
             }
 
             $source = XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname";
@@ -1492,53 +1517,71 @@ class OnlineUpgrade
 
     public static function do_block($act, $update_sn)
     {
-        global $xoopsDB;
+        global $xoopsDB, $xoopsConfig;
 
         $TadAmModuleConfig = self::get_adm_config();
+        $source            = empty($TadAmModuleConfig['source']) ? 'https://campus-xoops.tn.edu.tw' : $TadAmModuleConfig['source'];
+        $update_sn         = (int) $update_sn;
         $ver               = (int) str_replace('.', '', substr(XOOPS_VERSION, 6, 5));
-        $add_count_url     = $TadAmModuleConfig['source'] . "/modules/tad_modules/api.php?update_sn={$update_sn}&from=" . XOOPS_URL . "&sitename={$xoopsConfig['sitename']}&theme={$xoopsConfig['theme_set']}&version=$ver&language={$xoopsConfig['language']}";
+        $add_count_url     = $source . '/modules/tad_modules/api.php?' . http_build_query([
+            'update_sn' => $update_sn,
+            'from'      => XOOPS_URL,
+            'sitename'  => $xoopsConfig['sitename'] ?? '',
+            'theme'     => $xoopsConfig['theme_set'] ?? '',
+            'version'   => $ver,
+            'language'  => $xoopsConfig['language'] ?? '',
+        ]);
 
-        $url = $TadAmModuleConfig['source'] . "/uploads/tad_modules/{$update_sn}.json";
+        $url = $source . "/uploads/tad_modules/{$update_sn}.json";
 
         if (function_exists('curl_init')) {
             // [修補 CWE-297] 啟用 SSL 憑證驗證
             $ch      = curl_init();
             $timeout = 5;
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            self::apply_curl_ssl_options($ch);
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
             $data = curl_exec($ch);
-            curl_close($ch);
+            unset($ch);
 
             $ch      = curl_init();
             $timeout = 5;
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            self::apply_curl_ssl_options($ch);
             curl_setopt($ch, CURLOPT_URL, $add_count_url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
             $count = curl_exec($ch);
-            curl_close($ch);
+            unset($ch);
         } elseif (function_exists('file_get_contents')) {
             $data  = file_get_contents($url);
             $count = file_get_contents($add_count_url);
         } else {
             $handle = fopen($url, 'rb');
-            $data   = stream_get_contents($handle);
-            fclose($handle);
+            $data   = $handle ? stream_get_contents($handle) : '';
+            if ($handle) {
+                fclose($handle);
+            }
 
             $handle = fopen($add_count_url, 'rb');
-            $count  = stream_get_contents($handle);
-            fclose($handle);
+            $count  = $handle ? stream_get_contents($handle) : '';
+            if ($handle) {
+                fclose($handle);
+            }
         }
 
-        $block         = json_decode($data, true);
-        $last_modified = time();
+        $block         = is_string($data) ? json_decode($data, true) : null;
+        if (!is_array($block)) {
+            redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars($url, ENT_QUOTES, 'UTF-8')));
+        }
+        $last_modified    = time();
+        $block['content'] = \stripslashes((string) ($block['content'] ?? ''));
+        $block['title']   = (string) ($block['title'] ?? '');
+        $block['side']    = (int) ($block['side'] ?? 0);
+        $block['c_type']  = (string) ($block['c_type'] ?? 'H');
+        $block['dirname'] = (string) ($block['dirname'] ?? '');
 
         if ('install' === $act) {
-            $block['content'] = \stripslashes($block['content']);
             $sql              = 'INSERT INTO `' . $xoopsDB->prefix('newblocks') . '`
             (`mid`, `func_num`, `options`, `name`, `title`, `content`, `side`, `weight`, `visible`, `block_type`, `c_type`, `isactive`, `dirname`, `func_file`, `show_func`, `edit_func`, `template`, `bcachetime`, `last_modified`)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
@@ -1561,17 +1604,11 @@ class OnlineUpgrade
             (`block_id`, `module_id`)
             VALUES (?, ?)';
             Utility::query($sql, 'ii', [$block_id, $module_id]) or Utility::web_error($sql, __FILE__, __LINE__);
-
-            $sql = 'INSERT INTO `' . $xoopsDB->prefix('group_permission') . '`
-            (`gperm_groupid`, `gperm_itemid`, `gperm_modid`, `gperm_name`)
-            VALUES (?, ?, ?, ?), (?, ?, ?, ?), (?, ?, ?, ?)';
-            Utility::query($sql, 'iiisiiisiiis', [1, $block_id, 1, 'block_read', 2, $block_id, 1, 'block_read', 3, $block_id, 1, 'block_read']) or Utility::web_error($sql, __FILE__, __LINE__);
         } else {
-            $block['content'] = \stripslashes($block['content']);
             $sql              = 'UPDATE `' . $xoopsDB->prefix('newblocks') . '`
             SET `content` = ?, `last_modified` = ?
             WHERE `dirname` = ?';
-            Utility::query($sql, 'sss', [$block['content'], $last_modified, $block['dirname']]) or Utility::web_error($sql, __FILE__, __LINE__);
+            Utility::query($sql, 'sis', [$block['content'], $last_modified, $block['dirname']]) or Utility::web_error($sql, __FILE__, __LINE__);
         }
     }
 
@@ -1588,13 +1625,12 @@ class OnlineUpgrade
         $remote_hash = '';
         if (function_exists('curl_init')) {
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            self::apply_curl_ssl_options($ch);
             curl_setopt($ch, CURLOPT_URL, $hash_url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
             $remote_hash = curl_exec($ch);
-            curl_close($ch);
+            unset($ch);
         } elseif (function_exists('file_get_contents')) {
             $remote_hash = file_get_contents($hash_url);
         }
@@ -1839,28 +1875,83 @@ class OnlineUpgrade
     }
 
     /**
+     * 套用安全的 cURL SSL 憑證驗證設定，於支援環境自動啟用作業系統原生憑證庫（CURLSSLOPT_NATIVE_CA）。
+     */
+    private static function apply_curl_ssl_options($ch): void
+    {
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        if (defined('CURLSSLOPT_NATIVE_CA')) {
+            curl_setopt($ch, CURLOPT_SSL_OPTIONS, CURLSSLOPT_NATIVE_CA);
+        }
+    }
+
+    /**
+     * 驗證並解析套件下載網址與本機儲存路徑（防止 SSRF 與任意路徑寫入）。
+     * 僅允許來源網址下的 /uploads/tad_modules/file/<safe>.zip，並強制寫入 XOOPS_ROOT_PATH/uploads/。
+     */
+    private static function resolve_package_download(string $file_link, string $source, string $dirname = ''): ?array
+    {
+        $source = rtrim('' !== $source ? $source : 'https://campus-xoops.tn.edu.tw', '/');
+        $url    = str_replace('[source]', $source, trim($file_link));
+        if ('' === $url || false !== strpos($url, "\0")) {
+            return null;
+        }
+
+        $allowed_prefixes = [$source . '/uploads/tad_modules/file/'];
+        if ('tad_adm' === $dirname) {
+            $allowed_prefixes[] = 'https://campus-xoops.tn.edu.tw/uploads/tad_modules/file/';
+        }
+
+        foreach (array_unique($allowed_prefixes) as $prefix) {
+            if (0 === strpos($url, $prefix)) {
+                $filename = substr($url, strlen($prefix));
+                if (preg_match('/^[a-zA-Z0-9._-]+\.zip$/D', $filename) && false === strpos($filename, '..')) {
+                    return [$url, XOOPS_ROOT_PATH . '/uploads/' . $filename];
+                }
+            }
+        }
+
+        error_log('[tad_adm] SECURITY: invalid package download link blocked: ' . $url);
+        return null;
+    }
+
+    /**
      * 確保路徑在 XOOPS_ROOT_PATH 之內（防止路徑穿越）。
      * 回傳正規化後的路徑；若不合法則回傳 null。
      */
     private static function sanitize_path(string $path): ?string
     {
+        if ('' === $path || false !== strpos($path, "\0")) {
+            error_log("[tad_adm] SECURITY: invalid path blocked: " . $path);
+            return null;
+        }
+
+        $root = rtrim(str_replace('\\', '/', XOOPS_ROOT_PATH), '/');
+        $win  = DIRECTORY_SEPARATOR === '\\';
         $real = realpath($path);
 
         if ($real === false) {
-            // 目標尚不存在，改用字串前綴檢查
+            // 目標尚不存在，先拒絕 '..' 區段再檢查前綴
             $normalized = rtrim(str_replace('\\', '/', $path), '/');
-            $root       = rtrim(str_replace('\\', '/', XOOPS_ROOT_PATH), '/');
-            if (strpos($normalized, $root . '/') === 0) {
-                return $path;
+            if (in_array('..', explode('/', $normalized), true)) {
+                error_log("[tad_adm] SECURITY: path traversal attempt blocked: " . $path);
+                return null;
+            }
+            $check_norm = $win ? strtolower($normalized) : $normalized;
+            $check_root = $win ? strtolower($root) : $root;
+            if (strpos($check_norm, $check_root . '/') === 0) {
+                return $normalized;
             }
             error_log("[tad_adm] SECURITY: path traversal attempt blocked: " . $path);
             return null;
         }
 
-        $root = rtrim(str_replace('\\', '/', XOOPS_ROOT_PATH), '/');
-        $real = str_replace('\\', '/', $real);
+        $real       = str_replace('\\', '/', $real);
+        $check_real = $win ? strtolower($real) : $real;
+        $check_root = $win ? strtolower($root) : $root;
 
-        if (strpos($real . '/', $root . '/') !== 0) {
+        if (strpos($check_real . '/', $check_root . '/') !== 0) {
             error_log("[tad_adm] SECURITY: path traversal attempt blocked: " . $path);
             return null;
         }
@@ -1887,21 +1978,25 @@ class OnlineUpgrade
             $xoopsTpl->assign('module_sn', $module_sn);
             $xoopsTpl->assign('file_link', $file_link);
             $xoopsTpl->assign('tad_adm_ssh_id', $_SESSION['tad_adm_ssh_id'] ?? '');
-            $xoopsTpl->assign('tad_adm_ssh_passwd', $_SESSION['tad_adm_ssh_passwd'] ?? '');
+            $xoopsTpl->assign('tad_adm_ssh_passwd', '');
+            $xoopsTpl->assign('token_html', isset($GLOBALS['xoopsSecurity']) && is_object($GLOBALS['xoopsSecurity']) ? $GLOBALS['xoopsSecurity']->getTokenHTML() : '');
             return;
         }
 
         $TadAmModuleConfig = self::get_adm_config();
 
-        $orig_link = $file_link;
-        $file_link = str_replace('[source]', $TadAmModuleConfig['source'], $file_link);
-        $new_file  = str_replace($TadAmModuleConfig['source'] . "/uploads/tad_modules/file/", XOOPS_ROOT_PATH . '/uploads/', $file_link);
+        $orig_link         = $file_link;
+        $resolved_download = self::resolve_package_download((string) $file_link, (string) ($TadAmModuleConfig['source'] ?? ''));
+        if (null === $resolved_download) {
+            redirect_header($fail_url, 10, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars((string) $file_link, ENT_QUOTES, 'UTF-8')));
+        }
+        list($file_link, $new_file) = $resolved_download;
 
         self::prepare_package_directory(XOOPS_ROOT_PATH . '/uploads/tad_adm', $fail_url);
         self::copyemz($file_link, $new_file, $update_sn);
 
         if (!is_file($new_file)) {
-            redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, $file_link));
+            redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars($file_link, ENT_QUOTES, 'UTF-8')));
         }
 
         $work_path = XOOPS_ROOT_PATH . "/uploads/tad_adm/$module_sn";
