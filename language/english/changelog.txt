@@ -1,3 +1,17 @@
+Tad Adm 3.9 (Released 2026-11-25)
+==================================================================
+1. Enhanced front-end and back-end security (reinforced CSRF validation, system administrator permission checks, output escaping, and package download validation)
+2. Fixed compatibility issues with PHP 8.3–8.5, Smarty 3–5, and jQuery 4.0
+3. Upgraded the `tad_adm` table to InnoDB and created composite indexes to optimize performance for spam account and statistical queries
+4. Fixed an issue with cURL SSL certificate verification on Windows servers
+5. Fixed an issue where the installation process on the centralized platform could be triggered even when module symbolic links were not created, resulting in empty records in the database;```
+6. Replaced FancyBox with GLightbox;```
+7. Upgraded Adminer to version 6.3.1;```
+*** Translated with www.DeepL.com/Translator (free version) ***
+
+
+
+
 Tad Adm 3.8 (Released 2026-11-06)
 ==================================================================
 1. Upgraded Adminer to version 6.3.0
