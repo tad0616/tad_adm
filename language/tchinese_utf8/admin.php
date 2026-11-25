@@ -225,3 +225,5 @@ define('_MA_TADADM_SSH_WARN_OUTPUT', 'SSH 輸出的詳細訊息：');
 define('_MA_TADADM_WARN_BLOCKED', '有 %d 個不受支援的指令或不允許的路徑已略過');
 define('_MA_TADADM_WARN_CHMOD', '有 %d 項權限變更失敗');
 define('_MA_TADADM_WARN_DELETE', '有 %d 個路徑無法刪除，請自行手動刪除');
+define('_MA_TADADM_SCHOOLWEB_NO_SYMLINK', '集中式平台未建立此模組的軟連結，無法安裝');
+define('_MA_TADADM_SCHOOLWEB_INSTALL_BLOCKED', '集中式平台尚未建立「%s」模組的有效軟連結，已中止安裝。');

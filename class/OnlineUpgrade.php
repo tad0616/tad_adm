@@ -399,10 +399,26 @@ class OnlineUpgrade
         return $item_data;
     }
 
+    // 檢查模組目錄是否存在且為有效的軟連結（供集中式平台安裝前檢查）
+    public static function has_module_symlink(string $dirname): bool
+    {
+        if (!preg_match('/^[a-zA-Z0-9_-]+$/D', $dirname)) {
+            return false;
+        }
+        $path = XOOPS_ROOT_PATH . "/modules/{$dirname}";
+
+        return is_link($path) && is_file("{$path}/xoops_version.php");
+    }
+
     //未安裝模組
     public static function get_uninstall($kind, $data)
     {
-        $status                      = self::version_status('', $data, $data['dirname'], $data['kind']);
+        global $inSchoolWeb;
+
+        $status = self::version_status('', $data, $data['dirname'], $data['kind']);
+        if ('ok' === $status && $inSchoolWeb && 'module' === $kind && !self::has_module_symlink((string) $data['dirname'])) {
+            $status = _MA_TADADM_SCHOOLWEB_NO_SYMLINK;
+        }
         list($background, $function) = self::get_uninstall_status($status);
         $rc                          = ($data['new_status_version']) ? " {$data['new_status']}{$data['new_status_version']}" : '';
 
@@ -587,6 +603,9 @@ class OnlineUpgrade
         if ('delete_theme' === $act && ($inSchoolWeb || $dirname === $xoopsConfig['theme_set'])) {
             redirect_header('main.php', 3, _MA_TADADM_THEME_DELETE_FAIL);
         }
+        if ('install_module' === $act && $inSchoolWeb && !self::has_module_symlink((string) $dirname)) {
+            redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 10, sprintf(_MA_TADADM_SCHOOLWEB_INSTALL_BLOCKED, htmlspecialchars((string) $dirname, ENT_QUOTES, 'UTF-8')));
+        }
         if ('delete_theme' === $act && !$is_writable && !\Xmf\Request::getInt('force_ssh')) {
             $scan = ['count' => 1, 'paths' => [XOOPS_ROOT_PATH . '/themes'], 'user' => UpgradeManifest::php_user()];
             $ssh_message = self::theme_delete_preflight_message($scan);
@@ -720,8 +739,11 @@ class OnlineUpgrade
                 redirect_header($_SERVER['PHP_SELF'] . '?op=list_all_modules&tad_adm_tpl=clean', 3, _MA_TADADM_ADM_TPL_UPDATE_OK);
             }
         } elseif ('install_module' === $act) {
+            if ($inSchoolWeb && !self::has_module_symlink((string) $dirname)) {
+                redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 10, sprintf(_MA_TADADM_SCHOOLWEB_INSTALL_BLOCKED, htmlspecialchars((string) $dirname, ENT_QUOTES, 'UTF-8')));
+            }
             if ($inSchoolWeb or self::get_new_file($file_link, $dirname, $work_dir, $update_sn, $ssh, $act)) {
-                if (!preg_match('/^[a-zA-Z0-9_-]+$/D', (string) $dirname)) {
+                if (!preg_match('/^[a-zA-Z0-9_-]+$/D', (string) $dirname) || !is_file(XOOPS_ROOT_PATH . "/modules/{$dirname}/xoops_version.php")) {
                     redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 10, sprintf(_MA_TADADM_INVALID_PACKAGE_DIR, htmlspecialchars((string) $dirname, ENT_QUOTES, 'UTF-8')));
                 }
                 header('location:' . XOOPS_URL . "/modules/system/admin.php?fct=modulesadmin&op={$op}&module=" . rawurlencode($dirname) . '&tad_adm_tpl=clean');

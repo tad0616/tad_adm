@@ -226,3 +226,5 @@ define('_MA_TADADM_SSH_WARN_OUTPUT', 'SSH output details:');
 define('_MA_TADADM_WARN_BLOCKED', '%d unsupported instruction(s) or disallowed path(s) were skipped');
 define('_MA_TADADM_WARN_CHMOD', '%d chmod operation(s) failed');
 define('_MA_TADADM_WARN_DELETE', '%d path(s) could not be deleted, please remove them manually');
+define('_MA_TADADM_SCHOOLWEB_NO_SYMLINK', 'No symlink exists for this module on the centralized platform; cannot install');
+define('_MA_TADADM_SCHOOLWEB_INSTALL_BLOCKED', 'Installation aborted: no valid symlink exists for module "%s" on the centralized platform.');
