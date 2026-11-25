@@ -2,17 +2,7 @@
     'use strict';
 
     function updateUpgradeDialog() {
-        var frame = window.frameElement;
-        if (!frame) {
-            return;
-        }
-        var parentJQuery = window.parent.jQuery;
-        var fancybox = parentJQuery && parentJQuery.fancybox;
-        if (fancybox && fancybox.isOpen && fancybox.current &&
-            fancybox.current.type === 'iframe' && fancybox.current.content &&
-            fancybox.current.content[0] === frame) {
-            fancybox.update();
-        }
+        // GLightbox 使用響應式外框尺寸（90vw/90vh），不需手動呼叫舊版 FancyBox update()
     }
 
     window.tadAdmUpgradeProgress = {

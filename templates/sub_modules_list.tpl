@@ -25,7 +25,7 @@
                 <a href="<{$xoops_url|escape:'html'}>/modules/system/admin.php?fct=preferences&amp;op=showmod&amp;mod=<{$mod.mid|default:''|escape:'url'}>" title="<{$mod.dirname|default:''|escape:'html'}><{$smarty.const._MA_TADADM_MOD_PREF|escape:'html'}>"><i class="fa fa-edit"></i>
                     <{$smarty.const._MA_TADADM_CONFIG}></a>
 
-                <a href="<{$xoops_url|escape:'html'}>/modules/system/admin.php?fct=modulesadmin&amp;op=update&amp;module=<{$mod.dirname|default:''|escape:'url'}>&amp;tad_adm_tpl=clean" title="<{$smarty.const._MA_TADADM_MODULES_UPDATING|escape:'html'}><{$mod.dirname|default:''|escape:'html'}>" class="modulesadmin" data-fancybox-type="iframe"><i class="fa fa-refresh" ></i>
+                <a href="<{$xoops_url|escape:'html'}>/modules/system/admin.php?fct=modulesadmin&amp;op=update&amp;module=<{$mod.dirname|default:''|escape:'url'}>&amp;tad_adm_tpl=clean" title="<{$smarty.const._MA_TADADM_MODULES_UPDATING|escape:'html'}><{$mod.dirname|default:''|escape:'html'}>" class="modulesadmin" data-type="external"><i class="fa fa-refresh" ></i>
                     <{$smarty.const._MA_TADADM_UPDATE}></a>
 
                 <a href="<{$xoops_url|escape:'html'}>/modules/<{$mod.dirname|default:''|escape:'url'}>/admin/index.php" title="<{$mod.dirname|default:''|escape:'html'}><{$smarty.const._MA_TADADM_MOD_BLOCK|escape:'html'}>" target="_blank"><i class="fa fa-th" ></i>
@@ -59,7 +59,7 @@
                 </a>
             </div>
         <{elseif $mod.function|default:''=='upgrade' or $mod.function|default:''=='latest'}>
-            <a href="main.php?op=upgrade_<{$mod.kind|default:''|escape:'url'}>&amp;dirname=<{$mod.dirname|default:''|escape:'url'}>&amp;file_link=<{$mod.file_link|default:''|escape:'url'}>&amp;update_sn=<{$mod.update_sn|default:''|escape:'url'}>&amp;module_sn=<{$mod.module_sn|default:''|escape:'url'}>&amp;tad_adm_tpl=clean" class="modulesadmin <{if $mod.function=='latest'}>latest_btn<{else}>update_btn<{/if}>"  data-fancybox-type="iframe" title="<{$mod.dirname|default:''|escape:'html'}> <{$mod.now_version|default:''|escape:'html'}> (<{$mod.last_update|default:''|escape:'html'}>) to <{$mod.new_version|default:''|escape:'html'}> (<{$mod.new_last_update|default:''|escape:'html'}>) <{$mod.function|default:''|escape:'html'}>" style="">
+            <a href="main.php?op=upgrade_<{$mod.kind|default:''|escape:'url'}>&amp;dirname=<{$mod.dirname|default:''|escape:'url'}>&amp;file_link=<{$mod.file_link|default:''|escape:'url'}>&amp;update_sn=<{$mod.update_sn|default:''|escape:'url'}>&amp;module_sn=<{$mod.module_sn|default:''|escape:'url'}>&amp;tad_adm_tpl=clean" class="modulesadmin <{if $mod.function=='latest'}>latest_btn<{else}>update_btn<{/if}>"  data-type="external" title="<{$mod.dirname|default:''|escape:'html'}> <{$mod.now_version|default:''|escape:'html'}> (<{$mod.last_update|default:''|escape:'html'}>) to <{$mod.new_version|default:''|escape:'html'}> (<{$mod.new_last_update|default:''|escape:'html'}>) <{$mod.function|default:''|escape:'html'}>" style="">
                 <{if $mod.function=='latest'}>
                     <{$mod.dirname|default:''|escape:'html'}> <{$mod.now_version|default:''|escape:'html'}> <{$smarty.const._MA_TADADM_MOD_LATEST}>
                 <{else}>
@@ -68,7 +68,7 @@
             </a>
 
         <{elseif $mod.function|default:''=='install'}>
-            <a href="main.php?op=install_<{$mod.kind|default:''|escape:'url'}>&amp;dirname=<{$mod.dirname|default:''|escape:'url'}>&amp;file_link=<{$mod.file_link|default:''|escape:'url'}>&amp;update_sn=<{$mod.update_sn|default:''|escape:'url'}>&amp;module_sn=<{$mod.module_sn|default:''|escape:'url'}>&amp;tad_adm_tpl=clean" class="modulesadmin install_btn" title="<{$mod.dirname|default:''|escape:'html'}> <{$mod.now_version|default:''|escape:'html'}> (<{$mod.last_update|default:''|escape:'html'}>) to <{$mod.new_version|default:''|escape:'html'}> (<{$mod.new_last_update|default:''|escape:'html'}>)" data-fancybox-type="iframe">
+            <a href="main.php?op=install_<{$mod.kind|default:''|escape:'url'}>&amp;dirname=<{$mod.dirname|default:''|escape:'url'}>&amp;file_link=<{$mod.file_link|default:''|escape:'url'}>&amp;update_sn=<{$mod.update_sn|default:''|escape:'url'}>&amp;module_sn=<{$mod.module_sn|default:''|escape:'url'}>&amp;tad_adm_tpl=clean" class="modulesadmin install_btn" title="<{$mod.dirname|default:''|escape:'html'}> <{$mod.now_version|default:''|escape:'html'}> (<{$mod.last_update|default:''|escape:'html'}>) to <{$mod.new_version|default:''|escape:'html'}> (<{$mod.new_last_update|default:''|escape:'html'}>)" data-type="external">
                 <{$smarty.const._MA_TADADM_MOD_INSTALL_MODULE}> <{$mod.name|default:''|escape:'html'}>
             </a>
         <{/if}>

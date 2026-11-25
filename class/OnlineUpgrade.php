@@ -3,8 +3,8 @@
 namespace XoopsModules\Tad_adm;
 
 use XoopsModules\Tadtools\EasyResponsiveTabs;
-use XoopsModules\Tadtools\FancyBox;
 use XoopsModules\Tadtools\FooTable;
+use XoopsModules\Tadtools\GLightbox;
 use XoopsModules\Tadtools\Utility;
 use XoopsModules\Tad_adm\DunZip2;
 
@@ -121,8 +121,8 @@ class OnlineUpgrade
         $xoopsTpl->assign('theme_set', $xoopsConfig['theme_set']);
         $xoopsTpl->assign('inSchoolWeb', $inSchoolWeb);
 
-        $FancyBox = new FancyBox('.modulesadmin', '640', '480');
-        $FancyBox->render(true);
+        $GLightbox = new GLightbox('.modulesadmin', '640', '480');
+        $GLightbox->render(true);
 
         xoops_loadLanguage('main', 'tadtools');
         $xoTheme->addStylesheet('modules/tadtools/sweet-alert/sweet-alert.css');
@@ -178,8 +178,8 @@ class OnlineUpgrade
         $FooTable = new FooTable();
         $FooTable->render();
 
-        $FancyBox = new FancyBox('.modulesadmin');
-        $FancyBox->render(true);
+        $GLightbox = new GLightbox('.modulesadmin');
+        $GLightbox->render(true);
 
         $xoopsTpl->assign('jquery', Utility::get_jquery(true));
 

@@ -27,7 +27,7 @@
         <!-- <div><{$mod.status|default:''|escape:'html'}>-<{$mod.function|default:''|escape:'html'}></div> -->
         <{if $mod.function|default:''=='unable'}>
             <{if $mod.status|default:''== $smarty.const._MA_TADADM_PATCH_INSTALLED}>
-                <a href="xoops.php?op=<{$mod.xoops_type|default:''|escape:'url'}>_xoops&amp;file_link=<{$mod.file_link|default:''|escape:'url'}>&amp;xoops_sn=<{$mod.xoops_sn|default:''|escape:'url'}>&amp;tad_adm_tpl=clean" class="modulesadmin latest_btn"  data-fancybox-type="iframe">
+                <a href="xoops.php?op=<{$mod.xoops_type|default:''|escape:'url'}>_xoops&amp;file_link=<{$mod.file_link|default:''|escape:'url'}>&amp;xoops_sn=<{$mod.xoops_sn|default:''|escape:'url'}>&amp;tad_adm_tpl=clean" class="modulesadmin latest_btn"  data-type="external">
                     <{$smarty.const._MA_TADADM_PATCH_INSTALLED}>
                 </a>
             <{else}>
@@ -36,7 +36,7 @@
                 </div>
             <{/if}>
         <{elseif $mod.function|default:''=='upgrade' or $mod.function|default:''=='latest'}>
-            <a href="xoops.php?op=<{$mod.xoops_type|default:''|escape:'url'}>_xoops&amp;file_link=<{$mod.file_link|default:''|escape:'url'}>&amp;xoops_sn=<{$mod.xoops_sn|default:''|escape:'url'}>&amp;tad_adm_tpl=clean" class="modulesadmin <{if $mod.function=='latest'}>latest_btn<{else}>install_btn<{/if}>"  data-fancybox-type="iframe" >
+            <a href="xoops.php?op=<{$mod.xoops_type|default:''|escape:'url'}>_xoops&amp;file_link=<{$mod.file_link|default:''|escape:'url'}>&amp;xoops_sn=<{$mod.xoops_sn|default:''|escape:'url'}>&amp;tad_adm_tpl=clean" class="modulesadmin <{if $mod.function=='latest'}>latest_btn<{else}>install_btn<{/if}>"  data-type="external" >
                 <{if $mod.function=='latest'}>
                     <{$smarty.const._MA_TADADM_MOD_LATEST}>
                 <{else}>

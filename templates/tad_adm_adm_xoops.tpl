@@ -53,31 +53,33 @@
                 <{/if}>
             </div>
         </div>
-        <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js?v=2026110902"></script>
+        <script src="<{$xoops_url}>/modules/tad_adm/js/xoops_upgrade_progress.js?v=2026112501"></script>
         <script>
             $(function() {
-                var stopProgress;
-                var token;
-                document.addEventListener('click', function(event) {
-                    var link = event.target.closest('a.modulesadmin[href*="op=upgrade_xoops"]:not(.disabled)');
-                    if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
-                        return;
-                    }
-                    token = window.tadAdmUpgradeProgress.token();
-                    var url = new URL(link.href, window.location.href);
-                    if (token) {
-                        url.searchParams.set('upgrade_progress_token', token);
-                    } else {
-                        url.searchParams.delete('upgrade_progress_token');
-                    }
-                    link.href = url.toString();
-                    $('body').addClass('tad-adm-xoops-upgrade-loading');
-                }, true);
+                var stopProgress = null;
+                var progressOverlay = null;
+                var modalObserver = null;
 
-                $(document).on('onLoading.tadAdmXoopsUpgrade', function() {
-                    if (!$('body').hasClass('tad-adm-xoops-upgrade-loading')) {
-                        return;
+                function cleanupProgress() {
+                    if (stopProgress) {
+                        stopProgress();
+                        stopProgress = null;
                     }
+                    if (modalObserver) {
+                        modalObserver.disconnect();
+                        modalObserver = null;
+                    }
+                    if (progressOverlay) {
+                        progressOverlay.remove();
+                        progressOverlay = null;
+                    }
+                    $('body').removeClass('tad-adm-xoops-upgrade-loading');
+                }
+
+                function showProgress(token) {
+                    cleanupProgress();
+                    $('body').addClass('tad-adm-xoops-upgrade-loading');
+                    progressOverlay = $('<div id="tad-adm-xoops-progress-overlay"></div>');
                     var status = $('<div class="tad-adm-progress" role="status" aria-live="polite"></div>')
                         .text('<{$smarty.const._MA_TADADM_XOOPS_UPGRADE_WAIT|escape:"javascript"}>')
                         .attr({
@@ -89,46 +91,72 @@
                             'data-progress-unlimited': '<{$smarty.const._MA_TADADM_PROGRESS_PHP_UNLIMITED|escape:"javascript"}>',
                             'data-progress-limit-unavailable': '<{$smarty.const._MA_TADADM_PROGRESS_PHP_LIMIT_UNAVAILABLE|escape:"javascript"}>'
                         });
-                    $('#fancybox-loading').append(status);
-                    if (token) {
+                    progressOverlay.append(status);
+                    $('body').append(progressOverlay);
+                    if (token && window.tadAdmUpgradeProgress) {
                         stopProgress = window.tadAdmUpgradeProgress.start(status[0], token, 'upgrade_progress.php');
                     }
-                });
 
-                $(document).on('afterShow.tadAdmXoopsUpgrade afterClose.tadAdmXoopsUpgrade onCancel.tadAdmXoopsUpgrade', function() {
-                    if (stopProgress) {
-                        stopProgress();
-                        stopProgress = null;
+                    if (typeof window.MutationObserver === 'function') {
+                        var modalSeen = false;
+                        modalObserver = new window.MutationObserver(function() {
+                            var modal = document.getElementById('glightbox-body');
+                            if (modal) {
+                                modalSeen = true;
+                                var frame = modal.querySelector('iframe');
+                                if (frame && frame.dataset.tadAdmProgressBound !== '1') {
+                                    frame.dataset.tadAdmProgressBound = '1';
+                                    frame.addEventListener('load', function() {
+                                        cleanupProgress();
+                                    });
+                                }
+                            } else if (modalSeen) {
+                                cleanupProgress();
+                            }
+                        });
+                        modalObserver.observe(document.body, { childList: true, subtree: true });
                     }
-                    $('body').removeClass('tad-adm-xoops-upgrade-loading');
-                });
+                }
+
+                document.addEventListener('click', function(event) {
+                    var link = event.target.closest('a.modulesadmin[href*="op=upgrade_xoops"]:not(.disabled)');
+                    if (!link || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) {
+                        return;
+                    }
+                    var token = window.tadAdmUpgradeProgress ? window.tadAdmUpgradeProgress.token() : '';
+                    var url = new URL(link.href, window.location.href);
+                    if (token) {
+                        url.searchParams.set('upgrade_progress_token', token);
+                    } else {
+                        url.searchParams.delete('upgrade_progress_token');
+                    }
+                    link.href = url.toString();
+                    showProgress(token);
+                }, true);
             });
         </script>
         <style>
-            body.tad-adm-xoops-upgrade-loading #fancybox-loading {
-                width: auto;
-                height: auto;
-                margin: 0;
-                background: none;
+            #tad-adm-xoops-progress-overlay {
+                position: fixed;
                 left: 50%;
                 top: 50%;
                 transform: translate(-50%, -50%);
+                z-index: 1000000;
                 max-height: calc(100vh - 2rem);
                 overflow-y: auto;
+                background: #fff;
+                border-radius: 0.4rem;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
             }
 
-            body.tad-adm-xoops-upgrade-loading #fancybox-loading > div:not(.tad-adm-progress):not(.tad-adm-progress-timer):not(.tad-adm-progress-steps) {
-                display: none;
-            }
-
-            body.tad-adm-xoops-upgrade-loading #fancybox-loading .tad-adm-progress-steps,
-            body.tad-adm-xoops-upgrade-loading #fancybox-loading .tad-adm-progress-steps div {
+            #tad-adm-xoops-progress-overlay .tad-adm-progress-steps,
+            #tad-adm-xoops-progress-overlay .tad-adm-progress-steps div {
                 width: auto;
                 height: auto;
                 background: #fff;
             }
 
-            body.tad-adm-xoops-upgrade-loading #fancybox-loading .tad-adm-progress {
+            #tad-adm-xoops-progress-overlay .tad-adm-progress {
                 display: block;
                 width: auto;
                 height: auto;
@@ -136,7 +164,6 @@
                 border: 1px solid #ccc;
                 border-radius: 0.4rem;
                 background: #fff;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
                 color: #333;
                 font-size: 1rem;
                 min-width: min(20rem, 80vw);
@@ -144,7 +171,7 @@
                 overflow-wrap: anywhere;
             }
 
-            body.tad-adm-xoops-upgrade-loading #fancybox-loading .tad-adm-progress-timer {
+            #tad-adm-xoops-progress-overlay .tad-adm-progress-timer {
                 display: block;
                 width: auto;
                 height: auto;

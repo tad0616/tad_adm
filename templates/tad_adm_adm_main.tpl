@@ -8,14 +8,14 @@
         <a href="main.php" class="btn btn-primary" id="theme-delete-close"><{$smarty.const._MA_TADADM_THEME_DELETE_CLOSE}></a>
         <script>
             document.getElementById('theme-delete-close').addEventListener('click', function (event) {
-                if (window.parent !== window && window.parent.jQuery && window.parent.jQuery.fancybox) {
+                if (window.parent !== window && window.parent.TadGLightbox && typeof window.parent.TadGLightbox.close === 'function') {
                     event.preventDefault();
-                    window.parent.jQuery.fancybox.close();
+                    window.parent.TadGLightbox.close();
                 }
             });
         </script>
     <{else}>
-        <script src="<{$xoops_url}>/modules/tad_adm/js/module_update_guard.js?v=2026110901"
+        <script src="<{$xoops_url}>/modules/tad_adm/js/module_update_guard.js?v=2026112501"
                 data-wait-message="<{$smarty.const._MA_TADADM_MODULE_UPDATE_WAIT|escape:'html'}>"></script>
         <div id="modTab">
             <ul class="resp-tabs-list vert">
