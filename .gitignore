@@ -222,3 +222,21 @@ manager_xc.php
 *-old.tpl
 *_bak.php
 /del*.php
+
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+.claude/
+.agents/
