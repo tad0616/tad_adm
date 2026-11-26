@@ -31,6 +31,8 @@ define('_MI_TADADM_HELP_OVERVIEW', 'Overview');
 
 define('_MI_TADADM_SOURCE', 'Download the list source');
 define('_MI_TADADM_SOURCE_DESC', 'If the update list can not be displayed, change to: https://www.tad0616.net');
+define('_MI_TADADM_SITE_KEY', 'Authorization key');
+define('_MI_TADADM_SITE_KEY_DESC', 'Used to install or upgrade packages restricted to authorized sites. Ask the administrator of the list source for this site\'s key and paste it here once. Leave blank to use public packages only.');
 
 define('_MI_TADADM_USE_FORGOT_PASSWD', 'Use Forgot Password Function');
 define('_MI_TADADM_USE_FORGOT_PASSWD_DESC', 'Whether to enable the forgot password function');

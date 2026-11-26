@@ -35,6 +35,19 @@ class OnlineUpgrade
 
         //取得升級訊息
         $all_mods = self::get_tad_json_info('all2.json');
+
+        // 有設定授權金鑰時，併入限定本站安裝的套件（取得失敗時只顯示公開套件）
+        $private_mods = self::get_private_json_info();
+        if (is_array($all_mods) && !empty($private_mods)) {
+            foreach ($private_mods as $kind => $items) {
+                if (!is_array($items)) {
+                    continue;
+                }
+                foreach ($items as $dirname => $data) {
+                    $all_mods[$kind][$dirname] = $data;
+                }
+            }
+        }
         Utility::test($all_mods, 'all_mods', 'dd');
         // Utility::dd($all_mods);
         // 已安裝模組
@@ -245,6 +258,78 @@ class OnlineUpgrade
         $mod = json_decode($data, true);
         return $mod;
     }
+
+    /**
+     * 取得限定本站安裝的套件清單（需在偏好設定填入授權金鑰）
+     */
+    public static function get_private_json_info(): array
+    {
+        $result = self::private_request('list');
+        if (null === $result) {
+            return [];
+        }
+        $mods = json_decode($result['body'], true);
+        return is_array($mods) ? $mods : [];
+    }
+
+    /**
+     * 是否為限定網站安裝套件的下載網址，是的話回傳 update_sn
+     */
+    private static function private_download_sn(string $url, string $source): int
+    {
+        $source = rtrim('' !== $source ? $source : 'https://campus-xoops.tn.edu.tw', '/');
+        $prefix = $source . '/modules/tad_modules/private.php?op=download&update_sn=';
+        if (0 === strpos($url, $prefix) && preg_match('/^[1-9][0-9]{0,9}$/D', substr($url, strlen($prefix)))) {
+            return (int) substr($url, strlen($prefix));
+        }
+        return 0;
+    }
+
+    /**
+     * 以授權金鑰簽章後向來源站的 private.php 送出請求
+     * 金鑰不會被送出，只送出 HMAC-SHA256 簽章
+     * @return array|null ['body' => string, 'sha256' => string]，失敗回傳 null
+     */
+    private static function private_request(string $op, int $update_sn = 0): ?array
+    {
+        $TadAmModuleConfig = self::get_adm_config();
+        $key               = trim((string) ($TadAmModuleConfig['site_key'] ?? ''));
+        if ('' === $key || !function_exists('curl_init')) {
+            return null;
+        }
+        $source = rtrim(empty($TadAmModuleConfig['source']) ? 'https://campus-xoops.tn.edu.tw' : $TadAmModuleConfig['source'], '/');
+        $site   = XOOPS_URL;
+        $ts     = (string) time();
+        $sig    = hash_hmac('sha256', "{$op}\n{$site}\n{$ts}\n{$update_sn}", $key);
+
+        $sha256 = '';
+        $ch     = curl_init();
+        self::apply_curl_ssl_options($ch);
+        curl_setopt($ch, CURLOPT_URL, "{$source}/modules/tad_modules/private.php");
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query(['op' => $op, 'site' => $site, 'ts' => $ts, 'update_sn' => $update_sn, 'sig' => $sig]));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 'download' === $op ? 300 : 15);
+        curl_setopt($ch, CURLOPT_HEADERFUNCTION, static function ($ch, $header) use (&$sha256) {
+            if (0 === stripos($header, 'X-Package-Sha256:')) {
+                $sha256 = strtolower(trim(substr($header, 17)));
+            }
+            return strlen($header);
+        });
+        $body = curl_exec($ch);
+        $code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        unset($ch);
+
+        if (false === $body || 200 !== $code) {
+            if ('list' !== $op || 403 === $code) {
+                error_log("[tad_adm] private request failed: op={$op} update_sn={$update_sn} http={$code}");
+            }
+            return null;
+        }
+        return ['body' => (string) $body, 'sha256' => $sha256];
+    }
+
     public static function get_installed_status($status)
     {
         if ($status == "ok") {
@@ -990,9 +1075,7 @@ class OnlineUpgrade
         Utility::mk_dir(XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname");
 
         UpgradeProgress::update(sprintf(_MA_TADADM_PROGRESS_EXTRACT, basename($new_file)), 'extract');
-        $zip = new DunZip2($new_file);
-        $extracted = $zip->unzipAll(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
-        $zip->close();
+        $extracted = self::extract_zip($new_file, XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}/");
         if (!$extracted) {
             self::upgrade_redirect($fail_url, 15, sprintf(_MA_TADADM_EXTRACT_FAIL, htmlspecialchars(XOOPS_ROOT_PATH . "/uploads/tad_adm/{$dirname}", ENT_QUOTES)));
         }
@@ -1300,7 +1383,30 @@ class OnlineUpgrade
 
         $url = $file1;
 
-        if (function_exists('curl_init')) {
+        // 限定網站安裝的套件：以授權金鑰簽章下載，並比對檔案雜湊
+        $private_sn = self::private_download_sn((string) $url, (string) ($TadAmModuleConfig['source'] ?? ''));
+        if ($private_sn > 0) {
+            $result = self::private_request('download', $private_sn);
+            if (null === $result || '' === $result['body']) {
+                self::upgrade_redirect($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 5, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars($url, ENT_QUOTES, 'UTF-8')) . ' (' . _MA_TADADM_PRIVATE_DENIED . ')');
+            }
+            if (64 === strlen($result['sha256']) && !hash_equals($result['sha256'], hash('sha256', $result['body']))) {
+                self::upgrade_redirect($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 5, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars($url, ENT_QUOTES, 'UTF-8')) . ' (sha256)');
+            }
+            $contentx = $result['body'];
+
+            // 回報計數（非關鍵，失敗不中斷流程）
+            if ($progress) {
+                $progress('count', $file2);
+            }
+            $ch = curl_init();
+            self::apply_curl_ssl_options($ch);
+            curl_setopt($ch, CURLOPT_URL, $add_count_url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+            curl_exec($ch);
+            unset($ch);
+        } elseif (function_exists('curl_init')) {
             // ── 下載主檔 ──────────────────────────────────────────
             $ch      = curl_init();
             $timeout = 30; // 原為 5，對大檔案過短
@@ -1476,13 +1582,15 @@ class OnlineUpgrade
             $source = XOOPS_ROOT_PATH . "/uploads/tad_adm/$dirname";
             $dest = XOOPS_ROOT_PATH . "/{$work_dir}/{$dirname}";
             if (is_dir($source) && !Utility::delete_directory($source)) {
+                error_log("[tad_adm] failed to remove previous staging directory: {$source}");
                 redirect_header($fail_url, 15, sprintf(_MA_TADADM_EXTRACT_FAIL, htmlspecialchars($source, ENT_QUOTES)));
             }
 
-            $zip = new DunZip2($new_file);
-            $extracted = $zip->unzipAll(XOOPS_ROOT_PATH . '/uploads/tad_adm/', '', true, 0);
-            $zip->close();
+            $extracted = self::extract_zip($new_file, XOOPS_ROOT_PATH . '/uploads/tad_adm/');
             if (!$extracted || !is_dir($source)) {
+                if ($extracted && !is_dir($source)) {
+                    error_log("[tad_adm] zip extracted but expected directory missing: {$source}");
+                }
                 redirect_header($fail_url, 15, sprintf(_MA_TADADM_EXTRACT_FAIL, htmlspecialchars($source, ENT_QUOTES)));
             }
 
@@ -1535,6 +1643,120 @@ class OnlineUpgrade
         if ((!is_dir($path) && !@mkdir($path, 0755, true) && !is_dir($path)) || !is_writable($path) || !is_writable(XOOPS_ROOT_PATH . '/uploads')) {
             redirect_header($fail_url, 15, sprintf(_MA_TADADM_STAGING_WRITE_FAIL, htmlspecialchars($path, ENT_QUOTES), htmlspecialchars(UpgradeManifest::php_user(), ENT_QUOTES)));
         }
+    }
+
+    /**
+     * 解壓套件 ZIP：優先使用 PHP 原生 ZipArchive（支援 UTF-8 檔名、ZIP64、Data Descriptor），
+     * 主機未安裝 zip 擴充時才退回 DunZip2。內建防止 Zip Slip 路徑穿越與拒絕符號連結。
+     */
+    private static function extract_zip(string $zipFile, string $targetDir): bool
+    {
+        $targetDir = rtrim(str_replace('\\', '/', $targetDir), '/');
+        if (!is_dir($targetDir) && !@mkdir($targetDir, 0755, true) && !is_dir($targetDir)) {
+            error_log("[tad_adm] zip extract failed: cannot create target dir {$targetDir}");
+            return false;
+        }
+
+        if (class_exists(\ZipArchive::class)) {
+            $zip  = new \ZipArchive();
+            $code = $zip->open($zipFile);
+            if (true !== $code) {
+                error_log("[tad_adm] ZipArchive::open failed ({$code}) for {$zipFile}");
+                return false;
+            }
+
+            $ok = true;
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $rawName = $zip->getNameIndex($i);
+                if (false === $rawName || '' === $rawName || false !== strpos($rawName, "\0")) {
+                    continue;
+                }
+                $entry = str_replace('\\', '/', $rawName);
+                $isDir = '/' === substr($entry, -1);
+                $entry = ltrim(rtrim($entry, '/'), '/');
+                if ('' === $entry) {
+                    continue;
+                }
+
+                // 防止路徑穿越（Zip Slip）
+                $parts = explode('/', $entry);
+                $safe  = true;
+                foreach ($parts as $part) {
+                    if ('' === $part || '.' === $part || '..' === $part) {
+                        $safe = false;
+                        break;
+                    }
+                }
+                if (!$safe) {
+                    error_log("[tad_adm] SECURITY: blocked unsafe zip entry: {$rawName}");
+                    $ok = false;
+                    break;
+                }
+
+                // 略過 Unix 符號連結，避免透過 symlink 寫出目標目錄外
+                if (method_exists($zip, 'getExternalAttributesIndex')) {
+                    $opsys = 0;
+                    $attr  = 0;
+                    if ($zip->getExternalAttributesIndex($i, $opsys, $attr)
+                        && \ZipArchive::OPSYS_UNIX === $opsys
+                        && 0120000 === (($attr >> 16) & 0170000)) {
+                        error_log("[tad_adm] SECURITY: skipped symlink zip entry: {$rawName}");
+                        continue;
+                    }
+                }
+
+                $dest = $targetDir . '/' . $entry;
+                if ($isDir) {
+                    if (!is_dir($dest) && !@mkdir($dest, 0755, true) && !is_dir($dest)) {
+                        error_log("[tad_adm] ZipArchive failed to create dir: {$dest}");
+                        $ok = false;
+                        break;
+                    }
+                    continue;
+                }
+
+                $parent = dirname($dest);
+                if (!is_dir($parent) && !@mkdir($parent, 0755, true) && !is_dir($parent)) {
+                    error_log("[tad_adm] ZipArchive failed to create parent dir: {$parent}");
+                    $ok = false;
+                    break;
+                }
+
+                $in = $zip->getStream($rawName);
+                if (false === $in) {
+                    error_log("[tad_adm] ZipArchive::getStream failed for entry: {$rawName}");
+                    $ok = false;
+                    break;
+                }
+                $out = @fopen($dest, 'wb');
+                if (false === $out) {
+                    fclose($in);
+                    error_log("[tad_adm] ZipArchive failed to open output file: {$dest}");
+                    $ok = false;
+                    break;
+                }
+                $copied = stream_copy_to_stream($in, $out);
+                fclose($in);
+                fclose($out);
+                if (false === $copied) {
+                    error_log("[tad_adm] ZipArchive stream_copy_to_stream failed for: {$dest}");
+                    $ok = false;
+                    break;
+                }
+            }
+
+            $zip->close();
+            return $ok;
+        }
+
+        // 主機未啟用 ZipArchive 時退回 DunZip2
+        $zip       = new DunZip2($zipFile);
+        $extracted = $zip->unzipAll($targetDir . '/', '', true, 0);
+        if (!$extracted) {
+            error_log('[tad_adm] DunZip2::unzipAll failed for ' . $zipFile . ': ' . (string) $zip->getLastError());
+        }
+        $zip->close();
+        return (bool) $extracted;
     }
 
     public static function do_block($act, $update_sn)
@@ -1593,6 +1815,11 @@ class OnlineUpgrade
         }
 
         $block         = is_string($data) ? json_decode($data, true) : null;
+        if (!is_array($block)) {
+            // 限定網站安裝的自訂區塊不提供公開 json，改以授權金鑰取得
+            $result = self::private_request('block', $update_sn);
+            $block  = null === $result ? null : json_decode($result['body'], true);
+        }
         if (!is_array($block)) {
             redirect_header($_SERVER['PHP_SELF'] . '?tad_adm_tpl=clean', 3, sprintf(_MA_TADADM_DL_FAIL, htmlspecialchars($url, ENT_QUOTES, 'UTF-8')));
         }
@@ -1910,7 +2137,8 @@ class OnlineUpgrade
 
     /**
      * 驗證並解析套件下載網址與本機儲存路徑（防止 SSRF 與任意路徑寫入）。
-     * 僅允許來源網址下的 /uploads/tad_modules/file/<safe>.zip，並強制寫入 XOOPS_ROOT_PATH/uploads/。
+     * 僅允許來源網址下的 /uploads/tad_modules/file/<safe>.zip，
+     * 或限定網站安裝套件的 /modules/tad_modules/private.php?op=download&update_sn=<數字>，並強制寫入 XOOPS_ROOT_PATH/uploads/。
      */
     private static function resolve_package_download(string $file_link, string $source, string $dirname = ''): ?array
     {
@@ -1918,6 +2146,12 @@ class OnlineUpgrade
         $url    = str_replace('[source]', $source, trim($file_link));
         if ('' === $url || false !== strpos($url, "\0")) {
             return null;
+        }
+
+        // 限定網站安裝的套件：只接受來源站 private.php 的下載網址，本機檔名由程式決定
+        $private_sn = self::private_download_sn($url, $source);
+        if ($private_sn > 0) {
+            return [$url, XOOPS_ROOT_PATH . "/uploads/tad_private_{$private_sn}.zip"];
         }
 
         $allowed_prefixes = [$source . '/uploads/tad_modules/file/'];
@@ -2027,9 +2261,7 @@ class OnlineUpgrade
         }
         self::prepare_package_directory($work_path, $fail_url);
 
-        $zip = new DunZip2($new_file);
-        $extracted = $zip->unzipAll($work_path . '/', '', true, 0);
-        $zip->close();
+        $extracted = self::extract_zip($new_file, $work_path . '/');
         if (!$extracted) {
             redirect_header($fail_url, 15, sprintf(_MA_TADADM_EXTRACT_FAIL, htmlspecialchars($work_path, ENT_QUOTES)));
         }

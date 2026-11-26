@@ -31,6 +31,8 @@ define('_MI_TADADM_HELP_OVERVIEW', '概要');
 
 define('_MI_TADADM_SOURCE', '下載清單來源');
 define('_MI_TADADM_SOURCE_DESC', '預設為 https://campus-xoops.tn.edu.tw ');
+define('_MI_TADADM_SITE_KEY', '授權金鑰');
+define('_MI_TADADM_SITE_KEY_DESC', '用來安裝或升級「限定網站安裝」的套件。請向下載清單來源的管理員索取本站的金鑰後貼上，設定一次即可；空白表示只使用公開套件。');
 
 define('_MI_TADADM_USE_FORGOT_PASSWD', '使用忘記密碼功能');
 define('_MI_TADADM_USE_FORGOT_PASSWD_DESC', '是否啟用忘記密碼功能');

@@ -34,6 +34,7 @@ define('_MA_TADADM_FTP_HOST', '請輸入FTP登入主機');
 define('_MA_TADADM_FTP_ID', '請輸入FTP登入帳號');
 define('_MA_TADADM_FTP_PASS', '請輸入FTP登入密碼');
 define('_MA_TADADM_DL_FAIL', '「%s」下載失敗！');
+define('_MA_TADADM_PRIVATE_DENIED', '此套件限定網站安裝，請確認偏好設定中的「授權金鑰」正確，且本站已被授權');
 define('_MA_TADADM_EXTRACT_FAIL', '無法準備或解壓升級套件至「%s」，請檢查套件及目錄權限。尚未複製至目標位置。');
 define('_MA_TADADM_SESSION_RESTORE_FAIL', '無法恢復登入工作階段，請重新登入後再繼續。');
 define('_MA_TADADM_INVALID_PACKAGE_DIR', '無效的套件目錄或識別碼：「%s」。');
